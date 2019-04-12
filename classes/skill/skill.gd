@@ -410,7 +410,7 @@ const opCode = {
 	"counter_el" : OPCODE_COUNTER_ELEMENT,
 	"counter_filter" : OPCODE_COUNTER_FILTER,
 	"counter_set" : OPCODE_COUNTER,
-	
+
 	"chain_start" : OPCODE_CHAIN_START,
 	"chain_follow" : OPCODE_CHAIN_FOLLOW,
 	"chain_finish" : OPCODE_CHAIN_FINISH,
@@ -723,6 +723,67 @@ const statusInfo = {
 	STATUS_SLEEP: 	{ name = "Sleep", desc = "put to sleep", color = "0000FF", short = "SLP" },
 }
 
+
+class SkillState:
+	# Core attack stats #########################
+	var hits : Array =            [1, 1]   #Number of hits (min, max)
+	var dmgBonus : int =          0        #Damage bonus. Added to attack power.
+	var dmgAddRaw : int =         0        #Raw damage to add to attacks.
+	var healPow : int =           0        #Healing power
+	var healBonus : int =         0        #Healing bonus. Added to healing power.
+	var healAddRaw : int =        0        #Raw healing to add to heals.
+	var drainLife : int =         0        #Drain life. Percentage.
+	var accMod : int =            0        #Accuracy modifier.
+	var critMod : int =           0        #Critical modifier.
+	var element : int =           0        #Element to use.
+	var fieldEffectMult : float = 0.0      #Field effect multiplier.
+	var dmgStat : int =           0        #Damage stat.
+	var nomiss : bool =           false    #If true, the attack always hits.
+	var nocap : bool =            false    #If true, the attack ignores damage cap (32000).
+	var energyDMG : bool =        false    #If true, use energy resistance stats on target.
+	var ranged : bool =           false    #If true, ignore range penalties and targetting restrictions.
+	var ignoreDefs : bool =       false    #If true, ignore special defenses (guard, barrier).
+	# Infliction stats ##########################
+	var inflictPow : int =        0
+	var inflictBonus : int =      0
+	# Effect ####################################
+	var setEffect : bool =        false    #If true, try to set an effect.
+	# Hit record ################################
+	var lastHit : bool =          false    #If true, the last attack connected.
+	var hitRecord : Array =       []       #Record of last succeeding hits.
+	var anyHit : bool =           false    #If true, any of the attacks has connected.
+	# Onhit effects #############################
+	var combo : Array                      #Data for combo setup.
+	var follow : Array                     #Data for followup setup.
+	var counter : Array                    #Data for counter setup.
+	# Target override ###########################
+	var originalTarget =          null     #Keep track of original target.
+	# Statistics and output #####################
+	var totalHeal : int =         0        #Total amount of healing done this turn.
+	var totalAfflictions : int =  0        #Total amount of afflictions caused this turn.
+	var finalHeal : int =         0        #Final amount of healing.
+	var finalDMG : int =          0        #Final amount of damage.
+	# SVAL stack
+	var value : int =             0        #Internal data stack.
+
+	func _init(S : Dictionary, level : int, user, target):
+		#Initialize values from skill definition
+		element = S.element[level]
+		fieldEffectMult = S.fieldEffectMult[level]
+		dmgStat = S.damageStat
+		accMod = S.accMod[level]
+		critMod = S.critMod[level]
+		energyDMG = S.energyDMG
+		ranged = S.ranged[level]
+		inflictPow = S.inflictPow[level]
+		setEffect = true if (S.category == CAT_SUPPORT and S.effect != EFFECT_NONE) else false
+		anyHit = true if S.category == CAT_SUPPORT else false
+		combo =   [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
+		follow  = [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
+		counter = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL]
+		originalTarget = target
+
+
 func translateOpCode(o : String) -> int:
 	return opCode[o] if o in opCode else OPCODE_NULL
 
@@ -860,7 +921,7 @@ func calculateFieldMod(elem:int, mult:int) -> float:
 func checkHitConditions(S, level, user, target, state) -> bool:
 	if target.filter(S.filter):
 		if state.nomiss: return true
-		else: return checkHit(user.battle.stat, target.battle.stat, state.accMod[level])
+		else: return checkHit(user.battle.stat, target.battle.stat, state.accMod)
 	return false
 
 
@@ -884,12 +945,12 @@ func processAttack(S, level, user, target, state, value, flags):
 	var output : String = ""
 	var silent : bool = bool(flags & OPFLAGS_SILENT_ATTACK)
 	print("Attack: %05d + %05d = %05d power + %05d raw damage > silent: %s, hit record: %s" % [value, state.dmgBonus, state.dmgBonus + value, state.dmgAddRaw, silent, hitInfo])
-	state.lastConnect = false
+	state.lastHit = false
 
 	for i in range(hitnum): #For each attack, check hits individually.
 		#if (checkHit(a, b, state.accMod[level]) or state.nomiss == true) and target.status != STATUS_DOWN:
 		if checkHitConditions(S, level, user, target, state):
-			state.lastConnect = true                                                  #It connected. Start processing it.
+			state.lastHit = true                                                  #It connected. Start processing it.
 			dmg = state.dmgBonus + value
 			crit = calculateCrit(a.LUC, b.LUC, state.critMod)                         #Check if this individual attack crits.
 			args = {
@@ -970,7 +1031,7 @@ func processAttack(S, level, user, target, state, value, flags):
 		hitInfo = [] #Clear accumulated attack info.
 
 	user.battle.turnHits += totalHits
-	state.finalDMG += totalDmg
+	state.finalDMG += totalDmg as int
 
 	if state.drainLife > 0:                                                       #Drain life effects
 		print("Life drain (%s)" % state.drainLife)
@@ -1033,47 +1094,7 @@ func process(S, level, user, _targets, WP = null, IT = null):
 	#return SKILL_FAILED
 
 func initSkillState(S, level, user, target):
-	return {
-		# Core attack stats ########################################################
-		hits = [1, 1],
-		dmgBonus = 0,
-		dmgAddRaw = 0,
-		healPow = 0,
-		healBonus = 0,
-		healAddRaw = 0,
-		drainLife = 0,
-		critMod = 0,
-		element = S.element[level],
-		fieldEffectMult = S.fieldEffectMult[level],
-		dmgStat = S.damageStat,
-		accMod = S.accMod,
-		nomiss = false,
-		nocap = false, #If true damage cap (32000) is ignored.
-		spread = false, #If true final damage is halved (before critical)
-		energyDMG = S.energyDMG,
-		ranged = S.ranged[level],
-		ignoreDefs = false,
-		# Infliction stats #########################################################
-		inflictPow = S.inflictPow[level],
-		inflictBonus = 0,
-		# Effect (buff/debuff) #####################################################
-		setEffect = true if (S.category == CAT_SUPPORT and S.effect != EFFECT_NONE) else false,
-		lastHit = false,
-		hitRecord = [],
-		anyHit = true if (S.category == CAT_SUPPORT) else false,
-		# Follow data ##############################################################
-		combo =   [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED],
-		follow  = [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED],
-		counter = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL],
-		# Target override ##########################################################
-		originalTarget = target,
-		# Statistics and output ####################################################
-		totalHeal = 0,
-		totalAfflictions = 0,
-		finalHeal = 0,
-		finalDMG = 0,
-		value = 0
-	}
+	return SkillState.new(S, level, user, target)
 
 func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	var temp = null
@@ -1503,7 +1524,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 		print("[%s] No skill code %02d found. Taking no action." % [S.name, _code])
 		if S.effect != EFFECT_NONE:
 			print("[%s] Provides an effect. Performing accuracy check." % S.name)
-			if state.nomiss or checkHit(a, b, state.accMod[level]):
+			if state.nomiss or checkHit(a, b, state.accMod):
 				state.setEffect = true
 				print(" Accuracy check passed.")
 			else:
