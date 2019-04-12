@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=2]
+
+[sub_resource type="Gradient" id=1]
+
+offsets = PoolRealArray( 0, 0.431953, 0.550296, 0.639053, 1 )
+colors = PoolColorArray( 0.141737, 0.136978, 0.746094, 1, 0.237821, 0.222427, 0.503906, 1, 0.20829, 0.128393, 0.290873, 1, 0, 0, 0, 1, 0.167969, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+
+flags = 4
+gradient = SubResource( 1 )
+width = 680
+
+[sub_resource type="CanvasItemMaterial" id=3]
+
+render_priority = 0
+blend_mode = 1
+light_mode = 0
+
+[sub_resource type="Gradient" id=4]
+
+offsets = PoolRealArray( 0, 0.526627, 1 )
+colors = PoolColorArray( 0.746094, 0.136978, 0.136978, 1, 0.0573918, 0.0105368, 0.0105368, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=5]
+
+flags = 4
+gradient = SubResource( 4 )
+width = 680
+
+[node name="Root" type="Node2D" index="0"]
+z_index = -1
+_sections_unfolded = [ "Transform", "Z Index" ]
+
+[node name="Sprite6" type="Sprite" parent="." index="0"]
+position = Vector2( -32.0016, 32.0469 )
+rotation = -1.5708
+scale = Vector2( 0.0941867, 63.7133 )
+texture = SubResource( 2 )
+centered = false
+_sections_unfolded = [ "Offset", "Transform", "Z Index" ]
+
+[node name="Sprite7" type="Sprite" parent="." index="1"]
+self_modulate = Color( 1, 1, 1, 0.470588 )
+material = SubResource( 3 )
+position = Vector2( -32.0002, 31.994 )
+rotation = -1.5708
+scale = Vector2( 0.0938091, 63.7133 )
+z_index = 1
+texture = SubResource( 5 )
+centered = false
+_sections_unfolded = [ "Material", "Offset", "Transform", "Visibility", "Z Index" ]
+

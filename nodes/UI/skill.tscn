@@ -1,0 +1,118 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://nodes/UI/skill.gd" type="Script" id=1]
+[ext_resource path="res://resources/icons/untyped.svg" type="Texture" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.0862745, 0.0862745, 0.0862745, 0.501961 )
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.419608, 0.741176, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.560784, 0.862745, 0.74902, 1 )
+corner_radius_bottom_left = 5
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.167969, 0.219971, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+corner_radius_bottom_left = 5
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.167969, 0.219971, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+corner_radius_bottom_left = 5
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.145098, 0.14902, 0.172549, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.686275, 0.352941, 0.352941, 1 )
+corner_radius_bottom_left = 5
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.167969, 0.219971, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+corner_radius_bottom_left = 5
+corner_detail = 1
+anti_aliasing = false
+
+[node name="Control" type="Control"]
+margin_right = 390.0
+margin_bottom = 20.0
+script = ExtResource( 1 )
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 10.0
+margin_right = 390.0
+margin_bottom = 20.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="Button" type="Button" parent="."]
+margin_right = 310.0
+margin_bottom = 20.0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
+
+[node name="USE" type="Label" parent="."]
+margin_left = 310.0
+margin_right = 350.0
+margin_bottom = 20.0
+text = "XX"
+align = 1
+valign = 1
+
+[node name="Element0" type="Sprite" parent="."]
+position = Vector2( 20, 10 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )
+
+[node name="Element1" type="Sprite" parent="."]
+visible = false
+position = Vector2( 40, 10 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )
+
+[node name="Element2" type="Sprite" parent="."]
+visible = false
+position = Vector2( 60, 10 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 70.0
+margin_right = 310.0
+margin_bottom = 20.0
+text = "SKILL NAME"
+valign = 1
+[connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_Button_mouse_exited"]

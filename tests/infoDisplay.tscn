@@ -1,0 +1,66 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=1]
+
+[sub_resource type="DynamicFont" id=1]
+
+size = 11
+outline_size = 0
+outline_color = Color( 1, 1, 1, 1 )
+use_mipmaps = true
+use_filter = false
+font_data = ExtResource( 1 )
+_sections_unfolded = [ "Font", "Settings" ]
+
+[sub_resource type="GDScript" id=2]
+
+script/source = "extends RichTextLabel
+
+var lines = []
+const MAX_LINES = 25
+
+func _ready():
+	update()
+
+func addLine(text):
+	print(text)
+	lines.push_back(text)
+	if(lines.size() > MAX_LINES): lines.pop_front()
+	update()
+
+func update():
+	var result = \"\"
+	for i in range(lines.size()):
+		result = str(result + lines[i] + \"\\n\")
+	self.text=result
+	pass"
+
+[node name="RichTextLabel" type="RichTextLabel"]
+self_modulate = Color( 1, 1, 1, 0.811765 )
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 680.0
+margin_bottom = 90.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = true
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/normal_font = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = ""
+visible_characters = -1
+percent_visible = 1.0
+meta_underlined = false
+tab_size = 2
+text = ""
+scroll_active = true
+scroll_following = true
+selection_enabled = false
+override_selected_font_color = false
+script = SubResource( 2 )
+_sections_unfolded = [ "BBCode", "Visibility" ]
+

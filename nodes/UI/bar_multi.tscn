@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://nodes/UI/bar_multi.gd" type="Script" id=1]
+
+[node name="MultiBar" type="Control"]
+margin_right = 320.0
+margin_bottom = 170.0
+mouse_filter = 2
+script = ExtResource( 1 )
+

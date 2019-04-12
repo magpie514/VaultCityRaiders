@@ -1,0 +1,206 @@
+extends "res://classes/library/lib_base.gd"
+var skill = core.skill
+
+const LIBEXT_AIPATTERN = "loaderAIPattern"
+
+
+enum {
+	AIPATTERN_SIMPLE,
+	AIPATTERN_PICK_RANDOMLY,
+	AIPATTERN_PICK_2_IF_WEAK,
+	AIPATTERN_PICK_2_IF_RANK,
+	AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY,
+}
+
+enum {
+ AIPATTERN_LOOP,
+ AIPATTERN_LOOP_SKIP_FIRST,
+}
+
+enum {
+ AITARGET_SELF,
+ AITARGET_RANDOM,
+ AITARGET_WEAKEST,
+ AITARGET_ALLY_WEAKEST,
+}
+
+
+var example = {
+	"debug" : {
+		"debug": {
+			name = "Debugger",
+			description = "Combat testing robot. Vanilla flavored.",
+			statSpread = [
+				#HP    STR  END  INT  WIS  AGI  LUC
+				[0045, 010, 010, 010, 010, 010, 010],
+				[0500, 100, 100, 100, 100, 100, 100]
+			],
+			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
+			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			defeatMsg = "%s exploded!",
+			ai = 1,
+			aiPattern = {
+				pattern = [
+#					[AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY, [1, AITARGET_RANDOM], [2, AITARGET_RANDOM]],
+					[AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY, [3, AITARGET_SELF], [2, AITARGET_RANDOM]],
+					[AIPATTERN_PICK_RANDOMLY, 050, [2, AITARGET_RANDOM], [0, AITARGET_RANDOM]],
+					[AIPATTERN_PICK_2_IF_WEAK, 050, [3, AITARGET_SELF], [0, AITARGET_RANDOM]],
+				],
+				flags = 0,
+				loopFrom = 1,
+			},
+			skill = [ ["debug", "bash"], ["debug", "defdown"], ["debug", "shoot"], ["core", "defend"] ]
+		}, "debug1": {
+			name = "Solid Debugger",
+			description = "Combat testing robot specialized in high kinetic defense.",
+			statSpread = [[0045, 010, 030, 010, 010, 010, 010], [0500, 100, 300, 100, 100, 100, 100]],
+			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
+			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			defeatMsg = "%s exploded!",
+			ai = 0,
+			skill = [ ["core", "defend"], ["debug", "bash"] ]
+		}, "debug2": {
+			name = "Barrier Debugger",
+			description = "Combat testing robot specialized in high energy defense.",
+			statSpread = [[0045, 010, 010, 010, 030, 010, 010], [0500, 100, 100, 100, 300, 100, 100]],
+			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
+			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			defeatMsg = "%s exploded!",
+			ai = 0,
+			skill = [ ["debug", "shoot"] ]
+		}, "debug3": {
+			name = "Speed Debugger",
+			description = "Combat testing robot specialized in high mobility.",
+			statSpread = [[0045, 010, 010, 010, 010, 030, 030], [0500, 100, 100, 100, 100, 300, 300]],
+			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
+			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			defeatMsg = "%s exploded!",
+			ai = 0,
+			skill = [ ["debug", "slash"], ["debug", "shoot"], ["debug", "decoy"] ]
+		}, "compiler": {
+			name = "Compiler",
+			spriteFile = "res://resources/images/compiler.png",
+			description = "Combat testing drone. A glorified moving turret. Vanilla scented.",
+			statSpread = [
+				#HP    STR  END  INT  WIS  AGI  LUC
+				[0015, 001, 008, 012, 008, 011, 005],
+				[0200, 001, 095, 125, 096, 120, 050]
+			],
+			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
+			RES = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
+			defeatMsg = "%s exploded!",
+			ai = 1,
+			aiPattern = {
+				pattern = [
+					[AIPATTERN_SIMPLE, [0, AITARGET_RANDOM]],
+					[AIPATTERN_SIMPLE, [0, AITARGET_RANDOM]],
+					[AIPATTERN_SIMPLE, [1, AITARGET_RANDOM]],
+				],
+				flags = AIPATTERN_LOOP|AIPATTERN_LOOP_SKIP_FIRST,
+			},
+			skill = [ ["debug", "shoot"], ["debug", "sprshot"] ]
+		}, "compiler2": {
+			name = "Repair Compiler",
+			description = "Combat testing drone. A glorified moving turret. Vanilla scented.",
+			statSpread = [
+				#HP    STR  END  INT  WIS  AGI  LUC
+				[0015, 001, 008, 012, 008, 011, 005],
+				[0200, 001, 095, 125, 096, 120, 050]
+			],
+			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
+			RES = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
+			weakThreshold = 025,
+			defeatMsg = "%s exploded!",
+			ai = 1,
+			aiPattern = {
+				pattern = [
+					[AIPATTERN_SIMPLE, [1, AITARGET_RANDOM]],
+					[AIPATTERN_PICK_2_IF_WEAK, 025, [1,AITARGET_RANDOM], [0, AITARGET_SELF]],
+					[AIPATTERN_PICK_2_IF_RANK, 300, [1, AITARGET_WEAKEST], [0, AITARGET_SELF]],
+					[AIPATTERN_SIMPLE, [2, AITARGET_ALLY_WEAKEST]],
+					[AIPATTERN_PICK_RANDOMLY, 50, [1, AITARGET_RANDOM], [2, AITARGET_ALLY_WEAKEST]],
+				],
+				flags = AIPATTERN_LOOP|AIPATTERN_LOOP_SKIP_FIRST,
+			},
+			flavorScript = {
+				opener = [
+					[1, "SYSTEMS SWITCHED TO COMBAT MODE"],
+				],
+			},
+			skill = [ ["core", "defend"], ["debug", "shoot"], ["debug", "heal"] ]
+		}
+	}
+}
+
+func initTemplate():
+	return {
+		"name" : { loader = LIBSTD_STRING },											#Enemy name
+		"spriteFile" : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
+		"energyColor" : { loader = LIBSTD_STRING, default = "#AAFFFF" },
+		"description" : { loader = LIBSTD_STRING },								#Enemy description
+		"statSpread" : { loader = LIBSTD_STATSPREAD },						#Stat spread
+		"OFF" : { loader = LIBSTD_ELEMENTDATA },									#Elemental offense
+		"RES" : { loader = LIBSTD_ELEMENTDATA },									#Elemental defense
+		"race" : { loader = LIBSTD_INT },													#Race type (for "slayer" effects)
+		"raceFlags" : { loader = LIBSTD_INT },										#Race flags (BIO/MEC/SPI), affects vulnerability to certain effects.
+		"defeatMsg" : { loader = LIBSTD_STRING, default = "%s was defeated!" },			#Message to display when defeated. "%s倒した！"
+		"ai" : { loader = LIBSTD_INT },														#AI mode
+		"aiPattern" : { loader = LIBEXT_AIPATTERN },							#AI pattern
+		"skill" : { loader = LIBSTD_SKILL_LIST },									#Skill list
+	}
+
+
+func name(id):
+	var entry = getIndex(id)
+	return entry.name if entry else "ERROR"
+
+func getStatSpread(id):
+	var entry = getIndex(id)
+	return entry.statSpread
+
+func loadDebug():
+	loadDict(example)
+	print("Monster library:")
+	#printData()
+
+func parseAISkill(S, defaultTarget = AITARGET_RANDOM) -> Array:
+	match typeof(S):
+		TYPE_INT:
+			return [int(S), defaultTarget]
+		TYPE_NIL:
+			return [0, defaultTarget]
+		TYPE_ARRAY:
+			return [int(S[0]), int(S[1])]
+	return [0, defaultTarget]
+
+func parseAIPattern(line) -> Array:
+	if line == null or typeof(line) != TYPE_ARRAY:
+		return [AIPATTERN_SIMPLE, parseAISkill(0)]
+	match line[0]:
+		AIPATTERN_SIMPLE:
+			return [AIPATTERN_SIMPLE, parseAISkill(line[1])]
+		AIPATTERN_PICK_2_IF_WEAK:
+			return [AIPATTERN_PICK_2_IF_WEAK, int(line[1]), parseAISkill(line[2]), parseAISkill(line[3])]
+		AIPATTERN_PICK_2_IF_RANK:
+			return [AIPATTERN_PICK_2_IF_RANK, int(line[1]), parseAISkill(line[2]), parseAISkill(line[3])]
+		AIPATTERN_PICK_RANDOMLY:
+			return [AIPATTERN_PICK_RANDOMLY, int(line[1]), parseAISkill(line[2]), parseAISkill(line[3])]
+		AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY:
+			return [AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY, parseAISkill(line[1]), parseAISkill(line[2])]
+	return [AIPATTERN_SIMPLE, parseAISkill(0)]
+
+func loaderAIPattern(dict):
+	if dict == null:
+		return null
+	var result = {}
+	if dict.pattern != null:
+			result.pattern = []
+			result.pattern.resize(dict.pattern.size())
+			for i in range(dict.pattern.size()):
+				result.pattern[i] = parseAIPattern(dict.pattern[i])
+	print("AI pattern:", result)
+	return result

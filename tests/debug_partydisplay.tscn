@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=1]
+[ext_resource path="res://tests/debug_partydisplay.gd" type="Script" id=2]
+
+[node name="PartyDisplay" type="Panel"]
+margin_right = 450.0
+margin_bottom = 50.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+

@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://tests/ctrltest.tscn" type="PackedScene" id=1]
+
+[node name="Control" type="Control" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 50.0
+margin_top = -110.0
+margin_right = 90.0
+margin_bottom = -70.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="Control" parent="." index="0" instance=ExtResource( 1 )]
+
+margin_left = -50.0
+margin_top = 291.0
+margin_right = -50.0
+margin_bottom = 291.0
+
+[node name="Control2" parent="." index="1" instance=ExtResource( 1 )]
+
+margin_left = 292.0
+margin_top = 291.0
+margin_right = 292.0
+margin_bottom = 291.0
+
+[node name="Control3" parent="." index="2" instance=ExtResource( 1 )]
+
+margin_left = 634.0
+margin_top = 291.0
+margin_right = 634.0
+margin_bottom = 291.0
+
+[node name="ColorRect" type="ColorRect" parent="." index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = -50.0
+margin_top = 110.0
+margin_right = 970.0
+margin_bottom = 280.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+color = Color( 0.308594, 0.186769, 0.106079, 1 )
+
+

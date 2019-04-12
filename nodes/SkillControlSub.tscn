@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+signal skill_end
+signal skill_continue
+
+#TODO: Give this its own timer?
+
+func continueSkill():
+	emit_signal(\"skill_continue\")
+
+func finishSubSkill():
+	emit_signal(\"sub_skill_finish\")
+
+func stop():
+	emit_signal(\"skill_end\")
+	queue_free()"
+
+[node name="SkillControlSub" type="Node"]
+script = SubResource( 1 )

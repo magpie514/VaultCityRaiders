@@ -1,0 +1,568 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://nodes/UI/battle/enemy_info_display.gd" type="Script" id=1]
+[ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://nodes/UI/bar_multi.tscn" type="PackedScene" id=3]
+[ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 13
+outline_size = 1
+outline_color = Color( 0.00784314, 0.54902, 0.694118, 0.294118 )
+extra_spacing_bottom = -2
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+draw_center = false
+border_width_top = 45
+border_color = Color( 0.152941, 0.717647, 0.807843, 0.384314 )
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+draw_center = false
+border_width_top = 45
+border_color = Color( 0.807843, 0.152941, 0.152941, 0.384314 )
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id=4]
+draw_center = false
+border_width_right = 3
+border_width_bottom = 1
+border_color = Color( 0.447059, 0.890196, 0.431373, 1 )
+corner_radius_bottom_right = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=5]
+draw_center = false
+border_width_right = 3
+border_width_bottom = 1
+border_color = Color( 0.431373, 0.643137, 0.890196, 1 )
+corner_radius_bottom_right = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=6]
+draw_center = false
+border_width_right = 3
+border_width_bottom = 1
+border_color = Color( 0.886275, 0.431373, 0.890196, 1 )
+corner_radius_bottom_right = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=7]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.431373, 0.431373, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.431373, 0.741176, 0.890196, 1 )
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.431373, 0.847059, 0.890196, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=9]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.886275, 0.890196, 0.431373, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[node name="EnemyInfoDisplay" type="Panel"]
+margin_right = 960.0
+margin_bottom = 90.0
+script = ExtResource( 1 )
+
+[node name="Name" type="Label" parent="."]
+margin_left = 60.0
+margin_right = 260.0
+margin_bottom = 20.0
+text = "123456789012345678901234"
+valign = 1
+
+[node name="Level" type="Label" parent="."]
+margin_left = 10.0
+margin_right = 60.0
+margin_bottom = 20.0
+text = "LV.000"
+valign = 1
+
+[node name="StatStatic" type="Label" parent="."]
+editor/display_folded = true
+margin_left = 10.0
+margin_top = 20.0
+margin_right = 40.0
+margin_bottom = 80.0
+custom_fonts/font = SubResource( 1 )
+text = "STR
+END
+INT
+WIS
+AGI
+LUC"
+
+[node name="STR" type="Label" parent="StatStatic"]
+margin_left = 100.0
+margin_right = 130.0
+margin_bottom = 10.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="BSTR" parent="StatStatic" instance=ExtResource( 3 )]
+margin_left = 26.0
+margin_top = 1.0
+margin_right = 96.0
+margin_bottom = 9.0
+bgcolor = Color( 0, 0, 0, 0.333333 )
+
+[node name="END" type="Label" parent="StatStatic"]
+margin_left = 100.0
+margin_top = 10.0
+margin_right = 130.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="BEND" parent="StatStatic" instance=ExtResource( 3 )]
+margin_left = 26.0
+margin_top = 11.0
+margin_right = 96.0
+margin_bottom = 19.0
+bgcolor = Color( 0, 0, 0, 0.333333 )
+
+[node name="INT" type="Label" parent="StatStatic"]
+margin_left = 100.0
+margin_top = 20.0
+margin_right = 130.0
+margin_bottom = 30.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="BINT" parent="StatStatic" instance=ExtResource( 3 )]
+margin_left = 26.0
+margin_top = 21.0
+margin_right = 96.0
+margin_bottom = 29.0
+bgcolor = Color( 0, 0, 0, 0.333333 )
+
+[node name="WIS" type="Label" parent="StatStatic"]
+margin_left = 100.0
+margin_top = 30.0
+margin_right = 130.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="BWIS" parent="StatStatic" instance=ExtResource( 3 )]
+margin_left = 26.0
+margin_top = 31.0
+margin_right = 96.0
+margin_bottom = 39.0
+bgcolor = Color( 0, 0, 0, 0.333333 )
+
+[node name="AGI" type="Label" parent="StatStatic"]
+margin_left = 100.0
+margin_top = 40.0
+margin_right = 130.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="BAGI" parent="StatStatic" instance=ExtResource( 3 )]
+margin_left = 26.0
+margin_top = 41.0
+margin_right = 96.0
+margin_bottom = 49.0
+bgcolor = Color( 0, 0, 0, 0.333333 )
+
+[node name="LUC" type="Label" parent="StatStatic"]
+margin_left = 100.0
+margin_top = 50.0
+margin_right = 130.0
+margin_bottom = 60.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="BLUC" parent="StatStatic" instance=ExtResource( 3 )]
+margin_left = 26.0
+margin_top = 51.0
+margin_right = 96.0
+margin_bottom = 59.0
+bgcolor = Color( 0, 0, 0, 0.333333 )
+
+[node name="VitalStatic" type="Label" parent="."]
+editor/display_folded = true
+margin_left = 140.0
+margin_top = 21.0
+margin_right = 240.0
+margin_bottom = 35.0
+text = "Vital"
+align = 1
+valign = 2
+
+[node name="Vital" type="Label" parent="VitalStatic"]
+margin_top = 9.0
+margin_right = 100.0
+margin_bottom = 25.0
+custom_fonts/font = SubResource( 1 )
+text = "XXXXX/XXXXX"
+align = 1
+valign = 1
+
+[node name="BVital" parent="VitalStatic" instance=ExtResource( 4 )]
+margin_top = 24.0
+margin_right = 100.0
+margin_bottom = 29.0
+
+[node name="ConditionStatic" type="Label" parent="."]
+editor/display_folded = true
+margin_left = 140.0
+margin_top = 56.0
+margin_right = 240.0
+margin_bottom = 70.0
+text = "Condition"
+align = 1
+valign = 2
+
+[node name="Condition" type="Label" parent="ConditionStatic"]
+margin_top = 13.0
+margin_right = 100.0
+margin_bottom = 28.0
+text = "STATUS_NAME"
+align = 1
+valign = 2
+
+[node name="Buffs" type="Panel" parent="."]
+editor/display_folded = true
+margin_left = 770.0
+margin_right = 960.0
+margin_bottom = 45.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="BuffLine0" type="Label" parent="Buffs"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 180.0
+margin_bottom = 17.0
+text = "buff here"
+align = 1
+valign = 2
+
+[node name="Label" type="Label" parent="Buffs/BuffLine0"]
+margin_left = 164.0
+margin_right = 180.0
+margin_bottom = 12.0
+custom_fonts/font = SubResource( 1 )
+text = "00"
+valign = 1
+
+[node name="BuffLine1" type="Label" parent="Buffs"]
+margin_left = 10.0
+margin_top = 16.0
+margin_right = 180.0
+margin_bottom = 30.0
+text = "buff here"
+align = 1
+valign = 2
+
+[node name="Label" type="Label" parent="Buffs/BuffLine1"]
+margin_left = 164.0
+margin_right = 180.0
+margin_bottom = 14.0
+custom_fonts/font = SubResource( 1 )
+text = "00"
+valign = 1
+
+[node name="BuffLine2" type="Label" parent="Buffs"]
+margin_left = 10.0
+margin_top = 30.0
+margin_right = 180.0
+margin_bottom = 44.0
+text = "buff here"
+align = 1
+valign = 2
+
+[node name="Label" type="Label" parent="Buffs/BuffLine2"]
+margin_left = 164.0
+margin_right = 180.0
+margin_bottom = 14.0
+custom_fonts/font = SubResource( 1 )
+text = "00"
+valign = 1
+
+[node name="Debuffs" type="Panel" parent="."]
+editor/display_folded = true
+margin_left = 770.0
+margin_top = 45.0
+margin_right = 960.0
+margin_bottom = 90.0
+custom_styles/panel = SubResource( 3 )
+
+[node name="DebuffLine0" type="Label" parent="Debuffs"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 180.0
+margin_bottom = 19.0
+text = "debuff here"
+align = 1
+valign = 2
+
+[node name="Label" type="Label" parent="Debuffs/DebuffLine0"]
+margin_left = 164.0
+margin_right = 180.0
+margin_bottom = 14.0
+custom_fonts/font = SubResource( 1 )
+text = "00"
+valign = 1
+
+[node name="DebuffLine1" type="Label" parent="Debuffs"]
+margin_left = 10.0
+margin_top = 18.0
+margin_right = 180.0
+margin_bottom = 32.0
+text = "debuff here"
+align = 1
+valign = 2
+
+[node name="Label" type="Label" parent="Debuffs/DebuffLine1"]
+margin_left = 164.0
+margin_right = 180.0
+margin_bottom = 14.0
+custom_fonts/font = SubResource( 1 )
+text = "00"
+valign = 1
+
+[node name="DebuffLine2" type="Label" parent="Debuffs"]
+margin_left = 10.0
+margin_top = 31.0
+margin_right = 180.0
+margin_bottom = 45.0
+text = "debuff here"
+align = 1
+valign = 2
+
+[node name="Label" type="Label" parent="Debuffs/DebuffLine2"]
+margin_left = 164.0
+margin_right = 180.0
+margin_bottom = 14.0
+custom_fonts/font = SubResource( 1 )
+text = "00"
+valign = 1
+
+[node name="Elements" type="Panel" parent="."]
+editor/display_folded = true
+margin_left = 260.0
+margin_right = 430.0
+margin_bottom = 90.0
+
+[node name="OFF" type="Control" parent="Elements"]
+modulate = Color( 1, 0.823529, 0.823529, 1 )
+margin_left = 50.0
+margin_top = 31.0
+margin_right = 90.0
+margin_bottom = 71.0
+
+[node name="01" type="Label" parent="Elements/OFF"]
+margin_left = -30.0
+margin_top = -10.0
+margin_right = -1.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="02" type="Label" parent="Elements/OFF"]
+margin_left = -40.0
+margin_top = 15.0
+margin_right = -11.0
+margin_bottom = 25.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="03" type="Label" parent="Elements/OFF"]
+margin_left = -30.0
+margin_top = 40.0
+margin_right = -1.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="04" type="Label" parent="Elements/OFF"]
+margin_left = 70.0
+margin_top = -10.0
+margin_right = 99.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 2
+
+[node name="05" type="Label" parent="Elements/OFF"]
+margin_left = 80.0
+margin_top = 15.0
+margin_right = 109.0
+margin_bottom = 25.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 2
+
+[node name="06" type="Label" parent="Elements/OFF"]
+margin_left = 70.0
+margin_top = 40.0
+margin_right = 99.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 2
+
+[node name="07" type="Label" parent="Elements/OFF"]
+margin_left = 20.0
+margin_top = 9.0
+margin_right = 50.0
+margin_bottom = 19.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 1
+
+[node name="RES" type="Control" parent="Elements"]
+modulate = Color( 0.823529, 0.835294, 1, 1 )
+margin_left = 50.0
+margin_top = 21.0
+margin_right = 90.0
+margin_bottom = 61.0
+
+[node name="01" type="Label" parent="Elements/RES"]
+margin_right = 29.0
+margin_bottom = 10.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="02" type="Label" parent="Elements/RES"]
+margin_left = -10.0
+margin_top = 25.0
+margin_right = 19.0
+margin_bottom = 35.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="03" type="Label" parent="Elements/RES"]
+margin_top = 50.0
+margin_right = 29.0
+margin_bottom = 60.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="04" type="Label" parent="Elements/RES"]
+margin_left = 40.0
+margin_right = 69.0
+margin_bottom = 10.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 2
+
+[node name="05" type="Label" parent="Elements/RES"]
+margin_left = 50.0
+margin_top = 25.0
+margin_right = 79.0
+margin_bottom = 35.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 2
+
+[node name="06" type="Label" parent="Elements/RES"]
+margin_left = 40.0
+margin_top = 50.0
+margin_right = 69.0
+margin_bottom = 60.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 2
+
+[node name="07" type="Label" parent="Elements/RES"]
+margin_left = 20.0
+margin_top = 29.0
+margin_right = 50.0
+margin_bottom = 39.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+align = 1
+
+[node name="Label" type="Label" parent="Elements"]
+margin_left = 40.0
+margin_top = 10.0
+margin_right = 70.0
+margin_bottom = 20.0
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 1 )
+text = "CUT"
+
+[node name="Label2" type="Label" parent="Elements"]
+margin_left = 30.0
+margin_top = 35.0
+margin_right = 60.0
+margin_bottom = 45.0
+custom_styles/normal = SubResource( 5 )
+custom_fonts/font = SubResource( 1 )
+text = "PIE"
+
+[node name="Label3" type="Label" parent="Elements"]
+margin_left = 40.0
+margin_top = 60.0
+margin_right = 70.0
+margin_bottom = 70.0
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 1 )
+text = "BLU"
+
+[node name="Label4" type="Label" parent="Elements"]
+margin_left = 100.0
+margin_top = 10.0
+margin_right = 130.0
+margin_bottom = 20.0
+custom_styles/normal = SubResource( 7 )
+custom_fonts/font = SubResource( 1 )
+text = "FIR"
+align = 2
+
+[node name="Label5" type="Label" parent="Elements"]
+margin_left = 110.0
+margin_top = 35.0
+margin_right = 140.0
+margin_bottom = 45.0
+custom_styles/normal = SubResource( 8 )
+custom_fonts/font = SubResource( 1 )
+text = "ICE"
+align = 2
+
+[node name="Label6" type="Label" parent="Elements"]
+margin_left = 100.0
+margin_top = 60.0
+margin_right = 130.0
+margin_bottom = 70.0
+custom_styles/normal = SubResource( 9 )
+custom_fonts/font = SubResource( 1 )
+text = "ELE"
+align = 2
+
+[node name="Label7" type="Label" parent="Elements"]
+margin_left = 70.0
+margin_top = 31.0
+margin_right = 100.0
+margin_bottom = 41.0
+custom_fonts/font = SubResource( 1 )
+text = "ULT"
+align = 1
+
+[node name="CHAR" type="Panel" parent="."]
+margin_left = 520.0
+margin_right = 770.0
+margin_bottom = 90.0

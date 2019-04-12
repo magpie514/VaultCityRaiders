@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://resources/icons/fire.svg" type="Texture" id=1]
+
+[node name="FEPanel" type="Panel"]
+margin_left = 392.0
+margin_top = 237.0
+margin_right = 584.0
+margin_bottom = 322.0
+
+[node name="TEST00" type="Button" parent="."]
+margin_top = 15.0
+margin_right = 192.0
+margin_bottom = 35.0
+text = "Add FE element"
+
+[node name="TEST01" type="Button" parent="."]
+margin_top = 35.0
+margin_right = 38.0
+margin_bottom = 55.0
+text = "R1"
+
+[node name="TEST02" type="Button" parent="."]
+margin_left = 38.0
+margin_top = 35.0
+margin_right = 80.0
+margin_bottom = 56.0
+text = "R2"
+
+[node name="TEST03" type="Button" parent="."]
+margin_left = 80.0
+margin_top = 35.0
+margin_right = 122.0
+margin_bottom = 56.0
+text = "R3"
+
+[node name="TEST05" type="Button" parent="."]
+margin_left = 122.0
+margin_top = 35.0
+margin_right = 160.0
+margin_bottom = 56.0
+text = "R4"
+
+[node name="TEST04" type="Button" parent="."]
+margin_top = 55.0
+margin_right = 192.0
+margin_bottom = 75.0
+text = "Optimize FEs"
+
+[node name="Label" type="Label" parent="."]
+margin_right = 192.0
+margin_bottom = 16.0
+text = "FE debug"
+align = 1
+
+[node name="CloseFEPanel" type="TextureButton" parent="."]
+self_modulate = Color( 1, 0.596078, 0, 1 )
+margin_left = 178.0
+margin_right = 188.0
+margin_bottom = 10.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_clip_content = true
+shortcut_in_tooltip = false
+texture_normal = ExtResource( 1 )
+texture_pressed = ExtResource( 1 )
+texture_hover = ExtResource( 1 )
+texture_disabled = ExtResource( 1 )
+texture_focused = ExtResource( 1 )
+expand = true
+

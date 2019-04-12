@@ -1,0 +1,206 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=1]
+[ext_resource path="res://tests/ctrltest.gd" type="Script" id=2]
+[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=6]
+[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=7]
+[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=8]
+[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=9]
+[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=10]
+[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=11]
+[ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=12]
+[ext_resource path="res://tests/SkillController.gd" type="Script" id=13]
+
+[sub_resource type="DynamicFont" id=1]
+size = 11
+outline_color = Color( 0.00784314, 0.980392, 0.980392, 0.103098 )
+use_mipmaps = true
+use_filter = true
+extra_spacing_top = -1
+extra_spacing_bottom = -1
+extra_spacing_char = -1
+font_data = ExtResource( 5 )
+fallback/0 = ExtResource( 4 )
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends RichTextLabel
+
+var lines = []
+const MAX_LINES = 50
+
+func _ready():
+	update()
+
+func addLine(text):
+	print(text)
+	lines.push_back(text)
+	if(lines.size() > MAX_LINES): lines.pop_front()
+	update()
+
+func update():
+	var result = \"\"
+	for i in range(lines.size()):
+		result = str(result + lines[i] + \"\\n\")
+	self.bbcode_text=result
+	pass"
+
+[sub_resource type="DynamicFont" id=3]
+outline_size = 1
+outline_color = Color( 0.431373, 0.854902, 0.913725, 0.386588 )
+use_mipmaps = true
+font_data = ExtResource( 5 )
+fallback/0 = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0, 0, 0, 0.470588 )
+border_width_top = 2
+border_width_bottom = 2
+border_blend = true
+corner_detail = 1
+
+[sub_resource type="DynamicFont" id=5]
+size = 60
+outline_size = 1
+outline_color = Color( 0.0347443, 0.988281, 0.965933, 0.5 )
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 12 )
+
+[node name="Control" type="Control"]
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Panel" type="Panel" parent="."]
+margin_right = 960.0
+margin_bottom = 720.0
+
+[node name="ViewportContainer" type="ViewportContainer" parent="Panel"]
+editor/display_folded = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="Panel/ViewportContainer"]
+size = Vector2( 960, 720 )
+handle_input_locally = false
+hdr = false
+disable_3d = true
+usage = 0
+render_target_update_mode = 3
+gui_disable_input = true
+
+[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 3 )]
+
+[node name="Panel2" type="Panel" parent="Panel"]
+margin_right = 960.0
+margin_bottom = 90.0
+
+[node name="BattleLog" type="RichTextLabel" parent="Panel"]
+self_modulate = Color( 1, 1, 1, 0.811765 )
+anchor_right = 1.0
+margin_bottom = 90.0
+custom_fonts/normal_font = SubResource( 1 )
+custom_constants/line_separation = -1
+bbcode_enabled = true
+meta_underlined = false
+tab_size = 2
+scroll_following = true
+script = SubResource( 2 )
+
+[node name="BattleLog2" type="RichTextLabel" parent="Panel"]
+anchor_right = 1.0
+margin_bottom = 90.0
+custom_fonts/normal_font = SubResource( 3 )
+custom_constants/line_separation = -4
+bbcode_enabled = true
+meta_underlined = false
+scroll_active = false
+
+[node name="ColorRect" type="ColorRect" parent="Panel"]
+anchor_right = 1.0
+margin_top = 80.0
+margin_bottom = 90.0
+color = Color( 0, 0, 0, 0.258824 )
+
+[node name="Turn" type="Label" parent="Panel"]
+margin_left = 890.0
+margin_top = 76.0
+margin_right = 950.0
+margin_bottom = 92.0
+text = "Turn X"
+align = 2
+
+[node name="FieldEffect" parent="Panel" instance=ExtResource( 6 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -130.0
+margin_top = 79.0
+margin_right = 130.0
+margin_bottom = 114.0
+
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 7 )]
+visible = false
+
+[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 8 )]
+visible = false
+anchor_right = 1.0
+margin_right = 0.0
+
+[node name="BattleControls" parent="Panel" instance=ExtResource( 9 )]
+margin_top = 90.0
+margin_right = 110.0
+margin_bottom = 310.0
+
+[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 10 )]
+margin_left = 160.0
+margin_top = 490.0
+margin_right = 840.0
+margin_bottom = 610.0
+
+[node name="GuildDisplay" parent="Panel" instance=ExtResource( 11 )]
+anchor_left = 0.125
+anchor_top = 0.889
+anchor_right = 0.875
+anchor_bottom = 0.972
+
+[node name="Panel" type="Label" parent="Panel"]
+visible = false
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -34.0
+margin_bottom = 34.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+text = "VICTORY"
+align = 1
+valign = 1
+
+[node name="QuitButton" type="Button" parent="."]
+margin_top = 700.0
+margin_right = 300.0
+margin_bottom = 720.0
+text = "This test is too intense get me out!!"
+
+[node name="DebugActionQueue" type="RichTextLabel" parent="."]
+modulate = Color( 1, 1, 1, 0.266667 )
+margin_left = 770.0
+margin_top = 96.0
+margin_right = 960.0
+margin_bottom = 440.0
+bbcode_enabled = true
+
+[node name="SkillController" type="Node" parent="."]
+script = ExtResource( 13 )
+
+[node name="FXTimer" type="Timer" parent="SkillController"]
+[connection signal="finished" from="Panel/BattleControls" to="." method="_on_BattleControls_finished"]
+[connection signal="pressed" from="QuitButton" to="." method="_on_QuitButton_pressed"]
+[connection signal="timeout" from="SkillController/FXTimer" to="SkillController" method="_on_FXTimer_timeout"]
