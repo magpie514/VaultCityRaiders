@@ -314,9 +314,9 @@ enum {
 	OPCODE_ENERGY,						#Switch energy property to true (if not 0) or false (if 0).
 	OPCODE_DRAINLIFE,					#User is healed for given % of total damage dealt for each hit.
 
-	OPCODE_SET_CHAIN,					#Modify current chain value (if >1 only) by X.
-	OPCODE_INIT_CHAIN,				#If a chain is not started (chain == 0), make it 1.
-	OPCODE_END_CHAIN,					#If chain is not 0, make it 0.
+	OPCODE_CHAIN_START,						#If a chain is not started (chain == 0), make it 1.
+	OPCODE_CHAIN_FOLLOW,					#Modify current chain value (if >1 only) by X.
+	OPCODE_CHAIN_FINISH,					#If chain is not 0, make it 0.
 	# Elemental Field ############################################################
 	OPCODE_FIELD_PUSH,				#Add specified element to the element field. 0 to use current element.
 	OPCODE_FIELD_FILL,				#Fill the element field with the specified element.
@@ -410,6 +410,10 @@ const opCode = {
 	"counter_el" : OPCODE_COUNTER_ELEMENT,
 	"counter_filter" : OPCODE_COUNTER_FILTER,
 	"counter_set" : OPCODE_COUNTER,
+	
+	"chain_start" : OPCODE_CHAIN_START,
+	"chain_follow" : OPCODE_CHAIN_FOLLOW,
+	"chain_finish" : OPCODE_CHAIN_FINISH,
 
 	"heal" : OPCODE_HEAL,
 	"heal_row" : OPCODE_HEALROW,
@@ -1605,6 +1609,28 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						state.counter[0] = int(value)
 						for i in range(7):
 							variableTarget.battle.counter[i] = state.counter[i]
+# Chains #######################################################################
+					OPCODE_CHAIN_START:
+						print(">CHAIN START: %s" % value)
+						if variableTarget.battle.chain == 0:
+							print("Starting chain!")
+							variableTarget.battle.chain = 1
+						else:
+							print("Chain already started! No action taken.")
+					OPCODE_CHAIN_FOLLOW:
+						print(">CHAIN FOLLOW: %s" % value)
+						if variableTarget.battle.chain > 0:
+							print("Following chain! Adding %d" % [value])
+							variableTarget.battle.chain += value
+						else:
+							print("Chain not started! No action taken.")
+					OPCODE_CHAIN_FINISH:
+						print(">CHAIN FINISH: %s" % value)
+						if variableTarget.battle.chain > 0:
+							print("Finishing chain!")
+							variableTarget.battle.chain = 0
+						else:
+							print("Chain not started! No action taken.")
 # Healing functions ############################################################
 					OPCODE_HEAL:
 						print(">HEAL(%s)" % value)
