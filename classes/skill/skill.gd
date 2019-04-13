@@ -783,7 +783,7 @@ class SkillState:
 		counter = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL]
 		originalTarget = target
 
-
+ 
 func translateOpCode(o : String) -> int:
 	return opCode[o] if o in opCode else OPCODE_NULL
 
