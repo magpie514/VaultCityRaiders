@@ -297,9 +297,9 @@ enum {
 	#Attack modifiers ############################################################
 	#These are reset per target and if used in PR code they don't carry over.
 	OPCODE_DAMAGEBONUS,				#Bonus% to base power (additive).
-	OPCODE_ADD_RAW_DAMAGE,		#Raw damage addition to next attack.
+	OPCODE_DAMAGE_RAW_BONUS,	#Raw damage addition to next attack.
 	OPCODE_HEALBONUS,					#Bonus% to heal power (additive).
-	OPCODE_ADD_RAW_HEAL,			#Raw healing addtion to next heal.
+	OPCODE_HEAL_RAW_BONUS,		#Raw healing addtion to next heal.
 	OPCODE_INFLICT,						#Infliction rate for the following attacks.
 	OPCODE_INFLICT_B,					#Bonus% to status infliction (additive).
 
@@ -397,7 +397,12 @@ enum {
 	OPCODE_IF_SYNERGY_TARGET,
 }
 
-const opCodesPowerable = [OPCODE_ATTACK, OPCODE_HEAL, OPCODE_BARRIER, OPCODE_GUARD, OPCODE_DAMAGERAW]
+const opCodesPowerable = [
+	OPCODE_ATTACK, OPCODE_DAMAGERAW, OPCODE_DAMAGE_RAW_BONUS,
+	OPCODE_HEAL, OPCODE_HEALROW, OPCODE_HEALALL, OPCODE_HEALBONUS, OPCODE_HEAL_RAW_BONUS,
+	OPCODE_BARRIER,
+	OPCODE_GUARD, OPCODE_GUARD_RAW,
+]
 
 const opCode = {
 	"null" : OPCODE_NULL,
@@ -445,7 +450,9 @@ const opCode = {
 	"transform" : OPCODE_TRANSFORM,
 
 	"dmgbonus" : OPCODE_DAMAGEBONUS,
+	"dmg_raw_bonus" : OPCODE_DAMAGE_RAW_BONUS,
 	"healbonus" : OPCODE_HEALBONUS,
+	"heal_raw_bonus" : OPCODE_HEAL_RAW_BONUS,
 	"inflict" : OPCODE_INFLICT,
 	"inflictbonus" : OPCODE_INFLICT_B,
 
@@ -850,8 +857,8 @@ func calculateHeal(a, power):
 	var EDF = float(a.EDF)
 	return int( ( (((power * EDF * 2) * 0.0021786) + (power * 0.16667)) ) + ( ((EDF * 2 * 0.010599) * sqrt(power)) * 0.1 ) )
 
-func calculateDamage(a, b, args): #TODO:Fix damage stat
-	var ATK : float = float(a.ETK if args.energyDMG else a.ATK)
+func calculateDamage(a, b, args):
+	var ATK : float = float(a[core.stats.STATS[args.dmgStat]])
 	var DEF : float = float(b.EDF if args.energyDMG else b.DEF)
 	var mult : float = 1.0
 	var comp : float = DEF / ATK
@@ -1021,6 +1028,8 @@ func processAttack(S, level, user, target, state, value, flags):
 				1: user.battle.weaknessHits += 1
 				2: user.battle.resistedHits += 1
 			dmg *= calculateRangedDamage(S, level, user, target)
+			print("Damage so far: %05d, adding raw +%05d (=%05d)" % [dmg, state.dmgAddRaw, dmg+state.dmgAddRaw])
+			dmg += state.dmgAddRaw
 			if field[args.element] > 0:
 				fieldBonus = calculateFieldMod(args.element, state.fieldEffectMult)
 				print("Field effect elemental bonus: %s mult: (%s x %s) (%s x %s = %s)" % [field[state.element], core.battle.control.state.field.getBonus(state.element), state.fieldEffectMult, dmg, fieldBonus, fieldBonus*dmg])
@@ -1109,6 +1118,8 @@ func processHeal(S, state, user, target, value:float) -> float:
 	var field = core.battle.control.state.field.bonus
 	var fieldBonus : float = 0.0
 	if state.element > 0:
+		print("Heal so far: %05d, adding raw +%05d (=%05d)" % [value, state.healAddRaw, value+state.healAddRaw])
+		value += state.healAddRaw
 		fieldBonus = calculateFieldMod(state.element, state.fieldEffectMult)
 		print("Field effect elemental bonus : %s (%s x %s = %s)" % [field[state.element], value, fieldBonus, fieldBonus*value])
 		value *= fieldBonus
@@ -1829,6 +1840,13 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						else:
 							state.dmgBonus += value
 						print("Total: %s" % state.dmgBonus)
+					OPCODE_DAMAGE_RAW_BONUS:
+						print(">DAMAGE RAW BONUS: %s" % value)
+						if flags & OPFLAGS_VALUE_ABSOLUTE:
+							state.dmgAddRaw = value
+						else:
+							state.dmgAddRaw += value
+						print("Total: %s" % state.dmgAddRaw)
 					OPCODE_HEALBONUS:
 						print(">HEAL BONUS: %s" % value)
 						if flags & OPFLAGS_VALUE_ABSOLUTE:
@@ -1836,6 +1854,13 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						else:
 							state.healBonus += value
 						print("Total: %s" % state.healBonus)
+					OPCODE_HEAL_RAW_BONUS:
+						print(">HEAL RAW BONUS: %s" % value)
+						if flags & OPFLAGS_VALUE_ABSOLUTE:
+							state.healAddRaw = value
+						else:
+							state.healAddRaw += value
+						print("Total: %s" % state.healAddRaw)
 					OPCODE_INFLICT:
 						print(">INFLICT: %s" % value)
 						if flags & OPFLAGS_VALUE_ABSOLUTE:

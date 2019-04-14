@@ -107,16 +107,16 @@ class StatClass:
 	const STATS = [ "MHP", "ATK", "DEF", "ETK", "EDF", "AGI", "LUC" ]
 	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC	}
 	enum ELEMENTS {
-		DMG_UNTYPED,	#Cannot be resisted
-		DMG_CUT,			#Slash or wind attacks
-		DMG_PIERCE,		#Perforating or earth attacks.
-		DMG_BLUNT,		#Blunt/explosive or water attacks.
-		DMG_FIRE,			#Fire attacks
-		DMG_ICE,			#Ice attacks
-		DMG_ELEC,			#Electric attacks
-		DMG_ULTIMATE,	#Spirit/Gravity/Light/Dark attacks (Use sparingly)
-		DMG_KINETIC,	#Supertype for all physical damage
-		DMG_ENERGY,		#Supertype for all energy damage
+		DMG_UNTYPED = 0,	#Cannot be resisted
+		DMG_CUT,					#Slash or wind attacks
+		DMG_PIERCE,				#Perforating or earth attacks.
+		DMG_BLUNT,				#Blunt/explosive or water attacks.
+		DMG_FIRE,					#Fire attacks
+		DMG_ICE,					#Ice attacks
+		DMG_ELEC,					#Electric attacks
+		DMG_ULTIMATE,			#Spirit/Gravity/Light/Dark attacks (Use sparingly)
+		DMG_KINETIC,			#Supertype for all physical damage
+		DMG_ENERGY,				#Supertype for all energy damage
 	}
 	const ELEMENT_CONV = [
 		"DMG_UNTYPED",

@@ -293,7 +293,8 @@ var example = {
 			damageStat = core.stats.STAT.EDF,
 			ranged = true,
 			codeMN = [
-				["heal", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["heal_raw_bonus", 020,023,025,028,075,   078,080,083,086,090],
+				["heal",           060,063,065,068,075,   078,080,083,086,090],
 			],
 		},
 		"drshield": {
