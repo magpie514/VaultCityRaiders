@@ -231,23 +231,23 @@ scroll_active = false
 margin_right = 40.0
 margin_bottom = 40.0
 
-[node name="LEND" type="Label" parent="Panel/Stats"]
+[node name="LDEF" type="Label" parent="Panel/Stats"]
 margin_left = 10.0
 margin_top = 88.0
 margin_right = 40.0
 margin_bottom = 102.0
 rect_pivot_offset = Vector2( 32, 14 )
 custom_fonts/font = SubResource( 7 )
-text = "END"
+text = "DEF"
 
-[node name="LWIS" type="Label" parent="Panel/Stats"]
+[node name="LEDF" type="Label" parent="Panel/Stats"]
 margin_left = 98.0
 margin_top = 88.0
 margin_right = 128.0
 margin_bottom = 102.0
 rect_pivot_offset = Vector2( 32, 14 )
 custom_fonts/font = SubResource( 7 )
-text = "WIS"
+text = "EDF"
 
 [node name="LAGI" type="Label" parent="Panel/Stats"]
 margin_left = 188.0
@@ -267,7 +267,7 @@ rect_pivot_offset = Vector2( 32, 14 )
 custom_fonts/font = SubResource( 7 )
 text = "LUC"
 
-[node name="ENDB" parent="Panel/Stats" instance=ExtResource( 3 )]
+[node name="DEFB" parent="Panel/Stats" instance=ExtResource( 3 )]
 margin_left = 40.0
 margin_top = 88.0
 margin_right = 80.0
@@ -275,13 +275,13 @@ margin_bottom = 98.0
 rect_pivot_offset = Vector2( 5, 14 )
 color = Color( 0.921569, 0.552941, 0, 1 )
 
-[node name="ColorRect" type="ColorRect" parent="Panel/Stats/ENDB"]
+[node name="ColorRect" type="ColorRect" parent="Panel/Stats/DEFB"]
 show_behind_parent = true
 margin_right = 40.0
 margin_bottom = 10.0
 color = Color( 0.254902, 0.192157, 0, 0.866667 )
 
-[node name="WISB" parent="Panel/Stats" instance=ExtResource( 3 )]
+[node name="EDFB" parent="Panel/Stats" instance=ExtResource( 3 )]
 margin_left = 130.0
 margin_top = 88.0
 margin_right = 170.0
@@ -289,7 +289,7 @@ margin_bottom = 98.0
 rect_pivot_offset = Vector2( 5, 14 )
 color = Color( 0.921569, 0.552941, 0, 1 )
 
-[node name="ColorRect" type="ColorRect" parent="Panel/Stats/WISB"]
+[node name="ColorRect" type="ColorRect" parent="Panel/Stats/EDFB"]
 show_behind_parent = true
 margin_right = 40.0
 margin_bottom = 10.0
@@ -323,7 +323,7 @@ margin_right = 40.0
 margin_bottom = 10.0
 color = Color( 0.254902, 0.192157, 0, 0.866667 )
 
-[node name="END" type="Label" parent="Panel/Stats"]
+[node name="DEF" type="Label" parent="Panel/Stats"]
 margin_left = 48.0
 margin_top = 88.0
 margin_right = 78.0
@@ -332,7 +332,7 @@ rect_pivot_offset = Vector2( -56, 14 )
 custom_fonts/font = SubResource( 7 )
 text = "999"
 
-[node name="WIS" type="Label" parent="Panel/Stats"]
+[node name="EDF" type="Label" parent="Panel/Stats"]
 margin_left = 138.0
 margin_top = 88.0
 margin_right = 168.0

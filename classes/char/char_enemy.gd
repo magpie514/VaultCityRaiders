@@ -13,10 +13,10 @@ func recalculateStats():
 	stats.setElementDataFromArray(S.RES, lib.RES)
 	stats.setElementDataFromArray(S.OFF, lib.OFF)
 	var modstats = stats.create()
-	modstats.STR = S.STR
-	modstats.END = S.END
-	modstats.INT = S.INT
-	modstats.WIS = S.WIS
+	modstats.ATK = S.ATK
+	modstats.DEF = S.DEF
+	modstats.ETK = S.ETK
+	modstats.EDF = S.EDF
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
 

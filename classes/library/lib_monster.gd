@@ -31,7 +31,7 @@ var example = {
 			name = "Debugger",
 			description = "Combat testing robot. Vanilla flavored.",
 			statSpread = [
-				#HP    STR  END  INT  WIS  AGI  LUC
+				#HP    ATK  DEF  ETK  EDF  AGI  LUC
 				[0045, 010, 010, 010, 010, 010, 010],
 				[0500, 100, 100, 100, 100, 100, 100]
 			],
@@ -86,7 +86,6 @@ var example = {
 			spriteFile = "res://resources/images/compiler.png",
 			description = "Combat testing drone. A glorified moving turret. Vanilla scented.",
 			statSpread = [
-				#HP    STR  END  INT  WIS  AGI  LUC
 				[0015, 001, 008, 012, 008, 011, 005],
 				[0200, 001, 095, 125, 096, 120, 050]
 			],
@@ -107,7 +106,6 @@ var example = {
 			name = "Repair Compiler",
 			description = "Combat testing drone. A glorified moving turret. Vanilla scented.",
 			statSpread = [
-				#HP    STR  END  INT  WIS  AGI  LUC
 				[0015, 001, 008, 012, 008, 011, 005],
 				[0200, 001, 095, 125, 096, 120, 050]
 			],

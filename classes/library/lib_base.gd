@@ -121,7 +121,7 @@ func loaderVariableArray(val):
 func loaderStatSpread(val):
 	if val == null:
 		return [
-		#  HP   STR  END  INT  WIS  AGI  LUC
+		#  HP   ATK  DEF  ETK  EDF  AGI  LUC
 			[000, 000, 000, 000, 000, 000, 000],
 			[000, 000, 000, 000, 000, 000, 000]
 		]

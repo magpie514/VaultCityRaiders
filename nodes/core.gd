@@ -104,8 +104,8 @@ class _tid:
 class StatClass:
 	const STAT_CAP = 255
 	const MAX_DMG = 32000
-	const STATS = [ "MHP", "STR", "END", "INT", "WIS", "AGI", "LUC" ]
-	enum STAT { MHP, STR, END, INT, WIS, AGI, LUC	}
+	const STATS = [ "MHP", "ATK", "DEF", "ETK", "EDF", "AGI", "LUC" ]
+	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC	}
 	enum ELEMENTS {
 		DMG_UNTYPED,	#Cannot be resisted
 		DMG_CUT,			#Slash or wind attacks

@@ -47,7 +47,7 @@ func init(C, slot):
 	else:                          $Panel/ETK.self_modulate = "#FFFFFF"
 	$Panel/DGem.init(WP.DGem)
 	$Panel/DGem.set_process(true)
-	for i in ['END', 'WIS', 'AGI', 'LUC']:
+	for i in ['DEF', 'EDF', 'AGI', 'LUC']:
 		var node = $Panel/Stats.get_node(i)
 		node.text = str("%s%03d" % ['+' if WS[i] >= 0 else '-', WS[i]])
 		node = $Panel/Stats.get_node(str("%sB" % i))

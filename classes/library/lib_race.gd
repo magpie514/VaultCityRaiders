@@ -5,7 +5,7 @@ var example = {
 		"debug" : {
 			name = "DEBUG",
 			description = "This is a debug class with ridiculously high stat growth.",
-			#               HP   STR  END  INT  WIS  AGI  LUC    HP   STR  END  INT  WIS  AGI  LUC
+			#               HP   ATK  DEF  ETK  EDF  AGI  LUC    HP   ATK  DEF  ETK  EDF  AGI  LUC
 			statSpread = [ [050, 010, 010, 010, 010, 010, 010], [999, 255, 255, 255, 255, 255, 255] ],
 			#flags = RACE_MACHINE,
 		},
@@ -80,7 +80,7 @@ func printData():
 		print("[%8s]" % key1)
 		for key2 in data[key1]:
 			entry = data[key1][key2]
-			print(" [%8s]\n  Name: %12s\n  Stats[HP:%03d-%03d|STR:%03d-%03d|END:%03d-%03d|INT:%03d-%03d|WIS:%03d-%03d|AGI:%03d-%03d|LUC:%03d-%03d]\n  Desc: %s" %
+			print(" [%8s]\n  Name: %12s\n  Stats[HP:%03d-%03d|ATK:%03d-%03d|DEF:%03d-%03d|ETK:%03d-%03d|EDF:%03d-%03d|AGI:%03d-%03d|LUC:%03d-%03d]\n  Desc: %s" %
 				[
 					key2,
 					entry.name,

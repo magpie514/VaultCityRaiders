@@ -242,7 +242,7 @@ class Weapon:
 	}
 	var STATS_DEFAULT : Dictionary = {
 		ATK = int(0), ETK = int(0), WRD = int(0), DUR = int(0),
-		END = int(0), WIS = int(0), AGI = int(0), LUC = int(0),
+		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
 		OFF = core.stats.createElementData(),
 		RES = core.stats.createElementData(),
 		SKL = [],
@@ -278,11 +278,11 @@ class Weapon:
 
 	func recalculateStats() -> void:
 		var gemstats = DGem.stats
-		stats.ATK = lib.ATK[bonus] + (gemstats.STR if 'STR' in gemstats else 0)
-		stats.ETK = lib.ETK[bonus] + (gemstats.INT if 'INT' in gemstats else 0)
+		stats.ATK = lib.ATK[bonus] + (gemstats.ATK if 'ATK' in gemstats else 0)
+		stats.ETK = lib.ETK[bonus] + (gemstats.ETK if 'ETK' in gemstats else 0)
 		stats.WRD = lib.weight[bonus] + (gemstats.WRD if 'WRD' in gemstats else 0)
 		stats.DUR = lib.durability[bonus] + (gemstats.DUR if 'DUR' in gemstats else 0)
-		for i in ['END', 'WIS', 'AGI', 'LUC']:
+		for i in ['DEF', 'EDF', 'AGI', 'LUC']:
 			stats[i] = gemstats[i] if i in gemstats else 0
 		for i in ['OFF', 'RES']:
 			if i in gemstats:
@@ -347,8 +347,8 @@ class equipClass:
 	func calculateWeaponBonuses(weapon):
 		var wstats = weapon.stats
 		var stats = core.stats.create()
-		for i in [ ['STR','ATK'], ['END','END'], ['INT','ETK'], ['WIS','WIS'], ['AGI','AGI'], ['LUC','LUC'] ]:
-			stats[i[0]] += wstats[i[1]] if i[1] in wstats else 0
+		for i in ['ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
+			stats[i] += wstats[i] if i in wstats else 0
 		for i in ['OFF', 'RES']:
 			if i in wstats:
 				for j in core.stats.ELEMENTS:

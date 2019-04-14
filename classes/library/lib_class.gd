@@ -133,7 +133,7 @@ func printData():
 		print("[%8s]" % key1)
 		for key2 in data[key1]:
 			entry = data[key1][key2]
-			print(" [%8s]Name: %12s, Stats[HP:%03d-%03d|STR:%03d-%03d|END:%03d-%03d|INT:%03d-%03d|WIS:%03d-%03d|AGI:%03d-%03d|LUC:%03d-%03d]" %
+			print(" [%8s]Name: %12s, Stats[HP:%03d-%03d|ATK:%03d-%03d|DEF:%03d-%03d|ETK:%03d-%03d|EDF:%03d-%03d|AGI:%03d-%03d|LUC:%03d-%03d]" %
 				[
 					key2,
 					entry.name,

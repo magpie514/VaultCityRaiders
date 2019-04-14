@@ -101,34 +101,33 @@ text = "LV.000"
 valign = 1
 
 [node name="StatStatic" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 10.0
 margin_top = 20.0
 margin_right = 40.0
 margin_bottom = 80.0
 custom_fonts/font = SubResource( 1 )
-text = "STR
-END
-INT
-WIS
+text = "ATK
+DEF
+ETK
+EDF
 AGI
 LUC"
 
-[node name="STR" type="Label" parent="StatStatic"]
+[node name="ATK" type="Label" parent="StatStatic"]
 margin_left = 100.0
 margin_right = 130.0
 margin_bottom = 10.0
 custom_fonts/font = SubResource( 1 )
 text = "999"
 
-[node name="BSTR" parent="StatStatic" instance=ExtResource( 3 )]
+[node name="BATK" parent="StatStatic" instance=ExtResource( 3 )]
 margin_left = 26.0
 margin_top = 1.0
 margin_right = 96.0
 margin_bottom = 9.0
 bgcolor = Color( 0, 0, 0, 0.333333 )
 
-[node name="END" type="Label" parent="StatStatic"]
+[node name="DEF" type="Label" parent="StatStatic"]
 margin_left = 100.0
 margin_top = 10.0
 margin_right = 130.0
@@ -136,14 +135,14 @@ margin_bottom = 20.0
 custom_fonts/font = SubResource( 1 )
 text = "999"
 
-[node name="BEND" parent="StatStatic" instance=ExtResource( 3 )]
+[node name="BDEF" parent="StatStatic" instance=ExtResource( 3 )]
 margin_left = 26.0
 margin_top = 11.0
 margin_right = 96.0
 margin_bottom = 19.0
 bgcolor = Color( 0, 0, 0, 0.333333 )
 
-[node name="INT" type="Label" parent="StatStatic"]
+[node name="ETK" type="Label" parent="StatStatic"]
 margin_left = 100.0
 margin_top = 20.0
 margin_right = 130.0
@@ -151,14 +150,14 @@ margin_bottom = 30.0
 custom_fonts/font = SubResource( 1 )
 text = "999"
 
-[node name="BINT" parent="StatStatic" instance=ExtResource( 3 )]
+[node name="BETK" parent="StatStatic" instance=ExtResource( 3 )]
 margin_left = 26.0
 margin_top = 21.0
 margin_right = 96.0
 margin_bottom = 29.0
 bgcolor = Color( 0, 0, 0, 0.333333 )
 
-[node name="WIS" type="Label" parent="StatStatic"]
+[node name="EDF" type="Label" parent="StatStatic"]
 margin_left = 100.0
 margin_top = 30.0
 margin_right = 130.0
@@ -166,7 +165,7 @@ margin_bottom = 40.0
 custom_fonts/font = SubResource( 1 )
 text = "999"
 
-[node name="BWIS" parent="StatStatic" instance=ExtResource( 3 )]
+[node name="BEDF" parent="StatStatic" instance=ExtResource( 3 )]
 margin_left = 26.0
 margin_top = 31.0
 margin_right = 96.0
@@ -204,7 +203,6 @@ margin_bottom = 59.0
 bgcolor = Color( 0, 0, 0, 0.333333 )
 
 [node name="VitalStatic" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 140.0
 margin_top = 21.0
 margin_right = 240.0
@@ -228,7 +226,6 @@ margin_right = 100.0
 margin_bottom = 29.0
 
 [node name="ConditionStatic" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 140.0
 margin_top = 56.0
 margin_right = 240.0
@@ -246,7 +243,6 @@ align = 1
 valign = 2
 
 [node name="Buffs" type="Panel" parent="."]
-editor/display_folded = true
 margin_left = 770.0
 margin_right = 960.0
 margin_bottom = 45.0
@@ -304,7 +300,6 @@ text = "00"
 valign = 1
 
 [node name="Debuffs" type="Panel" parent="."]
-editor/display_folded = true
 margin_left = 770.0
 margin_top = 45.0
 margin_right = 960.0
@@ -363,7 +358,6 @@ text = "00"
 valign = 1
 
 [node name="Elements" type="Panel" parent="."]
-editor/display_folded = true
 margin_left = 260.0
 margin_right = 430.0
 margin_bottom = 90.0

@@ -85,7 +85,7 @@ enum {
 	RACEF_SPI = 0x04,
 }
 
-enum { MODSTAT_NONE, MODSTAT_STR, MODSTAT_END, MODSTAT_INT, MODSTAT_WIS, MODSTAT_AGI, MODSTAT_LUC }
+enum { MODSTAT_NONE, MODSTAT_ATK, MODSTAT_DEF, MODSTAT_ETK, MODSTAT_EDF, MODSTAT_AGI, MODSTAT_LUC }
 enum {
 	REQUIRES_NONE =	0x00,
 	REQUIRES_HEAD =	0x01,
@@ -801,12 +801,12 @@ func hasCodePR(S):
 
 func calculateHeal(a, power):
 	power = float(power)
-	var WIS = float(a.WIS)
-	return int( ( (((power * WIS * 2) * 0.0021786) + (power * 0.16667)) ) + ( ((WIS * 2 * 0.010599) * sqrt(power)) * 0.1 ) )
+	var EDF = float(a.EDF)
+	return int( ( (((power * EDF * 2) * 0.0021786) + (power * 0.16667)) ) + ( ((EDF * 2 * 0.010599) * sqrt(power)) * 0.1 ) )
 
 func calculateDamage(a, b, args): #TODO:Fix damage stat
-	var ATK : float = float(a.INT if args.energyDMG else a.STR)
-	var DEF : float = float(b.WIS if args.energyDMG else b.END)
+	var ATK : float = float(a.ETK if args.energyDMG else a.ATK)
+	var DEF : float = float(b.EDF if args.energyDMG else b.DEF)
 	var mult : float = 1.0
 	var comp : float = DEF / ATK
 	var baseDMG : float = 0.0
@@ -823,8 +823,8 @@ func checkInflict(a, b, args):
 	#TODO: This might work better in the char class.
 	var effStat = 0
 	match args.effStat:
-		MODSTAT_INT: effStat = a.INT
-		MODSTAT_WIS: effStat = a.WIS
+		MODSTAT_ETK: effStat = a.ETK
+		MODSTAT_EDF: effStat = a.EDF
 		_:           effStat = a.LUC
 
 	effStat = float(effStat + (a.LUC * 2))
