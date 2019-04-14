@@ -295,6 +295,23 @@ var example = {
 				["heal", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
 			],
 		},
+		"drshield": {
+			name = "Dragon Shield",
+			description = "",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_UNTYPED,
+			energyDMG = true,
+			damageStat = core.stats.STAT.WIS,
+			ranged = true,
+			spdMod = [135, 135, 135, 135, 135,   135, 135, 135, 135, 135],
+			codeMN = [
+				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025, skill.OPFLAGS_VALUE_PERCENT],
+				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025],
+				["AD",    -15, -15, -15, -15, -15,   -15, -15, -15, -15, -15]
+			],
+		},
 		"echo": {
 			name = "Echo Burst",
 			description = "",

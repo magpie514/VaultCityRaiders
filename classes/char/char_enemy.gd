@@ -42,10 +42,11 @@ func defeat():
 	if sprDisplay != null:
 		sprDisplay.defeat()
 
-func damage(x, data, silent = false) -> void:
-	.damage(x, data, silent)
+func damage(x, data, silent = false) -> Array:
+	var info : Array = .damage(x, data, silent)
 	if sprDisplay != null and not silent:
 		sprDisplay.damage()
+	return info
 
 func charge(x : bool = false) -> void:
 	if sprDisplay != null:

@@ -280,7 +280,8 @@ enum {
 	OPCODE_AD,								#[@=]Set target's active defense% for the rest of the turn.
 	OPCODE_DECOY,							#[@=]Set target's decoy% for the rest of the turn.
 	OPCODE_BARRIER,						#[@=]Set target's barrier (all incoming damage is reduced by X) for the rest of the turn.
-	OPCODE_GUARD,							#[@=%]Set target's guard (a total of X damage is negated) for the rest of the turn.
+	OPCODE_GUARD, 						#[@=%]Set target's guard (a total of X damage is negated) for the rest of the turn.
+	OPCODE_GUARD_RAW,					#[@=%]Set target's guard for the rest of the turn. Not modified by elemental bonuses.
 	OPCODE_PROTECT,						#[@]User protects target with an X% chance until the end of the turn.
 	OPCODE_RAISE_OVER,				#[@]Increases Over gauge by X.
 
@@ -355,6 +356,8 @@ enum {
 	OPCODE_GET_CHAIN,         #Get current combo value.
 	OPCODE_GET_LAST_ELEMENT,  #Get last element used by a party member.
 	OPCODE_GET_HEALTH_PERCENT,#Get health percentage from target.
+	OPCODE_GET_MAX_HEALTH,		#Get target's max health.
+	OPCODE_GET_HEALTH,        #Get target's health.
 	OPCODE_GET_LAST_HURT,			#Get amount of health lost from last skill.
 
 	# Math #######################################################################
@@ -428,6 +431,7 @@ const opCode = {
 	"decoy" : OPCODE_DECOY,
 	"barrier" : OPCODE_BARRIER,
 	"guard" : OPCODE_GUARD,
+	"guard_raw" : OPCODE_GUARD_RAW,
 	"protect" : OPCODE_PROTECT,
 	"over" : OPCODE_RAISE_OVER,
 
@@ -977,7 +981,6 @@ func processAttack(S, level, user, target, state, value, flags):
 
 			dmg = round(dmg)                                                          #Final damage
 			dmg = target.finalizeDamage(dmg)
-			var overkill = (target.HP - dmg < -(target.maxHealth()/10))
 
 			totalDmg += dmg                                                           #Add to action total
 			dmgPercent = (dmg / float(target.maxHealth())) * 100
@@ -988,9 +991,9 @@ func processAttack(S, level, user, target, state, value, flags):
 			user.battle.turnDealtDMG += dmg as int
 			user.battle.accumulatedDealtDMG += dmg as int
 
-			target.damage(dmg, [crit, overkill, temp[1]], true)                                #Deal the final amount here
-			hitInfo.push_back([dmg, crit, overkill, temp[1]])
-			if not target.filter(S.filter): #Abort loop if target doesn't fit filter criteria (like being defeated)
+			var info = target.damage(dmg, [crit, false, temp[1]], true)                                #Deal the final amount here
+			hitInfo.push_back([dmg, crit, info[0], temp[1]])
+			if not target.filter(S.filter) or info[1]: #Abort loop if target doesn't fit filter criteria (like being defeated)
 				break
 
 			if state.inflictPow > 0 and not silent:
@@ -1717,11 +1720,8 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">OVERHEAL: %s" % value)
 # Standard effect functions ####################################################
 					OPCODE_AD:
-						print(">ACTIVE DEFENSE(%s)" % value)
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
-							variableTarget.battle.AD = value
-						else:
-							variableTarget.battle.AD += value
+						print(">ACTIVE DEFENSE: %s(%s)" % ["=" if flags & OPFLAGS_VALUE_ABSOLUTE else "+", value])
+						variableTarget.setAD(value, flags & OPFLAGS_VALUE_ABSOLUTE)
 						print("Total: %s" % variableTarget.battle.AD)
 					OPCODE_DECOY:
 						print(">DECOY(%s)" % value)
@@ -1741,8 +1741,20 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">GUARD(%s)" % value)
 						if flags & OPFLAGS_VALUE_PERCENT: dmg = int(float(variableTarget.maxHealth()) * (float(value) * 0.01))
 						else: dmg = value
-						if flags & OPFLAGS_VALUE_ABSOLUTE: variableTarget.battle.guard = dmg
-						else: variableTarget.battle.guard += dmg
+						var fieldBonus = calculateFieldMod(state.element, state.fieldEffectMult)
+						print("Field effect elemental bonus: %s mult: (%s x %s) (%s x %s = %s)" % [core.battle.control.state.field.bonus[state.element], core.battle.control.state.field.getBonus(state.element), state.fieldEffectMult, dmg, fieldBonus, fieldBonus*dmg])
+						dmg *= fieldBonus
+						if flags & OPFLAGS_VALUE_ABSOLUTE:
+							variableTarget.battle.guard = int(dmg)
+						else:
+							variableTarget.battle.guard += int(dmg)
+						print("Total: %s" % variableTarget.battle.guard)
+					OPCODE_GUARD_RAW:
+						print(">GUARD RAW(%s)" % value)
+						if flags & OPFLAGS_VALUE_PERCENT: dmg = int(float(variableTarget.maxHealth()) * (float(value) * 0.01))
+						else: dmg = value
+						if flags & OPFLAGS_VALUE_ABSOLUTE: variableTarget.battle.guard = int(dmg)
+						else: variableTarget.battle.guard += int(dmg)
 						print("Total: %s" % variableTarget.battle.guard)
 					OPCODE_PROTECT:
 						print(">PROTECT(%s)" % value)
@@ -1949,6 +1961,22 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_GET_CHAIN:
 						print(">GET CURRENT CHAIN")
 						state.value = variableTarget.battle.chain
+						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_LAST_ELEMENT:
+						print(">[TODO]GET LAST ELEMENT")
+						state.value = variableTarget.battle.chain
+						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_HEALTH_PERCENT:
+						print(">GET HEALTH PERCENT")
+						state.value = variableTarget.getHealthN()
+						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_MAX_HEALTH:
+						print(">GET MAX HEALTH")
+						state.value = variableTarget.maxHealth()
+						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_HEALTH:
+						print(">GET CURRENT HEALTH")
+						state.value = variableTarget.HP
 						print(">>>>>SVAL = %s" % state.value)
 # Math #########################################################################
 					OPCODE_MATH_ADD:

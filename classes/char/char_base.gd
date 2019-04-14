@@ -178,8 +178,9 @@ func damageProtectionPass(x : int) -> int:
 	return x
 
 func damageResistModifier(x : float, _type : int, energyDMG : bool) -> Array:
-	if energyDMG: x = x * (float(battle.stat.RES.DMG_ENERGY) * 0.01)
-	else: x = x * (float(battle.stat.RES.DMG_KINETIC) * 0.01)
+	# Apply Kinetic/Energy damage modifiers.
+	if energyDMG: x = x * core.percent(battle.stat.RES.DMG_ENERGY)
+	else:         x = x * core.percent(battle.stat.RES.DMG_KINETIC)
 
 	var type : String = stats.getElementKey(_type)
 	if type == "DMG_UNTYPED" or battle.stat.RES[type] == 100:
@@ -196,17 +197,31 @@ func damageResistModifier(x : float, _type : int, energyDMG : bool) -> Array:
 func finalizeDamage(x) -> int:
 	#Apply active defense, reduce damage from guard or barrier.
 	#var finalDmg : float = x * (float(battle.AD) * .01)
-	var finalDmg = damageProtectionPass(x * (float(battle.AD) * .01))
+	var finalDmg = damageProtectionPass(x * core.percent(battle.AD))
 	return clamp(finalDmg, 1, core.skill.MAX_DMG) as int
 
-func damage(x : int, data, silent = false) -> void:
-	HP = int(clamp(HP - x, 0.0, maxHealth()))
-	if HP == 0:
+func damage(x : int, data, silent = false) -> Array:
+	var temp = HP - x
+	var overkill : bool = false
+	var defeat : bool = false
+	HP = int(clamp(temp, 0.0, maxHealth()))
+	if HP == 0: #Defeated!
+		if int(abs(temp)) >= maxHealth() / 2: #Check for overkill.
+			overkill = true
 		defeat()
+		defeat = true
 	battle.accumulatedDMG += x
 	battle.turnDMG += x
 	if not silent:
-		display.damage([[x, data[0], data[1], data[2]]])
+		display.damage([[x, data[0], overkill, data[2]]])
+	return [overkill, defeat]
+
+func setAD(x : int, absolute : bool = false):
+	if absolute:
+		battle.AD = x
+	else:
+		battle.AD += x
+	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
 func defeat():
 	status = skill.STATUS_DOWN

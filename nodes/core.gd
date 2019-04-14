@@ -276,6 +276,8 @@ static func chance(val) -> bool:
 static func normalize(v:int, m:int) -> float: #I was tired of doing the casting by hand don't judge me.
 	return float(float(v) / float(m))
 
+static func percent(v:int) -> float:
+	return float(v) * .01
 
 static func randomPick(val):
 	match typeof(val):

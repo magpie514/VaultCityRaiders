@@ -1,98 +1,54 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://nodes/UI/battle/misc_message.gd" type="Script" id=2]
+[ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
-
-content_margin_left = -1.0
-content_margin_right = -1.0
-content_margin_top = -1.0
-content_margin_bottom = -1.0
-bg_color = Color( 0, 0, 0, 0.14902 )
-draw_center = true
-border_width_left = 0
-border_width_top = 2
-border_width_right = 0
-border_width_bottom = 2
+bg_color = Color( 0, 0.00392157, 0.0862745, 0.376471 )
+border_width_top = 3
+border_width_bottom = 3
 border_color = Color( 1, 1, 1, 0.301961 )
 border_blend = true
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-corner_radius_bottom_right = 0
-corner_radius_bottom_left = 0
 corner_detail = 1
-expand_margin_left = 0.0
-expand_margin_right = 0.0
-expand_margin_top = 0.0
-expand_margin_bottom = 0.0
-shadow_color = Color( 0, 0, 0, 0.6 )
-shadow_size = 0
 anti_aliasing = false
 anti_aliasing_size = 5
-_sections_unfolded = [ "Anti Aliasing", "Border", "Border Width" ]
 
 [sub_resource type="DynamicFont" id=2]
-
-size = 24
-outline_size = 0
-outline_color = Color( 1, 1, 1, 1 )
+size = 14
+outline_size = 1
 use_mipmaps = true
-use_filter = false
-extra_spacing_top = 1
-extra_spacing_bottom = -4
+extra_spacing_top = -1
 extra_spacing_char = -1
-font_data = ExtResource( 1 )
-_sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
+font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=3]
-
 size = 6
-outline_size = 0
-outline_color = Color( 1, 1, 1, 1 )
 use_mipmaps = true
-use_filter = false
 extra_spacing_char = 3
 font_data = ExtResource( 1 )
-_sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
 
-[node name="Message" type="Label" index="0"]
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_right = 56.0
-margin_bottom = 27.0
+[node name="Message" type="Label"]
+margin_left = -40.0
+margin_top = -10.0
+margin_right = 45.0
+margin_bottom = 5.0
+grow_horizontal = 2
 grow_vertical = 0
 rect_min_size = Vector2( 1, 1 )
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 2
-mouse_default_cursor_shape = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 custom_styles/normal = SubResource( 1 )
 custom_fonts/font = SubResource( 2 )
-text = "9999"
-percent_visible = 1.0
-lines_skipped = 0
+text = "EFFECT!!!"
+align = 1
 max_lines_visible = 1
 script = ExtResource( 2 )
-_sections_unfolded = [ "Custom Fonts", "Grow Direction", "Material", "custom_fonts", "custom_styles" ]
 
-[node name="CritLabel" type="Label" parent="." index="0"]
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_right = 56.0
+[node name="CritLabel" type="Label" parent="."]
+visible = false
+anchor_right = 1.0
 margin_bottom = 8.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-mouse_filter = 2
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 4
 custom_fonts/font = SubResource( 3 )
 custom_colors/font_color = Color( 1, 0, 0, 1 )
 text = "CRITICAL"
@@ -100,8 +56,3 @@ align = 1
 valign = 1
 clip_text = true
 uppercase = true
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
-_sections_unfolded = [ "custom_colors", "custom_fonts" ]
-

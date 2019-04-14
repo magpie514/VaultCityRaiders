@@ -315,6 +315,20 @@ var example = {
 			},
 			skill = ["gem", "echo"],
 		},
+		"protect" : {
+			name = "Protect",
+			levels = 10,
+			desc = "Reacts to positive emotions. Provides the skill Dragon Shield.",
+			shape = GEMSHAPE_DIAMOND,
+			color = "#3F13AF",
+			on_weapon = {
+			STR = [-001, -001, -001, -001, -001,   -002, -002, -002, -002, -002], #Attack
+			INT = [-001, -001, -001, -001, -001,   -002, -002, -002, -002, -002], #Energy attack
+			WIS = [+001, +001, +002, +002, +005,   +005, +005, +005, +005, +005],
+			DUR = [001, 001, 002, 002, 003,   003, 003, 004, 004, 005], #Durability increase
+			},
+			skill = ["gem", "drshield"],
+		},
 		"power" : {
 			name = "Power",
 			levels = 10,

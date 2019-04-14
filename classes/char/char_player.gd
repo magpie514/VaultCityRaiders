@@ -507,10 +507,11 @@ func initDict(C):	#Load the character from save data
 func initJson(json):
 	pass
 
-func damage(x, data, silent = false):
-	.damage(x, data, silent)
+func damage(x, data, silent = false) -> Array:
+	var info : Array = .damage(x, data, silent)
 	if display != null and not silent:
 		display.damageShake()
+	return info
 
 func charge(x : bool = false) -> void:
 	if display != null:
