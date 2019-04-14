@@ -774,8 +774,11 @@ class SkillState:
 	var finalDMG : int =          0        #Final amount of damage.
 	# SVAL stack
 	var value : int =             0        #Internal data stack.
+	# Copy of init values
+	var initVals : Array
 
 	func _init(S : Dictionary, level : int, user, target):
+		initVals = [S, level, user, target]
 		#Initialize values from skill definition
 		element = S.element[level]
 		fieldEffectMult = S.fieldEffectMult[level]
@@ -791,6 +794,43 @@ class SkillState:
 		follow  = [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
 		counter = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL]
 		originalTarget = target
+
+	func duplicate() -> SkillState:
+		print("[@SKILL_STATE] Duplicating state...")
+		var copy = SkillState.new(initVals[0], initVals[1], initVals[2], initVals[3])
+		copy.hits = hits.duplicate()
+		copy.dmgBonus = dmgBonus
+		copy.dmgAddRaw = dmgAddRaw
+		copy.healPow = healPow
+		copy.healBonus = healBonus
+		copy.healAddRaw = healAddRaw
+		copy.drainLife = drainLife
+		copy.accMod = accMod
+		copy.critMod = critMod
+		copy.element = element
+		copy.fieldEffectMult = fieldEffectMult
+		copy.dmgStat = dmgStat
+		copy.nomiss = nomiss
+		copy.nocap = nocap
+		copy.energyDMG = energyDMG
+		copy.ranged = ranged
+		copy.ignoreDefs = ignoreDefs
+		copy.inflictPow = inflictPow
+		copy.inflictBonus = inflictBonus
+		copy.setEffect = setEffect
+		copy.lastHit = lastHit
+		copy.hitRecord = hitRecord.duplicate()
+		copy.anyHit = anyHit
+		copy.combo = combo.duplicate()
+		copy.follow = follow.duplicate()
+		copy.counter = counter.duplicate()
+		copy.originalTarget = originalTarget
+		copy.totalHeal = totalHeal
+		copy.totalAfflictions = totalAfflictions
+		copy.finalHeal = finalHeal
+		copy.finalDMG = finalDMG
+		copy.value = value
+		return copy
 
 
 func translateOpCode(o : String) -> int:
