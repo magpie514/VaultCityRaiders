@@ -20,48 +20,50 @@ var row : int = 0											#Character's calculated row
 var side : int = 0										#Quick ally/enemy reference. Mostly for text coloring.
 var group = null											#Reference to the character's group.
 
+
+class BattleStats:
+	# Core stats ################################################################################
+	var stat = core.stats.create()         #Calculated battle stats
+	var statmult : Dictionary = {}      #Stat multipliers
+	# Statistics ################################################################################
+	var accumulatedDMG : int = 0      #Damage accumulated during current battle
+	var accumulatedDealtDMG : int = 0 #Damage dealt accumulated during current battle
+	var defeats : int = 0             #Number of enemies defeated during current battle.
+	var resistedHits : int = 0        #Number of attacks that hit an elemental resistance this turn
+	var weaknessHits : int = 0        #Number of attacks that hit an elemental weakness this turn
+	var turnDMG : int = 0             #Damage accumulated during current turn
+	var turnDealtDMG : int = 0        #Damage dealt during current turn
+	var turnHits : int = 0            #Number of hits this turn
+	var turnDodges : int = 0          #Number of times attacks were dodged this turn
+	var turnHeal : int = 0            #Amount of health restored this turn
+	# Switches ##################################################################################
+	var turnActed : bool = false      #True if character acted this turn
+	var paralyzed : bool = false      #If true, character is unable to act due to paralysis this turn.
+	var scanned : bool = false        #If scanned, use the scanned resists set.
+	# Buffs/Debuffs/Effects #####################################################################
+	var buff : Array = []             #Active buffs (stack of 3)
+	var debuff : Array = []           #Active debuffs (stack of 3)
+	var effect : Array = []           #Active special effects (max 8, will fail if no slots)
+  # Onhit activations #########################################################################
+	var follow : Array = []           #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
+	var combo : Array = []            #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
+	var counter : Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 1, core.skill.PARRY_NONE]
+	var delayed : Array = []          #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
+	# Defensive stats ###########################################################################
+	var AD : int = 100                #Active Defense. Global final damage multiplier.
+	var decoy : int = 0               #Chance to draw enemy attacks to self.
+	var guard : int = 0               #Prevents an amount of damage. Like a health buffer.
+	var barrier : int = 0             #Nullifies X damage from the received total.
+	var specialDodge : int = 0        #Always dodges X attacks this turn unless they are set to not miss
+	var chain : int = 0               #Chain counter.
+	var parry : Array = [100, 33, core.skill.PARRY_NONE]
+	var protectedBy : Array = []	    #Array of arrays, [pointer to defender, chance of defending]
+	# Misc stats ################################################################################
+	var overheat : int = 0            #Reduces by 1 per turn. Prevents overheat skills from being used.
+	var lastAction = null
+
 func createBattleStats():
-	return {
-		stat = stats.create(),			#Calculated battle stats
-		statmult = {},
-
-		accumulatedDMG = 0,					#Damage accumulated during current battle
-		accumulatedDealtDMG = 0,		#Damage dealt accumulated during current battle
-		defeats = 0,								#Number of enemies defeated during current battle.
-		resistedHits = 0,						#Number of attacks that hit an elemental resistance this turn
-		weaknessHits = 0,						#Number of attacks that hit an elemental weakness this turn
-		turnDMG = 0,								#Damage accumulated during current turn
-		turnDealtDMG = 0,						#Damage dealt during current turn
-		turnHits = 0,								#Number of hits this turn
-		turnDodges = 0,							#Number of times attacks were dodged this turn
-		turnHeal = 0,								#Amount of health restored this turn
-
-		turnActed = false,					#True if character acted this turn
-		paralyzed = false,					#If true, character is unable to act due to paralysis this turn.
-		scanned = false,						#If scanned, use the scanned resists set.
-
-		buff = [],									#Active buffs (stack of 3)
-		debuff = [],								#Active debuffs (stack of 3)
-		effect = [],								#Active special effects (max 8, will fail if no slots)
-
-		follow = [],                #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
-		combo = [],	                #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
-		counter = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 1, core.skill.PARRY_NONE],
-		delayed = [],								#Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns before or after the holder acts.
-
-		decoy = 0,									#Chance to draw enemy attacks to self.
-		guard = 0,									#Prevents an amount of damage. Like a health buffer.
-		barrier = 0,								#Nullifies X damage from the received total.
-		overheat = 0,								#Reduces by 1 per turn. Prevents overheat skills from being used.
-		specialDodge = 0,						#Always dodges X attacks this turn unless they are set to not miss
-		chain = 0,
-		parry = [100, 33, core.skill.PARRY_NONE],
-
-		protectedBy = [],						#Array of arrays, [pointer to defender, chance of defending]
-
-		AD = 100,										#Global final damage multiplier, for skill use.
-		lastAction = null,
-	}
+	return BattleStats.new()
 
 func checkParalysis() -> bool:
 	if status != skill.STATUS_PARA:
@@ -197,7 +199,7 @@ func finalizeDamage(x) -> int:
 	var finalDmg = damageProtectionPass(x * (float(battle.AD) * .01))
 	return clamp(finalDmg, 1, core.skill.MAX_DMG) as int
 
-func damage(x, data, silent = false) -> void:
+func damage(x : int, data, silent = false) -> void:
 	HP = int(clamp(HP - x, 0.0, maxHealth()))
 	if HP == 0:
 		defeat()
@@ -392,11 +394,11 @@ func canFollow(S, level, target) -> bool:
 	return false
 
 func updateFollows() -> void:
-	var newFollows = []
+	var newFollows : Array = []
 	for i in battle.follow:
 		if i[1] > 0:
 			newFollows.push_front(i)
-	battle.follows = newFollows
+	battle.follow = newFollows
 
 func canCounter(target, element: int, data: Array):
 	var C = battle.counter

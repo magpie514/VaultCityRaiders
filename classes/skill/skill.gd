@@ -783,7 +783,7 @@ class SkillState:
 		counter = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL]
 		originalTarget = target
 
- 
+
 func translateOpCode(o : String) -> int:
 	return opCode[o] if o in opCode else OPCODE_NULL
 
@@ -985,8 +985,8 @@ func processAttack(S, level, user, target, state, value, flags):
 			state.lastHit = true
 			state.anyHit = true
 			state.setEffect = true if S.effect != EFFECT_NONE else false
-			user.battle.turnDealtDMG += dmg
-			user.battle.accumulatedDealtDMG += dmg
+			user.battle.turnDealtDMG += dmg as int
+			user.battle.accumulatedDealtDMG += dmg as int
 
 			target.damage(dmg, [crit, overkill, temp[1]], true)                                #Deal the final amount here
 			hitInfo.push_back([dmg, crit, overkill, temp[1]])
