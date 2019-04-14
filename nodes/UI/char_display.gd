@@ -91,6 +91,7 @@ func setActionText(act):
 	if act == null:
 		$Action.hide()
 		$Action.text = ""
+		updateAD(chr.battle.AD)
 		action = null
 		return
 	var S = null
@@ -115,6 +116,7 @@ func setActionText(act):
 	$Action.text = "%s\n%s" % [S.name, target]
 	$Action.show()
 	if S.chargeAnim[act[2]] != 0: charge(true)
+	if S.initAD[act[2]] != 100: updateAD(S.initAD[act[2]])
 	action = true
 
 func highlight(b):
@@ -130,6 +132,9 @@ func charge(b : bool = false):
 	$Charge.emitting = b
 	$Charge.self_modulate = Color(chr.energyColor)
 
+func updateAD(x:int) -> void:
+	if chr.battle != null:
+		$AD.value = x
 
 func update():
 	if chr != null:
@@ -137,6 +142,7 @@ func update():
 		var vitalN = chr.getHealthN()
 		var vitalDiff = lastVital - vital
 		if chr.battle != null:
+			updateAD(chr.battle.AD)
 			if chr.battle.guard > 0:
 				$Guard.show()
 				$Guard.text = str(chr.battle.guard)
@@ -150,6 +156,7 @@ func update():
 
 		style.fromStatus(chr.status)
 		$Status.text = core.skill.statusInfo[chr.status].short
+
 
 		$Name.text = chr.name
 		$HP.text = str(vital)

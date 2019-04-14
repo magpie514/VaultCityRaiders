@@ -540,24 +540,24 @@ var example = {
 				element = [001, 001, 001, 001, 001,   001, 001, 001, 001, 001],
 			}
 		},
-		"rebiwatr" : {
-			name = "Rebind: Water",
-			levels = 10,
-			desc = "Linked skill changes element to blunt.",
-			shape = GEMSHAPE_SQUARE,
-			color = "#6EA4E3",
-			on_weapon = {
-			},
-			skillMod = {
-				element = [002, 002, 002, 002, 002,   002, 002, 002, 002, 002],
-			}
-		},
 		"rebierth" : {
 			name = "Rebind: Earth",
 			levels = 10,
 			desc = "Linked skill changes element to pierce.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#E26EE3",
+			on_weapon = {
+			},
+			skillMod = {
+				element = [002, 002, 002, 002, 002,   002, 002, 002, 002, 002],
+			}
+		},
+		"rebiwatr" : {
+			name = "Rebind: Water",
+			levels = 10,
+			desc = "Linked skill changes element to blunt.",
+			shape = GEMSHAPE_SQUARE,
+			color = "#6EA4E3",
 			on_weapon = {
 			},
 			skillMod = {

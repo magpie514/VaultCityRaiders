@@ -9,7 +9,7 @@ var testguild = null
 var testmform = null
 var state = preload("res://classes/battle/battle_state.gd").new()
 var reply = null
-var battleSpeed = 0
+var battleSpeed : int = 0
 
 func getBattleDelay(x):
 	return float(x) * (BATTLE_SPEED_MULTIPLIER[battleSpeed])
@@ -148,6 +148,7 @@ func battle():
 func _ready():
 	testguild = core.guild
 	testmform = core.battle.enemy
+	$SkillController.speed = battleSpeed
 	core.battle.control = self
 	core.battle.skillControl = $SkillController
 	state.init(testguild, testmform, self)
@@ -191,3 +192,8 @@ func showInfo(what, type, level = 0):
 
 func hideInfo():
 	$Panel/InfoDisplay.hide()
+
+
+func _on_Speed_pressed(x:int) -> void:
+	battleSpeed = x
+	$SkillController.speed = x

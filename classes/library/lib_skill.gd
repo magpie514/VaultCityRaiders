@@ -13,7 +13,6 @@ var example = {
 		"defend" : {
 			name = "Defend",
 			description = "",
-			chargeAnim = true,
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -284,6 +283,8 @@ var example = {
 		"revitlze": {
 			name = "Revitalize",
 			description = "",
+			animations = "/nodes/FX/basic_heal.tscn",
+			animFlags = skill.ANIMFLAGS_COLOR_FROM_ELEMENT,
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -1201,8 +1202,9 @@ func initTemplate():
 		"effectDuration" : { loader = LIBSTD_SKILL_ARRAY },
 		"effectPriority" : { loader = LIBSTD_INT },
 
-		"chargeAnim" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-		"animations" : { loader = LIBEXT_ANIM },
+		"chargeAnim" : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0] },
+		"animations" : { loader = LIBEXT_ANIM, default = "/nodes/FX/basic.tscn" },
+		"animFlags" : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0]},
 
 		"ranged" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
 		"levels" : { loader = LIBSTD_INT, default = 10 },
@@ -1321,4 +1323,7 @@ func loaderSkillLink(val):
 	return null
 
 func loaderAnim(val):
-	return ["res://nodes/FX/basic.tscn"]
+	if val != null:
+		return ["res:/%s" % str(val)]
+	else:
+		return [ null ]

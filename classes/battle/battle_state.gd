@@ -12,7 +12,7 @@ var formations = core.newArray(2)
 var actionQueue = core.newArray(1)
 var field = preload("res://classes/battle/field_effects.gd").new()
 var lastElement : int = 0    #Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
-var follows = []
+var onhit = []
 var UI = null
 var lastAct = []
 var nextAct = []
@@ -135,6 +135,7 @@ func addAction(side, slot, act):
 	}
 	user.battle.lastAction = act
 	if S.chargeAnim[A.level] != 0: user.charge(true)
+	if S.initAD[A.level] != 100: user.display.updateAD(S.initAD[A.level])
 	act = null
 	pushAction(A)
 
@@ -194,16 +195,16 @@ func resolveAction(act):
 		act.user.useBattleSkill(self, act.act, act.skill, act.level, act.target, act.WP, act.IT)
 		yield(core.battle.skillControl, "skill_finished")
 		# Process post-skill actions.
-		if follows.size() > 0:
-			while follows.size() > 0:
-				var F = follows.pop_front()
+		if onhit.size() > 0:
+			while onhit.size() > 0:
+				var F = onhit.pop_front()
 				if F[1][0].canFollow(F[1][3], F[1][4], F[0]):
-					checkFollow(F, follows.size() == 0)
+					checkFollow(F, onhit.size() == 0)
 					yield(core.battle.skillControl, "skill_special_finished")
-			yield(core.battle.skillControl, "follows_finished")
+			yield(core.battle.skillControl, "onhit_finished")
 			core.battle.skillControl.actionFinish()
 		else:
-			print("[BATTLE_STATE][RESOLVEACTION] No follows, all done.")
+			print("[BATTLE_STATE][RESOLVEACTION] No onhit, all done.")
 			core.battle.skillControl.actionFinish()
 
 func checkFollow(F, last) -> void:

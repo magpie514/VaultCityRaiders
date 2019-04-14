@@ -3,11 +3,13 @@ signal timeout
 signal skill_finished
 signal fx_finished
 signal skill_special_finished
-signal follows_finished
+signal onhit_finished
 signal action_finished
 
-var subControlNode = preload("res://nodes/SkillControlSub.tscn")
+const ANIM_SPEEDS = [5.0, 2.0, 1.0, 0.5]
 
+var subControlNode = preload("res://nodes/SkillControlSub.tscn")
+var speed : int = 0
 var anim = null
 
 func start():
@@ -25,8 +27,8 @@ func finishSpecial() -> void:
 	emit_signal("skill_special_finished")
 
 func finishFollows() -> void:
-	print("FOLLOW FINISHED SIGNAL")
-	emit_signal("follows_finished")
+	print("ONHIT FINISHED SIGNAL")
+	emit_signal("onhit_finished")
 
 func actionFinish() -> void:
 	print("ACTION FINISHED SIGNAL")
@@ -47,12 +49,16 @@ func wait(x):
 	$FXTimer.start()
 	return self
 
-func startAnim(x, display):
-	anim = load("res://nodes/FX/basic.tscn").instance()
+func startAnim(S, level, x, display) -> void:
+	var temp = S.animations[x]
+	anim = load(temp).instance()
 	add_child(anim)
+	if S.animFlags[level] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
+		anim.modulate = core.stats.ELEMENT_DATA[S.element[level]].color
+		print("[SKILLCONTROLLER] Setting color from element! %s" % str(anim.modulate))
 	anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
 	anim.connect("anim_done", self, "on_anim_done")
-	anim.play(6.0)
+	anim.play(ANIM_SPEEDS[speed])
 
 func _on_FXTimer_timeout():
 	emit_signal("timeout")

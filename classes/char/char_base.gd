@@ -221,6 +221,8 @@ func setAD(x : int, absolute : bool = false):
 		battle.AD = x
 	else:
 		battle.AD += x
+	if battle != null and display != null:
+		display.updateAD(battle.AD)
 	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
 func defeat():
@@ -449,7 +451,7 @@ func refreshRow() -> void:
 	row = 0 if slot < group.ROW_SIZE else 1
 
 func setInitAD(S, level) -> void:
-	battle.AD = S.initAD[level]
+	setAD(S.initAD[level], true)
 	print("[SKILL][setInitAD] Active Defense set to %d" % battle.AD)
 
 func useBattleSkill(state, act:int, S, level:int, targets, WP = null, IT = null) -> void:

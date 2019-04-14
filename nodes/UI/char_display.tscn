@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://resources/tres/char_display.tres" type="StyleBox" id=1]
 [ext_resource path="res://nodes/UI/char_display.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=5]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=6]
 [ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=7]
+[ext_resource path="res://nodes/UI/battle/AD.tscn" type="PackedScene" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 use_mipmaps = true
@@ -139,6 +140,12 @@ margin_right = 22.0
 margin_bottom = 10.0
 custom_fonts/font = SubResource( 5 )
 text = "CND"
+
+[node name="AD" parent="." instance=ExtResource( 8 )]
+margin_left = 10.0
+margin_top = 1.0
+margin_right = -210.0
+margin_bottom = -29.0
 
 [node name="Charge" parent="." instance=ExtResource( 7 )]
 position = Vector2( 110, 16 )

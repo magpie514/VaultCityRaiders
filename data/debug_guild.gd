@@ -32,7 +32,7 @@ var data = {
 			energyColor = "#0033DD",
 			equip = [
 				{ id = ["debug", "soldrifl"], bonus = 0, uses = 25, extra = null, gem = [ [["core", "void"], 900], [["core", "charge"], 900] ] },
-				{ id = ["debug", "boostbld"], bonus = 0, uses = 50, extra = null, gem = [ [["core", "protect"], 900], [["core", "power"], 900], [["core", "protect"], 0], [["core", "rebierth"], 0] ] },
+				{ id = ["debug", "boostbld"], bonus = 0, uses = 50, extra = null, gem = [ [["core", "protect"], 900], [["core", "power"], 900], [["core", "protect"], 0], [["core", "rebierth"], 0], [["core", "protect"], 0], [["core", "accel"], 900] ] },
 			 ],
 		 	skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1] ],
 			links = [

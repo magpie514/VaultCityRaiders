@@ -156,7 +156,6 @@ margin_right = 40.0
 margin_bottom = 40.0
 
 [node name="WeaponPanel" type="Panel" parent="Main"]
-editor/display_folded = true
 self_modulate = Color( 1, 1, 1, 0.00392157 )
 margin_left = 20.0
 margin_top = 44.0

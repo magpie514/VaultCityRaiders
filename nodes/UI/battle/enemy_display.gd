@@ -56,10 +56,15 @@ func resize(v):
 	$Button.rect_size.x = v.x
 	$ComplexBar.rect_size.x = rect_size.x * 0.8
 
+func updateAD(x:int) -> void:
+	if chr.battle != null:
+		$AD.value = x
+
 func update():
 	$ComplexBar.value = chr.getHealthN()
 	style.fromStatus(chr.status)
 	$Status.text = core.skill.statusInfo[chr.status].short
+	updateAD(chr.battle.AD)
 
 func _process(delta):
 	modulate.a = fade

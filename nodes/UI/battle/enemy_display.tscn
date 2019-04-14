@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://resources/tres/enemy_display.tres" type="StyleBox" id=1]
 [ext_resource path="res://nodes/UI/battle/enemy_display.gd" type="Script" id=2]
 [ext_resource path="res://nodes/UI/bar_complex.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://nodes/UI/battle/AD.tscn" type="PackedScene" id=5]
 
 [sub_resource type="DynamicFont" id=1]
 size = 10
@@ -46,6 +47,12 @@ custom_fonts/font = SubResource( 1 )
 align = 1
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="AD" parent="." instance=ExtResource( 5 )]
+margin_left = 5.0
+margin_top = 2.0
+margin_right = 21.0
+margin_bottom = 18.0
 [connection signal="mouse_entered" from="." to="." method="_on_EnemyDisplay_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_EnemyDisplay_mouse_exited"]
 [connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]

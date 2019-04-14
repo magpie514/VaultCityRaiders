@@ -158,6 +158,11 @@ enum {
 	MSG_SKILL = 		0x04,
 }
 
+enum {
+	ANIMFLAGS_NONE = 0x00,
+	ANIMFLAGS_COLOR_FROM_ELEMENT = 0x01,
+}
+
 enum { #Chains. Starters init a sequence, follows increase it, and finishers use the chain value as modifier.
 	CHAIN_NONE = 0,
 	CHAIN_STARTER,
@@ -174,9 +179,9 @@ enum { #Parry. Reduces the damage of an attack with a given chance.
 }
 
 enum {
-	FOLLOW_FOLLOWUP,
-	FOLLOW_COMBO,
-	FOLLOW_COUNTER,
+	ONHIT_FOLLOWUP,
+	ONHIT_COMBO,
+	ONHIT_COUNTER,
 }
 
 enum {
@@ -1105,7 +1110,7 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	var controlNode = core.battle.skillControl
 	var control = null
 	var state = null
-	user.battle.AD = S.AD[level - 1] #Set active defense on execution regardless of success.
+	user.setAD(S.AD[level - 1], true) #Set active defense on execution regardless of success.
 	#print("%s sets Active Defense: %s" % [user.name, user.battle.AD])
 	if WP != null:
 		user.setWeapon(WP)
@@ -1119,7 +1124,7 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
 		if tempTarget.filter(S.filter): #Target is valid.
-			controlNode.startAnim(S.animations[0], tempTarget.display)
+			controlNode.startAnim(S, level, 0, tempTarget.display)
 			yield(controlNode, "fx_finished") #Wait for animation to finish.
 			print("Animation finished")
 			control = controlNode.start()
@@ -1180,13 +1185,13 @@ func processEF(S, level, user, target):
 func processFL(S, level, user, target, data, type):
 	print("%s's action FL on %s => %s LV%d" % [user.name, target.name, S.name, level])
 	match type:
-		FOLLOW_FOLLOWUP, FOLLOW_COMBO:
+		ONHIT_FOLLOWUP, ONHIT_COMBO:
 			msg("[color=#%s]%s[/color] followed with %s!%s" % [
 				core.battle.control.state.colorName(user),
 				user.name, S.name,
 				(" [color=#888888](next %03d%%)[/color]" % data[0]) if data[0] > 0 else ""
 				])
-		FOLLOW_COUNTER:
+		ONHIT_COUNTER:
 			msg("[color=#%s]%s[/color] countered with %s!%s" % [
 				core.battle.control.state.colorName(user),
 				user.name, S.name,
@@ -1194,7 +1199,7 @@ func processFL(S, level, user, target, data, type):
 				])
 	yield(core.battle.skillControl.wait(0.1), "timeout")
 	var control = core.battle.skillControl.start()
-	core.battle.skillControl.startAnim(S.animations[0], target.display)
+	core.battle.skillControl.startAnim(S, level, 0, target.display)
 	yield(core.battle.skillControl, "fx_finished")
 	print("FL ANIMATION FINISHED")
 	processSkillCode(S, level, user, target, CODE_FL, control)
@@ -1428,6 +1433,7 @@ func factory(Sp, mods, level): #Sp is a pointer to skill copy
 				"element":
 					for j in range(MAX_LEVEL):
 						Sp.element[j] = int( mods.element[level] )
+						Sp.animFlags[j] |= ANIMFLAGS_COLOR_FROM_ELEMENT
 					print("[SKILLFACTORY] Element changed to %s" % [mods.element[level]])
 
 func getSpeedMod(tid):
@@ -1480,17 +1486,17 @@ func processSkillCode(S, level, user, target, _code, control = core.battle.skill
 				if i[5] == 0 or (i[5] == state.element):
 					if user.canFollow(i[3], i[4], target) and user != target and core.chance(i[1]):
 						i[1] -= i[2]
-						core.battle.control.state.follows.push_back([target, i, FOLLOW_FOLLOWUP])
+						core.battle.control.state.onhit.push_back([target, i, ONHIT_FOLLOWUP])
 		if target.battle.combo.size() > 0 and S.category == CAT_ATTACK: #Target has a combo set.
 			for i in target.battle.combo:
 				if i[5] == 0 or (i[5] == state.element):
 					if i[0].canFollow(i[3], i[4], target) and user != i[0] and core.chance(i[1]):
 						i[1] -= i[2]
-						core.battle.control.state.follows.push_back([target, i, FOLLOW_COMBO])
+						core.battle.control.state.onhit.push_back([target, i, ONHIT_COMBO])
 		#Check for counters.
 		var C = target.canCounter(user, state.element, state.counter)
 		if C[0] and S.category == CAT_ATTACK:
-			core.battle.control.state.follows.push_back([user, C[1], FOLLOW_COUNTER])
+			core.battle.control.state.onhit.push_back([user, C[1], ONHIT_COUNTER])
 
 
 	if state.follow[5]: #Set follow parameters. User will add one skill (CODE_FL) after their next action.
@@ -1671,7 +1677,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						dmg = processHeal(S, state, user, target, dmg)
 						dmg = round(dmg)
 						variableTarget.heal(dmg)
-						state.totalHeal += dmg
+						state.totalHeal += int(dmg)
 						if variableTarget == user:
 							msg(str("%s restored %s!" % [user.name, dmg]))
 						else:
