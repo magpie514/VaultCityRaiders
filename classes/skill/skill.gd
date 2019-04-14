@@ -364,6 +364,7 @@ enum {
 	OPCODE_GET_MAX_HEALTH,		#Get target's max health.
 	OPCODE_GET_HEALTH,        #Get target's health.
 	OPCODE_GET_LAST_HURT,			#Get amount of health lost from last skill.
+	OPCODE_GET_DODGES,				#Get amount of dodges for this turn.
 
 	# Math #######################################################################
 	OPCODE_MATH_ADD,					#Add X to stored value.
@@ -488,12 +489,17 @@ const opCode = {
 	"stop" : OPCODE_STOP,
 	"jump" : OPCODE_JUMP,
 
-	"get_ef_bonus" :  OPCODE_GET_FIELD_BONUS,
-	"get_ef_chains" : OPCODE_GET_FIELD_CHAINS,
-	"get_ef_unique" : OPCODE_GET_FIELD_UNIQUE,
-	"get_synergies" : OPCODE_GET_SYNERGY_PARTY,
-	"get_turn" :      OPCODE_GET_TURN,
-	"get_chain" :     OPCODE_GET_CHAIN,
+	"get_ef_bonus" :  	OPCODE_GET_FIELD_BONUS,
+	"get_ef_chains" : 	OPCODE_GET_FIELD_CHAINS,
+	"get_ef_unique" : 	OPCODE_GET_FIELD_UNIQUE,
+	"get_synergies" : 	OPCODE_GET_SYNERGY_PARTY,
+	"get_turn" :      	OPCODE_GET_TURN,
+	"get_chain" :     	OPCODE_GET_CHAIN,
+	"get_last_element":	OPCODE_GET_LAST_ELEMENT,
+	"get_health%" :			OPCODE_GET_HEALTH_PERCENT,
+	"get_max_health" :	OPCODE_GET_MAX_HEALTH,
+	"get_health" :			OPCODE_GET_HEALTH,
+	"get_dodges" :			OPCODE_GET_DODGES,
 
 	"add" :  OPCODE_MATH_ADD,
 	"sub" :  OPCODE_MATH_SUB,
@@ -2023,6 +2029,10 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_GET_HEALTH:
 						print(">GET CURRENT HEALTH")
 						state.value = variableTarget.HP
+						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_DODGES:
+						print(">GET DODGES")
+						state.value = variableTarget.battle.turnDodges
 						print(">>>>>SVAL = %s" % state.value)
 # Math #########################################################################
 					OPCODE_MATH_ADD:
