@@ -50,7 +50,6 @@ bbcode_text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 [node name="ACC" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 2.0
 margin_top = 24.0
 margin_right = 42.0
@@ -64,7 +63,6 @@ margin_bottom = 16.0
 text = "000"
 
 [node name="AD" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 2.0
 margin_top = 36.0
 margin_right = 42.0
@@ -84,7 +82,6 @@ margin_bottom = 16.0
 text = "000"
 
 [node name="SPD" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 2.0
 margin_top = 48.0
 margin_right = 42.0
@@ -98,7 +95,6 @@ margin_bottom = 16.0
 text = "000"
 
 [node name="CRIT" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 2.0
 margin_top = 60.0
 margin_right = 42.0

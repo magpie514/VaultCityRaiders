@@ -79,10 +79,11 @@ enum { #Weapon classes
 	WPCLASS_SHIELD,
 }
 
-enum {
-	RACEF_BIO = 0x01,
-	RACEF_MEC = 0x02,
-	RACEF_SPI = 0x04,
+enum { #Race Aspect
+	RACEF_NON = 0x00,
+	RACEF_MEC = 0x01, #Race has mechanical parts
+	RACEF_BIO = 0x02, #Race has organic parts
+	RACEF_SPI = 0x04, #Race has a soul
 }
 
 enum { MODSTAT_NONE, MODSTAT_ATK, MODSTAT_DEF, MODSTAT_ETK, MODSTAT_EDF, MODSTAT_AGI, MODSTAT_LUC }
@@ -235,6 +236,7 @@ enum {
 	OPFLAGS_BLOCK_START =    0x0040,  #In a conditional, start a block. Skips everything until a OPFLAGS_BLOCK_END is found.
 	OPFLAGS_BLOCK_END =      0x0080,  #Determines end of a code block.
 	OPFLAGS_SILENT_ATTACK =  0x0100,  #Makes an attack not output any messages, and passes previous attack as a stack for next non-silent attack.
+	OPFLAGS_LOGIC_NOT =      0x0200,  #In a conditional, reverse the outcome.
 }
 
 enum {
@@ -395,6 +397,7 @@ enum {
 	OPCODE_IF_CONNECT,                  #Execute next line if last attack command hit.
 	OPCODE_IF_SYNERGY_PARTY,
 	OPCODE_IF_SYNERGY_TARGET,
+	OPCODE_IF_RACE_ASPECT,							#Execute next line if target has the given race aspects.
 }
 
 const opCodesPowerable = [
@@ -534,6 +537,7 @@ const opCode = {
 	"if_connect" : OPCODE_IF_CONNECT,
 	"if_synergy_party" : OPCODE_IF_SYNERGY_PARTY,
 	"if_synergy" : OPCODE_IF_SYNERGY_TARGET,
+	"if_race_aspect" : OPCODE_IF_RACE_ASPECT,
 }
 
 var opcodeInfo = {
@@ -1148,7 +1152,7 @@ func msg(text):
 
 func process(S, level, user, _targets, WP = null, IT = null):
 	print("[SKILL][PROCESS] %s's action: %s" % [user.name, S.name])
-	msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, S.name]))
+	msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, S.name if IT == null else IT.name]))
 	if _targets.size() == 0: return
 	var targets = calculateTarget(S, level, user, _targets)
 	if targets != null and targets.size() == 0: return
@@ -1568,6 +1572,12 @@ func processSkillCode(S, level, user, target, _code, control = core.battle.skill
 	print("[SKILL][PROCESSSKILLCODE] %s finished" % S.name)
 	control.stop()
 	print("[SKILL][PROCESSSKILLCODE] %s control stopped" % S.name)
+
+
+func s_if(cond = false, flags = 0) -> bool:
+	if flags & OPFLAGS_LOGIC_NOT:
+		cond = not cond
+	return cond
 
 func processSkillCode2(S, level, user, target, _code, state, control):
 	level = 1                                                                     #TODO: Remember this is here...
@@ -1990,7 +2000,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							yield(controlNode.wait(0.01), "timeout")
 					OPCODE_PLAYANIM:
 						print(">PLAY ANIMATION: %s" % value)
-						controlNode.startAnim(S.animations[0], target.display)
+						controlNode.startAnim(S, level, S.animations[0], target.display)
 						yield(controlNode, "fx_finished")
 					OPCODE_WAIT:
 						print(">WAIT: %s" % value)
@@ -2100,7 +2110,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 # Conditionals #################################################################
 					OPCODE_IF_TRUE:
 						print(">IF TRUE %s" % value)
-						if value != 0:
+						if s_if(value != 0, flags):
 							print("%s is not zero" % [int(value)])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2113,7 +2123,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_CHANCE:
 						print(">IF_CHANCE: %s" % value)
-						if core.chance(value):
+						if s_if(core.chance(value), flags):
 							print("Chance check passed, executing next line.")
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2126,7 +2136,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_STATUS:
 						print(">IF_STATUS: %s" % value)
-						if variableTarget.status != STATUS_NONE:
+						if s_if(variableTarget.status != STATUS_NONE, flags):
 							print("Target is afflicted, executing next line.")
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2139,7 +2149,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_SVAL_EQUAL:
 						print(">IF SVAL EQUALS %s" % value)
-						if int(state.value) == int(value):
+						if s_if(int(state.value) == int(value), flags):
 							print("%s == %s, executing next line" % [int(state.value),int(value)])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2152,7 +2162,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_SVAL_LESSTHAN:
 						print(">IF SVAL IS LESS THAN %s" % value)
-						if int(state.value) < int(value):
+						if s_if(int(state.value) < int(value), flags):
 							print("%s < %s, executing next line" % [int(state.value),int(value)])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2165,7 +2175,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_SVAL_LESS_EQUAL_THAN:
 						print(">IF SVAL IS LESS OR EQUAL THAN %s" % value)
-						if int(state.value) <= int(value):
+						if s_if(int(state.value) <= int(value), flags):
 							print("%s <= %s, executing next line" % [int(state.value),int(value)])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2178,7 +2188,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_SVAL_MORETHAN:
 						print(">IF SVAL IS MORE THAN %s" % value)
-						if int(state.value) > int(value):
+						if s_if(int(state.value) > int(value), flags):
 							print("%s > %s, executing next line" % [int(state.value),int(value)])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2191,7 +2201,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_SVAL_MORE_EQUAL_THAN:
 						print(">IF SVAL IS MORE OR EQUAL THAN %s" % value)
-						if int(state.value) >= int(value):
+						if s_if(int(state.value) >= int(value), flags):
 							print("%s >= %s, executing next line" % [int(state.value),int(value)])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2204,7 +2214,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_EF_BONUS_LESS_EQUAL_THAN:
 						print(">IF ELEMENT FIELD MORE OR EQUAL THAN %s" % value)
-						if core.battle.control.state.field.bonus[state.element] <= value:
+						if s_if(core.battle.control.state.field.bonus[state.element] <= value, flags):
 							print("Element bonus for %s: %s <= %s, executing next line" % [state.element, core.battle.control.state.field.bonus[state.element], value])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2217,7 +2227,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								skipLine = true
 					OPCODE_IF_EF_BONUS_MORE_EQUAL_THAN:
 						print(">IF ELEMENT FIELD MORE OR EQUAL THAN %s" % value)
-						if core.battle.control.state.field.bonus[state.element] >= value:
+						if s_if(core.battle.control.state.field.bonus[state.element] >= value, flags):
 							print("Element bonus for %s: %s >= %s, executing next line" % [state.element, core.battle.control.state.field.bonus[state.element], value])
 						else:
 							if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2229,12 +2239,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								print("Element bonus for %s: %s < %s. Skipping next line." % [state.element, core.battle.control.state.field.bonus[state.element], value])
 								skipLine = true
 					OPCODE_IF_SYNERGY_PARTY:
-						print(">[INDEV]IF SYNERGY IN PARTY %02d (using %02d)" % [value, value - 1])
+						print(">IF SYNERGY IN PARTY %02d (using %02d)" % [value, value - 1])
 						value = int(value - 1)
 						if value >= 0 and value < S.synergy.size():
 							var synS = core.lib.skill.getIndex(S.synergy[value])
 							var synResult = variableTarget.group.findEffects(synS)
-							if synResult:
+							if s_if(synResult, flags):
 								print("Skill %s found in party. Executing next line." % [synS.name])
 							else:
 								if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2248,12 +2258,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						else:
 							print("%d not found" % value)
 					OPCODE_IF_SYNERGY_TARGET:
-						print(">[INDEV]IF SYNERGY IN TARGET %s" % value)
+						print(">IF SYNERGY IN TARGET %s" % value)
 						value = int(value - 1)
 						if value >= 0 and value < S.synergy.size():
 							var synS = core.lib.skill.getIndex(S.synergy[value])
 							var synResult = variableTarget.findEffects(synS)
-							if synResult:
+							if s_if(synResult, flags):
 								print("Skill %s found on %s. Executing next line." % [synS.name, variableTarget.name])
 							else:
 								if flags & OPFLAGS_QUIT_ON_FALSE:
@@ -2264,12 +2274,29 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 									cond_block = (flags & OPFLAGS_BLOCK_START)
 									print("Skill %s not found in %s. Skipping next %s" % [synS.name, variableTarget.name, 'block' if cond_block else 'line'])
 									skipLine = true
-
+					OPCODE_IF_RACE_ASPECT:
+						print(">IF RACE ASPECT IN TARGET %s" % value)
+						var temp2 = false
+						if variableTarget is core.Player:
+							temp2 = variableTarget.racePtr.aspect & int(value)
+						else:
+							temp2 = variableTarget.lib.aspect & int(value)
+						if s_if(temp2,flags):
+							print("Race aspect %d found on %s. Executing next line." % [value, variableTarget.name])
+						else:
+							if flags & OPFLAGS_QUIT_ON_FALSE:
+								print("Race aspect %d not found on %s. Aborting execution." % [value, variableTarget.name])
+								control.continueSkill()
+								return
+							else:
+								cond_block = (flags & OPFLAGS_BLOCK_START)
+								print("Race aspect %d not found on %s. Skipping next %s" % [value, variableTarget.name, 'block' if cond_block else 'line'])
+								skipLine = true
 			else:
 				print("[%s]%02d>SKIP %s" % [S.name, j, 'LINE' if not cond_block else 'BLOCK'])
 				if cond_block:
 					#We are inside a code block.
-					if flags & OPFLAGS_BLOCK_END:
+					if flags & OPFLAGS_BLOCK_END or line[0] == OPCODE_STOP: #TODO: Revise this. I sense trouble.
 						#This line ends the block.
 						cond_block = false
 						skipLine = false
@@ -2280,3 +2307,14 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					skipLine = false
 
 	control.continueSkill()
+
+
+
+func printCode(S, level, code = CODE_MN) -> String:
+	var body = ""
+	match(code):
+		CODE_MN:
+			if S.codeMN != null:
+				for i in range(S.codeMN.size()):
+					body += "%02d:%s:%03d:%d\n" % [i,S.codeMN[i][0], S.codeMN[i][level], S.codeMN[i][11]]
+	return body

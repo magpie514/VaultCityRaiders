@@ -107,12 +107,17 @@ func finish():
 
 func chooseResult(x, WP, skillOverride=null): #[TID skill, int level]
 	modulate.a = 0.2			#Fade menu out a bit.
+	var result = controls.state.Action.new(controls.state.ACT_FIGHT)
+	result.WP = WP
 	if skillOverride != null: print("[MENU_WEAPON][chooseResult] Found override: %s" % skillOverride.name)
 	var S = core.getSkillPtr(x[0]) if skillOverride == null else skillOverride #Get pointer to skill.
+	result.skill = S; result.skillTid = x[0]; result.level = x[1]
+	result.override = skillOverride
 	target = core.skill.selectTargetAuto(S, x[1], currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()
-		emit_signal("selection", [controls.state.ACT_FIGHT, x[0], x[1], target, WP, skillOverride])
+		result.target = target
+		emit_signal("selection", result)
 	else: #If not, show the target select dialog.
 		targetPanel.init(S, self, x[1])
 		yield(targetPanel, "selection") #Wait for getTarget() to get called from target menu.
@@ -121,7 +126,8 @@ func chooseResult(x, WP, skillOverride=null): #[TID skill, int level]
 			modulate.a = 1.0 #Selection was canceled so restore the window back to form.
 		else:
 			finish()
-			emit_signal("selection", [controls.state.ACT_FIGHT, x[0], x[1], target, WP, skillOverride])
+			result.target = target
+			emit_signal("selection", result)
 
 func getTarget(x):
 	target = x

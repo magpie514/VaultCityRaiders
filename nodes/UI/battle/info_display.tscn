@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://nodes/UI/battle/info_display.gd" type="Script" id=1]
 [ext_resource path="res://nodes/UI/battle/skill_display.tscn" type="PackedScene" id=2]
 [ext_resource path="res://nodes/UI/battle/player_display.tscn" type="PackedScene" id=3]
 [ext_resource path="res://nodes/UI/battle/enemy_info_display.tscn" type="PackedScene" id=4]
+[ext_resource path="res://nodes/UI/battle/item_display.tscn" type="PackedScene" id=5]
 
 [node name="InfoDisplay" type="Panel"]
 anchor_right = 1.0
@@ -18,4 +19,7 @@ margin_bottom = 0.0
 visible = false
 
 [node name="EnemyInfoDisplay" parent="." instance=ExtResource( 4 )]
+visible = false
+
+[node name="ItemDisplay" parent="." instance=ExtResource( 5 )]
 visible = false

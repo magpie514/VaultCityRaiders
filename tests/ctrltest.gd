@@ -89,7 +89,7 @@ func battle():
 			yield($Panel/BattleControls, "finished")
 			print(reply)
 			C.display.highlight(false)
-			if typeof(reply) == TYPE_ARRAY and reply.size() > 3 and reply[0] != -1:
+			if reply is state.Action:
 				#Player chose a valid action, register it and move to next.
 				C.display.setActionText(reply)
 				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])

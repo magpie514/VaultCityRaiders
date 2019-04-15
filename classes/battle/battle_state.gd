@@ -97,47 +97,59 @@ func status():
 func amount():
 	return actionQueue.size()
 
-func addAction(side, slot, act):
+class Action:
+	var side: int = 0
+	var slot: int = 0
+	var user = null
+	var spd: int = 0
+	var level: int = 0
+	var skill
+	var skillTid
+	var target: Array
+	var act: int = ACT_SKILL
+	var WP = null
+	var IT = null
+	var override = null
+	var cancel: bool = false
+
+	func _init(_act = ACT_SKILL) -> void:
+		act = _act
+
+
+
+func addAction(side, slot, act: Action):
 	var user = formations[side].formation[slot]
-	var T = null
-	var skill = null
-	match act[0]:
+	act.user = user
+	act.side = side
+	act.slot = slot
+	match act.act:
 		ACT_DEFEND:
-			skill = core.tid.create("core", "defend")
-			T = [ user ]
+			act.skillTid = core.tid.create("core", "defend")
+			act.skill = core.lib.skill.getIndex(act.skillTid)
+			act.target = [ user ]
 		ACT_RUN:
-			skill = core.tid.create("debug", "debugi")
-			T = [ user ]
-		ACT_FIGHT, ACT_SKILL, ACT_ITEM:
-			skill = act[1]
-			T = act[3]
-	var S
-	if act.size() == 6:
-		if act[5] != null: #If a modified skill from a dragon gem exists, use it.
-			S = act[5]
-			print("[BATTLE STATE][addAction] Using override %s" % S.name)
-		else:
-			S = core.lib.skill.getIndex(skill)
-	else:
-		S = core.lib.skill.getIndex(skill)
-	var spd = user.calcSPD(S, 1)
-	var A = {
-		side = int(side),
-		user = user,
-		spd = int(spd),
-		level = int(act[2]),
-		skillTid = skill,
-		skill = S,
-		target = T,
-		act = int(act[0]),
-		WP = act[4],
-		IT = null,
-	}
+			act.skillTid = core.tid.create("debug", "debugi")
+			act.skill = core.lib.skill.getIndex(act.skillTid)
+			act.target = [ user ]
+	if act.override != null:
+			print("[BATTLE STATE][addAction] Using override %s" % act.override)
+	act.spd = user.calcSPD(act.skill, 1)
+	# var A = {
+	# 	side = int(side),
+	# 	user = user,
+	# 	spd = int(spd),
+	# 	level = int(act[2]),
+	# 	skillTid = skill,
+	# 	skill = S,
+	# 	target = T,
+	# 	act = int(act[0]),
+	# 	WP = act[4],
+	# 	IT = null,
+	# }
 	user.battle.lastAction = act
-	if S.chargeAnim[A.level] != 0: user.charge(true)
-	if S.initAD[A.level] != 100: user.display.updateAD(S.initAD[A.level])
-	act = null
-	pushAction(A)
+	if act.skill.chargeAnim[act.level] != 0: user.charge(true)
+	if act.skill.initAD[act.level] != 100: user.display.updateAD(act.skill.initAD[act.level])
+	pushAction(act)
 
 func updateActions(A):
 	lastAct = [A.side, A.user, A.skill, A.level]
@@ -175,8 +187,14 @@ func enemyActions():
 	var P = formations[SIDE_PLAYER]
 	var action = null
 	for i in F.activeMembers():
+		i.display.update()
 		action = i.thinkBattleAction(F, P, self)
-		addAction(SIDE_ENEMY, i.slot, [ ACT_SKILL, action[0], action[1], action[2], null])
+		var result = Action.new(ACT_SKILL)
+		result.skillTid = action[0]
+		result.skill = core.lib.skill.getIndex(action[0])
+		result.level = action[1]
+		result.target = action[2]
+		addAction(SIDE_ENEMY, i.slot, result)
 
 
 func checkActionExecution(user, target) -> bool:

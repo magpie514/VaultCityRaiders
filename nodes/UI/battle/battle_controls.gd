@@ -53,7 +53,7 @@ func setup(C, place, node):
 		$Main/Repeat.disabled = true
 	else:
 		$Main/Repeat.disabled = false
-		var RS = core.lib.skill.getIndex(C.battle.lastAction[1])
+		var RS = C.battle.lastAction.skill
 		$Main/Repeat.text = str("Repeat %s" % RS.name)
 
 func _process(delta: float) -> void: #Just a quick hack for now
@@ -105,7 +105,14 @@ func _on_Skill_pressed():
 	else: $Main.show()
 
 func _on_Defend_pressed():#
-	exit([state.ACT_DEFEND, ["core", "defend"], 1, [ currentChar ], currentChar.currentWeapon])
+	var result = state.Action.new(state.ACT_DEFEND)
+	result.skillTid = ["core", "defend"]
+	result.skill = core.lib.skill.getIndex(result.skillTid)
+	result.level = 1
+	result.user = currentChar
+	result.target = [currentChar]
+	result.WP = currentChar.currentWeapon
+	exit(result)
 
 func _on_Item_pressed():
 	var display = null
@@ -128,25 +135,23 @@ func _on_Run_pressed():#
 func _on_Macro_pressed():
 	pass # replace with function body
 
-
-
 func _on_Back_pressed():
 	exit([-1])
-
-
 
 func _on_Switch_pressed():
 	pass # replace with function body
 
+func _on_Repeat_pressed() -> void:
+	exit(currentChar.battle.lastAction)
+
+func _on_WeaponMenu_selection(x) -> void:
+	print("[BATTLECONTROLS][_on_WeaponMenu_selection]\n\t%s" % str(x))
+	action = x
+
 func _on_SkillMenu_selection(x) -> void:
+	print("[BATTLECONTROLS][_on_SkillMenu_selection]\n\t%s" % str(x))
 	action = x
 
 func _on_ItemMenu_selection(x) -> void:
-	print(action)
+	print("[BATTLECONTROLS][_on_ItemMenu_selection]\n\t%s" % str(x))
 	action = x
-
-func _on_WeaponMenu_selection(x) -> void:
-	action = x
-
-func _on_Repeat_pressed() -> void:
-	exit(currentChar.battle.lastAction)

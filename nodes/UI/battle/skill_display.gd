@@ -63,6 +63,7 @@ func init(_S, level) -> void:
 	$MODSTAT/Label.text = "%s" % core.stats.STATS[S.modStat]
 
 	$Desc.text = S.description
+	$Desc2.text = core.skill.printCode(S, level)
 
 
 func colorACC(n : int) -> String:

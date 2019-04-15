@@ -41,15 +41,20 @@ func clear() -> void:
 
 func finish() -> void:
 	clear()
+	controls.infoPanel.hideInfo()
 	hide()
 
 func chooseResult(x): #[TID skill, int level]
 	modulate.a = 0.2			#Fade menu out a bit.
+	var result = controls.state.Action.new(controls.state.ACT_SKILL)
+	result.WP = currentChar.currentWeapon
 	var S = core.getSkillPtr(x[0]) #Get pointer to skill.
+	result.skill = S; result.skillTid = x[0]; result.level = x[1]
 	target = core.skill.selectTargetAuto(S, x[1], currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()
-		emit_signal("selection", [controls.state.ACT_SKILL, x[0], x[1], target, currentChar.currentWeapon])
+		result.target = target
+		emit_signal("selection", result)
 	else: #If not, show the target select dialog.
 		targetPanel.init(S, self, x[1])
 		yield(targetPanel, "selection") #Wait for getTarget() to get called from target menu.
@@ -58,7 +63,8 @@ func chooseResult(x): #[TID skill, int level]
 			modulate.a = 1.0 #Selection was canceled so restore the window back to form.
 		else:
 			finish()
-			emit_signal("selection", [controls.state.ACT_SKILL, x[0], x[1], target, currentChar.currentWeapon])
+			result.target = target
+			emit_signal("selection", result)
 
 func getTarget(x):
 	target = x

@@ -22,12 +22,15 @@ func makeEntry(chr, prev):
 		prev.next = result
 	return result
 
-func init(S, parent, level):
+func init(S, parent, level, override = null):
 	var group = null
 	skill = S
 	state = controls.state
 	var test = connect("selection", parent, "getTarget")
-	$Label.text = "%s" % S.name
+	if override != null:
+		$Label.text = "%s" % override.name
+	else:
+		$Label.text = "%s" % S.name
 	var flip = false
 	match(S.targetGroup):
 		core.skill.TARGET_GROUP_ALLY:

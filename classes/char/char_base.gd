@@ -151,7 +151,7 @@ func getHealthN(): #Get normalized health as a float from 0 to 1.
 func fullHeal():
 	self.HP = maxHealth()
 
-func calcSPD(S, level):
+func calcSPD(S, level) -> int:
 #[(Equipment Speed Mod + 100) * AGI * Skill Speed Mod * Random number between 90 and 110 / 10000] * Modifiers
 	level -= 1
 	var equipSpeedMod = float(getEquipSpeedMod() + 100)
@@ -159,7 +159,7 @@ func calcSPD(S, level):
 	var mod = 100 #90 + ( randi() % 20 )
 	var skillSpeedMod = float(S.spdMod[level]) * 0.01
 	#return (equipSpeedMod * AGI * skillSpeedMod * mod * statBonus.mult.SPD) / 10000
-	return (equipSpeedMod * AGI * skillSpeedMod * mod) / 10000
+	return int((equipSpeedMod * AGI * skillSpeedMod * mod) / 10000)
 
 func getEquipSpeedMod():
 	return 0

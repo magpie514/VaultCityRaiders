@@ -592,13 +592,16 @@ var example = {
 			],
 		},
 		"potion": {
-			name = "Healing Potion",
+			name = "Healing",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
 			codeMN = [
-				["heal", 075, 125, 132, 132, 140,   140, 147, 147, 147, 160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["if_race_aspect", 002,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
+				 ["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				 ["stop",          001,001,001,001,001,  001,001,001,001,001],
+				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 			],
 		},
 		"illusion": {

@@ -1,4 +1,5 @@
 extends "res://classes/library/lib_base.gd"
+var skill = core.skill
 
 var example = {
 	"debug" : {
@@ -7,48 +8,56 @@ var example = {
 			description = "This is a debug class with ridiculously high stat growth.",
 			#               HP   ATK  DEF  ETK  EDF  AGI  LUC    HP   ATK  DEF  ETK  EDF  AGI  LUC
 			statSpread = [ [050, 010, 010, 010, 010, 010, 010], [999, 255, 255, 255, 255, 255, 255] ],
+			aspect = skill.RACEF_MEC,
 			#flags = RACE_MACHINE,
 		},
 		"human" : {
 			name = "Human",
 			description = "The third of the three races engineered by Tiamat, the Originator. They have an inherent affinity to technology.",
 			statSpread = [ [045, 011, 013, 011, 010, 013, 014], [460, 120, 135, 100, 090, 130, 150] ],
+			aspect = skill.RACEF_BIO|skill.RACEF_SPI,
 			#flags = RACE_HUMAN,
 		},
 		"elf" : {
 			name = "Elf",
 			description = "A human with fairy blood, which raises their affinity to nature and the elements.",
 			statSpread = [ [040, 009, 010, 012, 012, 014, 011], [410, 090, 094, 140, 135, 140, 110] ],
+			aspect = skill.RACEF_BIO|skill.RACEF_SPI,
 			#flags = RACE_HUMAN|RACE_FAIRY,
 		},
 		"vampire" : {
 			name = "Vampire",
 			description = "Humans afflicted by a dark curse, turning them undead and requiring blood to live. A perfected form of ghoul.",
 			statSpread = [ [048, 013, 012, 013, 011, 012, 005], [500, 135, 130, 135, 100, 125, 035] ],
+			aspect = skill.RACEF_BIO|skill.RACEF_SPI,
 			#flags = RACE_HUMAN|RACE_UNDEAD,
 		},
 		"cyborg" : {
 			name = "Cyborg",
 			description = "A human partially augmented by technology. They are limited by their human bodies, but their augments allow for higher potential.",
 			statSpread = [ [035, 010, 012, 010, 008, 012, 013], [380, 100, 100, 100, 075, 125, 120] ],
+			aspect = skill.RACEF_BIO|skill.RACEF_SPI|skill.RACEF_MEC,
 			#flags = RACE_HUMAN|RACE_MACHINE,
 		},
 		"choujin" : {
 			name = "Choujin",
 			description = "One of the potential ultimate forms of humanity. A human soul in a full machine body.",
 			statSpread = [ [060, 015, 015, 015, 010, 010, 005], [520, 150, 165, 120, 090, 110, 085] ],
+			aspect = skill.RACEF_SPI|skill.RACEF_MEC,
 			#flags = RACE_MACHINE,
 		},
 		"fairy" : {
 			name = "Fairy",
 			description = "The second of the three races engineered by Tiamat, the Originator. They have an inherent affinity to nature and the elements.",
 			statSpread = [ [040, 008, 008, 014, 014, 013, 010], [415, 090, 085, 150, 150, 130, 100] ],
+			aspect = skill.RACEF_BIO|skill.RACEF_SPI,
 			#flags = RACE_FAIRY,
 		},
 		"dragon" : {
 			name = "Dragon",
 			description = "The first of the three races engineered by Tiamat, the Originator. They have an inherent affinity to power. They can change to a human form when needed.",
 			statSpread = [ [065, 014, 011, 014, 012, 013, 005], [600, 145, 120, 145, 130, 135, 050] ],
+			aspect = skill.RACEF_BIO|skill.RACEF_SPI,
 			#flags = RACE_DRAGON,
 		},
 	}
@@ -59,6 +68,7 @@ func initTemplate():
 		"name": { loader = LIBSTD_STRING },
 		"description": { loader = LIBSTD_STRING },
 		"statSpread": { loader = LIBSTD_STATSPREAD },
+		"aspect" : { loader = LIBSTD_INT },
 	}
 
 func loadDebug():

@@ -101,7 +101,11 @@ var data = {
 		1, 3, 4
 	],
 	inventory = [
-		[["debug", "potion"], 5],
+		[["core", "nostrum"], 5],
+		[["core", "nostrum"], 5],
+		[["core", "nostrum"], 5],
+		[["core", "repair1"], 5],
+		[["core", "repair1"], 5],
 		[["debug", "grenade"], 5],
 	],
 	dragonGems = [

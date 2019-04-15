@@ -1,7 +1,7 @@
 extends Panel
 signal selection(x)
 
-var skillNode = load("res://nodes/UI/skill.tscn")
+var skillNode = load("res://nodes/UI/item.tscn")
 
 var buttons = []
 var target = null
@@ -20,7 +20,7 @@ func init(C):
 	for i in C.group.inventory:
 		S = core.lib.item.getIndex(i[0])
 		button = skillNode.instance()
-		button.init(S.name, i[1])
+		button.init(S, i[1])
 		$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
 		$ScrollContainer/VBoxContainer.add_child(button)
 		button.get_node("Button").connect("pressed", self, "chooseResult", [i])
@@ -40,21 +40,26 @@ func finish():
 
 func chooseResult(x):
 	modulate.a = 0.2			#Fade menu out a bit.
+	var result = controls.state.Action.new(controls.state.ACT_ITEM)
 	var I = core.lib.item.getIndex(x[0]) #Get pointer to skill.
+	result.IT = I
 	var S = core.lib.skill.getIndex(I.skills[0])
+	result.skill = S; result.skillTid = I.skills[0]; result.level = x[1]
 	target = core.skill.selectTargetAuto(S, x[1], currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()
-		emit_signal("selection", [controls.state.ACT_ITEM, I.skills[0], target, currentChar.currentWeapon])
+		result.target = target
+		emit_signal("selection", result)
 	else: #If not, show the target select dialog.
-		targetPanel.init(S, self)
+		targetPanel.init(S, self, x[1], I)
 		yield(targetPanel, "selection") #Wait for getTarget() to get called from target menu.
 		targetPanel.disconnect("selection", self, "getTarget") #TODO: Disconnect from the menu itself.
 		if target == null:
 			modulate.a = 1.0 #Selection was canceled so restore the window back to form.
 		else:
 			finish()
-			emit_signal("selection", [controls.state.ACT_ITEM, I.skills[0], target, currentChar.currentWeapon])
+			result.target = target
+			emit_signal("selection", result)
 
 func getTarget(x):
 	target = x

@@ -27,6 +27,8 @@ func update():
 			if bars[i] != null:
 				bars[i].stop()
 				bars[i] = null
+		else:
+			group.formation[i].display.update()
 
 func showBars(time):
 	for i in bars:

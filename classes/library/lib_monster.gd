@@ -37,7 +37,7 @@ var example = {
 			],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 1,
 			aiPattern = {
@@ -57,7 +57,7 @@ var example = {
 			statSpread = [[0045, 010, 030, 010, 010, 010, 010], [0500, 100, 300, 100, 100, 100, 100]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
 			skill = [ ["core", "defend"], ["debug", "bash"] ]
@@ -67,7 +67,7 @@ var example = {
 			statSpread = [[0045, 010, 010, 010, 030, 010, 010], [0500, 100, 100, 100, 300, 100, 100]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
 			skill = [ ["debug", "shoot"] ]
@@ -77,7 +77,7 @@ var example = {
 			statSpread = [[0045, 010, 010, 010, 010, 030, 030], [0500, 100, 100, 100, 100, 300, 300]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, raceFlags = skill.RACEF_MEC,
+			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
 			skill = [ ["debug", "slash"], ["debug", "shoot"], ["debug", "decoy"] ]
@@ -144,7 +144,7 @@ func initTemplate():
 		"OFF" : { loader = LIBSTD_ELEMENTDATA },									#Elemental offense
 		"RES" : { loader = LIBSTD_ELEMENTDATA },									#Elemental defense
 		"race" : { loader = LIBSTD_INT },													#Race type (for "slayer" effects)
-		"raceFlags" : { loader = LIBSTD_INT },										#Race flags (BIO/MEC/SPI), affects vulnerability to certain effects.
+		"aspect" : { loader = LIBSTD_INT },										#Race aspects (BIO/MEC/SPI), affects vulnerability to certain effects.
 		"defeatMsg" : { loader = LIBSTD_STRING, default = "%s was defeated!" },			#Message to display when defeated. "%s倒した！"
 		"ai" : { loader = LIBSTD_INT },														#AI mode
 		"aiPattern" : { loader = LIBEXT_AIPATTERN },							#AI pattern

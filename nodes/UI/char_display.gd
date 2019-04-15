@@ -95,15 +95,12 @@ func setActionText(act):
 		action = null
 		return
 	var S = null
-	if act.size() == 6:
-		if act[5] != null: #If a modified skill from a dragon gem exists, use it.
-			S = act[5]
-			print("[BATTLE STATE][addAction] Using override %s" % S.name)
-		else:
-			S = core.lib.skill.getIndex(act[1])
-	else: S = core.lib.skill.getIndex(act[1])
+	if act.override != null:
+		S = act.override
+		print("[BATTLE STATE][addAction] Using override %s" % S.name)
+	else: S = act.skill
 	var target = ""
-	if act[3][0] != null:
+	if act.target[0] != null:
 		match(S.target):
 			core.skill.TARGET_SELF:
 				target = "Self"
@@ -112,11 +109,11 @@ func setActionText(act):
 			core.skill.TARGET_ALL:
 				target = "All %s" % [ "party" if S.targetGroup == core.skill.TARGET_GROUP_ALLY else "enemy" ]
 			_:
-				target = act[3][0].name
-	$Action.text = "%s\n%s" % [S.name, target]
+				target = act.target[0].name
+	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.name, target]
 	$Action.show()
-	if S.chargeAnim[act[2]] != 0: charge(true)
-	if S.initAD[act[2]] != 100: updateAD(S.initAD[act[2]])
+	if S.chargeAnim[act.level] != 0: charge(true)
+	if S.initAD[act.level] != 100: updateAD(S.initAD[act.level])
 	action = true
 
 func highlight(b):
