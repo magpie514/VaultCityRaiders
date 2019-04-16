@@ -229,20 +229,27 @@ func defeat():
 	status = skill.STATUS_DOWN
 	print("%s is down" % name)
 
+
 func heal(x : int) -> void:
 	HP = int(clamp(HP + x, 0, maxHealth()))
 	if HP == 0:	defeat()
 	battle.turnHeal += x
 	display.damage([[-x, false, false, 0]])
 
-func overHeal(x, y):
+func overHeal(x, y) -> void:
 	var temp = maxHealth() + y
 	HP = int(clamp(HP+x, 0, temp))
 	if HP == 0:	defeat()
 	battle.turnHeal += x
 	display.damage([[-x, false, false, 0]])
 
-func inflict(x):
+func revive(x: int) -> void:
+	if status == skill.STATUS_DOWN:
+		status = skill.STATUS_NONE
+		heal(x)
+		display.update()
+
+func inflict(x) -> void:
 	status = x if HP > 0 else skill.STATUS_DOWN
 	display.message(skill.statusInfo[x].name, false, skill.statusInfo[x].color)
 

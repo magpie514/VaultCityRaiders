@@ -90,6 +90,24 @@ var example = {
 			],
 		},
 	},
+	"enemy" : {
+		"repair": {
+			name = "Repair",
+			description = "",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			energyDMG = true,
+			modStat = core.stats.STAT.LUC,
+			ranged = true,
+			accMod = [100,099,099,099,099,   099,099,099,099,099],
+			spdMod = [080,100,100,100,100,   100,100,100,100,100],
+			AD =     [105,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["enemy_revive" ,100,125,132,132,140, 140,147,147,147,160],
+			],
+		},
+	},
 	"sto_wp" : {
 		"sever": {
 			name = "Sever",
@@ -594,6 +612,7 @@ var example = {
 		"potion": {
 			name = "Healing",
 			category = skill.CAT_SUPPORT,
+			animations = "/nodes/FX/basic_heal.tscn",
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
@@ -602,6 +621,18 @@ var example = {
 				 ["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 				 ["stop",          001,001,001,001,001,  001,001,001,001,001],
 				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+			],
+		},
+		"revive": {
+			name = "Revive",
+			category = skill.CAT_SUPPORT,
+			animations = "/nodes/FX/basic_heal.tscn",
+			target = skill.TARGET_SINGLE,
+			filter = skill.FILTER_DOWN,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			ranged = true,
+			codeMN = [
+				["revive",       015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 			],
 		},
 		"illusion": {

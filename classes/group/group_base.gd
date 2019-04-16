@@ -38,6 +38,14 @@ func activeCount():
 				count += 1
 	return count
 
+func emptySlot() -> bool:
+	var result: bool = false
+	for i in formation:
+		if i == null:
+			result = true
+			break
+	return result
+
 func countRowTargets(row, size, filter) -> int:
 	var rowMembers = getRow(row, size)
 	var result : int = 0

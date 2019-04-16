@@ -38,7 +38,8 @@ func getTooltip():
 func defeat():
 	.defeat()
 	core.battle.control.state.EXP += (100 * XPMultiplier)
-
+	group.defeated.push_front(self)
+	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
 	if sprDisplay != null:
 		sprDisplay.defeat()
 
@@ -161,6 +162,17 @@ func thinkPattern(F, P, state, aiPattern):
 				targetHint = pattern[index][3][1]
 			S = core.lib.skill.getIndex(action)
 			print("[PICK 2 IF WEAK, (%s, %s), %s]" % [temp, int(getHealthN() * 100), S.name])
+		core.lib.monster.AIPATTERN_PICK_2_IF_CAN_REVIVE:
+			if not group.canRevive():
+				action = skills[pattern[index][1][0]]
+				temp = "true"
+				targetHint = pattern[index][1][1]
+			else:
+				action = skills[pattern[index][2][0]]
+				temp = "false"
+				targetHint = pattern[index][2][1]
+			S = core.lib.skill.getIndex(action)
+			print("[PICK 2 IF CAN_REVIVE, (%s, %s), %s]" % [temp, int(getHealthN() * 100), S.name])
 		_:
 			action = skills[0]
 			targetHint = core.lib.monster.AITARGET_RANDOM

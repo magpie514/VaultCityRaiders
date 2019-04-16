@@ -513,6 +513,9 @@ func damage(x, data, silent = false) -> Array:
 		display.damageShake()
 	return info
 
+func revive(x: int) -> void:
+	.revive(x)
+
 func charge(x : bool = false) -> void:
 	if display != null:
 		display.charge(x)

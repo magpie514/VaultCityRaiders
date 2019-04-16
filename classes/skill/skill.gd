@@ -350,6 +350,9 @@ enum {
 	# Player only specials #######################################################
 	OPCODE_EXP_BONUS,					#Increases EXP given by enemy at the end of battle.
 
+	# Enemy only specials ########################################################
+	OPCODE_ENEMY_REVIVE,			#[+]Revives a fallen enemy.
+
 	# Control flow ###############################################################
 	OPCODE_STOP,							#Stop execution.
 	OPCODE_JUMP,							#Jump (Continue execution from given line).
@@ -490,6 +493,7 @@ const opCode = {
 	"ef_mult" : OPCODE_FIELD_MULT,
 
 	"exp_bonus" : OPCODE_EXP_BONUS,
+	"enemy_revive" : OPCODE_ENEMY_REVIVE,
 
 	"printmsg" : OPCODE_PRINTMSG,
 	"linkskill" : OPCODE_LINKSKILL,
@@ -1789,6 +1793,18 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">RESTORE PART: %s" % value)
 					OPCODE_REVIVE:
 						print(">REVIVE: %s" % value)
+						dmg = 0
+						if flags & OPFLAGS_HEAL_BONUS:
+							dmg = calculateHeal(a, state.healBonus)
+							print("Bonus healing: %s" % [dmg])
+						if flags & OPFLAGS_VALUE_ABSOLUTE:
+							dmg += value
+						elif flags & OPFLAGS_VALUE_PERCENT:
+							dmg += 999 #TODO: Heal X%
+						else:
+							dmg += calculateHeal(a, value)
+						dmg = processHeal(S, state, user, target, dmg)
+						variableTarget.revive(dmg)
 					OPCODE_OVERHEAL:
 						print(">OVERHEAL: %s" % value)
 # Standard effect functions ####################################################
@@ -2000,7 +2016,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							yield(controlNode.wait(0.01), "timeout")
 					OPCODE_PLAYANIM:
 						print(">PLAY ANIMATION: %s" % value)
-						controlNode.startAnim(S, level, S.animations[0], target.display)
+						controlNode.startAnim(S, level, 0, target.display)
 						yield(controlNode, "fx_finished")
 					OPCODE_WAIT:
 						print(">WAIT: %s" % value)
@@ -2012,6 +2028,13 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							target.XPMultiplier += (float(value) * 0.01)
 						else:
 							print("EXP_BONUS not applied, target is not an enemy.")
+# Enemy only specials ##########################################################
+					OPCODE_ENEMY_REVIVE:
+						print(">ENEMY REVIVE: %s" % value)
+						if user is core.Enemy:
+							user.group.revive(value)
+						else:
+							print("User is not an enemy, no effect.")
 # Flow control #################################################################
 					OPCODE_STOP:
 						print(">STOP")

@@ -42,6 +42,17 @@ var example = {
 				["debug", "potion"],
 			]
 		},
+		"lifeshrd" : {
+			name = "Life Shard",
+			description = "Can bring even machines and spirits from the brink of death.",
+			value = [00050, 00000, 00000, 00000, 00000,   00000, 00000, 00000, 00000, 00000],
+			category = 0,
+			maxLevel = 10,
+			skill = [001, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+			skills = [
+				["debug", "revive"],
+			]
+		},
 	}
 }
 

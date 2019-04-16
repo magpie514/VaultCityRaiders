@@ -3,11 +3,17 @@ extends Node2D
 var lock : bool = false
 var chr = null
 
-func init(spr, C):
+func init(spr, C, slot):
 	chr = C
 	$AnimationPlayer.play("BEGIN")
 	$Sprite.texture = load(spr)
 	lock = false
+	if slot < 5:
+		scale = Vector2(1.2, 1.2)
+	else:
+		modulate.v = 0.8
+
+
 
 func act():
 	if lock: return

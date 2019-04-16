@@ -11,14 +11,8 @@ func init(_group):
 	group.display = self
 	for i in range(10):
 		if group.formation[i] != null:
-			node = _bar.instance()
-			add_child(node)
-			node.rect_position = Vector2(i * width, 100) if i < 5 else Vector2((i - 5) * width, 30)
-			node.resize(Vector2(width - 2, 8))
-			node.get_node("ComplexBar").value = group.formation[i].getHealthN()
-			node.init(group.formation[i])
-			group.formation[i].display = node
-			bars[i] = node
+			bars[i] = createDisplay(i)
+			group.formation[i].sprDisplay = group.initSprite(group.formation[i], i)
 			bars[i].fadeTo(0.1, 5.0)
 
 func update():
@@ -29,6 +23,21 @@ func update():
 				bars[i] = null
 		else:
 			group.formation[i].display.update()
+
+func revive(C, slot) -> void:
+	bars[slot] = createDisplay(slot)
+	group.formation[slot].sprDisplay = group.initSprite(group.formation[slot], slot)
+
+func createDisplay(slot):
+	var node = _bar.instance()
+	node.rect_position = Vector2(slot * width, 100) if slot < 5 else Vector2((slot - 5) * width, 30)
+	node.resize(Vector2(width - 2, 8))
+	node.get_node("ComplexBar").value = group.formation[slot].getHealthN()
+	node.init(group.formation[slot])
+	group.formation[slot].display = node
+	add_child(node)
+	return node
+
 
 func showBars(time):
 	for i in bars:
@@ -52,4 +61,3 @@ func disconnectUISignals(obj):
 		if group.formation[i] != null:
 			bars[i].disconnect("display_info", obj, "showInfo")
 			bars[i].disconnect("hide_info", obj, "hideInfo")
-

@@ -4,7 +4,8 @@ var battle = {
 	enemy = null,
 	bgm = null,
 	control = null,
-	skillControl = null
+	skillControl = null,
+	background = null,
 }
 var lib = {
 	race = null,

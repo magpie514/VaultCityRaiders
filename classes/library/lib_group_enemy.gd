@@ -17,7 +17,7 @@ var example = {
 		"debug0" : {
 			name = "Debug Bots",
 			formation = [
-				{tid = ["debug", "debug"], level = 5, flags = null}, null, {tid = ["debug", "debug1"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},
+				{tid = ["debug", "debug4"], level = 5, flags = null}, null, {tid = ["debug", "debug1"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},
 				null, null, null, null,	null
 			]
 		},

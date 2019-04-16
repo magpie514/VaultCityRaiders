@@ -291,11 +291,14 @@ func printQueueTargets(a):
 func printQueue():
 	print("= Action queue =")
 	print("Actions: %s" % actionQueue.size())
+	print("Revive enemies: %s" % str(formations[SIDE_ENEMY].defeated))
 	for i in actionQueue:
 		print("[%1s]%s %sL%02d SPD:%s>%s" % [i.user.slot, i.user.name, i.skillTid, i.level, i.spd, printQueueTargets(i.target)])
 
 func printQueuePanel():
 	var result = "= Action Queue =\n"
+	result += ("Actions: %s\n" % actionQueue.size())
+	result += ("Revive enemies: %s\n" % str(formations[SIDE_ENEMY].defeated))
 	for i in actionQueue:
 		result += str("[%1s]%s %sL%02d SPD:%s>%s\n" % [i.user.slot, i.user.name, i.skillTid, i.level, i.spd, printQueueTargets(i.target)])
 	return result

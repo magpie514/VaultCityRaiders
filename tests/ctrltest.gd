@@ -151,6 +151,7 @@ func _ready():
 	$SkillController.speed = battleSpeed
 	core.battle.control = self
 	core.battle.skillControl = $SkillController
+	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
 	state.init(testguild, testmform, self)
 	$Panel/BattleControls.init(state, self)
 	$Panel/BattleControls.hide()
