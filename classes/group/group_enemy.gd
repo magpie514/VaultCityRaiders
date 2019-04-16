@@ -1,5 +1,5 @@
 extends "res://classes/group/group_base.gd"
-var monster = preload("res://classes/char/char_enemy.gd")
+var enemy = preload("res://classes/char/char_enemy.gd")
 
 const ROW_SIZE = 5
 const MAX_SIZE = ROW_SIZE * 2
@@ -36,11 +36,17 @@ func initSprite(C, slot):
 	return null
 
 func initMember(d, lvbonus):
-	var m = monster.new()
+	var m = enemy.new()
 	m.level = d.level + lvbonus
 	m.tid = d.tid
-	m.initDict(core.lib.monster.getIndex(d.tid))
+	m.initDict(core.lib.enemy.getIndex(d.tid))
 	return m
+	
+func defeat(slot:int, C):
+	formation[slot].display.stop()
+	formation[slot] = null
+	defeated.push_front(C)
+	display.bars[slot] = null
 
 func revive(x: int) -> void:
 	#Only get here if AI determined a revive is possible

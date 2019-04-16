@@ -38,10 +38,11 @@ func getTooltip():
 func defeat():
 	.defeat()
 	core.battle.control.state.EXP += (100 * XPMultiplier)
-	group.defeated.push_front(self)
+	group.defeat(slot, self)
 	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
 	if sprDisplay != null:
 		sprDisplay.defeat()
+	display.stop()
 
 func damage(x, data, silent = false) -> Array:
 	var info : Array = .damage(x, data, silent)
@@ -116,7 +117,7 @@ func thinkRandom(F, P, state) -> Array:
 func thinkPattern(F, P, state, aiPattern):
 	var pattern = aiPattern.pattern
 	var index = (state.turn - 1) % pattern.size()
-	var targetHint = core.lib.monster.AITARGET_RANDOM
+	var targetHint = core.lib.enemy.AITARGET_RANDOM
 	var action = null
 	var S = null
 	var target = null
@@ -124,12 +125,12 @@ func thinkPattern(F, P, state, aiPattern):
 	if index <= pattern.size():
 		print("turn %s, index %s:" % [state.turn, index])
 	match pattern[index][0]:
-		core.lib.monster.AIPATTERN_SIMPLE:
+		core.lib.enemy.AIPATTERN_SIMPLE:
 			action = skills[(pattern[index][1][0])]
 			targetHint = pattern[index][1][1]
 			S = core.lib.skill.getIndex(action)
 			print("[SIMPLE, %s]" % [S.name])
-		core.lib.monster.AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY:
+		core.lib.enemy.AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY:
 			action = skills[(pattern[index][1][0])]
 			targetHint = pattern[index][1][1]
 			temp = "false"
@@ -140,7 +141,7 @@ func thinkPattern(F, P, state, aiPattern):
 			S = core.lib.skill.getIndex(action)
 			print("[PICK_2_IF_ALLY_USED_1_ALREADY, %s, %s]" % [temp, S.name])
 
-		core.lib.monster.AIPATTERN_PICK_RANDOMLY:
+		core.lib.enemy.AIPATTERN_PICK_RANDOMLY:
 			if core.chance(pattern[index][1]):
 				action = skills[pattern[index][2][0]]
 				temp = "true"
@@ -151,7 +152,7 @@ func thinkPattern(F, P, state, aiPattern):
 				targetHint = pattern[index][3][1]
 			S = core.lib.skill.getIndex(action)
 			print("[PICK RANDOMLY, (%s), %s]" % [temp, S.name])
-		core.lib.monster.AIPATTERN_PICK_2_IF_WEAK:
+		core.lib.enemy.AIPATTERN_PICK_2_IF_WEAK:
 			if int(getHealthN() * 100) <= pattern[index][1]:
 				action = skills[pattern[index][2][0]]
 				temp = "true"
@@ -162,7 +163,7 @@ func thinkPattern(F, P, state, aiPattern):
 				targetHint = pattern[index][3][1]
 			S = core.lib.skill.getIndex(action)
 			print("[PICK 2 IF WEAK, (%s, %s), %s]" % [temp, int(getHealthN() * 100), S.name])
-		core.lib.monster.AIPATTERN_PICK_2_IF_CAN_REVIVE:
+		core.lib.enemy.AIPATTERN_PICK_2_IF_CAN_REVIVE:
 			if not group.canRevive():
 				action = skills[pattern[index][1][0]]
 				temp = "true"
@@ -175,7 +176,7 @@ func thinkPattern(F, P, state, aiPattern):
 			print("[PICK 2 IF CAN_REVIVE, (%s, %s), %s]" % [temp, int(getHealthN() * 100), S.name])
 		_:
 			action = skills[0]
-			targetHint = core.lib.monster.AITARGET_RANDOM
+			targetHint = core.lib.enemy.AITARGET_RANDOM
 			S = core.lib.skill.getIndex(action)
 			print("[ERROR, using %s]" % [S.name])
 	match targetHint:

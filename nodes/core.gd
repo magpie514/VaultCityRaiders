@@ -11,7 +11,7 @@ var lib = {
 	race = null,
 	aclass = null,
 	weapon = null,
-	monster = null,
+	enemy = null,
 	mform = null,
 	skill = null,
 	item = null
@@ -307,8 +307,8 @@ func initLibs():
 	lib.race.loadDebug()
 	lib.aclass = load("res://classes/library/lib_class.gd").new()
 	lib.aclass.loadDebug()
-	lib.monster = load("res://classes/library/lib_monster.gd").new()
-	lib.monster.loadDebug()
+	lib.enemy = load("res://classes/library/lib_enemy.gd").new()
+	lib.enemy.loadDebug()
 	lib.weapon = load("res://classes/library/lib_weapon.gd").new()
 	lib.weapon.loadDebug()
 	lib.mform = load("res://classes/library/lib_group_enemy.gd").new()

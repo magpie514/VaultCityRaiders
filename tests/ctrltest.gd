@@ -130,8 +130,8 @@ func battle():
 					state.updateActions(A)
 					state.sort()
 					yield(wait(1.0), "timeout")
-					$Panel/EnemyGroupDisplay.update()
 					$Panel/GuildDisplay.update()
+					$Panel/EnemyGroupDisplay.update()
 					$Panel/FieldEffect.updateDisplay(state.field)
 					if A.side == state.SIDE_PLAYER: A.user.display.highlight(false)
 					if checkResolution(): return
