@@ -46,7 +46,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=3]
 resource_name = "CHARGE"
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
@@ -61,7 +61,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 0, 100, 100, 1 ), Color( 100, 100, 100, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=4]
 length = 0.351434
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
@@ -76,7 +76,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 100, 0, 0, 1 ), Color( 100, 100, 100, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=5]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
 tracks/0/interp = 2
@@ -101,9 +101,9 @@ region_rect = Rect2( 4, 58, 121, 154 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/ACTION = SubResource( 1 )
 anims/BEGIN = SubResource( 2 )
-anims/CHARGE = SubResource( 5 )
-anims/DAMAGE = SubResource( 3 )
-anims/DEFEAT = SubResource( 4 )
+anims/CHARGE = SubResource( 3 )
+anims/DAMAGE = SubResource( 4 )
+anims/DEFEAT = SubResource( 5 )
 
 [node name="Charge" parent="." instance=ExtResource( 3 )]
 position = Vector2( 0, -100 )
