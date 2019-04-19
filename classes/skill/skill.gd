@@ -15,6 +15,7 @@ enum { #Category
 	CAT_FIELD,				#Skill that can be used for events
 }
 
+
 enum { #Filter
 #Whenever any skill activates (for every number of activations), the skill will test based on filter
 #If failed, the attack fails (as opposed to missing).
