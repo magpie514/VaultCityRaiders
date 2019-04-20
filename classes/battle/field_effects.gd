@@ -41,7 +41,7 @@ func update() -> void: #TODO: Count number of chains and individual elements
 	var last : int = 0
 	var temp : int = 0
 	var highestChain : int = 0
-	var chain : int = 0
+	var chainCount : int = 0
 	var chainElem : int = 0
 	var _chains : Array = core.newArray(bonus.size())
 	var totalChains : int = 0
@@ -58,12 +58,12 @@ func update() -> void: #TODO: Count number of chains and individual elements
 				if chainElem != temp:
 					_chains[temp] += 1
 					chainElem = temp
-				chain += 1
-				if chain > highestChain: highestChain = chain
+				chainCount += 1
+				if chainCount > highestChain: highestChain = chainCount
 				bonus[temp] += 1 #if temp != 0 else 0
 				if bonus[temp] >= 23: bonus[temp] = 25
 			else:
-				chain = 0
+				chainCount = 0
 				chainElem = 0
 			last = temp
 	temp = 0

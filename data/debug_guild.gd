@@ -108,6 +108,7 @@ var data = {
 		[["core", "repair1"], 5],
 		[["core", "lifeshrd"], 1],
 		[["debug", "grenade"], 5],
+		[["core", "defshrd"], 1],
 	],
 	dragonGems = [
 		[["core", "flame"], 0],

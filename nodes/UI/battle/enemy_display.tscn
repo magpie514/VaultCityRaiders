@@ -49,9 +49,9 @@ align = 1
 [node name="Tween" type="Tween" parent="."]
 
 [node name="AD" parent="." instance=ExtResource( 5 )]
-margin_left = 5.0
+margin_left = 6.0
 margin_top = 2.0
-margin_right = 21.0
+margin_right = 22.0
 margin_bottom = 18.0
 [connection signal="mouse_entered" from="." to="." method="_on_EnemyDisplay_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_EnemyDisplay_mouse_exited"]

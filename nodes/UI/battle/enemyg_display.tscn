@@ -10,8 +10,8 @@ corner_detail = 1
 anti_aliasing = false
 
 [node name="EnemyGroupDisplay" type="Control"]
-margin_right = 680.0
-margin_bottom = 120.0
+margin_right = 960.0
+margin_bottom = 60.0
 script = ExtResource( 1 )
 
 [node name="Panel" type="Panel" parent="."]

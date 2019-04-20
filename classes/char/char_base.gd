@@ -47,7 +47,7 @@ class BattleStats:
   # Onhit activations #########################################################################
 	var follow : Array = []           #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
 	var combo : Array = []            #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
-	var counter : Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 1, core.skill.PARRY_NONE]
+	var counter : Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
 	var delayed : Array = []          #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
 	# Defensive stats ###########################################################################
 	var AD : int = 100                #Active Defense. Global final damage multiplier.
@@ -151,13 +151,13 @@ func getHealthN(): #Get normalized health as a float from 0 to 1.
 func fullHeal():
 	self.HP = maxHealth()
 
-func calcSPD(S, level) -> int:
+func calcSPD(S, lv) -> int:
 #[(Equipment Speed Mod + 100) * AGI * Skill Speed Mod * Random number between 90 and 110 / 10000] * Modifiers
-	level -= 1
+	lv -= 1
 	var equipSpeedMod = float(getEquipSpeedMod() + 100)
 	var AGI = battle.stat.AGI
 	var mod = 100 #90 + ( randi() % 20 )
-	var skillSpeedMod = float(S.spdMod[level]) * 0.01
+	var skillSpeedMod = float(S.spdMod[lv]) * 0.01
 	#return (equipSpeedMod * AGI * skillSpeedMod * mod * statBonus.mult.SPD) / 10000
 	return int((equipSpeedMod * AGI * skillSpeedMod * mod) / 10000)
 
@@ -265,7 +265,7 @@ func checkProtect(S):
 				return [true, i[0]]
 		return [false, self]
 
-func addEffect(S, level, user):
+func addEffect(S, lv, user):
 	#TODO: Effects with duration 0 should be added to the stack anyway and removed at the end of turn.
 	if S != null:
 		var holder = null
@@ -276,13 +276,13 @@ func addEffect(S, level, user):
 				holder = battle.debuff
 			_:
 				holder = battle.effect
-		var tempLV = int(clamp(level - 1, 0, 9))
+		var tempLV = int(clamp(lv - 1, 0, 9))
 		var E = [S, tempLV, S.effectDuration[tempLV], user]
 		var check = checkEffectRefresh(holder, E)
 		if check != null:
 			refreshEffect(check, E, holder)
 		else:
-			print("Adding effect %sL%s to %s, duration %s" % [S.name, level, user.name, E[2]])
+			print("Adding effect %sL%s to %s, duration %s" % [S.name, tempLV, user.name, E[2]])
 			holder.push_back(E)
 			initEffect(E, true)
 			display.message(S.name, false, "FF0000" if S.effectType == skill.EFFTYPE_DEBUFF else "3252FF")
@@ -325,13 +325,13 @@ func findEffects(S) -> bool:
 
 func initEffect(E, runEF = false) -> void:
 	var S = E[0]
-	var level = E[1]
+	var lv = E[1]
 	if S.effect & skill.EFFECT_STATS:
-		calculateEffectStats(S, level)
+		calculateEffectStats(S, lv)
 	if S.effect & skill.EFFECT_SPECIAL and runEF:
 		skill.processEF(S, level + 1, E[3], self)
 
-func calculateEffectStats(S, level):
+func calculateEffectStats(S, lv):
 	var temp = null
 	var stdout = str("%s stat changes from %s:" % [name, S.name])
 	var K = skill.EffectStat
@@ -342,38 +342,38 @@ func calculateEffectStats(S, level):
 				"EFFSTAT_BASE":
 					for i in stats.STATS:
 						if temp.has(i) and S.effectStats & K.EFFSTAT_BASE:
-							battle.stat[i] += temp[i][level]
-							stdout += str("%s+%s " % [i, temp[i][level]])
+							battle.stat[i] += temp[i][lv]
+							stdout += str("%s+%s " % [i, temp[i][lv]])
 				"EFFSTAT_BASEMULT":
 					for i in stats.STATS:
 						if temp.has(i) and S.effectStats & K.EFFSTAT_BASEMULT:
 							battle.statmult[i] += temp[i][level]
-							stdout += str("%s+%s%% " % [i, temp[i][level]])
+							stdout += str("%s+%s%% " % [i, temp[i][lv]])
 				"EFFSTAT_OFF":
 					for i in stats.ELEMENTS:
 						if temp.has(i) and S.effectStats & K.EFFSTAT_OFF:
 							battle.stat.OFF[i] += temp[i][level]
-							stdout += str("%s+%s " % [i, temp[i][level]])
+							stdout += str("%s+%s " % [i, temp[i][lv]])
 				"EFFSTAT_RES":
 					for i in stats.ELEMENTS:
 						if temp.has(i) and S.effectStats & K.EFFSTAT_RES:
 							battle.stat.RES[i] += temp[i][level]
-							stdout += str("%s+%s " % [i, temp[i][level]])
+							stdout += str("%s+%s " % [i, temp[i][lv]])
 				"EFFSTAT_GUARD":
 					if S.effectStats & K.EFFSTAT_GUARD:
 						battle.guard += temp[level]
-						stdout += str("Guard+%s " % [temp[level]])
+						stdout += str("Guard+%s " % [temp[lv]])
 				"EFFSTAT_BARRIER":
 					if S.effectStats & K.EFFSTAT_BARRIER:
 						battle.barrier += temp[level]
-						stdout += str("Barrier+%s " % [temp[level]])
+						stdout += str("Barrier+%s " % [temp[lv]])
 				"EFFSTAT_EVASION":
 					if S.effectStats & K.EFFSTAT_EVASION:
-						stdout += str("Evasion+%s " % [temp[level]])
+						stdout += str("Evasion+%s " % [temp[lv]])
 				"EFFSTAT_DECOY":
 					if S.effectStats & K.EFFSTAT_DECOY:
 						battle.decoy += temp[level]
-						stdout += str("Drawrate+%s " % [temp[level]])
+						stdout += str("Drawrate+%s " % [temp[lv]])
 	print(stdout)
 
 func updateEffects(holder, defer):
@@ -411,7 +411,7 @@ func canAct() -> bool:
 		skill.STATUS_STUN:    return false
 		_:                    return true
 
-func canFollow(S, level, target) -> bool:
+func canFollow(S, lv, target) -> bool:
 	if canAct():
 		if target.filter(S.filter):
 			return true
@@ -426,11 +426,14 @@ func updateFollows() -> void:
 
 func canCounter(target, element: int, data: Array):
 	var C = battle.counter
-	if C[2] != null and C[5] > 0:
-		if C[4] == 0 or C[4] == element:
+	print("[CHAR_BASE][canCounter] Checking for counter...")
+	if C[2] != null and C[5] > 0: #Check if skill isn't null and there are enough uses left.
+		print("[CHAR_BASE][canCounter] Skill: %s, Chance: %d%%, Uses = %d" % [C[2].name, C[0], C[5]])
+		if C[4] == 0 or C[4] == element: #If counter element isn't set to non elemental or element counter is set to this element.
 			if canFollow(C[2], C[3], target) and core.chance(C[0]):
 				C[0] -= C[1]
 				C[5] -= 1
+				print("[CHAR_BASE][canCounter] Counter status: Rate:%d%%, Decrement:-%d%%, Skill: %s, Level = %d, Max = %d" % [C[0], C[1], C[2].name, C[3], C[5]])
 				return [true, [self, C[0], C[1], C[2], C[3], C[4]]]
 	return [false, null]
 
@@ -457,9 +460,9 @@ func filter(f) -> bool:
 func refreshRow() -> void:
 	row = 0 if slot < group.ROW_SIZE else 1
 
-func setInitAD(S, level) -> void:
-	setAD(S.initAD[level], true)
+func setInitAD(S, lv) -> void:
+	setAD(S.initAD[lv], true)
 	print("[SKILL][setInitAD] Active Defense set to %d" % battle.AD)
 
-func useBattleSkill(state, act:int, S, level:int, targets, WP = null, IT = null) -> void:
-	core.skill.process(S, level, self, targets, WP, IT)
+func useBattleSkill(state, act:int, S, lv:int, targets, WP = null, IT = null) -> void:
+	core.skill.process(S, lv, self, targets, WP, IT)

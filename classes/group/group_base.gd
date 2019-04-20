@@ -4,6 +4,7 @@ const BACK_ROW = 1
 var name : String = ""
 var formation = null
 var lastElement : int = 0
+var versus = null
 
 func getRow(row, size) -> Array:
 	var result = []
@@ -11,6 +12,22 @@ func getRow(row, size) -> Array:
 	for i in range(st, st + size):
 		if formation[i] != null:
 			result.push_front(formation[i])
+	return result
+
+func getRowIter(row) -> Array:
+	return []
+
+func getEmptySlots(row = -1, size = 3) -> Array:
+	var result = []
+	if row >= 0:
+		var st = row * size
+		for i in range(st, st + size):
+			if formation[i] == null:
+				result.push_front(i)
+	elif row == -1:
+		for i in range(formation.size()):
+			if formation[i] == null:
+				result.push_front(i)
 	return result
 
 func swapMembers(slot1, slot2):

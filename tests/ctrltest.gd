@@ -148,6 +148,8 @@ func battle():
 func _ready():
 	testguild = core.guild
 	testmform = core.battle.enemy
+	testmform.versus = testguild
+	testguild.versus = testmform
 	$SkillController.speed = battleSpeed
 	core.battle.control = self
 	core.battle.skillControl = $SkillController

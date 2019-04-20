@@ -5,11 +5,10 @@ var _targetButton = load("res://nodes/UI/target_button.tscn")
 
 var buttons = []
 var rows = [[],[]]
-var group = null
 var controls = null
 var skill = null
 var state = null
-var level = 0
+var _level = 0
 
 func makeEntry(chr, prev):
 	var result = {
@@ -92,7 +91,7 @@ func disconnectUISignals(obj):
 func targetSelectSignal(x):
 	hide()
 	var result = null
-	match skill.target[level]:
+	match skill.target[_level]:
 		core.skill.TARGET_SPREAD:
 			var who = null
 			result = [x]
@@ -122,7 +121,7 @@ func onHighlight(chr, b):
 	for i in buttons:
 		if i.chr == chr:
 			who = i
-	match(skill.target[level]):
+	match(skill.target[_level]):
 		core.skill.TARGET_SPREAD:
 			if who.next != null:
 				if not who.next.button.disabled:

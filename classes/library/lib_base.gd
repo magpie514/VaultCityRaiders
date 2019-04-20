@@ -11,6 +11,7 @@ const LIBSTD_STATSPREAD = "loaderStatSpread"
 const LIBSTD_ELEMENTDATA = "loaderElementData"
 const LIBSTD_SKILL_ARRAY = "loaderSkillArray"
 const LIBSTD_SKILL_LIST = "loaderSkillList"
+const LIBSTD_SUMMONS = "loaderSummons"
 
 func initTemplate():
 	return null
@@ -174,4 +175,23 @@ func loaderSkillArray(val):
 		TYPE_NIL:
 			for i in range(10):
 				result[i] = int(0)
+	return result
+	
+func loaderSummons(val):
+	if val == null or typeof(val) != TYPE_ARRAY:
+		return null
+	var result = []
+	for i in range(val.size()):
+		var tmp = val[i]
+		var entry = {}
+		entry.tid = core.tid.fromArray(tmp.tid if "tid" in tmp else ["debug", "debug"])
+		entry.level = int(tmp.level if "level" in tmp else 1)
+		entry.amount = int(tmp.amount if "amount" in tmp else 1)
+		entry.amount = int(clamp(entry.amount, 0, 4)) #Prevent more than 4 summons at once because come on.
+		entry.chance = int(tmp.chance if "chance" in tmp else 95)
+		entry.restrictRow = int(tmp.restrictRow if "restrictRow" in tmp else 0)
+		entry.msg = str(tmp.msg if "msg" in tmp else "{name} came to help!")
+		entry.failmsg = str(tmp.failmsg if "failmsg" in tmp else "But nobody came...")
+		entry.center = bool(tmp.center if "center" in tmp else true)
+		result.push_back(entry)
 	return result

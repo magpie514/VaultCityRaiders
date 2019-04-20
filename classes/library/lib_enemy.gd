@@ -3,7 +3,6 @@ var skill = core.skill
 
 const LIBEXT_AIPATTERN = "loaderAIPattern"
 
-
 enum {
 	AIPATTERN_SIMPLE,
 	AIPATTERN_PICK_RANDOMLY,
@@ -23,10 +22,34 @@ enum {
  AITARGET_RANDOM,
  AITARGET_WEAKEST,
  AITARGET_ALLY_WEAKEST,
+ AITARGET_SUMMONER
 }
 
 
 var example = {
+	"story" : {
+		"lunablaz": {
+			name = "Flame From Beyond",
+			spriteFile = "res://resources/images/flame_from_beyond.png",
+			description = "An anomaly of time, burning with the heat from times unknown.",
+			statSpread = [
+				[0045, 001, 038, 012, 015, 011, 005],
+				[0250, 001, 135, 125, 096, 120, 050]
+			],
+			OFF = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
+			RES = [ 075, 075, 125,  005, 125, 050,  100, 100, 110 ],
+			defeatMsg = "%s vanished!",
+			ai = 1,
+			aiPattern = {
+				pattern = [
+					[AIPATTERN_SIMPLE, [0, AITARGET_SUMMONER]],
+					[AIPATTERN_SIMPLE, [1, AITARGET_RANDOM]],
+				],
+				flags = AIPATTERN_LOOP,
+			},
+			skill = [ ["gem", "firewave"], ["debug", "sprshot"] ]
+		}
+	},
 	"debug" : {
 		"debug": {
 			name = "Debugger",
@@ -51,7 +74,7 @@ var example = {
 				flags = 0,
 				loopFrom = 1,
 			},
-			skill = [ ["debug", "bash"], ["debug", "defdown"], ["debug", "shoot"], ["core", "defend"] ]
+			skill = [ ["debug", "alertstc"], ["debug", "defdown"], ["debug", "shoot"], ["core", "defend"] ]
 		}, "debug1": {
 			name = "Solid Debugger",
 			description = "Combat testing robot specialized in high kinetic defense.",
@@ -95,7 +118,7 @@ var example = {
 			aiPattern = {
 				pattern = [
 #					[AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY, [1, AITARGET_RANDOM], [2, AITARGET_RANDOM]],
-					[AIPATTERN_PICK_2_IF_CAN_REVIVE, [1, AITARGET_RANDOM], [2, AITARGET_SELF]],
+					[AIPATTERN_PICK_2_IF_CAN_REVIVE, [1, AITARGET_ALLY_WEAKEST], [2, AITARGET_SELF]],
 				],
 				flags = 0,
 				loopFrom = 1,
@@ -160,6 +183,7 @@ func initTemplate():
 		"name" : { loader = LIBSTD_STRING },											#Enemy name
 		"spriteFile" : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
 		"energyColor" : { loader = LIBSTD_STRING, default = "#AAFFFF" },
+		"summons" : { loader = LIBSTD_SUMMONS },									#Summon data
 		"description" : { loader = LIBSTD_STRING },								#Enemy description
 		"statSpread" : { loader = LIBSTD_STATSPREAD },						#Stat spread
 		"OFF" : { loader = LIBSTD_ELEMENTDATA },									#Elemental offense

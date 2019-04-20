@@ -5,10 +5,14 @@ const DragonGem = adventurer.DragonGem
 const ROW_SIZE = 3
 const MAX_SIZE = ROW_SIZE * 2
 
+const ROW_ITER = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+
+
+
 var roster : Array = core.newArray(24)
 var formationSlots : Array = core.newArray(MAX_SIZE)
 var dragonGems : Array = []
-var mons : Array = core.newArray(6)
+var mons : Array = core.newArray(6) #Monster party.
 var guest : adventurer = null
 var funds : int = 0
 var inventory = null
@@ -111,3 +115,6 @@ func healAll():
 		if i != null:
 			i.status = core.skill.STATUS_NONE
 			i.fullHeal()
+
+func getRowIter(row: int) -> Array:
+	return ROW_ITER[row % 2]

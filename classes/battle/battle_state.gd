@@ -255,7 +255,7 @@ func checkPriorityActions():
 		collectPriorityActions(i, temp)
 		#Set Active Defense for all participants
 		#TODO: Ensure this isn't done twice for Over skills or multiple actions?
-		i.user.setInitAD(i.skill, i.level)
+		i.user.setInitAD(i.skill, i.level - 1)
 	if temp.size() > 0:
 		for i in temp:
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
@@ -264,6 +264,7 @@ func checkPriorityActions():
 			core.skill.processPR(i[0], i[1], i[2])
 			yield(controlNode, "skill_finished")
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(false)
+			i[2].display.update()
 			print("[BATTLE_STATE][checkPriorityActions] PR returned!")
 			yield(core.battle.control.wait(0.5), "timeout")
 			print("[BATTLE_STATE][checkPriorityActions]")

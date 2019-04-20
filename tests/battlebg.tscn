@@ -13,11 +13,10 @@ script = ExtResource( 1 )
 position = Vector2( -340, -285 )
 
 [node name="Enemy" type="Node2D" parent="."]
-editor/display_folded = true
 position = Vector2( 220, 95 )
 
 [node name="B1" type="Position2D" parent="Enemy"]
-position = Vector2( -262, 146 )
+position = Vector2( -288, 140 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/B1"]
 visible = false
@@ -34,7 +33,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="B2" type="Position2D" parent="Enemy"]
-position = Vector2( -142, 146 )
+position = Vector2( -152, 140 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/B2"]
 visible = false
@@ -51,7 +50,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="B3" type="Position2D" parent="Enemy"]
-position = Vector2( -32, 146 )
+position = Vector2( -32, 140 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/B3"]
 visible = false
@@ -68,7 +67,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="B4" type="Position2D" parent="Enemy"]
-position = Vector2( 78, 145 )
+position = Vector2( 78, 140 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/B4"]
 visible = false
@@ -85,7 +84,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="B5" type="Position2D" parent="Enemy"]
-position = Vector2( 198, 146 )
+position = Vector2( 214, 140 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/B5"]
 visible = false
@@ -102,7 +101,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="F1" type="Position2D" parent="Enemy"]
-position = Vector2( -304, 195 )
+position = Vector2( -424, 200 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/F1"]
 visible = false
@@ -119,7 +118,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="F2" type="Position2D" parent="Enemy"]
-position = Vector2( -168, 195 )
+position = Vector2( -220, 200 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/F2"]
 visible = false
@@ -136,7 +135,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="F3" type="Position2D" parent="Enemy"]
-position = Vector2( -32, 195 )
+position = Vector2( -32, 200 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/F3"]
 visible = false
@@ -153,7 +152,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="F4" type="Position2D" parent="Enemy"]
-position = Vector2( 104, 195 )
+position = Vector2( 146, 200 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/F4"]
 visible = false
@@ -170,7 +169,7 @@ focus_previous = NodePath(".")
 color = Color( 1, 1, 1, 0.0392157 )
 
 [node name="F5" type="Position2D" parent="Enemy"]
-position = Vector2( 240, 195 )
+position = Vector2( 324, 200 )
 
 [node name="ColorRect" type="ColorRect" parent="Enemy/F5"]
 visible = false
@@ -190,4 +189,3 @@ color = Color( 1, 1, 1, 0.0392157 )
 position = Vector2( 170, 75 )
 current = true
 editor_draw_limits = true
-

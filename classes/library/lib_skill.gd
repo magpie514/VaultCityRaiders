@@ -40,7 +40,29 @@ var example = {
 			messages = [
 				["%s defends!", skill.MSG_USER]
 			],
-		}
+		},
+		"defup": {
+			name = "DEF up",
+			description = "Raises defense.",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			effect = skill.EFFECT_STATS,
+			effectIfActive = skill.EFFCOLL_ADD,
+			effectType = skill.EFFTYPE_BUFF,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT,
+			effectStatBonus = {
+				EFFSTAT_BASEMULT = {
+					DEF = [150, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+			},
+			effectDuration = [002, 002, 002, 002, 003,   003, 003, 003, 003, 004],
+			effectPriority = 3,
+			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+		},
 	},
 	"story" : {
 		"plasfeld": {
@@ -705,6 +727,30 @@ var example = {
 			AD = 			[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			spdMod = 	[150, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 		},
+		"alertstc": {
+			name = "Situation check",
+			description = "",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			effect = skill.EFFECT_SPECIAL,
+			effectIfActive = skill.EFFCOLL_REFRESH,
+			effectType = skill.EFFTYPE_BUFF,
+			effectStats = skill.EffectStat.EFFSTAT_NONE,
+			effectDuration = [000, 002, 002, 002, 003,   003, 003, 003, 003, 004],
+			effectPriority = 0,
+			AD = 			[075, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[200, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeMN = [
+				["counter_max",   002,000,000,000,000,  000,000,000,000,000],
+				["counter_dec",   000,000,000,000,000,  000,000,000,000,000],
+				["counter_set",   080,000,000,000,000,  000,000,000,000,000],
+			],
+			codeFL = [
+				["enemy_summon",   001,000,000,000,000,  000,000,000,000,000],
+			]
+		},
+
 		"nrgshild": {
 			name = "Energy Shield",
 			description = "",
@@ -957,7 +1003,7 @@ var example = {
 		},
 		"lunablaz": {
 			name = "Lunatic Blaze",
-			description = "",
+			description = "Uses a temporal distortion to fuel a massive blaze, but can call anomalies from the brink of time if interrupted during charge.\nA risky move.",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -965,12 +1011,33 @@ var example = {
 			energyDMG = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
+			fieldEffectMult = 2,
+			fieldEffectAdd = 2,
 			ranged = true,
-			spdMod = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			chargeAnim = true,
+			spdMod = [001, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			initAD = [025,025,100, 100, 100,   100, 100, 100, 100, 100],
 			AD = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			codeMN = [
-				["drainlife", 005, 125, 132, 132, 140,   140, 147, 147, 147, 160],
-				["attack", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+				["dmg_raw_bonus", 030,125,132,132,140,   140,147,147,147,160],
+				["drainlife", 015, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+				["attack", 400,125,132,132,140,   140,147,147,147,160],
+			],
+			codePR = [
+				["counter_max", 002,002,002,002,002,   140,147,147,147,160],
+				["counter_dec", 000,002,002,002,002,   140,147,147,147,160],
+				["counter_set", 100,002,002,002,002,   140,147,147,147,160],
+				["decoy",       100,002,002,002,002,   140,147,147,147,160],
+			],
+			codeFL = [
+				["playanim",    001,002,002,002,002,   140,147,147,147,160],
+				["ef_push",     000,002,002,002,002,   140,147,147,147,160],
+				["enemy_summon",001,002,002,002,002,   140,147,147,147,160],
+				["attack",      020,002,002,002,002,   140,147,147,147,160],
+			],
+			summons = [
+				{ tid=["story", "lunablaz"], amount = 2, msg="{name} burst forth!", failmsg="" },
+				{ tid=["story", "lunablaz"], amount = 1, msg="{name} burst forth!", failmsg="" },
 			],
 		},
 		"heatngtr": {
@@ -1253,6 +1320,7 @@ func initTemplate():
 		"linkSkill" : { loader = LIBSTD_SKILL_LIST },
 		"synergy" : { loader = LIBSTD_SKILL_LIST },
 		"chain" : {loader = LIBSTD_INT, default = core.skill.CHAIN_NONE },
+		"summons" : {loader = LIBSTD_SUMMONS, default = null},
 
 		"codeST" : { loader = LIBEXT_SKILL_CODE },
 		"codeMN" : { loader = LIBEXT_SKILL_CODE },

@@ -53,6 +53,17 @@ var example = {
 				["debug", "revive"],
 			]
 		},
+		"defshrd": {
+			name = "Defense Shard",
+			description = "Increases DEF for one ally.",
+			value = [00150, 00000, 00000, 00000, 00000,   00000, 00000, 00000, 00000, 00000],
+			category = 0,
+			maxLevel = 10,
+			skill = [001, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+			skills = [
+				["core", "defup"],
+			]
+		}
 	}
 }
 

@@ -353,6 +353,7 @@ enum {
 
 	# Enemy only specials ########################################################
 	OPCODE_ENEMY_REVIVE,			#[+]Revives a fallen enemy.
+	OPCODE_ENEMY_SUMMON,			#Summons with index X. If battle formation has a summons set, those take priority, otherwise monster-specific ones are used, if neither exist or the index is out of range, summon the same type as the user.
 
 	# Control flow ###############################################################
 	OPCODE_STOP,							#Stop execution.
@@ -495,6 +496,7 @@ const opCode = {
 
 	"exp_bonus" : OPCODE_EXP_BONUS,
 	"enemy_revive" : OPCODE_ENEMY_REVIVE,
+	"enemy_summon" : OPCODE_ENEMY_SUMMON,
 
 	"printmsg" : OPCODE_PRINTMSG,
 	"linkskill" : OPCODE_LINKSKILL,
@@ -954,7 +956,7 @@ func checkDrawRateRow(user, targets, S):
 		return group.getRowTargets(finalTarget.row, S.filter)
 
 func checkHit(a, b, mod):
-	var comp = float(((float(a.AGI) * 2.0) + float(a.LUC)) * 10.0) / ((float(b.AGI) * 2) + float(b.LUC))
+	var comp = float(((float(a.AGI) * 2.0) + float(a.LUC)) * 10.0) / ((float(b.AGI) * 2) + float(b.LUC) + 0.00001)
 	var val = 0.0
 	var rand = randi() % 1000
 	if comp < 10:
@@ -1328,10 +1330,12 @@ func calculateTarget(S, level, user, _targets):
 		TARGET_SELF_ROW, TARGET_SELF_ROW_NOT_SELF:
 			targets = user.group.getRowTargets(user.row, S.filter)
 		TARGET_ALL, TARGET_ALL_NOT_SELF, TARGET_RANDOM1, TARGET_RANDOM2:
-			for i in range(_targets.size()):
-				if _targets[i].filter(S.filter):
-					targets.push_front(_targets[i])
-	match S.target: #Second pass to remove user from certain targettings.
+			_targets = null
+			targets = user.group.getAllTargets(S.filter) if S.targetGroup == TARGET_GROUP_ALLY else user.group.versus.getAllTargets(S.filter)
+		#	for i in range(_targets.size()):
+		#		if _targets[i].filter(S.filter):
+		#			targets.push_front(_targets[i])
+	match S.target[level]: #Second pass to remove user from certain targettings.
 		TARGET_ALL_NOT_SELF,TARGET_SELF_ROW_NOT_SELF:
 			targets.erase(user)
 
@@ -1711,6 +1715,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						state.counter[0] = int(value)
 						for i in range(7):
 							variableTarget.battle.counter[i] = state.counter[i]
+						print("Counter params: [Rate = %d%%, Decrement = %d%%, Skill = %s, Level = %d, Element Lock : %d, Max =  %d]" % [variableTarget.battle.counter[0], variableTarget.battle.counter[1], variableTarget.battle.counter[2].name, variableTarget.battle.counter[3], variableTarget.battle.counter[4], variableTarget.battle.counter[5]])
 # Chains #######################################################################
 					OPCODE_CHAIN_START:
 						print(">CHAIN START: %s" % value)
@@ -1859,6 +1864,31 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if "over" in variableTarget:
 							variableTarget.over += value
 						print("Total: %s" % variableTarget.over)
+					OPCODE_ENEMY_SUMMON:
+						print(">ENEMY SUMMON: %s" % value)
+						var sumresult: Array
+						var SU = null
+						if value == 0:
+							print("Zero value summon, taking no action.")
+						else:
+							value -= 1
+							if S.summons != null:
+								print("Using skill summon data. val:%d" % value)
+								sumresult = core.battle.enemy.trySummon(user, value, S.summons, user.level)
+							else:
+								print("Normal enemy summon chain val:%d" % value)
+								sumresult = core.battle.enemy.trySummon(user, value)
+						if sumresult[0]:
+							SU = core.lib.enemy.getIndex(sumresult[1].tid)
+							if sumresult[1].msg.length() > 0: msg(sumresult[1].msg.format(SU))
+						else:
+							if sumresult[1] != null:
+								if sumresult[1].failmsg.length() > 0: msg(sumresult[1].failmsg.format(SU))
+							else:
+								print("Unable to summon!")
+						yield(controlNode.wait(0.1), "timeout")
+						print("Done.")
+
 # State modifiers ##############################################################
 					OPCODE_DAMAGEBONUS:
 						print(">DAMAGE BONUS: %s" % value)

@@ -5,6 +5,7 @@ var sprDisplay = null
 var skills = []
 var lib = null
 var XPMultiplier : float = 1.0
+var summoner = null
 
 func recalculateStats():
 	var S = stats.create()
@@ -19,7 +20,6 @@ func recalculateStats():
 	modstats.EDF = S.EDF
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
-
 
 func initDict(C):
 	side = 1
@@ -38,16 +38,21 @@ func getTooltip():
 func defeat():
 	.defeat()
 	core.battle.control.state.EXP += (100 * XPMultiplier)
-	group.defeat(slot, self)
 	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
-	if sprDisplay != null:
-		sprDisplay.defeat()
+	sprDisplay.defeat()
 	display.stop()
+	group.defeat(slot, self)
+
+func onSummonerDefeat():
+	print("[CHAR_ENEMY][onSummonerDefeat] %s's summoner fell!" % name)
+	print("[TODO] Add special effects here...")
+	print("[TODO] Add capture chance here when mons are a thing.")
 
 func damage(x, data, silent = false) -> Array:
 	var info : Array = .damage(x, data, silent)
-	if sprDisplay != null and not silent:
+	if sprDisplay != null:
 		sprDisplay.damage()
+
 	return info
 
 func charge(x : bool = false) -> void:
@@ -180,6 +185,15 @@ func thinkPattern(F, P, state, aiPattern):
 			S = core.lib.skill.getIndex(action)
 			print("[ERROR, using %s]" % [S.name])
 	match targetHint:
+		core.lib.enemy.AITARGET_SELF:
+			target = [ self ]
+		core.lib.enemy.AITARGET_SUMMONER:
+			if summoner != null:
+				print("[AITARGET] Summoner found (%s)" % summoner.name)
+				target = [ summoner ] if summoner.filter(S.filter) else pickTarget(S, 1, F, P, state)
+			else:
+				print("[AITARGET] No summoner found, picking normally.")
+				target = [ summoner ] if summoner.filter(S.filter) else pickTarget(S, 1, F, P, state)
 		_:
 			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])

@@ -4,7 +4,6 @@ const ROW_SIZE = 5
 const MAX_SIZE = ROW_SIZE * 2
 const LIBEXT_FORMATION = "loaderFormation"
 
-
 var example = {
 	"debug" : {
 		"debug" : {
@@ -12,13 +11,16 @@ var example = {
 			formation = [
 				null, null, {tid = ["debug", "debug"], level = 1, flags = null}, null, null,
 				null, null, null, null,	null
-			]
+			],
 		},
 		"debug0" : {
 			name = "Debug Bots",
 			formation = [
 				{tid = ["debug", "debug4"], level = 5, flags = null}, null, {tid = ["debug", "debug1"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},
 				null, null, null, null,	null
+			],
+			summons = [
+				{tid = ["debug", "compiler"], level = 1, flags = null},
 			]
 		},
 		"debug1" : {
@@ -43,6 +45,7 @@ func initTemplate():
 	return {
 	"name" : { loader = LIBSTD_STRING },
 	"formation" : { loader = LIBEXT_FORMATION },
+	"summons" : { loader = LIBSTD_SUMMONS },
 	}
 
 func name(id):
@@ -72,3 +75,4 @@ func loaderFormation(val):
 					level = int(val[i].level),
 				}
 		return result
+		
