@@ -90,7 +90,6 @@ color = Color( 0.94902, 0.745098, 0.0431373, 1 )
 margin_right = 80.0
 margin_bottom = 24.0
 flat = true
-
 [connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_Button_mouse_exited"]
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

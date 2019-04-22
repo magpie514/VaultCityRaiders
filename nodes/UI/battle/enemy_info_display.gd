@@ -24,12 +24,13 @@ func showChar(c):
 	$ConditionStatic/Condition.text = str("%s" % core.skill.statusInfo[c.status].name)
 	$ConditionStatic/Condition.add_color_override("font_color", core.skill.statusInfo[c.status].color)
 
-	var elem = null
-	for i in range(1, 8):
-		elem = get_node(str("Elements/OFF/%02d" % [i]))
-		elem.text = str("%03d" % c.battle.stat.OFF[core.stats.getElementKey(i)])
-		elem = get_node(str("Elements/RES/%02d" % [i]))
-		elem.text = str("%03d" % c.battle.stat.RES[core.stats.getElementKey(i)])
+	$DescPanel/Desc.bbcode_text = str(c.lib.description)
+	$DescPanel/Name.text = c.name
+	if c.lib.aspect & core.skill.RACEF_MEC: $DescPanel/MEC/Label.show(); else: $DescPanel/MEC/Label.hide()
+	if c.lib.aspect & core.skill.RACEF_BIO: $DescPanel/BIO/Label.show(); else: $DescPanel/BIO/Label.hide()
+	if c.lib.aspect & core.skill.RACEF_SPI: $DescPanel/SPI/Label.show(); else: $DescPanel/SPI/Label.hide()
+	$Elements.init(c.battle.stat)
+	$DescPanel/Label.text = 'RACE: %s' % core.skill.racetypes[c.lib.race].name
 
 	var line = null
 	if c.battle.buff != null:

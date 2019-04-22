@@ -56,6 +56,17 @@ var example = {
 				["debug", "kamaita"],
 			],
 		},
+		"muramasa" : {
+			name = "Muramasa",
+			description = "A defensive class specializing in high defensive maneuvers, counters, and ghostly abilities",
+			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
+			skills = [
+				["debug", "defdown"],
+				["debug", "barricad"],
+				["debug", "solidbun"],
+				["debug", "decoy"],
+			],
+		},
 		"esper" : {
 			name = "ESPer",
 			description = "A balanced fighter with powerful psychic abilities.",
@@ -63,15 +74,6 @@ var example = {
 			skills = [
 				["debug", "illusion"],
 				["debug", "rosegrdn"],
-			],
-		},
-		"bard" : {
-			name = "bard",
-			description = "Ooh, spoony!",
-			statSpread = [ [002, 000, 000, 001, 002, 003, 003], [016, 004, 008, 016, 024, 048, 032] ],
-			skills = [
-				["debug", "defdown"],
-				["debug", "speedup"],
 			],
 		},
 		"defender" : {

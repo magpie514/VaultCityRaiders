@@ -107,16 +107,20 @@ func initBattleTurn() -> void:
 	battle.follow.clear()
 	battle.combo.clear()
 	battle.AD = 100
-	battle.counter[0] = 100
-	battle.counter[1] = 100
-	battle.counter[2] = null
-	battle.counter[3] = 0
-	battle.counter[4] = core.stats.ELEMENTS.DMG_UNTYPED
-	battle.counter[5] = 1
-	battle.counter[6] = skill.PARRY_NONE
+	resetCounter()
 	checkEffects(battle.buff, true)
 	checkEffects(battle.debuff, true)
 	applyBattleStatMultipliers()
+
+func resetCounter():
+	battle.counter[0] = 100 #Counter chance
+	battle.counter[1] = 100 #Counter decrease
+	battle.counter[2] = null #Counter skill TID
+	battle.counter[3] = 0 #Counter level
+	battle.counter[4] = core.stats.ELEMENTS.DMG_UNTYPED #Counter element filter
+	battle.counter[5] = 1 #Counter max amount
+	battle.counter[6] = skill.PARRY_NONE #Counter type filter
+
 
 func updateBattleStats() -> void:
 	recalculateStats()
@@ -164,7 +168,7 @@ func calcSPD(S, lv) -> int:
 func getEquipSpeedMod():
 	return 0
 
-func damageProtectionPass(x : int) -> int:
+func damageProtectionPass(x : int, info) -> int:
 	if battle.guard > 0:
 		var check = battle.guard - x
 		if check > 0:
@@ -173,8 +177,11 @@ func damageProtectionPass(x : int) -> int:
 		else:
 			x = x - battle.guard
 			battle.guard = 0
+			info.guardBreak = true
 	if battle.barrier > 0:
 		x = x - battle.barrier
+		if x <= 0:
+			info.barrierFullBlock = true
 	return x
 
 func damageResistModifier(x : float, _type : int, energyDMG : bool) -> Array:
@@ -194,10 +201,10 @@ func damageResistModifier(x : float, _type : int, energyDMG : bool) -> Array:
 	var result = x * resistMod
 	return [result, weak]
 
-func finalizeDamage(x) -> int:
+func finalizeDamage(x, info) -> int:
 	#Apply active defense, reduce damage from guard or barrier.
 	#var finalDmg : float = x * (float(battle.AD) * .01)
-	var finalDmg = damageProtectionPass(x * core.percent(battle.AD))
+	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info)
 	return clamp(finalDmg, 1, core.skill.MAX_DMG) as int
 
 func damage(x : int, data, silent = false) -> Array:
@@ -213,7 +220,7 @@ func damage(x : int, data, silent = false) -> Array:
 	battle.accumulatedDMG += x
 	battle.turnDMG += x
 	if not silent:
-		display.damage([[x, data[0], overkill, data[2]]])
+		display.damage([[x, data[0], overkill, data[2], data[3]]])
 	return [overkill, defeat]
 
 func setAD(x : int, absolute : bool = false):
@@ -227,21 +234,31 @@ func setAD(x : int, absolute : bool = false):
 
 func defeat():
 	status = skill.STATUS_DOWN
-	print("%s is down" % name)
+	HP = 0 #Set HP to zero in case this was called outside of damage()
+	#Ensure some things are removed on defeat.
+	battle.follow.clear()
+	battle.combo.clear()
+	battle.counter[0] = 0
+	battle.AD = 100
+	battle.buff.clear()
+	battle.debuff.clear()
+	battle.effect.clear()
+	charge(false)
+	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
 
 func heal(x : int) -> void:
 	HP = int(clamp(HP + x, 0, maxHealth()))
 	if HP == 0:	defeat()
 	battle.turnHeal += x
-	display.damage([[-x, false, false, 0]])
+	display.damage([[-x, false, false, 0, null]])
 
 func overHeal(x, y) -> void:
 	var temp = maxHealth() + y
 	HP = int(clamp(HP+x, 0, temp))
 	if HP == 0:	defeat()
 	battle.turnHeal += x
-	display.damage([[-x, false, false, 0]])
+	display.damage([[-x, false, false, 0, null]])
 
 func revive(x: int) -> void:
 	if status == skill.STATUS_DOWN:
@@ -260,7 +277,7 @@ func checkProtect(S):
 	else:
 		for i in battle.protectedBy:
 			print("%s is protecting %s, chance: %s" % [i[0].name, name, i[1]])
-			if core.chance(i[1]) and i[0].filter(S.filter):
+			if core.chance(i[1]) and i[0].filter(S):
 				print("%s intercepted the attack! (chance: %s)" % [i[0].name, i[1]])
 				return [true, i[0]]
 		return [false, self]
@@ -285,7 +302,7 @@ func addEffect(S, lv, user):
 			print("Adding effect %sL%s to %s, duration %s" % [S.name, tempLV, user.name, E[2]])
 			holder.push_back(E)
 			initEffect(E, true)
-			display.message(S.name, false, "FF0000" if S.effectType == skill.EFFTYPE_DEBUFF else "3252FF")
+			display.message(S.name, false, "FF0000" if S.effectType == skill.EFFTYPE_DEBUFF else "4DE8E8")
 
 
 func refreshEffect(E, data, holder):
@@ -329,7 +346,7 @@ func initEffect(E, runEF = false) -> void:
 	if S.effect & skill.EFFECT_STATS:
 		calculateEffectStats(S, lv)
 	if S.effect & skill.EFFECT_SPECIAL and runEF:
-		skill.processEF(S, level + 1, E[3], self)
+		skill.runExtraCode(S, level + 1, E[3], skill.CODE_EF, self)
 
 func calculateEffectStats(S, lv):
 	var temp = null
@@ -413,7 +430,7 @@ func canAct() -> bool:
 
 func canFollow(S, lv, target) -> bool:
 	if canAct():
-		if target.filter(S.filter):
+		if target.filter(S):
 			return true
 	return false
 
@@ -440,8 +457,8 @@ func canCounter(target, element: int, data: Array):
 func isAble() -> bool:
 	return false if status == skill.STATUS_DOWN else true
 
-func filter(f) -> bool:
-	match f:
+func filter(S:Dictionary) -> bool:
+	match S.filter:
 		skill.FILTER_ALIVE:
 			return false if (status == skill.STATUS_DOWN or status == skill.STATUS_STASIS) else true
 		skill.FILTER_ALIVE_OR_STASIS:
@@ -466,3 +483,9 @@ func setInitAD(S, lv) -> void:
 
 func useBattleSkill(state, act:int, S, lv:int, targets, WP = null, IT = null) -> void:
 	core.skill.process(S, lv, self, targets, WP, IT)
+
+func checkRaceType(type) -> bool:
+	return false
+
+func charge(x : bool = false) -> void:
+	pass

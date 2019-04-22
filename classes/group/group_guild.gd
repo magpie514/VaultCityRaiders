@@ -52,12 +52,8 @@ func init(dict):
 		else:
 			formation[i] = null
 
-func getSpreadTargets(row, filter, slot):
-	return getSpreadTargets2(row, ROW_SIZE, filter, slot)
-
-func getRowTargets(row, filter):
-	return getRowTargets2(row, ROW_SIZE, filter)
-
+func getRowSize():
+	return ROW_SIZE
 
 func giveDGem(G):
 	dragonGems.push_back(G)
@@ -70,7 +66,13 @@ func sortDGems():
 			result.push_back(i)
 	dragonGems = result
 
-
+func getDefeated() -> int:
+	var result : int = 0
+	for i in formation:
+		if i != null:
+			if i.status == core.skill.STATUS_DOWN:
+				result += 1
+	return result
 
 func size() -> int:
 	var count : int = 0

@@ -6,6 +6,7 @@ const LIBSTD_INT = "loaderInt"
 const LIBSTD_FLOAT = "loaderFloat"
 const LIBSTD_STRING = "loaderString"
 const LIBSTD_TID = "loaderTID"
+const LIBSTD_TID_ARRAY = "loaderTIDArray"
 const LIBSTD_VARIABLEARRAY = "loaderVariableArray"
 const LIBSTD_STATSPREAD = "loaderStatSpread"
 const LIBSTD_ELEMENTDATA = "loaderElementData"
@@ -147,6 +148,16 @@ func loaderTID(val):
 	else:
 		return core.tid.create(val[0], val[1])
 
+func loaderTIDArray(val):
+	if val == null:
+		return null
+	else:
+		var result : Array = []
+		for i in val:
+			var tmp = loaderTID(i)
+			result.push_back(tmp)
+		return result
+
 func loaderSkillList(val):
 	if val == null:
 		return [ loaderTID(null) ]
@@ -176,7 +187,7 @@ func loaderSkillArray(val):
 			for i in range(10):
 				result[i] = int(0)
 	return result
-	
+
 func loaderSummons(val):
 	if val == null or typeof(val) != TYPE_ARRAY:
 		return null

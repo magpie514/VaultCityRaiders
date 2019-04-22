@@ -180,11 +180,12 @@ func init(tid, lvbonus = 0):
 			formation[i].slot = i
 			formation[i].row = 0 if i < ROW_SIZE else 1
 
-func getSpreadTargets(row, filter, slot):
-	return getSpreadTargets2(row, ROW_SIZE, filter, slot)
 
-func getRowTargets(row, filter):
-	return getRowTargets2(row, ROW_SIZE, filter)
+func getRowSize():
+	return ROW_SIZE
+
+func getDefeated() -> int:
+	return defeated.size()
 
 func loadDebug():
 	init(["debug", "debug"])

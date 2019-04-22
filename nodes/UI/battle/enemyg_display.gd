@@ -25,6 +25,8 @@ func update():
 
 func revive(C, slot) -> void:
 	bars[slot] = createDisplay(slot)
+	if group.formation[slot].sprDisplay != null:
+		group.formation[slot].sprDisplay.queue_free()
 	group.formation[slot].sprDisplay = group.initSprite(group.formation[slot], slot)
 
 func createDisplay(slot):

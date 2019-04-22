@@ -79,12 +79,13 @@ var data = {
 				[010, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],
 			],
 			level = 4 },
-		{ name = "Lily",
-			race = ["debug", "human"],
-			aclass = ["debug", "medic"],
+		{ name = "Shiro",
+			race = ["debug", "choujin"],
+			aclass = ["debug", "muramasa"],
 			portrait = null,
 			equip = [
-				{ id = ["debug", "debugg"], bonus = 0, uses = 25, extra = null, gem = null },
+				{ id = ["story", "ganrei"], bonus = 0, uses = 25, extra = null, gem = null },
+				{ id = ["story", "kokukou"], bonus = 0, uses = 25, extra = null, gem = null },
 			 ],
 		 	skills = [ [0, 1], [1, 1], [2, 1] ],
 			links = [
@@ -97,8 +98,8 @@ var data = {
 			level = 4 },
 	],
 	formationSlots = [
- 		0, 2, null,
-		1, 3, 4
+ 		0, 2, 4,
+		1, 3, null,
 	],
 	inventory = [
 		[["core", "nostrum"], 5],

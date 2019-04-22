@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://nodes/UI/battle/player_display.gd" type="Script" id=1]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://nodes/UI/bar_multi.tscn" type="PackedScene" id=3]
 [ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=4]
+[ext_resource path="res://nodes/UI/Elements.tscn" type="PackedScene" id=5]
 
 [sub_resource type="DynamicFont" id=1]
 size = 13
@@ -25,61 +26,6 @@ draw_center = false
 border_width_top = 45
 border_color = Color( 0.807843, 0.152941, 0.152941, 0.384314 )
 border_blend = true
-
-[sub_resource type="StyleBoxFlat" id=4]
-draw_center = false
-border_width_right = 3
-border_width_bottom = 1
-border_color = Color( 0.447059, 0.890196, 0.431373, 1 )
-corner_radius_bottom_right = 2
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=5]
-draw_center = false
-border_width_right = 3
-border_width_bottom = 1
-border_color = Color( 0.431373, 0.643137, 0.890196, 1 )
-corner_radius_bottom_right = 2
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=6]
-draw_center = false
-border_width_right = 3
-border_width_bottom = 1
-border_color = Color( 0.886275, 0.431373, 0.890196, 1 )
-corner_radius_bottom_right = 2
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=7]
-draw_center = false
-border_width_left = 3
-border_width_bottom = 1
-border_color = Color( 0.890196, 0.431373, 0.431373, 1 )
-corner_radius_bottom_left = 2
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=8]
-bg_color = Color( 0.431373, 0.741176, 0.890196, 1 )
-draw_center = false
-border_width_left = 3
-border_width_bottom = 1
-border_color = Color( 0.431373, 0.847059, 0.890196, 1 )
-corner_radius_bottom_left = 2
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=9]
-draw_center = false
-border_width_left = 3
-border_width_bottom = 1
-border_color = Color( 0.886275, 0.890196, 0.431373, 1 )
-corner_radius_bottom_left = 2
-corner_detail = 1
-anti_aliasing = false
 
 [node name="PlayerDisplay" type="Panel"]
 margin_right = 960.0
@@ -357,206 +303,11 @@ custom_fonts/font = SubResource( 1 )
 text = "00"
 valign = 1
 
-[node name="Elements" type="Panel" parent="."]
-margin_left = 260.0
-margin_right = 430.0
-margin_bottom = 90.0
-
-[node name="OFF" type="Control" parent="Elements"]
-modulate = Color( 1, 0.823529, 0.823529, 1 )
-margin_left = 50.0
-margin_top = 31.0
-margin_right = 90.0
-margin_bottom = 71.0
-
-[node name="01" type="Label" parent="Elements/OFF"]
-margin_left = -30.0
-margin_top = -10.0
-margin_right = -1.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-
-[node name="02" type="Label" parent="Elements/OFF"]
-margin_left = -40.0
-margin_top = 15.0
-margin_right = -11.0
-margin_bottom = 25.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-
-[node name="03" type="Label" parent="Elements/OFF"]
-margin_left = -30.0
-margin_top = 40.0
-margin_right = -1.0
-margin_bottom = 50.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-
-[node name="04" type="Label" parent="Elements/OFF"]
-margin_left = 70.0
-margin_top = -10.0
-margin_right = 99.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 2
-
-[node name="05" type="Label" parent="Elements/OFF"]
-margin_left = 80.0
-margin_top = 15.0
-margin_right = 109.0
-margin_bottom = 25.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 2
-
-[node name="06" type="Label" parent="Elements/OFF"]
-margin_left = 70.0
-margin_top = 40.0
-margin_right = 99.0
-margin_bottom = 50.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 2
-
-[node name="07" type="Label" parent="Elements/OFF"]
-margin_left = 20.0
-margin_top = 9.0
-margin_right = 50.0
-margin_bottom = 19.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 1
-
-[node name="RES" type="Control" parent="Elements"]
-modulate = Color( 0.823529, 0.835294, 1, 1 )
-margin_left = 50.0
-margin_top = 21.0
-margin_right = 90.0
-margin_bottom = 61.0
-
-[node name="01" type="Label" parent="Elements/RES"]
-margin_right = 29.0
-margin_bottom = 10.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-
-[node name="02" type="Label" parent="Elements/RES"]
-margin_left = -10.0
-margin_top = 25.0
-margin_right = 19.0
-margin_bottom = 35.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-
-[node name="03" type="Label" parent="Elements/RES"]
-margin_top = 50.0
-margin_right = 29.0
-margin_bottom = 60.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-
-[node name="04" type="Label" parent="Elements/RES"]
-margin_left = 40.0
-margin_right = 69.0
-margin_bottom = 10.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 2
-
-[node name="05" type="Label" parent="Elements/RES"]
-margin_left = 50.0
-margin_top = 25.0
-margin_right = 79.0
-margin_bottom = 35.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 2
-
-[node name="06" type="Label" parent="Elements/RES"]
-margin_left = 40.0
-margin_top = 50.0
-margin_right = 69.0
-margin_bottom = 60.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 2
-
-[node name="07" type="Label" parent="Elements/RES"]
-margin_left = 20.0
-margin_top = 29.0
-margin_right = 50.0
-margin_bottom = 39.0
-custom_fonts/font = SubResource( 1 )
-text = "999"
-align = 1
-
-[node name="Label" type="Label" parent="Elements"]
-margin_left = 40.0
-margin_top = 10.0
-margin_right = 70.0
-margin_bottom = 20.0
-custom_styles/normal = SubResource( 4 )
-custom_fonts/font = SubResource( 1 )
-text = "CUT"
-
-[node name="Label2" type="Label" parent="Elements"]
-margin_left = 30.0
-margin_top = 35.0
-margin_right = 60.0
-margin_bottom = 45.0
-custom_styles/normal = SubResource( 5 )
-custom_fonts/font = SubResource( 1 )
-text = "PIE"
-
-[node name="Label3" type="Label" parent="Elements"]
-margin_left = 40.0
-margin_top = 60.0
-margin_right = 70.0
-margin_bottom = 70.0
-custom_styles/normal = SubResource( 6 )
-custom_fonts/font = SubResource( 1 )
-text = "BLU"
-
-[node name="Label4" type="Label" parent="Elements"]
-margin_left = 100.0
-margin_top = 10.0
-margin_right = 130.0
-margin_bottom = 20.0
-custom_styles/normal = SubResource( 7 )
-custom_fonts/font = SubResource( 1 )
-text = "FIR"
-align = 2
-
-[node name="Label5" type="Label" parent="Elements"]
-margin_left = 110.0
-margin_top = 35.0
-margin_right = 140.0
-margin_bottom = 45.0
-custom_styles/normal = SubResource( 8 )
-custom_fonts/font = SubResource( 1 )
-text = "ICE"
-align = 2
-
-[node name="Label6" type="Label" parent="Elements"]
-margin_left = 100.0
-margin_top = 60.0
-margin_right = 130.0
-margin_bottom = 70.0
-custom_styles/normal = SubResource( 9 )
-custom_fonts/font = SubResource( 1 )
-text = "ELE"
-align = 2
-
-[node name="Label7" type="Label" parent="Elements"]
-margin_left = 70.0
-margin_top = 31.0
-margin_right = 100.0
-margin_bottom = 41.0
-custom_fonts/font = SubResource( 1 )
-text = "ULT"
-align = 1
-
 [node name="CHAR" type="Panel" parent="."]
 margin_left = 520.0
 margin_right = 770.0
 margin_bottom = 90.0
+
+[node name="Elements" parent="." instance=ExtResource( 5 )]
+margin_left = 270.0
+margin_right = 390.0

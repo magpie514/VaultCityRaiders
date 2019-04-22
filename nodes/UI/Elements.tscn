@@ -1,0 +1,332 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://resources/tres/element_stylebox.tres" type="StyleBox" id=2]
+[ext_resource path="res://resources/icons/ice.svg" type="Texture" id=3]
+[ext_resource path="res://resources/icons/elec.svg" type="Texture" id=4]
+[ext_resource path="res://resources/icons/pierce.svg" type="Texture" id=5]
+[ext_resource path="res://resources/icons/bash.svg" type="Texture" id=6]
+[ext_resource path="res://resources/icons/void.svg" type="Texture" id=7]
+[ext_resource path="res://resources/icons/fire.svg" type="Texture" id=8]
+[ext_resource path="res://resources/icons/cut.svg" type="Texture" id=9]
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends Control
+
+func init(stats) -> void:
+	for i in range(1, 8):
+		var elem = get_node(str(\"OFF/%02d\" % [i]))
+		elem.text = str(\"%03d%%\" % stats.OFF[core.stats.getElementKey(i)])
+		elem = get_node(str(\"RES/%02d\" % [i]))
+		elem.text = str(\"%03d%%\" % stats.RES[core.stats.getElementKey(i)])
+
+"
+
+[sub_resource type="DynamicFont" id=1]
+size = 13
+outline_size = 1
+outline_color = Color( 0.00784314, 0.54902, 0.694118, 0.294118 )
+extra_spacing_bottom = -2
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.447059, 0.890196, 0.431373, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=3]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.886275, 0.431373, 0.890196, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=4]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.431373, 0.643137, 0.890196, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.431373, 0.847059, 0.890196, 1 )
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.431373, 0.847059, 0.890196, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=6]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0.886275, 0.890196, 0.431373, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=7]
+draw_center = false
+border_width_left = 3
+border_width_bottom = 1
+border_color = Color( 0, 0, 0, 1 )
+corner_radius_bottom_left = 2
+corner_detail = 1
+anti_aliasing = false
+
+[node name="Elements" type="Control"]
+margin_left = 260.0
+margin_right = 380.0
+margin_bottom = 90.0
+script = SubResource( 8 )
+
+[node name="OFF" type="Control" parent="."]
+modulate = Color( 1, 0.823529, 0.823529, 1 )
+margin_left = 10.0
+margin_right = 10.0
+
+[node name="01" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 5.0
+margin_right = 63.0
+margin_bottom = 15.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="02" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 15.0
+margin_right = 63.0
+margin_bottom = 25.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="03" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 25.0
+margin_right = 63.0
+margin_bottom = 35.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="04" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 40.0
+margin_right = 63.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="05" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 50.0
+margin_right = 63.0
+margin_bottom = 60.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="06" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 60.0
+margin_right = 63.0
+margin_bottom = 70.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="07" type="Label" parent="OFF"]
+margin_left = 34.0
+margin_top = 76.0
+margin_right = 64.0
+margin_bottom = 86.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="RES" type="Control" parent="."]
+modulate = Color( 0.823529, 0.835294, 1, 1 )
+margin_left = 10.0
+margin_right = 10.0
+
+[node name="01" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 5.0
+margin_right = 99.0
+margin_bottom = 15.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="02" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 15.0
+margin_right = 99.0
+margin_bottom = 25.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="03" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 25.0
+margin_right = 99.0
+margin_bottom = 35.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="04" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 40.0
+margin_right = 99.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="05" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 50.0
+margin_right = 99.0
+margin_bottom = 60.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="06" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 61.0
+margin_right = 99.0
+margin_bottom = 71.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="07" type="Label" parent="RES"]
+margin_left = 70.0
+margin_top = 76.0
+margin_right = 99.0
+margin_bottom = 86.0
+custom_fonts/font = SubResource( 1 )
+text = "999"
+
+[node name="CUT" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 40.0
+margin_bottom = 15.0
+custom_styles/normal = SubResource( 2 )
+custom_fonts/font = SubResource( 1 )
+text = "CUT"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="CUT"]
+self_modulate = Color( 0.447059, 0.890196, 0.431373, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 9 )
+expand = true
+
+[node name="PIE" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 15.0
+margin_right = 40.0
+margin_bottom = 25.0
+custom_styles/normal = SubResource( 3 )
+custom_fonts/font = SubResource( 1 )
+text = "PIE"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="PIE"]
+self_modulate = Color( 0.886275, 0.431373, 0.890196, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 5 )
+expand = true
+
+[node name="BLU" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 25.0
+margin_right = 40.0
+margin_bottom = 35.0
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 1 )
+text = "BLU"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="BLU"]
+self_modulate = Color( 0.431373, 0.643137, 0.890196, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 6 )
+expand = true
+
+[node name="FIR" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 40.0
+margin_right = 40.0
+margin_bottom = 50.0
+custom_styles/normal = ExtResource( 2 )
+custom_fonts/font = SubResource( 1 )
+text = "FIR"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="FIR"]
+self_modulate = Color( 0.890196, 0.431373, 0.431373, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 8 )
+expand = true
+
+[node name="ICE" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 50.0
+margin_right = 40.0
+margin_bottom = 60.0
+custom_styles/normal = SubResource( 5 )
+custom_fonts/font = SubResource( 1 )
+text = "ICE"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="ICE"]
+self_modulate = Color( 0.431373, 0.847059, 0.890196, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 3 )
+expand = true
+
+[node name="ELE" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 60.0
+margin_right = 40.0
+margin_bottom = 70.0
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 1 )
+text = "ELE"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="ELE"]
+self_modulate = Color( 0.886275, 0.890196, 0.431373, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 4 )
+expand = true
+
+[node name="ULT" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 76.0
+margin_right = 40.0
+margin_bottom = 86.0
+custom_styles/normal = SubResource( 7 )
+custom_fonts/font = SubResource( 1 )
+text = "ULT"
+align = 2
+
+[node name="TextureRect" type="TextureRect" parent="ULT"]
+self_modulate = Color( 0, 0, 0, 1 )
+margin_left = -10.0
+margin_bottom = 10.0
+texture = ExtResource( 7 )
+expand = true

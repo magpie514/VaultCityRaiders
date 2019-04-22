@@ -27,7 +27,7 @@ func showButtons(S):
 	for i in range(PARTY_SIZE):
 		chr = guild.formation[i]
 		if chr != null:
-			if chr.filter(S.filter):
+			if chr.filter(S):
 				displayAdv[i].selectable(true)
 
 func hideButtons():
@@ -90,4 +90,3 @@ func update():
 	for i in range(PARTY_SIZE):
 		if guild.formation[i] != null:
 			displayAdv[i].update()
-

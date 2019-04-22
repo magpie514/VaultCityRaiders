@@ -550,3 +550,9 @@ func isFullOver():
 
 func getSkillTID(t):
 	return aclassPtr.skills[t[0]]
+
+func checkRaceType(type:int) -> bool:
+	var result : bool = false
+	if type in race.lib.race:
+		result = true
+	return result

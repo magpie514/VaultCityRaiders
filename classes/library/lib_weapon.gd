@@ -81,6 +81,24 @@ var example = {
 			skill = [ ["sto_wp", "sever"], ["sto_wp", "orbishld"] ],
 			over = ["debug", "debug"]
 		},
+		"ganrei": {
+			name = "Ganreitou", wclass = core.skill.WPCLASS_LONGSWORD,
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [002, 002, 002, 002, 002, 002, 002, 002, 002, 000],
+			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
+			skill = [ ["sto_wp", "ganrei"], ["sto_wp", "reienzan"] ],
+			over = ["debug", "debug"]
+		},
+		"kokukou": {
+			name = "Kokukouga", wclass = core.skill.WPCLASS_SHORTSWORD,
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [002, 002, 002, 002, 002, 002, 002, 002, 002, 000],
+			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
+			skill = [ ["debug", "debug"], ["debug", "debug"] ],
+			over = ["debug", "debug"]
+		},
 	}
 }
 

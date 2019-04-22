@@ -261,7 +261,7 @@ func checkPriorityActions():
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(true)
 			else: i[2].sprDisplay.act()
-			core.skill.processPR(i[0], i[1], i[2])
+			core.skill.runExtraCode(i[0], i[1], i[2], core.skill.CODE_PR)
 			yield(controlNode, "skill_finished")
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(false)
 			i[2].display.update()

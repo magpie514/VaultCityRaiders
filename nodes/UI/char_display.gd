@@ -40,9 +40,7 @@ func damage(x):
 		damageShake()
 
 func message(msg, data, color):
-	var node = _miscMsg.instance()
-	add_child(node)
-	node.init(msg, data, color)
+	$MessageDisplay.add(msg, data, color)
 
 
 func init(C):
@@ -100,8 +98,8 @@ func setActionText(act):
 		print("[BATTLE STATE][addAction] Using override %s" % S.name)
 	else: S = act.skill
 	var target = ""
-	if act.target[0] != null:
-		match(S.target):
+	if act.target != null:
+		match(S.target[act.level]):
 			core.skill.TARGET_SELF:
 				target = "Self"
 			core.skill.TARGET_ROW:
@@ -109,7 +107,8 @@ func setActionText(act):
 			core.skill.TARGET_ALL:
 				target = "All %s" % [ "party" if S.targetGroup == core.skill.TARGET_GROUP_ALLY else "enemy" ]
 			_:
-				target = act.target[0].name
+				if act.target[0] != null:
+					target = act.target[0].name
 	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.name, target]
 	$Action.show()
 	if S.chargeAnim[act.level] != 0: charge(true)

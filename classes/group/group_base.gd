@@ -63,24 +63,24 @@ func emptySlot() -> bool:
 			break
 	return result
 
-func countRowTargets(row, size, filter) -> int:
+func countRowTargets(row, size, S) -> int:
 	var rowMembers = getRow(row, size)
 	var result : int = 0
 	var st = row * size
 	for i in rowMembers:
-		if i != null and i.filter(filter):
+		if i != null and i.filter(S):
 			result += 1
 	return result
 
-func getRowTargets2(row, size, filter):
+func getRowTargets2(row, size, S):
 	var rowMembers = getRow(row, size)
 	var result = []
 	for i in rowMembers:
-		if i != null and i.filter(filter):
+		if i != null and i.filter(S):
 			result.push_front(i)
 	return result
 
-func getSpreadTargets2(row, size, filter, slot):
+func getSpreadTargets2(row, size, S, slot):
 	var result = []
 	var st = row * size
 	for i in range(st, st+size):
@@ -88,38 +88,64 @@ func getSpreadTargets2(row, size, filter, slot):
 			print("[getSpreadTargets2] found slot %d" % slot)
 			for j in range(slot-1, st-1, -1):
 				print("[getSpreadTargets2] prev slot %d %s" % [j, formation[j]])
-				if formation[j] != null and formation[j].filter(filter):
+				if formation[j] != null and formation[j].filter(S):
 					print("OK")
 					result.push_front(formation[j])
 					break
 			for j in range(slot+1, st+size):
 				print("[getSpreadTargets2] next slot %d %s" % [j, formation[j]])
-				if formation[j] != null and formation[j].filter(filter):
+				if formation[j] != null and formation[j].filter(S):
 					print("OK")
 					result.push_front(formation[j])
 					break
 	return result
 
-func getAllTargets(filter):
+
+func getDefeated() -> int:
+	return 0
+
+func getAllTargets(S):
 	var result = []
 	for i in formation:
-		if i != null and i.filter(filter):
+		if i != null and i.filter(S):
 			result.push_front(i)
 	return result
 
-func getRandomTarget(filter):
-	var result = getAllTargets(filter)
+func getAllTargetsNotSelf(S, who):
+	var result = []
+	for i in formation:
+		if i != null and i.filter(S) and i != who:
+			result.push_front(i)
+	return result
+
+func getRandomTarget(S):
+	var result = getAllTargets(S)
 	return [result[randi() % result.size()]] #RNG
 
-func getRandomRowTarget(row, filter):
-	var result = getRowTargets(row, filter)
+func getRandomRowTarget(row, S):
+	var result = getRowTargets(row, S)
 	return [result[randi() % result.size()]] #RNG
 
-func getRowTargets(a, b):
-	pass
+func getRowSize(): #To be overriden by extends.
+	return 0
 
-func getSpreadTargets(a, b, c):
-	pass
+func getSpreadTargets(row, S, slot): #Get targets around the given target in given row.
+	return getSpreadTargets2(row, getRowSize(), S, slot)
+
+func getRowTargets(row, S): #Get all targets in the given row
+	return getRowTargets2(row, getRowSize(), S)
+
+func getRowTargetsNotSelf(row, S, user): #Get targets in row except self.
+	var rowMembers = getRow(row, getRowSize())
+	var result = []
+	for i in rowMembers:
+		if i != null and i.filter(S):
+			result.push_front(i)
+	return result
+
+func getOtherRowTargets(row, S): #Get targets in the other row.
+	var otherRow : int = 0 if row == 1 else 1
+	return getRowTargets2(otherRow, getRowSize(), S)
 
 func initBattle() -> void:
 	for i in formation:

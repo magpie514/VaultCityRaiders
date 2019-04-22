@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://nodes/UI/battle/message_display.gd" type="Script" id=1]
+
+[node name="MessageDisplay" type="Control"]
+margin_right = 130.0
+margin_bottom = 40.0
+mouse_filter = 2
+script = ExtResource( 1 )

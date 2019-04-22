@@ -53,7 +53,7 @@ func setup(C, place, node):
 		$Main/Repeat.disabled = true
 	else:
 		$Main/Repeat.disabled = false
-		var RS = C.battle.lastAction.skill
+		var RS = C.battle.lastAction.skill if C.battle.lastAction.IT == null else C.battle.lastAction.IT
 		$Main/Repeat.text = str("Repeat %s" % RS.name)
 
 func _process(delta: float) -> void: #Just a quick hack for now
@@ -142,6 +142,13 @@ func _on_Switch_pressed():
 	pass # replace with function body
 
 func _on_Repeat_pressed() -> void:
+	var lastAct = currentChar.battle.lastAction
+	if lastAct.skill.targetGroup == skill.TARGET_GROUP_ENEMY:
+		var p = currentChar.group.versus.getAllTargets(lastAct.skill)
+		for i in lastAct.target:
+			if not i in p:
+				print("[BATTLECONTROLS][_on_Repeat_pressed] targetting inactive target.")
+				lastAct.target.erase(i)
 	exit(currentChar.battle.lastAction)
 
 func _on_WeaponMenu_selection(x) -> void:

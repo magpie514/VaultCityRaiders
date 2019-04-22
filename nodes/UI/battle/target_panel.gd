@@ -57,7 +57,7 @@ func init(S, parent, level, override = null):
 			temp2.button.init(current, str("%1s%1s" % ["S" if i < group.ROW_SIZE else "", key]))
 			rows[(0 if i < group.ROW_SIZE else 1)].push_back(temp2)
 			connectUISignals(temp2.button)
-			if current.filter(S.filter):
+			if current.filter(S):
 				temp2.button.disabled = false
 			else:
 				temp2.button.disabled = true
@@ -99,15 +99,15 @@ func targetSelectSignal(x):
 				if i.chr == x:
 					who = i
 			if who.next != null:
-				if who.next.chr.filter(skill.filter):
+				if who.next.chr.filter(skill):
 					result.push_back(who.next.chr)
 			if who.prev != null:
-				if who.prev.chr.filter(skill.filter):
+				if who.prev.chr.filter(skill):
 					result.push_back(who.prev.chr)
 		core.skill.TARGET_ROW:
 			var row = x.row
 			var group = x.group
-			result = group.getRowTargets(row, skill.filter)
+			result = group.getRowTargets(row, skill)
 		core.skill.TARGET_SINGLE:
 			result = [x]
 		_:

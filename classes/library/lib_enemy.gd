@@ -38,16 +38,18 @@ var example = {
 			],
 			OFF = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
 			RES = [ 075, 075, 125,  005, 125, 050,  100, 100, 110 ],
+			race = skill.RACE_ELDRITCH, aspect = skill.RACEF_SPI,
 			defeatMsg = "%s vanished!",
 			ai = 1,
 			aiPattern = {
 				pattern = [
 					[AIPATTERN_SIMPLE, [0, AITARGET_SUMMONER]],
-					[AIPATTERN_SIMPLE, [1, AITARGET_RANDOM]],
+					[AIPATTERN_SIMPLE, [0, AITARGET_RANDOM]],
+					[AIPATTERN_SIMPLE, [1, AITARGET_SUMMONER]],
 				],
 				flags = AIPATTERN_LOOP,
 			},
-			skill = [ ["gem", "firewave"], ["debug", "sprshot"] ]
+			skill = [ ["gem", "firewave"], ["debug", "memebeyo"] ]
 		}
 	},
 	"debug" : {

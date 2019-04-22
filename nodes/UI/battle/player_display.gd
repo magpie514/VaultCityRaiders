@@ -5,7 +5,7 @@ func _ready():
 
 func showChar(c):
 	show()
-	$Name.text = str("%-24s" % c.name)
+	$Name.text = str("%s %s %-24s" % [c.racePtr.name, c.aclassPtr.name, c.name])
 	$Level.text = str("LV.%03d" % c.level)
 	$StatStatic/ATK.text = str(c.battle.stat.ATK)
 	$StatStatic/BATK.init([float(c.statBase.ATK) / 255.0, float(c.statFinal.ATK - c.statBase.ATK) / 255.0, float(c.battle.stat.ATK - c.statFinal.ATK) / 255.0], ["FF0000", "FF9900", "0088FF"] )
@@ -24,12 +24,7 @@ func showChar(c):
 	$ConditionStatic/Condition.text = str("%s" % core.skill.statusInfo[c.status].name)
 	$ConditionStatic/Condition.add_color_override("font_color", core.skill.statusInfo[c.status].color)
 
-	var elem = null
-	for i in range(1, 8):
-		elem = get_node(str("Elements/OFF/%02d" % [i]))
-		elem.text = str("%03d" % c.battle.stat.OFF[core.stats.getElementKey(i)])
-		elem = get_node(str("Elements/RES/%02d" % [i]))
-		elem.text = str("%03d" % c.battle.stat.RES[core.stats.getElementKey(i)])
+	$Elements.init(c.battle.stat)
 
 	var line = null
 	if c.battle.buff != null:

@@ -46,9 +46,7 @@ func damage(x):
 		damageDelay = 1
 
 func message(msg, data, color):
-	var node = _miscMsg.instance()
-	add_child(node)
-	node.init(msg, data, color)
+	$MessageDisplay.add(msg, data, color)
 
 func resize(v):
 	rect_size.x = v.x

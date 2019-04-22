@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://resources/tres/char_display.tres" type="StyleBox" id=1]
 [ext_resource path="res://nodes/UI/char_display.gd" type="Script" id=2]
@@ -6,8 +6,9 @@
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=5]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=6]
-[ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=7]
+[ext_resource path="res://nodes/UI/battle/message_display.tscn" type="PackedScene" id=7]
 [ext_resource path="res://nodes/UI/battle/AD.tscn" type="PackedScene" id=8]
+[ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=9]
 
 [sub_resource type="DynamicFont" id=1]
 use_mipmaps = true
@@ -144,10 +145,14 @@ text = "CND"
 [node name="AD" parent="." instance=ExtResource( 8 )]
 margin_left = 10.0
 margin_top = 1.0
-margin_right = -210.0
-margin_bottom = -29.0
+margin_right = 10.0
+margin_bottom = 1.0
 
-[node name="Charge" parent="." instance=ExtResource( 7 )]
+[node name="MessageDisplay" parent="." instance=ExtResource( 7 )]
+margin_right = 220.0
+margin_bottom = 31.0
+
+[node name="Charge" parent="." instance=ExtResource( 9 )]
 position = Vector2( 110, 16 )
 [connection signal="mouse_entered" from="." to="." method="_on_CharDisplay_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_CharDisplay_mouse_exited"]

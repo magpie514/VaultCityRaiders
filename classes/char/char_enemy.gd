@@ -75,29 +75,29 @@ func pickTarget(S, level, F, P, state):
 			return [ self ]
 		core.skill.TARGET_SINGLE:
 			if S.ranged[level]:
-				if core.chance(80): return group.getRandomTarget(0)
-				else: return group.getRandomRowTarget(0, 0)
+				if core.chance(80): return group.getRandomTarget(S)
+				else: return group.getRandomRowTarget(0, S)
 			else:
 				if row == 0:
-					if core.chance(55): return group.getRandomTarget(0)
-					else: return group.getRandomRowTarget(0, 0)
+					if core.chance(55): return group.getRandomTarget(S)
+					else: return group.getRandomRowTarget(0, S)
 				else:
-					return group.getRandomRowTarget(0, 0)
+					return group.getRandomRowTarget(0, S)
 		core.skill.TARGET_ROW:
 			if S.ranged[level]:
-				if core.chance(55): return group.getRowTargets(0, 0)
-				else: return group.getRowTargets(1, 0)
+				if core.chance(55): return group.getRowTargets(0, S)
+				else: return group.getRowTargets(1, S)
 			else:
 				if row == 0:
-					if core.chance(60): return group.getRowTargets(0, 0)
-					else: return group.getRowTargets(1, 0)
+					if core.chance(60): return group.getRowTargets(0, S)
+					else: return group.getRowTargets(1, S)
 				else:
-					return group.getRowTargets(0, 0)
+					return group.getRowTargets(0, S)
 		core.skill.TARGET_ALL:
 			if S.ranged[level] or row == 0:
-				return group.getAllTargets(S.filter)
+				return group.getAllTargets(S)
 			else:
-				return group.getRowTargets(0, 0)
+				return group.getRowTargets(0, S)
 
 
 func thinkBattleAction(F, P, state):
@@ -109,7 +109,8 @@ func thinkBattleAction(F, P, state):
 				return thinkRandom(F, P, state)
 			else:
 				return thinkPattern(F, P, state, lib.aiPattern)
-	return thinkRandom(F, P, state)
+		_:
+			return thinkRandom(F, P, state)
 
 
 func thinkRandom(F, P, state) -> Array:
@@ -190,13 +191,27 @@ func thinkPattern(F, P, state, aiPattern):
 		core.lib.enemy.AITARGET_SUMMONER:
 			if summoner != null:
 				print("[AITARGET] Summoner found (%s)" % summoner.name)
-				target = [ summoner ] if summoner.filter(S.filter) else pickTarget(S, 1, F, P, state)
+				target = [ summoner ] if summoner.filter(S) else pickTarget(S, 1, F, P, state)
 			else:
 				print("[AITARGET] No summoner found, picking normally.")
-				target = [ summoner ] if summoner.filter(S.filter) else pickTarget(S, 1, F, P, state)
+				target = [ summoner ] if summoner.filter(S) else pickTarget(S, 1, F, P, state)
 		_:
 			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])
 	if S.chargeAnim[0]:
 		sprDisplay.charge(true)
 	return [ action, 1, target ]
+
+
+func filter(S:Dictionary) -> bool:
+	if S.targetBlacklist != null:
+		for i in S.targetBlacklist:
+			if i[0] == tid[0] and i[1] == tid[1]:
+				return false
+	return .filter(S)
+
+func checkRaceType(type) -> bool:
+	var result : bool = false
+	if type in lib.race:
+		result = true
+	return result
