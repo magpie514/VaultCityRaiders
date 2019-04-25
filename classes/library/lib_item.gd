@@ -28,18 +28,21 @@ var example = {
 			maxLevel = 10,
 			skill = [001, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 			skills = [
-				["debug", "potion"],
+				["debug", "healbio"],
 			]
 		},
 		"repair1" : {
-			name = "Repair Kit",
+			name = "Frame Repair Kit",
 			description = "Basic nanorepair kit for machines.",
-			value = [00050, 00000, 00000, 00000, 00000,   00000, 00000, 00000, 00000, 00000],
+			value = [00150, 00000, 00000, 00000, 00000,   00000, 00000, 00000, 00000, 00000],
 			category = 0,
 			maxLevel = 10,
+			charge = true,
+			chargeRate = [025,025,025,025,025, 025,025,025,025,025],
+			chargeUse =  [025,025,025,025,025, 025,025,025,025,025],
 			skill = [001, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 			skills = [
-				["debug", "potion"],
+				["debug", "healmec"],
 			]
 		},
 		"lifeshrd" : {
@@ -72,7 +75,7 @@ func initTemplate():
 		"name": { loader = LIBSTD_STRING },
 		"description": { loader = LIBSTD_STRING },
 		"value": { loader = LIBSTD_SKILL_ARRAY },
-		"charge": { loader = LIBSTD_BOOL, default = false }, #TODO: Items that recharge with a given rate per hour (up to 100) and consume an amount of charge on use.
+		"charge": { loader = LIBSTD_BOOL, default = false },
 		"chargeRate" : { loader = LIBSTD_SKILL_ARRAY },
 		"chargeUse"  : { loader = LIBSTD_SKILL_ARRAY },
 		"counter": { loader = LIBSTD_BOOL, default = false }, #TODO: Implement "counter" items, allows to intercept an element or status, but consumes itself or uses charge.

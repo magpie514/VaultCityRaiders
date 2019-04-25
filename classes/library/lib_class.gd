@@ -20,7 +20,7 @@ var example = {
 				["story", "plasfeld"],
 				["story", "thunswrd"],
 				["debug", "restshrd"],
-				["debug", "nrgshild"],
+				["story", "freerang"],
 				["debug", "gmissile"],
 				["debug", "gatebrkr"],
 				["debug", "codexalt"],
@@ -32,14 +32,18 @@ var example = {
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
 			skills = [
+				# Gun skills ##########
 				["debug", "trikshot"],
 				["debug", "focushot"],
+				# Core skills #########
 				["debug", "restshrd"],
-				["debug", "nrgshild"],
-				["debug", "gmissile"],
-				["debug", "gatebrkr"],
-				["debug", "codexalt"],
-				["debug", "blddance"],
+				["story", "gravrefl"],
+				["story", "gmissile"],
+				["story", "gatebrkr"],
+				["story", "codexalt"],
+				# Glaive/Auger skills #
+				["story", "gemshrap"],
+				["story", "spirbost"],
 			],
 		},
 		"akashic" : {

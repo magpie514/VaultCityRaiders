@@ -109,7 +109,7 @@ func setActionText(act):
 			_:
 				if act.target[0] != null:
 					target = act.target[0].name
-	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.name, target]
+	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.lib.name, target]
 	$Action.show()
 	if S.chargeAnim[act.level] != 0: charge(true)
 	if S.initAD[act.level] != 100: updateAD(S.initAD[act.level])
@@ -141,10 +141,13 @@ func update():
 			updateAD(chr.battle.AD)
 			if chr.battle.guard > 0:
 				$Guard.show()
+				$ComplexBar/GuardBlock.show()
 				$Guard.text = str(chr.battle.guard)
 			else:
+				$ComplexBar/GuardBlock.hide()
 				$Guard.hide()
 		else:
+			$ComplexBar/GuardBlock.hide()
 			$Guard.hide()
 
 		if vitalN < 0.15:			blink = -1

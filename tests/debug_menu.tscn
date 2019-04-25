@@ -13,7 +13,11 @@ func _ready():
 
 func init(ch):
 	C = ch
-	$Label.text = C.name"
+	$Label.text = C.name
+
+func _on_Repair_pressed() -> void:
+	C.fullRepair()
+"
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends Panel
@@ -159,9 +163,17 @@ valign = 1
 [node name="Funds" type="Label" parent="Panel2"]
 margin_left = 20.0
 margin_top = 40.0
-margin_right = 500.0
+margin_right = 270.0
 margin_bottom = 60.0
 text = "Funds:"
+valign = 1
+
+[node name="Time" type="Label" parent="Panel2"]
+margin_left = 280.0
+margin_top = 40.0
+margin_right = 460.0
+margin_bottom = 60.0
+text = "Time:"
 valign = 1
 
 [node name="Wins" type="Label" parent="Panel2"]
@@ -273,7 +285,6 @@ valign = 1
 [node name="Panel4" type="Panel" parent="." groups=[
 "CharMenus",
 ]]
-visible = false
 margin_left = 490.0
 margin_top = 390.0
 margin_right = 960.0
@@ -294,11 +305,18 @@ margin_right = 460.0
 margin_bottom = 50.0
 text = "Full Heal"
 
-[node name="DGem" type="Button" parent="Panel4"]
-margin_left = 12.0
+[node name="Repair" type="Button" parent="Panel4"]
+margin_left = 10.0
 margin_top = 60.0
 margin_right = 460.0
-margin_bottom = 80.0
+margin_bottom = 82.0
+text = "Full Repair"
+
+[node name="DGem" type="Button" parent="Panel4"]
+margin_left = 12.0
+margin_top = 90.0
+margin_right = 460.0
+margin_bottom = 112.0
 text = "Set Dragon Gems"
 
 [node name="Panel5" type="Panel" parent="." groups=[
@@ -380,5 +398,6 @@ text = "Remove"
 [connection signal="pressed" from="Panel2/Heal" to="." method="_on_Heal_pressed"]
 [connection signal="value_changed" from="Panel2/ELVSlider" to="." method="_on_ELVSlider_value_changed"]
 [connection signal="value_changed" from="Panel2/RankSlider" to="." method="_on_RankSlider_value_changed"]
+[connection signal="pressed" from="Panel4/Repair" to="Panel4" method="_on_Repair_pressed"]
 [connection signal="pressed" from="Panel4/DGem" to="." method="_on_DGem_pressed"]
 [connection signal="pressed" from="Panel6/DGemCancel" to="." method="_on_DGemCancel_pressed"]

@@ -23,8 +23,8 @@ var group = null											#Reference to the character's group.
 
 class BattleStats:
 	# Core stats ################################################################################
-	var stat = core.stats.create()         #Calculated battle stats
-	var statmult : Dictionary = {}      #Stat multipliers
+	var stat = core.stats.create()    #Calculated battle stats
+	var statmult : Dictionary = {}    #Stat multipliers
 	# Statistics ################################################################################
 	var accumulatedDMG : int = 0      #Damage accumulated during current battle
 	var accumulatedDealtDMG : int = 0 #Damage dealt accumulated during current battle
@@ -46,7 +46,7 @@ class BattleStats:
 	var effect : Array = []           #Active special effects (max 8, will fail if no slots)
   # Onhit activations #########################################################################
 	var follow : Array = []           #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
-	var combo : Array = []            #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
+	var chase : Array = []            #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
 	var counter : Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
 	var delayed : Array = []          #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
 	# Defensive stats ###########################################################################
@@ -54,10 +54,14 @@ class BattleStats:
 	var decoy : int = 0               #Chance to draw enemy attacks to self.
 	var guard : int = 0               #Prevents an amount of damage. Like a health buffer.
 	var barrier : int = 0             #Nullifies X damage from the received total.
-	var specialDodge : int = 0        #Always dodges X attacks this turn unless they are set to not miss
+	var dodge: int = 0								#Dodge rate%
+	var forceDodge : int = 0          #Always dodges X attacks this turn unless they are set to not miss
 	var chain : int = 0               #Chain counter.
 	var parry : Array = [100, 33, core.skill.PARRY_NONE]
 	var protectedBy : Array = []	    #Array of arrays, [pointer to defender, chance of defending]
+	# Item use stats ############################################################################
+	var itemSPD : int = 090						#Item use speed.
+	var itemAD : int = 110            #Item use AD set.
 	# Misc stats ################################################################################
 	var overheat : int = 0            #Reduces by 1 per turn. Prevents overheat skills from being used.
 	var lastAction = null
@@ -87,6 +91,7 @@ func applyBattleStatMultipliers():
 
 func initBattleTurn() -> void:
 	clampHealth()
+	battle.dodge = 0
 	recalculateStats()
 	stats.copy(battle.stat, statFinal)
 	resetBattleStatMultipliers()
@@ -102,10 +107,10 @@ func initBattleTurn() -> void:
 	battle.decoy = 0
 	battle.guard = 0
 	battle.barrier = 0
-	battle.specialDodge = 0
+	battle.forceDodge = 0
 	battle.protectedBy.clear()
 	battle.follow.clear()
-	battle.combo.clear()
+	battle.chase.clear()
 	battle.AD = 100
 	resetCounter()
 	checkEffects(battle.buff, true)
@@ -237,9 +242,12 @@ func defeat():
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
 	battle.follow.clear()
-	battle.combo.clear()
+	battle.chase.clear()
+	resetCounter()
 	battle.counter[0] = 0
 	battle.AD = 100
+	battle.dodge = 0
+	battle.forceDodge = 0
 	battle.buff.clear()
 	battle.debuff.clear()
 	battle.effect.clear()
@@ -302,7 +310,7 @@ func addEffect(S, lv, user):
 			print("Adding effect %sL%s to %s, duration %s" % [S.name, tempLV, user.name, E[2]])
 			holder.push_back(E)
 			initEffect(E, true)
-			display.message(S.name, false, "FF0000" if S.effectType == skill.EFFTYPE_DEBUFF else "4DE8E8")
+			display.message(S.name, false, skill.messageColors.debuff if S.effectType == skill.EFFTYPE_DEBUFF else skill.messageColors.buff)
 
 
 func refreshEffect(E, data, holder):
@@ -386,7 +394,8 @@ func calculateEffectStats(S, lv):
 						stdout += str("Barrier+%s " % [temp[lv]])
 				"EFFSTAT_EVASION":
 					if S.effectStats & K.EFFSTAT_EVASION:
-						stdout += str("Evasion+%s " % [temp[lv]])
+						battle.dodge += temp[level]
+						stdout += str("Dodge+%s " % [temp[lv]])
 				"EFFSTAT_DECOY":
 					if S.effectStats & K.EFFSTAT_DECOY:
 						battle.decoy += temp[level]
@@ -418,7 +427,7 @@ func removeEffect(E, holder):
 
 func dodgeAttack(user):
 	battle.turnDodges += 1
-	display.message("MISS", false, "888888")
+	display.message("Dodged!", false, "EFEFEF")
 
 func canAct() -> bool:
 	match status:

@@ -7,6 +7,7 @@ var battle = {
 	skillControl = null,
 	background = null,
 }
+var world : WorldClass = WorldClass.new()
 var lib = {
 	race = null,
 	aclass = null,
@@ -24,6 +25,35 @@ var init = false
 
 var Enemy = load("res://classes/char/char_enemy.gd")
 var Player = load("res://classes/char/char_player.gd")
+
+class WorldClass:
+	var time : int = 0 #30 steps or turns => one hour.
+	var day : int = 0
+
+	func init(data) -> void:
+		time = int(data.time)
+		day = int(data.day)
+
+	func save()	-> Dictionary:
+		var result : Dictionary = {
+			time = time,
+			day = day
+		}
+		return result
+
+	func passTime(amount : int = 1):
+		var oldtime = time
+		var oldhour = int(float(time) / 30)
+		time = time + amount
+		print("[WORLD][passTime] Passing %d time units." % amount)
+		var newhour = int(float(time) / 30)
+		print("[WORLD][passTime] %d hours pass." % (newhour-oldhour))
+		for i in range(newhour - oldhour):
+			core.guild.on_hour_pass()
+		while time >= 720:
+			day += 1
+			print("[WORLD][passTime] Day passed. Current day is %d" % day)
+			time -= 720
 
 
 class _charPanel:
@@ -102,6 +132,11 @@ class _tid:
 
 	func copy(tid):
 		create(tid[0], tid[1])
+
+	func string(tid) -> String:
+		var result = "%s/%s" % [tid[0], tid[1]]
+		return result
+
 class StatClass:
 	const STAT_CAP = 255
 	const MAX_DMG = 32000

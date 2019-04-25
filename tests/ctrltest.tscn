@@ -2,15 +2,15 @@
 
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=1]
 [ext_resource path="res://tests/ctrltest.gd" type="Script" id=2]
-[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=3]
+[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=5]
-[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=6]
-[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=7]
-[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=8]
-[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=9]
-[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=10]
-[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=11]
+[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=6]
+[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=7]
+[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=8]
+[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=9]
+[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=10]
+[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=11]
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=12]
 [ext_resource path="res://tests/SkillController.gd" type="Script" id=13]
 
@@ -93,7 +93,7 @@ usage = 0
 render_target_update_mode = 3
 gui_disable_input = true
 
-[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 3 )]
+[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 6 )]
 
 [node name="Panel2" type="Panel" parent="Panel"]
 margin_right = 960.0
@@ -127,14 +127,21 @@ margin_bottom = 90.0
 color = Color( 0, 0, 0, 0.258824 )
 
 [node name="Turn" type="Label" parent="Panel"]
-margin_left = 890.0
+margin_left = 800.0
 margin_top = 76.0
-margin_right = 950.0
+margin_right = 860.0
 margin_bottom = 92.0
 text = "Turn X"
 align = 2
 
-[node name="FieldEffect" parent="Panel" instance=ExtResource( 9 )]
+[node name="Time" type="Label" parent="Panel"]
+margin_left = 870.0
+margin_top = 76.0
+margin_right = 960.0
+margin_bottom = 92.0
+align = 2
+
+[node name="FieldEffect" parent="Panel" instance=ExtResource( 10 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -130.0
@@ -142,30 +149,32 @@ margin_top = 79.0
 margin_right = 130.0
 margin_bottom = 114.0
 
-[node name="InfoDisplay" parent="Panel" instance=ExtResource( 8 )]
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 7 )]
 visible = false
 
-[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 10 )]
+[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 8 )]
 visible = false
 anchor_right = 1.0
 margin_right = 0.0
 
-[node name="BattleControls" parent="Panel" instance=ExtResource( 6 )]
+[node name="BattleControls" parent="Panel" instance=ExtResource( 11 )]
 margin_top = 90.0
 margin_right = 110.0
 margin_bottom = 310.0
 
-[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 11 )]
+[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 9 )]
 margin_left = 10.0
 margin_top = 550.0
 margin_right = 952.0
 margin_bottom = 610.0
 
-[node name="GuildDisplay" parent="Panel" instance=ExtResource( 7 )]
+[node name="GuildDisplay" parent="Panel" instance=ExtResource( 3 )]
 anchor_left = 0.125
 anchor_top = 0.889
 anchor_right = 0.875
 anchor_bottom = 0.972
+margin_top = 19.92
+margin_bottom = 19.92
 
 [node name="Panel" type="Label" parent="Panel"]
 visible = false
@@ -183,9 +192,10 @@ align = 1
 valign = 1
 
 [node name="QuitButton" type="Button" parent="."]
-margin_top = 700.0
-margin_right = 300.0
-margin_bottom = 720.0
+margin_left = 692.0
+margin_top = 680.0
+margin_right = 960.0
+margin_bottom = 700.0
 text = "This test is too intense get me out!!"
 
 [node name="DebugActionQueue" type="RichTextLabel" parent="."]

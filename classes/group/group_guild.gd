@@ -7,6 +7,54 @@ const MAX_SIZE = ROW_SIZE * 2
 
 const ROW_ITER = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 
+class Consumable:
+	var tid
+	var lib : Dictionary
+	var charge : int = 0
+	var level : int = 0
+	var slot : int = 0
+
+	func _init(_slot, index:int):
+		slot = index
+		tid = core.tid.fromArray(_slot[0])
+		lib = core.lib.item.getIndex(tid)
+		level = int(_slot[1])
+		charge = int(_slot[2])
+
+	func recharge() -> void:
+		charge += lib.chargeRate[level]
+
+
+class Inventory:
+	const INIT_SLOTS = 30
+	var consumables : Array = []
+	var dragonGems : Array = []
+	var materials = null #TODO
+	var keyitems : Array = []
+
+	func _init(IN:Array):
+		for i in range(IN.size()):
+			if i < IN.size():
+				consumables.push_back(Consumable.new(IN[i], i))
+
+	func checkRecharges():
+		print("[INVENTORY][checkRecharges] Checking consumable charges.")
+		for i in consumables:
+			if i.lib.charge:
+				i.recharge()
+
+	func takeConsumable(I):
+		print("[INVENTORY][takeConsumable] Taking %s (slot %d)" % [str(I), I.slot])
+		consumables.erase(I)
+
+	func giveConsumable(I):
+		consumables.push_back(I)
+
+	func returnConsumable(I):
+		if I.lib.charge:
+			I.charge += I.lib.chargeUse[I.level]
+		else:
+			consumables.push_front(I)
 
 
 var roster : Array = core.newArray(24)
@@ -27,9 +75,15 @@ func init(dict):
 		wins = int(dict.stats.wins),
 		defeats = int(dict.stats.defeats),
 	}
+	#Restore world settings.
+	var world = {
+		time = dict.world.time if 'time' in dict.world else 29,
+		day = dict.world.day if 'day' in dict.world else 1,
+	}
+	core.world.init(world)
 	#Load item inventory
 	#TODO: Make a proper item class and use it. This will do until then.
-	inventory = dict.inventory.duplicate()
+	inventory = Inventory.new(dict.inventory)
 
 	#Load dragon gem inventory
 	if dict.dragonGems != null:
@@ -118,5 +172,15 @@ func healAll():
 			i.status = core.skill.STATUS_NONE
 			i.fullHeal()
 
+func restoreAll():
+	for i in formation:
+		if i != null:
+			i.status = core.skill.STATUS_NONE
+			i.fullHeal()
+			if i is core.Player: i.repairWeapons()
+
 func getRowIter(row: int) -> Array:
 	return ROW_ITER[row % 2]
+
+func on_hour_pass() -> void:
+	inventory.checkRecharges()

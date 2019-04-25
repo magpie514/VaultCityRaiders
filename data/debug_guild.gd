@@ -6,6 +6,10 @@ var data = {
 		wins = 0,
 		defeats = 0,
 	},
+	world = {
+		time = 29,
+		day = 1
+	},
 	roster = [
 		{ name = "Jay",
 			race = ["debug", "choujin"],
@@ -15,7 +19,7 @@ var data = {
 			equip = [
 				{ id = ["story", "orbicann"], bonus = 0, uses = 25, extra = null, gem = [ [["core", "speed"], 1001], [["core", "speed"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1000], [["core", "shock"], 1000], [["core", "power"], 1000] ] },
 			 ],
-			skills = [ [0, 1], [1, 1], [2, 1] ],
+			skills = [ [0, 1], [1, 1], [2, 1], [3, 1] ],
 			links = [
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
 				[100, A.LINK_BESTFRIEND, A.LINK_NONE, A.LINK_NONE],
@@ -34,7 +38,7 @@ var data = {
 				{ id = ["debug", "soldrifl"], bonus = 0, uses = 25, extra = null, gem = [ [["core", "void"], 900], [["core", "charge"], 900] ] },
 				{ id = ["debug", "boostbld"], bonus = 0, uses = 50, extra = null, gem = [ [["core", "protect"], 900], [["core", "power"], 900], [["core", "protect"], 0], [["core", "rebierth"], 0], [["core", "protect"], 0], [["core", "accel"], 900] ] },
 			 ],
-		 	skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1] ],
+		 	skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1],  [8, 1] ],
 			links = [
 				[100, A.LINK_BESTFRIEND, A.LINK_NONE, A.LINK_NONE],
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
@@ -102,14 +106,14 @@ var data = {
 		1, 3, null,
 	],
 	inventory = [
-		[["core", "nostrum"], 5],
-		[["core", "nostrum"], 5],
-		[["core", "nostrum"], 5],
-		[["core", "repair1"], 5],
-		[["core", "repair1"], 5],
-		[["core", "lifeshrd"], 1],
-		[["debug", "grenade"], 5],
-		[["core", "defshrd"], 1],
+		[["core", "nostrum"],  1, 0],
+		[["core", "nostrum"],  1, 0],
+		[["core", "nostrum"],  1, 0],
+		[["core", "repair1"],  1, 0],
+		[["core", "repair1"],  1, 25],
+		[["core", "lifeshrd"], 1, 0],
+		[["debug", "grenade"], 1, 0],
+		[["core", "defshrd"],  1, 0],
 	],
 	dragonGems = [
 		[["core", "flame"], 0],

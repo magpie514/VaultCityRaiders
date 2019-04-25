@@ -59,6 +59,7 @@ func endTurn():
 	var controlNode = core.battle.skillControl
 	yield(controlNode.wait(0.001), "timeout") #Wait a little bit so the yield on caller can wait.
 	print("Turn %s ended. Updating characters..." % turn)
+	core.world.passTime()
 	var defer = []
 	for i in formations:
 		for j in i.formation:
@@ -208,7 +209,7 @@ func checkActionExecution(user, target) -> bool:
 		return true
 	return false
 
-func resolveAction(act):
+func initAction(act):
 	if checkActionExecution(act.user, act.target):
 		act.user.useBattleSkill(self, act.act, act.skill, act.level, act.target, act.WP, act.IT)
 		yield(core.battle.skillControl, "skill_finished")
@@ -222,8 +223,12 @@ func resolveAction(act):
 			yield(core.battle.skillControl, "onhit_finished")
 			core.battle.skillControl.actionFinish()
 		else:
-			print("[BATTLE_STATE][RESOLVEACTION] No onhit, all done.")
+			print("[BATTLE_STATE][INITACTION] No onhit, all done.")
 			core.battle.skillControl.actionFinish()
+	else:
+		if act.IT != null:
+			print("[BATTLE_STATE][INITACTION] %s was trying to use %s, but was unable to act, giving it back." % [act.user.name, act.IT.lib.name])
+			act.user.group.inventory.returnConsumable(act.IT)
 
 func checkFollow(F, last) -> void:
 	var controlNode = core.battle.skillControl

@@ -49,11 +49,12 @@ func setup(C, place, node):
 		$Main/Macro.hide()
 		$Main/Talk.hide()
 		$Main/Back.show()
-	if C.battle.lastAction == null:
+	if not canRepeat(C.battle.lastAction):
 		$Main/Repeat.disabled = true
+		$Main/Repeat.text = str("Repeat last")
 	else:
 		$Main/Repeat.disabled = false
-		var RS = C.battle.lastAction.skill if C.battle.lastAction.IT == null else C.battle.lastAction.IT
+		var RS = C.battle.lastAction.skill if C.battle.lastAction.IT == null else C.battle.lastAction.IT.lib
 		$Main/Repeat.text = str("Repeat %s" % RS.name)
 
 func _process(delta: float) -> void: #Just a quick hack for now
@@ -141,6 +142,28 @@ func _on_Back_pressed():
 func _on_Switch_pressed():
 	pass # replace with function body
 
+func canRepeat(act) -> bool:
+	if act == null:
+		return false
+	if act.IT != null:
+		if act.IT.lib.charge:
+			if act.IT.charge >= act.IT.lib.chargeUse[act.IT.level]:
+				print("[BATTLECONTROLS][canRepeat] Item is chargeable, has charge, repeating.")
+				return true
+			else:
+				print("[BATTLECONTROLS][canRepeat] Item is chargeable, has no charge, not repeating.")
+				act.IT = null
+				return false
+		else:
+			for i in currentChar.group.inventory.consumables:
+				if i.lib == act.IT.lib and i.level == act.IT.level:
+					print("[BATTLECONTROLS][canRepeat] Item is not chargeable, but there's more on stock.")
+					return true
+			print("[BATTLECONTROLS][canRepeat] Item is not chargeable, there's no more on stock, not repeating.")
+			act.IT = null
+			return false
+	return false
+
 func _on_Repeat_pressed() -> void:
 	var lastAct = currentChar.battle.lastAction
 	if lastAct.skill.targetGroup == skill.TARGET_GROUP_ENEMY:
@@ -149,6 +172,17 @@ func _on_Repeat_pressed() -> void:
 			if not i in p:
 				print("[BATTLECONTROLS][_on_Repeat_pressed] targetting inactive target.")
 				lastAct.target.erase(i)
+	if lastAct.IT != null:
+		if not lastAct.IT.lib.charge:
+			for i in currentChar.group.inventory.consumables:
+				if lastAct.IT.lib == i.lib and lastAct.IT.level == i.level:
+					print("[BATTLECONTROLS][_on_Repeat_pressed] Found another %s on stack, using." % lastAct.IT.lib.name)
+					lastAct.IT = i
+					break
+		if not lastAct.IT.lib.charge:
+			currentChar.group.inventory.takeConsumable(lastAct.IT)
+		else:
+			lastAct.IT.charge -= lastAct.IT.lib.chargeUse[lastAct.IT.level]
 	exit(currentChar.battle.lastAction)
 
 func _on_WeaponMenu_selection(x) -> void:
@@ -161,4 +195,9 @@ func _on_SkillMenu_selection(x) -> void:
 
 func _on_ItemMenu_selection(x) -> void:
 	print("[BATTLECONTROLS][_on_ItemMenu_selection]\n\t%s" % str(x))
+	if x != null: # Consume item here.
+		if not x.IT.lib.charge:
+			currentChar.group.inventory.takeConsumable(x.IT)
+		else:
+			x.IT.charge -= x.IT.lib.chargeUse[x.IT.level]
 	action = x

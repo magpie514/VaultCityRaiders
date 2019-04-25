@@ -24,6 +24,11 @@ func wait(time):
 	$Timer.start()
 	return $Timer
 
+func waitFixed(time):
+	$Timer.wait_time = time
+	$Timer.start()
+	return $Timer
+
 func checkResolution():
 	state.checkResolution()		#Check for battle resolution.
 	match state.resolution: 	#Done very action, so no useless actions take place.
@@ -73,6 +78,7 @@ func battle():
 		state.passTurn()
 		$Panel/GuildDisplay.update()
 		$Panel/Turn.text = "Turn %s" % state.turn
+		$Panel/Time.text = "Time: %02d Day: %03d" % [int(core.world.time / 30), core.world.day]
 		state.enemyActions()
 		$DebugActionQueue.text = state.printQueuePanel()
 		islot = 0
@@ -81,7 +87,7 @@ func battle():
 		while islot < playerChars.size():
 			C = playerChars[islot]
 			reply = null
-			yield(wait(0.1), "timeout")
+			yield(waitFixed(0.05), "timeout")
 			C.display.highlight(true)
 			C.charge(false)
 			C.display.setActionText(null)
@@ -95,11 +101,14 @@ func battle():
 				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
 				islot += 1
 			elif islot > 0: #Player cancelled current action, so back to the previous character.
-				playerActions.pop_back()
+				var temp = playerActions.pop_back()
+				if temp[2].IT: #If player selected items, give them back to inventory or give charge back.
+					#TODO: Check for the usual item duplication exploit shenanigans.
+					testguild.inventory.returnConsumable(temp[2].IT)
 				islot -= 1
 			$Panel/BattleControls.closeAll()
 
-		yield(wait(0.5), "timeout")
+		yield(waitFixed(0.25), "timeout")
 		for i in playerActions:
 			state.addAction(i[0], i[1], i[2])
 
@@ -125,7 +134,7 @@ func battle():
 				if state.status():
 					if A.side == state.SIDE_PLAYER: A.user.display.highlight(true)
 					else: A.user.sprDisplay.act()
-					state.resolveAction(A)
+					state.initAction(A)
 					yield($SkillController, "action_finished")
 					state.updateActions(A)
 					state.sort()
@@ -172,6 +181,7 @@ func _ready():
 	yield(wait(24.0), "timeout")
 	$Panel/GuildDisplay.disconnectUISignals(self)
 	print("Done")
+	core.world.passTime(1)
 	core.changeScene("res://tests/debug_menu.tscn")
 
 

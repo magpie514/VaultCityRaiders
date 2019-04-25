@@ -66,6 +66,7 @@ var example = {
 		},
 	},
 	"story" : {
+# Jay's skills ####################################################################################
 		"plasfeld": {
 			name = "Plasma Field",
 			description = "Emit a plasma wave that charges the field with electricity.",
@@ -111,6 +112,254 @@ var example = {
 				["attack"       ,150,125,132,132,140,   140,147,147,147,160],
 				["ef_consume"   ,006,004,004,004,004,   004,004,004,004,004],
 			],
+		},
+		"freerang": {
+			name = "Free Range",
+			description = "Fire a cluster of seeking missiles with high accuracy.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SPREAD,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_BLUNT,
+			energyDMG = false,
+			damageStat = core.stats.STAT.ETK,
+			chain = skill.CHAIN_STARTER,
+			modStat = core.stats.STAT.LUC,
+			ranged = true,
+			accMod = [110,110,110,099,099,   099,099,099,099,099],
+			spdMod = [085,100,100,100,100,   100,100,100,100,100],
+			AD =     [095,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+# Magpie's skills #################################################################################
+		"gravrefl": {
+			name = "Graviton Reflow",
+			description = "Uses G-Crystal graviton reflow to increase a row's EDF and energy resistance.",
+			category = skill.CAT_SUPPORT,
+			type = skill.TYPE_BODY,
+			target = skill.TARGET_ROW,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			effect = skill.EFFECT_STATS,
+			effectIfActive = skill.EFFCOLL_ADD,
+			effectType = skill.EFFTYPE_BUFF,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_RES,
+			effectStatBonus = {
+				EFFSTAT_BASEMULT = {
+					EDF = [120, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+				EFFSTAT_RES = {
+					DMG_ENERGY =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+			},
+			effectDuration = [000, 002, 002, 002, 003,   003, 003, 003, 003, 004],
+			effectPriority = 0,
+			AD = 			[115, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[150, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeMN = [
+				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000, skill.OPFLAGS_BLOCK_START],
+					["guard",          010,000,000,000,000,   000,000,000,000,000, skill.OPFLAGS_VALUE_PERCENT],
+			],
+			codePO = [
+				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000],
+					["ef_take",        001,000,000,000,000,   000,000,000,000,000],
+			]
+		},
+		"gemshrap": {
+			name = "Gem Shrapnel",
+			description = "While active, every cut attack will follow with an additional pierce.",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_PIERCE,
+			effect = skill.EFFECT_SPECIAL,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_ADD,
+			effectDuration = 3,
+			effectPriority = 3,
+			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeEF = [
+				["follow_dec",   033, 033, 033, 033, 033,   033, 033, 033, 033, 033],
+				["follow_el",    001, 001, 001, 000, 000,   000, 000, 000, 000, 000],
+				["follow_set",   100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			],
+			codeFL = [
+				["if_synergy",  001, 033, 033, 033, 033,   033, 033, 033, 033, 033, skill.OPFLAGS_TARGET_SELF],
+				["ef_mult",     200, 033, 033, 033, 033,   033, 033, 033, 033, 033],
+				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+			],
+			synergy = [["debug", "dncsword"]]
+		},
+		"spirbost": {
+			name = "Spiral Boost",
+			description = "Flies at an enemy, using teleportation to dodge incoming attacks. Successful dodges improve damage. The further away the enemy is, the more time it'll take to reach.",
+			category = skill.CAT_ATTACK,
+			type = skill.TYPE_WEAPON,
+			requiresWeapon = skill.WPCLASS_POLEARM,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			energyDMG = false,
+			ranged = true,
+			spdMod = 	[075,100,100,100,100, 100,100,100,100,100],
+			initAD =  [095,095,095,095,095, 090,090,090,090,090],
+			AD = 			[125,100,100,100,100, 100,100,100,100,100],
+			codePR = [
+				["decoy",       100,100,100,100,100,  100,100,100,100,100],
+				["dodge",       100,100,100,100,100,  100,100,100,100,100],
+				["get_range",   000,000,000,000,000,  000,000,000,000,000],
+				["mul",         010,000,000,000,000,  000,000,000,000,000],
+				["subi",        100,000,000,000,000,  000,000,000,000,000],
+				["agi_mod",     000,000,000,000,000,  000,000,000,000,000, skill.OPFLAGS_VALUE_PERCENT|skill.OPFLAGS_USE_SVAL]
+			],
+			codeMN = [
+				["if_synergy",  001,033,033,033,033,  033,033,033,033,033, skill.OPFLAGS_TARGET_SELF],
+				["ef_mult",     240,240,240,240,240,  240,240,240,240,240],
+				["get_dodges",  000,000,000,000,000,  000,000,000,000,000, skill.OPFLAGS_TARGET_SELF],
+				["mul",         035,035,035,035,035,  035,035,035,035,035],
+				["add",         100,100,100,100,100,  100,100,100,100,100],
+				["attack",			000,000,000,000,000,  000,000,000,000,000, skill.OPFLAGS_USE_SVAL],
+			],
+			synergy = [["debug", "dncsword"]]
+		},
+		"gmissile": {
+			name = "G-Crystal Missile",
+			description = "",
+			displayElement = [2, 7],
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_ROW,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_PIERCE,
+			energyDMG = true,
+			damageStat = core.stats.STAT.ETK,
+			ranged = true,
+			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
+			effectType = skill.EFFTYPE_DEBUFF,
+			effectIfActive = skill.EFFCOLL_FAIL,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_RES,
+			effectStatBonus = {
+				EFFSTAT_RES = {
+					DMG_ULTIMATE =	[030,000,000,000,000,   000,000,000,000,000],
+				},
+				EFFSTAT_BASEMULT = {
+					AGI = [-20,000,000,000,000,   000,000,000,000,000],
+				},
+			},
+			effectDuration = [002,003,003,003,004,   004,004,004,004,005],
+			effectPriority = 3,
+			accMod = [099, 099, 099, 099, 099,   099, 099, 099, 099, 099],
+			spdMod = [080, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD =     [095, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeMN = [
+				["element",     007,007,007,007,007,   007,007,007,007,007],
+				["attack",		  045,125,132,132,140,   140,147,147,147,160],
+			],
+			codeED = [
+				["playanim",    001,001,001,001,001,   001,001,001,001,001],
+				["printmsg",    001,001,001,001,001,   001,001,001,001,001],
+				["element",     007,007,007,007,007,   007,007,007,007,007],
+				["ef_replace2", 015,015,015,015,015,   015,015,015,015,015],
+				["attack",		  035,125,132,132,140,   140,147,147,147,160],
+			],
+			messages = [
+				["Crystals detonate inside %s!", skill.MSG_TARGET],
+			],
+		},
+		"gatebrkr": {
+			name = "Gate Breaker",
+			description = "Discharges the G-Crystal particles used for dimensional scanning as a burst of energy.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			fieldEffectMult = 4,
+			energyDMG = true,
+			damageStat = core.stats.STAT.ETK,
+			filter = skill.FILTER_ALIVE_OR_STASIS,
+			ranged = true,
+			accMod = [100, 099, 099, 099, 099,   099, 099, 099, 099, 099],
+			spdMod = [110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = [110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeMN = [
+				["if_synergy_party", 001,001,001,001,001,   001, 001, 001, 001, 001, skill.OPFLAGS_BLOCK_START|skill.OPFLAGS_TARGET_SELF],
+				["ef_push",		       006,125,132,132,140,   140, 147, 147, 147, 160],
+				["playanim",	       001,125,132,132,140,   140, 147, 147, 147, 160],
+				["dmgbonus",		     015,125,132,132,140,   140, 147, 147, 147, 160, skill.OPFLAGS_BLOCK_END],
+				["attack",		       085,125,132,132,140,   140, 147, 147, 147, 160],
+			],
+			synergy = [ ["story", "plasfeld"] ],
+		},
+		"codexalt": {
+			name = "Code 「EXALT」",
+			description = "Releases limiters on the Hollow Engine, allowing temporary access to its full output.",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_NULLIFY,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_OFF|skill.EffectStat.EFFSTAT_RES|skill.EffectStat.EFFSTAT_EVASION,
+			effectStatBonus = {
+				EFFSTAT_OFF = {
+					DMG_ULTIMATE =	[030, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+				EFFSTAT_RES = {
+					DMG_KINETIC =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					DMG_ENERGY =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+				EFFSTAT_BASEMULT = {
+					AGI = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					ETK = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+				EFFSTAT_EVASION = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+			},
+			effectDuration = [002, 003, 003, 003, 004,   004, 004, 004, 004, 005],
+			effectPriority = 3,
+			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeMN = [
+				["printmsg", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
+			],
+			codeED = [
+				["printmsg", 002, 002, 002, 002, 002,   002, 002, 002, 002, 002],
+				["linkskill", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
+				["playanim", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
+			],
+			messages = [
+				["%s's limiter released!", skill.MSG_USER],
+				["%s overheats!", skill.MSG_USER],
+			],
+			linkSkill = [
+				["debug", "selfrepr"],
+			],
+		},
+		"dncsword": {
+			name = "Dancing Sword",
+			description = "Enchant a party member, giving it a blade of wind that follows their attacks.",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			effect = skill.EFFECT_SPECIAL,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_ADD,
+			effectDuration = 3,
+			effectPriority = 3,
+			ranged = true,
+			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeEF = [
+				["follow_dec",   033, 033, 033, 033, 033,   033, 033, 033, 033, 033],
+				["follow_set",   100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			],
+			codeFL = [
+				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+			]
 		},
 	},
 	"enemy" : {
@@ -272,6 +521,7 @@ var example = {
 			],
 		},
 	},
+# Dragon gem skills ###############################################################################
 	"gem" : {
 		"firewave": {
 			name = "Fire Wave",
@@ -724,7 +974,7 @@ var example = {
 				["heal",          080,125,132,132,140,  140,147,147,147,160],
 			],
 		},
-		"potion": {
+		"healbio": {
 			name = "Healing",
 			category = skill.CAT_SUPPORT,
 			animations = "/nodes/FX/basic_heal.tscn",
@@ -734,6 +984,20 @@ var example = {
 			codeMN = [
 				["if_race_aspect", 002,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
 				 ["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				 ["stop",          001,001,001,001,001,  001,001,001,001,001],
+				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+			],
+		},
+		"healmec": {
+			name = "Heal Machine",
+			category = skill.CAT_SUPPORT,
+			animations = "/nodes/FX/basic_heal.tscn",
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			ranged = true,
+			codeMN = [
+				["if_race_aspect", 001,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
+				 ["heal",          085,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 				 ["stop",          001,001,001,001,001,  001,001,001,001,001],
 				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 			],
@@ -844,32 +1108,6 @@ var example = {
 				["enemy_summon",   001,000,000,000,000,  000,000,000,000,000],
 			]
 		},
-
-		"nrgshild": {
-			name = "Energy Shield",
-			description = "",
-			category = skill.CAT_SUPPORT,
-			type = skill.TYPE_BODY,
-			target = skill.TARGET_ROW,
-			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			effect = skill.EFFECT_STATS,
-			effectIfActive = skill.EFFCOLL_ADD,
-			effectType = skill.EFFTYPE_BUFF,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_RES,
-			effectStatBonus = {
-				EFFSTAT_BASEMULT = {
-					EDF = [120, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-				EFFSTAT_RES = {
-					DMG_ENERGY =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-			},
-			effectDuration = [000, 002, 002, 002, 003,   003, 003, 003, 003, 004],
-			effectPriority = 0,
-			AD = 			[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = 	[150, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-		},
 		"decoy": {
 			name = "Decoy",
 			description = "",
@@ -919,7 +1157,7 @@ var example = {
 		},
 		"focushot": {
 			name = "Focus Shot",
-			description = "Marks an enemy for a combo sequence.",
+			description = "Marks an enemy for a chase attack.",
 			category = skill.CAT_ATTACK,
 			type = skill.TYPE_WEAPON,
 			target = skill.TARGET_SINGLE,
@@ -933,55 +1171,12 @@ var example = {
 			codeMN = [
 				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 				["if_connect",  000, 000, 000, 000, 000,   000, 000, 000, 000, 000, skill.OPFLAGS_QUIT_ON_FALSE],
-				["combo_dec",  035, 125, 132, 132, 140,   140, 147, 147, 147, 160],
-				["combo_set",  100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+				["chase_dec",  035, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+				["chase_set",  100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 			],
 			codeFL = [
 				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 			]
-		},
-		"gmissile": {
-			name = "G-Crystal Missile",
-			description = "",
-			displayElement = [2, 7],
-			category = skill.CAT_ATTACK,
-			target = skill.TARGET_ROW,
-			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = true,
-			damageStat = core.stats.STAT.ETK,
-			ranged = true,
-			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
-			effectType = skill.EFFTYPE_DEBUFF,
-			effectIfActive = skill.EFFCOLL_FAIL,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_RES,
-			effectStatBonus = {
-				EFFSTAT_RES = {
-					DMG_ULTIMATE =	[030,000,000,000,000,   000,000,000,000,000],
-				},
-				EFFSTAT_BASEMULT = {
-					AGI = [-20,000,000,000,000,   000,000,000,000,000],
-				},
-			},
-			effectDuration = [002,003,003,003,004,   004,004,004,004,005],
-			effectPriority = 3,
-			accMod = [099, 099, 099, 099, 099,   099, 099, 099, 099, 099],
-			spdMod = [080, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD =     [095, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			codeMN = [
-				["element",     007,007,007,007,007,   007,007,007,007,007],
-				["attack",		  045,125,132,132,140,   140,147,147,147,160],
-			],
-			codeED = [
-				["playanim",    001,001,001,001,001,   001,001,001,001,001],
-				["printmsg",    001,001,001,001,001,   001,001,001,001,001],
-				["element",     007,007,007,007,007,   007,007,007,007,007],
-				["ef_replace2", 015,015,015,015,015,   015,015,015,015,015],
-				["attack",		  035,125,132,132,140,   140,147,147,147,160],
-			],
-			messages = [
-				["Crystals detonate inside %s!", skill.MSG_TARGET],
-			],
 		},
 		"hyprshot": {
 			name = "Gateway Shot",
@@ -1186,31 +1381,7 @@ var example = {
 			],
 			synergy = [["debug", "dncsword"]],
 		},
-		"gatebrkr": {
-			name = "Gate Breaker",
-			description = "",
-			category = skill.CAT_ATTACK,
-			target = skill.TARGET_ALL,
-			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			fieldEffectMult = 4,
-			energyDMG = true,
-			damageStat = core.stats.STAT.ETK,
-			filter = skill.FILTER_ALIVE_OR_STASIS,
-			ranged = true,
-			accMod = [100, 099, 099, 099, 099,   099, 099, 099, 099, 099],
-			spdMod = [110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = [110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			codeMN = [
-				["if_synergy_party", 001,001,001,001,001,   001, 001, 001, 001, 001, skill.OPFLAGS_BLOCK_START|skill.OPFLAGS_TARGET_SELF],
-				["ef_push",		       006,125,132,132,140,   140, 147, 147, 147, 160],
-				["playanim",	       001,125,132,132,140,   140, 147, 147, 147, 160],
-				["dmgbonus",		     015,125,132,132,140,   140, 147, 147, 147, 160, skill.OPFLAGS_BLOCK_END],
-				["attack",		       085,125,132,132,140,   140, 147, 147, 147, 160],
-			],
-			synergy = [ ["story", "plasfeld"] ],
-		},
-			"selfrepr": {
+		"selfrepr": {
 			name = "System Repair",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
@@ -1262,102 +1433,6 @@ var example = {
 			accMod =	[080, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			AD = 			[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			spdMod = 	[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-		},
-		"blddance": {
-			name = "Gem Shrapnel",
-			description = "While active, every cut attack will follow with an additional pierce.",
-			category = skill.CAT_SUPPORT,
-			target = skill.TARGET_SELF,
-			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_PIERCE,
-			effect = skill.EFFECT_SPECIAL,
-			effectType = skill.EFFTYPE_BUFF,
-			effectIfActive = skill.EFFCOLL_ADD,
-			effectDuration = 3,
-			effectPriority = 3,
-			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			codeEF = [
-				["follow_dec",   033, 033, 033, 033, 033,   033, 033, 033, 033, 033],
-				["follow_el",    001, 001, 001, 000, 000,   000, 000, 000, 000, 000],
-				["follow_set",   100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			],
-			codeFL = [
-				["if_synergy",  001, 033, 033, 033, 033,   033, 033, 033, 033, 033, skill.OPFLAGS_TARGET_SELF],
-				["ef_mult",     002, 033, 033, 033, 033,   033, 033, 033, 033, 033],
-				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
-			],
-			synergy = [["debug", "dncsword"]]
-		},
-		"dncsword": {
-			name = "Dancing Sword",
-			description = "Enchant a party member, giving it a blade of wind that follows their attacks.",
-			category = skill.CAT_SUPPORT,
-			target = skill.TARGET_SINGLE,
-			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_CUT,
-			effect = skill.EFFECT_SPECIAL,
-			effectType = skill.EFFTYPE_BUFF,
-			effectIfActive = skill.EFFCOLL_ADD,
-			effectDuration = 3,
-			effectPriority = 3,
-			ranged = true,
-			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			codeEF = [
-				["follow_dec",   033, 033, 033, 033, 033,   033, 033, 033, 033, 033],
-				["follow_set",   100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			],
-			codeFL = [
-				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
-			]
-		},
-			"codexalt": {
-			name = "Code 「EXALT」",
-			description = "The limiter in the hollow engine will be released, allowing temporary access to its full output.",
-			category = skill.CAT_SUPPORT,
-			target = skill.TARGET_SELF,
-			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
-			effectType = skill.EFFTYPE_BUFF,
-			effectIfActive = skill.EFFCOLL_NULLIFY,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_OFF|skill.EffectStat.EFFSTAT_RES|skill.EffectStat.EFFSTAT_EVASION,
-			effectStatBonus = {
-				EFFSTAT_OFF = {
-					DMG_ULTIMATE =	[030, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-				EFFSTAT_RES = {
-					DMG_KINETIC =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-					DMG_ENERGY =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-				EFFSTAT_BASEMULT = {
-					AGI = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-					ETK = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-				EFFSTAT_EVASION = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-			},
-			effectDuration = [002, 003, 003, 003, 004,   004, 004, 004, 004, 005],
-			effectPriority = 3,
-			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			codeMN = [
-				["printmsg", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
-			],
-			codeED = [
-				["printmsg", 002, 002, 002, 002, 002,   002, 002, 002, 002, 002],
-				["linkskill", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
-				["playanim", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
-			],
-			messages = [
-				["%s's limiter released!", skill.MSG_USER],
-				["%s overheats!", skill.MSG_USER],
-			],
-			linkSkill = [
-				["debug", "selfrepr"],
-			],
 		},
 		"memebeyo": {
 			name = "Memento from the Void",
@@ -1487,7 +1562,7 @@ func loaderSkillCode(a):
 			for j in a.size():
 				line = a[j]
 				result[j] = core.newArray(12)
-				result[j][0] = skill.translateOpCode(line[0])
+				result[j][0] = skill.translateOpCode(str(line[0]).to_lower()) #Ensure code is loaded as lower case.
 				for i in range(1, 11):
 					result[j][i] = int(line[i])
 				if line.size() == 12:

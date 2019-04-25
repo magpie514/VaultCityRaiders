@@ -10,8 +10,10 @@ var hyper : int = 0                                                           #G
 var dominant : int = 0                                                        #Dominant element
 var locked : int = 0
 
+var frange = range(FIELD_EFFECT_SIZE)	#Some optimization.
+
 func _init() -> void:
-	print("Initializing element field")
+	print("[FIELD_EFFECT] Initializing element field. Size: %d" % FIELD_EFFECT_SIZE)
 	data.resize(FIELD_EFFECT_SIZE)
 	for i in data:
 		i = 0 as int
@@ -50,7 +52,7 @@ func update() -> void: #TODO: Count number of chains and individual elements
 	for i in range(bonus.size()):
 		bonus[i] = 0
 		_chains[i] = 0
-	for i in range(FIELD_EFFECT_SIZE):
+	for i in frange:
 		temp = data[i]
 		if temp != 0:
 			bonus[temp] += 1
@@ -113,12 +115,12 @@ func random(t:int) -> void:
 	if locked > 0: return
 	match(t):
 		0: #Random fill
-			for i in range(FIELD_EFFECT_SIZE):
+			for i in frange:
 				data[i] = randi() % 7
 		1: #Random fill, but including ultimate.
-			for i in range(FIELD_EFFECT_SIZE):
+			for i in frange:
 				data[i] = randi() % 8
-		2: #Random fill with increased chance of a combo.
+		2: #Random fill with increased chance of a chain.
 			var el : int = 0
 			for i in range(FIELD_EFFECT_SIZE):
 				if el != 0 and core.chance(50):
@@ -132,27 +134,28 @@ func random(t:int) -> void:
 	update()
 
 func optimize() -> void:
+	#Simply sorts all elements. This makes repeats form a chain.
 	if locked > 0: return
 	data.sort()
 	update()
 
 func replace(elem1:int, elem2:int) -> void:
 	if locked > 0: return
-	for i in range(FIELD_EFFECT_SIZE):
+	for i in frange:
 		if data[i] == elem1:
 			data[i] = elem2
 	update()
 
 func fillChance(elem:int, chance:int) -> void:
 	if locked > 0: return
-	for i in range(FIELD_EFFECT_SIZE):
+	for i in frange:
 		if core.chance(chance):
 			data[i] = elem
 	update()
 
 func replaceChance(elem1:int, elem2:int, chance:int) -> void:
 	if locked > 0: return
-	for i in range(FIELD_EFFECT_SIZE):
+	for i in frange:
 		if data[i] == elem1:
 			if core.chance(chance):
 				data[i] = elem2
@@ -160,20 +163,34 @@ func replaceChance(elem1:int, elem2:int, chance:int) -> void:
 
 func replaceChance2(elem:int, chance:int) -> void:
 	if locked > 0: return
-	for i in range(FIELD_EFFECT_SIZE):
+	for i in frange:
 		if core.chance(chance):
 			data[i] = elem
 	update()
 
 func consume(elem:int, elem2:int = 0) -> void:
+	#Remove all elem. Replace by elem2 if specified.
 	if locked > 0: return
-	var x : int = 0
-	var swap : int = 0
-	for i in range(FIELD_EFFECT_SIZE):
+	for i in frange:
 		if data[i] == elem:
 			data[i] = elem2
 	data.sort_custom(self.Sorters, "_consume_sort")
 	update()
+
+func take(amount:int, elem:int, elem2:int = 0) -> int:
+	#Take amount icons of elem. Replace by elem2 if specified.
+	if locked > 0 or amount <= 0: return 0
+	var taken = 0
+	for i in range(amount):
+		for i in frange:
+			if data[i] == elem:
+				data[i] = elem2
+				taken += 1
+				break
+	data.sort_custom(self.Sorters, "_consume_sort")
+	update()
+	return taken
+
 
 class Sorters:
 	static func _consume_sort(a, b):

@@ -302,11 +302,20 @@ class Weapon:
 	func setBonus(val) -> void: #Clamp value for upgrade bonus
 		bonus = int(clamp(val, 0, 9))
 
+	func fullRepair() -> void:
+		uses = stats.DUR
+		print("[WEAPON][fullRepair] Fully repaired!")
+
+	func partialRepair(val:int) -> void:
+		uses = float(stats.DUR) * core.percent(val)
+		print("[WEAPON][partialRepair] Durability is now %02d" % uses)
+
 
 class equipClass:
 	const WEAPON_SLOTS = 4
 	const GEAR_SLOTS = 4
 	var weps = core.newArray(WEAPON_SLOTS)
+	var currentWeapon : Weapon
 	var gear = core.newArray(GEAR_SLOTS)
 	var tid = core.tid
 	func _init() -> void:
@@ -315,9 +324,26 @@ class equipClass:
 		for i in range(GEAR_SLOTS):
 			gear[i] = null
 
+	func fullRepair(all:bool) -> void:
+		print("[EQUIP][fullRepair] Repairing all weapons.")
+		if all:
+			for i in weps:
+				if i != null:
+					i.fullRepair()
+		else:
+			currentWeapon.fullRepair()
+
+	func partialRepair(val:int, all:bool) -> void:
+		print("[EQUIP][partialRepair] Repairing %d%% to all weapons." % val)
+		if all:
+			for i in weps:
+				if i != null:
+					i.partialRepair(val)
+		else:
+			currentWeapon.partialRepair(val)
+
 	func loadWeapon(data : Dictionary) -> Weapon:
 		var result = Weapon.new(data)
-#		result.attachGem(DragonGem.new(["debug", "debug"], 0), 3)
 		return result
 
 	func loadWeapons(data) -> void:
@@ -496,6 +522,7 @@ func initDict(C):	#Load the character from save data
 	self.level = int(C.level)                  #Set character level. TODO: Read EXP instead?
 	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.
 	currentWeapon = equip.weps[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
+	equip.currentWeapon = equip.weps[0]
 	initSkillList(C.skills)                    #Init adventurer's skill list.
 	initLinkList(C.links)                      #Init adventurer's links and trust with other guild members.
 	if 'energyColor' in C: energyColor = C.energyColor
@@ -533,6 +560,7 @@ func setXP(val):
 func setWeapon(WP):
 	if currentWeapon != WP:
 		currentWeapon = WP
+		equip.currentWeapon = WP
 		print("Switched weapon to %s" % [WP.id])
 		updateBattleStats()
 
@@ -556,3 +584,9 @@ func checkRaceType(type:int) -> bool:
 	if type in race.lib.race:
 		result = true
 	return result
+
+func fullRepair(all:bool=true) -> void:
+	equip.fullRepair(all)
+
+func partialRepair(val:int, all:bool=true) -> void:
+	equip.partialRepair(val,all)
