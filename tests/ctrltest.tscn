@@ -5,12 +5,12 @@
 [ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=5]
-[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=6]
-[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=7]
-[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=8]
-[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=9]
-[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=10]
-[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=11]
+[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=6]
+[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=7]
+[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=8]
+[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=9]
+[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=10]
+[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=11]
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=12]
 [ext_resource path="res://tests/SkillController.gd" type="Script" id=13]
 
@@ -93,7 +93,7 @@ usage = 0
 render_target_update_mode = 3
 gui_disable_input = true
 
-[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 6 )]
+[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 10 )]
 
 [node name="Panel2" type="Panel" parent="Panel"]
 margin_right = 960.0
@@ -141,7 +141,14 @@ margin_right = 960.0
 margin_bottom = 92.0
 align = 2
 
-[node name="FieldEffect" parent="Panel" instance=ExtResource( 10 )]
+[node name="Button" type="Button" parent="Panel/Time"]
+margin_left = -19.0
+margin_top = 18.0
+margin_right = 70.0
+margin_bottom = 36.0
+text = "Pass hour"
+
+[node name="FieldEffect" parent="Panel" instance=ExtResource( 8 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -130.0
@@ -149,20 +156,20 @@ margin_top = 79.0
 margin_right = 130.0
 margin_bottom = 114.0
 
-[node name="InfoDisplay" parent="Panel" instance=ExtResource( 7 )]
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 9 )]
 visible = false
 
-[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 8 )]
+[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 11 )]
 visible = false
 anchor_right = 1.0
 margin_right = 0.0
 
-[node name="BattleControls" parent="Panel" instance=ExtResource( 11 )]
+[node name="BattleControls" parent="Panel" instance=ExtResource( 7 )]
 margin_top = 90.0
 margin_right = 110.0
 margin_bottom = 310.0
 
-[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 9 )]
+[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 6 )]
 margin_left = 10.0
 margin_top = 550.0
 margin_right = 952.0
@@ -204,6 +211,7 @@ margin_left = 770.0
 margin_top = 96.0
 margin_right = 960.0
 margin_bottom = 440.0
+mouse_filter = 2
 bbcode_enabled = true
 
 [node name="SkillController" type="Node" parent="."]
@@ -246,6 +254,7 @@ margin_left = 271.0
 margin_right = 331.0
 margin_bottom = 20.0
 text = "SLOW"
+[connection signal="pressed" from="Panel/Time/Button" to="." method="_on_Button_pressed"]
 [connection signal="finished" from="Panel/BattleControls" to="." method="_on_BattleControls_finished"]
 [connection signal="pressed" from="QuitButton" to="." method="_on_QuitButton_pressed"]
 [connection signal="timeout" from="SkillController/FXTimer" to="SkillController" method="_on_FXTimer_timeout"]

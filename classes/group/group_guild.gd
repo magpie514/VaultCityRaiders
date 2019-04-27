@@ -18,11 +18,18 @@ class Consumable:
 		slot = index
 		tid = core.tid.fromArray(_slot[0])
 		lib = core.lib.item.getIndex(tid)
-		level = int(_slot[1])
+		level = int(_slot[1]) - 1
 		charge = int(_slot[2])
 
 	func recharge() -> void:
+		print("[CONSUMABLES][rechargeFull] Charging %s (+%s)" % [lib.name, lib.chargeRate[level]])
 		charge += lib.chargeRate[level]
+		if charge >= 100:
+			charge = 100
+
+	func rechargeFull() -> void:
+		print("[CONSUMABLES][rechargeFull] Fully recharging %s" % lib.name)
+		charge = 100
 
 
 class Inventory:
@@ -42,6 +49,12 @@ class Inventory:
 		for i in consumables:
 			if i.lib.charge:
 				i.recharge()
+
+	func checkRechargesFull():
+		print("[INVENTORY][checkRechargesFull] Checking consumable charges.")
+		for i in consumables:
+			if i.lib.charge:
+				i.rechargeFull()
 
 	func takeConsumable(I):
 		print("[INVENTORY][takeConsumable] Taking %s (slot %d)" % [str(I), I.slot])

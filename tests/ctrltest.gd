@@ -3,7 +3,7 @@ signal battle_finished
 
 enum { WAIT_S, WAIT_M, WAIT_L, WAIT_XL }
 const DELAYS = [0.15, 0.5, 1.0, 2.0]
-const BATTLE_SPEED_MULTIPLIER = [0.05, 0.5, 1.0, 2.0]
+const BATTLE_SPEED_MULTIPLIER = [0.15, 0.5, 1.0, 2.0]
 
 var testguild = null
 var testmform = null
@@ -163,6 +163,7 @@ func _ready():
 	core.battle.control = self
 	core.battle.skillControl = $SkillController
 	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
+	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
 	state.init(testguild, testmform, self)
 	$Panel/BattleControls.init(state, self)
 	$Panel/BattleControls.hide()
@@ -210,3 +211,7 @@ func hideInfo():
 func _on_Speed_pressed(x:int) -> void:
 	battleSpeed = x
 	$SkillController.speed = x
+
+
+func _on_Button_pressed() -> void:
+	core.world.passTime()

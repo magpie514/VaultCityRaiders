@@ -6,7 +6,7 @@ signal skill_special_finished
 signal onhit_finished
 signal action_finished
 
-const ANIM_SPEEDS = [5.0, 2.0, 1.0, 0.5]
+const ANIM_SPEEDS = [2.5, 2.0, 1.0, 0.5]
 
 var subControlNode = preload("res://nodes/SkillControlSub.tscn")
 var speed : int = 0

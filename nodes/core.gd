@@ -6,6 +6,7 @@ var battle = {
 	control = null,
 	skillControl = null,
 	background = null,
+	bg_fx = null,
 }
 var world : WorldClass = WorldClass.new()
 var lib = {
@@ -45,7 +46,7 @@ class WorldClass:
 		var oldtime = time
 		var oldhour = int(float(time) / 30)
 		time = time + amount
-		print("[WORLD][passTime] Passing %d time units." % amount)
+		print("[WORLD][passTime] Passing %d time units (%d)." % [amount, time])
 		var newhour = int(float(time) / 30)
 		print("[WORLD][passTime] %d hours pass." % (newhour-oldhour))
 		for i in range(newhour - oldhour):

@@ -189,3 +189,9 @@ color = Color( 1, 1, 1, 0.0392157 )
 position = Vector2( 170, 75 )
 current = true
 editor_draw_limits = true
+
+[node name="FXHook" type="Control" parent="."]
+margin_left = -340.0
+margin_top = -185.0
+margin_right = -340.0
+margin_bottom = -185.0

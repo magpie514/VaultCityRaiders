@@ -162,7 +162,7 @@ func canRepeat(act) -> bool:
 			print("[BATTLECONTROLS][canRepeat] Item is not chargeable, there's no more on stock, not repeating.")
 			act.IT = null
 			return false
-	return false
+	return true
 
 func _on_Repeat_pressed() -> void:
 	var lastAct = currentChar.battle.lastAction

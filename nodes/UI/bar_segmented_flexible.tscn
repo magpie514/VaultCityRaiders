@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://nodes/UI/bar_segmented_flex.gd" type="Script" id=1]
+
+[node name="BarSegmentedF" type="Control"]
+margin_right = 40.0
+margin_bottom = 20.0
+mouse_filter = 2
+script = ExtResource( 1 )
+segments = 5
+value = 2

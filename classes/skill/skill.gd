@@ -201,6 +201,12 @@ enum {
 	ANIMFLAGS_COLOR_FROM_ELEMENT = 0x01,
 }
 
+enum {
+	ANIM_ONHIT = 0,
+	ANIM_STARTUP = 1,
+	ANIM_FINISH = 1
+}
+
 enum { #Chains. Starters init a sequence, follows increase it, and finishers use the chain value as modifier.
 	CHAIN_NONE = 0,
 	CHAIN_STARTER,
@@ -418,6 +424,9 @@ enum {
 	OPCODE_REPAIR_FULL,				#Repairs currently equipped weapon completely if not 0.
 	OPCODE_REPAIR_PARTIAL_ALL,#Repairs all equipped weapons by X%.
 	OPCODE_REPAIR_FULL_ALL,		#Repairs all equipped weapons completely if not 0.
+	OPCODE_ITEM_RECHARGE,			#Gives items charge equivalent to X hours.
+	OPCODE_ITEM_REFILL,				#Fully refills chargeable items.
+
 
 	# Enemy only specials ########################################################
 	OPCODE_ENEMY_REVIVE,			#[+]Revives a fallen enemy.
@@ -583,6 +592,8 @@ const opCode = {
 	"fullrepair" : OPCODE_REPAIR_FULL,
 	"repair_all" : OPCODE_REPAIR_PARTIAL_ALL,
 	"fullrepair_all" : OPCODE_REPAIR_FULL_ALL,
+	"item_recharge" : OPCODE_ITEM_RECHARGE,
+	"item_refill" : OPCODE_ITEM_REFILL,
 
 	"enemy_revive" : OPCODE_ENEMY_REVIVE,
 	"enemy_summon" : OPCODE_ENEMY_SUMMON,
@@ -1415,6 +1426,10 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 		user.setWeapon(WP)
 	user.charge(false)
 	var info = initSkillInfo()
+	if S.animations.size() > 1:
+		controlNode.startAnim(S, level, ANIM_STARTUP, core.battle.bg_fx)
+		yield(controlNode, "fx_finished") #Wait for animation to finish.
+		print("[SKILL][processCombatSkill] Startup animation finished")
 	info.postTargetGroup = 1 if S.codePO != null else 0 #Assume a post-main code is wanted if it's defined. Allow to cancel with codes.
 	if S.codeST != null: #Has a setup part. Initialize state here, copy for individual targets.
 		state = initSkillState(S, level, user, targets[0])
@@ -1424,7 +1439,7 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
 		if tempTarget.filter(S): #Target is valid.
-			controlNode.startAnim(S, level, 0, tempTarget.display)
+			controlNode.startAnim(S, level, ANIM_ONHIT, tempTarget.display)
 			yield(controlNode, "fx_finished") #Wait for animation to finish.
 			print("[SKILL][processCombatSkill] Standard animation finished")
 			control = controlNode.start()
@@ -2285,6 +2300,11 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							variableTarget.fullRepair()
 						else:
 							print("Target is not a player.")
+					OPCODE_ITEM_RECHARGE:
+						print(">ITEM RECHARGE: %s")
+						if variableTarget is core.Player:
+							for i in value:
+								variableTarget.group.inventory.checkRecharges()
 
 # Enemy only specials ##########################################################
 					OPCODE_ENEMY_REVIVE:

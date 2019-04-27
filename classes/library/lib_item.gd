@@ -38,8 +38,22 @@ var example = {
 			category = 0,
 			maxLevel = 10,
 			charge = true,
-			chargeRate = [025,025,025,025,025, 025,025,025,025,025],
+			chargeRate = [020,025,025,025,025, 025,025,025,025,025],
 			chargeUse =  [025,025,025,025,025, 025,025,025,025,025],
+			skill = [001, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+			skills = [
+				["debug", "healmec"],
+			]
+		},
+		"repair2" : {
+			name = "Frame Repair Kit test",
+			description = "Basic nanorepair kit for machines.",
+			value = [00150, 00000, 00000, 00000, 00000,   00000, 00000, 00000, 00000, 00000],
+			category = 0,
+			maxLevel = 10,
+			charge = true,
+			chargeRate = [010,025,025,025,025, 025,025,025,025,025],
+			chargeUse =  [020,025,025,025,025, 025,025,025,025,025],
 			skill = [001, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 			skills = [
 				["debug", "healmec"],

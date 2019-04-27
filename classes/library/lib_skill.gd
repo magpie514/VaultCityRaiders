@@ -13,7 +13,7 @@ var example = {
 		"defend" : {
 			name = "Defend",
 			description = "",
-			animations = "/nodes/FX/basic_charge.tscn",
+			animations = ["/nodes/FX/basic_charge.tscn"],
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -90,6 +90,7 @@ var example = {
 		"thunswrd": {
 			name = "Thunder Sword",
 			description = "Release a powerful energy beam using all the surrounding energy for heightened damage.",
+			animations = ["/nodes/FX/basic_charge.tscn", "/nodes/FX/basic_startup.tscn"],
 			category = skill.CAT_ATTACK,
 			type = skill.TYPE_WEAPON,
 			requiresWeapon = core.skill.WPCLASS_ARTILLERY,
@@ -432,7 +433,7 @@ var example = {
 		"ganrei": {
 			name = "Ganrei-battouzan",
 			description = "Enter a defensive stance, and counter with a powerful slash.",
-			animations = "/nodes/FX/basic_test.tscn",
+			animations = ["/nodes/FX/basic_test.tscn"],
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetPost = skill.TARGET_SELF_ROW,
@@ -467,7 +468,7 @@ var example = {
 		"reienzan": {
 			name = "Reienzan",
 			description = "Slashes the very soul of the target, setting it ablaze. Specially effective against targets with a spirit.",
-			animations = "/nodes/FX/basic_test.tscn",
+			animations = ["/nodes/FX/basic_test.tscn"],
 			displayElement = [1, 7],
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
@@ -666,7 +667,7 @@ var example = {
 		"revitlze": {
 			name = "Revitalize",
 			description = "",
-			animations = "/nodes/FX/basic_heal.tscn",
+			animations = ["/nodes/FX/basic_heal.tscn"],
 			animFlags = skill.ANIMFLAGS_COLOR_FROM_ELEMENT,
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
@@ -977,7 +978,7 @@ var example = {
 		"healbio": {
 			name = "Healing",
 			category = skill.CAT_SUPPORT,
-			animations = "/nodes/FX/basic_heal.tscn",
+			animations = ["/nodes/FX/basic_heal.tscn"],
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
@@ -991,7 +992,7 @@ var example = {
 		"healmec": {
 			name = "Heal Machine",
 			category = skill.CAT_SUPPORT,
-			animations = "/nodes/FX/basic_heal.tscn",
+			animations = ["/nodes/FX/basic_heal.tscn"],
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
@@ -1005,7 +1006,7 @@ var example = {
 		"revive": {
 			name = "Revive",
 			category = skill.CAT_SUPPORT,
-			animations = "/nodes/FX/basic_heal.tscn",
+			animations = ["/nodes/FX/basic_heal.tscn"],
 			target = skill.TARGET_SINGLE,
 			filter = skill.FILTER_DOWN,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -1087,7 +1088,7 @@ var example = {
 		"alertstc": {
 			name = "Situation check",
 			description = "",
-			animations = "/nodes/FX/basic_charge.tscn",
+			animations = ["/nodes/FX/basic_charge.tscn"],
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -1502,7 +1503,7 @@ func initTemplate():
 		"effectPriority" : { loader = LIBSTD_INT },
 
 		"chargeAnim" : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0] },
-		"animations" : { loader = LIBEXT_ANIM, default = "/nodes/FX/basic.tscn" },
+		"animations" : { loader = LIBEXT_ANIM, default = [ "/nodes/FX/basic.tscn" ] },
 		"animFlags" : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0]},
 
 		"ranged" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
@@ -1626,7 +1627,8 @@ func loaderSkillLink(val):
 	return null
 
 func loaderAnim(val):
+	var result = []
 	if val != null:
-		return ["res:/%s" % str(val)]
-	else:
-		return [ null ]
+		for i in val:
+			result.push_back("res:/%s" % str(i))
+	return result
