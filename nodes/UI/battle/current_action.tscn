@@ -1,0 +1,99 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://resources/tres/std_font_big.tres" type="DynamicFont" id=1]
+[ext_resource path="res://resources/icons/untyped.svg" type="Texture" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0.0313726, 0.701961, 0.443137 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 10
+corner_radius_bottom_right = 10
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Panel
+var textures : Array = core.newArray(8)
+onready var origPos:Vector2 = self.get_position()
+var timer:int = 0
+
+func _init() -> void:
+	for i in range(8):
+		textures[i] = load(core.stats.ELEMENT_DATA[i].icon)
+
+func init(A) -> void: #A:Action
+	var S = A.skill
+	var DE = S.displayElement
+	$Label2/Element0.hide()
+	$Label2/Element1.hide()
+	$Label2/Element2.hide()
+	if DE.size() > 0:
+		for i in range(DE.size()):
+			if i < 3:
+				var elem = $Label2.get_node(str(\"Element\",i))
+				elem.texture = textures[DE[i]]
+				elem.self_modulate = core.stats.ELEMENT_DATA[DE[i]].color
+				elem.show()
+	else:
+		$Label2/Element0.texture = textures[S.element[A.level]]
+		$Label2/Element0.self_modulate = core.stats.ELEMENT_DATA[S.element[A.level]].color
+		$Label2/Element0.show()
+	$Label.text = A.user.name
+	$Label2.text = S.name
+	timer = 6
+	set_process(true)
+
+func _process(delta: float) -> void:
+	if timer > 0:
+		timer -= 1
+		modulate.a = float(timer) / 6.0
+		rect_position = origPos + Vector2(lerp(.0, rect_size.x, float(timer) / 6.0), .0)
+		if timer == 0:
+			set_process(false)
+			rect_position = origPos
+			modulate.a = 1.0
+
+"
+
+[node name="CurrentAction" type="Panel"]
+margin_right = 220.0
+margin_bottom = 40.0
+custom_styles/panel = SubResource( 1 )
+script = SubResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 10.0
+margin_right = 200.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 1 )
+text = "CHARACTER NAME"
+valign = 1
+
+[node name="Label2" type="Label" parent="."]
+margin_top = 16.0
+margin_right = 210.0
+margin_bottom = 40.0
+custom_fonts/font = ExtResource( 1 )
+text = "SKILL NAME"
+align = 2
+valign = 1
+
+[node name="Element0" type="Sprite" parent="Label2"]
+position = Vector2( 10, 14 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )
+
+[node name="Element1" type="Sprite" parent="Label2"]
+visible = false
+position = Vector2( 28, 14 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )
+
+[node name="Element2" type="Sprite" parent="Label2"]
+visible = false
+position = Vector2( 46, 14 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 2 )

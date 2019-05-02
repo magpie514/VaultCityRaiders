@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://nodes/UI/battle/battle_controls.gd" type="Script" id=1]
 [ext_resource path="res://nodes/UI/battle/WeaponPanel.gd" type="Script" id=2]
@@ -10,6 +10,8 @@
 [ext_resource path="res://nodes/UI/menu_skill.tscn" type="PackedScene" id=8]
 [ext_resource path="res://nodes/UI/menu_item.tscn" type="PackedScene" id=9]
 [ext_resource path="res://nodes/UI/battle/target_panel.tscn" type="PackedScene" id=10]
+[ext_resource path="res://resources/tres/std_font.tres" type="DynamicFont" id=11]
+[ext_resource path="res://nodes/UI/menu_over.tscn" type="PackedScene" id=12]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.417969, 0.740814, 1, 1 )
@@ -208,7 +210,6 @@ margin_left = 20.0
 margin_top = 230.0
 margin_right = 130.0
 margin_bottom = 260.0
-disabled = true
 text = "Over"
 align = 0
 
@@ -275,10 +276,17 @@ color = Color( 0.490196, 0.870588, 0.870588, 1 )
 
 [node name="OverLabel" type="Label" parent="Main"]
 margin_top = 260.0
-margin_right = 40.0
-margin_bottom = 274.0
+margin_right = 20.0
+margin_bottom = 270.0
 custom_fonts/font = ExtResource( 5 )
 text = "OVER"
+
+[node name="Label" type="Label" parent="Main/OverLabel"]
+margin_top = 4.0
+margin_right = 24.0
+margin_bottom = 20.0
+custom_fonts/font = ExtResource( 11 )
+text = "XXX%"
 
 [node name="Name" type="Label" parent="Main"]
 margin_top = 2.0
@@ -325,6 +333,9 @@ visible = false
 
 [node name="TargetPanel" parent="." instance=ExtResource( 10 )]
 visible = false
+
+[node name="OverMenu" parent="." instance=ExtResource( 12 )]
+visible = false
 [connection signal="select" from="Main/WeaponPanel/Weapon1" to="." method="_on_Weapon_pressed" binds= [ 0 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon2" to="." method="_on_Weapon_pressed" binds= [ 1 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon3" to="." method="_on_Weapon_pressed" binds= [ 2 ]]
@@ -342,3 +353,4 @@ visible = false
 [connection signal="selection" from="WeaponMenu" to="." method="_on_WeaponMenu_selection"]
 [connection signal="selection" from="SkillMenu" to="." method="_on_SkillMenu_selection"]
 [connection signal="selection" from="ItemMenu" to="." method="_on_ItemMenu_selection"]
+[connection signal="selection" from="OverMenu" to="." method="_on_OverMenu_selection"]

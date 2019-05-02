@@ -23,7 +23,7 @@ func _ready():
 #Function buttons
 func _on_Heal_pressed():
 	if core.guild != null:
-		core.guild.healAll()
+		core.guild.restoreAll()
 
 #Battle start buttons
 func _on_Button_pressed():
@@ -53,7 +53,6 @@ func _on_RankSlider_value_changed(value: float) -> void:
 func _on_ELVSlider_value_changed(value: float) -> void:
 	ELV = value as int
 	$Panel2/ELV.text = str(ELV)
-
 
 #Character display
 func on_char_pressed(ch) -> void:
@@ -88,10 +87,8 @@ func _on_LoadDebugParty_pressed() -> void:
 		core.initGuild("res://data/debug_guild.gd")
 	core.changeScene("res://tests/debug_menu.tscn")
 
-
 func _on_DGemCancel_pressed() -> void:
 	$Panel6.close()
-
 
 func _on_DGemRemove_pressed(WP, slot) -> void:
 	var C = $Panel4.C

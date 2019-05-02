@@ -57,12 +57,12 @@ func getSummoned(C) -> Array:
 			result.push_back(i)
 	return result
 
-func defeat(slot:int, C):
+func defeat(slot:int, C): #Do stuff when the enemy is down.
 	var summoned = getSummoned(C)
-	for i in summoned:
+	for i in summoned: #Notify summons that this enemy is down.
 		i.onSummonerDefeat()
 	formation[slot] = null
-	defeated.push_front(C)
+	if C.lib.canResurrect: defeated.push_front(C) #If it can be resurrected, add to the list.
 	display.bars[slot] = null
 
 func revive(x: int) -> void:

@@ -39,7 +39,8 @@ var example = {
 			OFF = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
 			RES = [ 075, 075, 125,  005, 125, 050,  100, 100, 110 ],
 			race = skill.RACE_ELDRITCH, aspect = skill.RACEF_SPI,
-			defeatMsg = "%s vanished!",
+			canResurrect = false,
+			defeatMsg = "%s returned to the void!",
 			ai = 1,
 			aiPattern = {
 				pattern = [
@@ -164,7 +165,7 @@ var example = {
 				pattern = [
 					[AIPATTERN_SIMPLE, [1, AITARGET_RANDOM]],
 					[AIPATTERN_PICK_2_IF_WEAK, 025, [1,AITARGET_RANDOM], [0, AITARGET_SELF]],
-					[AIPATTERN_PICK_2_IF_RANK, 300, [1, AITARGET_WEAKEST], [0, AITARGET_SELF]],
+					[AIPATTERN_PICK_2_IF_RANK, 300, [1, AITARGET_ALLY_WEAKEST], [0, AITARGET_SELF]],
 					[AIPATTERN_SIMPLE, [2, AITARGET_ALLY_WEAKEST]],
 					[AIPATTERN_PICK_RANDOMLY, 50, [1, AITARGET_RANDOM], [2, AITARGET_ALLY_WEAKEST]],
 				],
@@ -186,6 +187,7 @@ func initTemplate():
 		"spriteFile" : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
 		"energyColor" : { loader = LIBSTD_STRING, default = "#AAFFFF" },
 		"summons" : { loader = LIBSTD_SUMMONS },									#Summon data
+		"canResurrect" : { loader = LIBSTD_BOOL, default = true },#If the enemy can be resurrected. If not, it won't be added to the resurrect list.
 		"description" : { loader = LIBSTD_STRING },								#Enemy description
 		"statSpread" : { loader = LIBSTD_STATSPREAD },						#Stat spread
 		"OFF" : { loader = LIBSTD_ELEMENTDATA },									#Elemental offense

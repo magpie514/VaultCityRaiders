@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resources/tres/action_queue_item-stylebox.tres" type="StyleBox" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Panel
+var _style = load(\"res://resources/tres/action_queue_item-stylebox.tres\")
+var style = null
+
+func init(A, pos) -> void: #A:Action
+	style = _style.duplicate()
+	set(\"custom_styles/panel\", style)
+	$Label.text = A.user.name
+	if A.user is core.Player:
+		style.bg_color = \"55000088\"
+	elif A.user is core.Enemy:
+		style.bg_color = \"55880000\"
+
+"
+
+[node name="ActionQueueItem" type="Panel"]
+margin_right = 219.84
+margin_bottom = 20.16
+custom_styles/panel = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 10.0
+margin_right = 200.0
+margin_bottom = 20.0
+text = "CHARACTER NAME"
+valign = 1

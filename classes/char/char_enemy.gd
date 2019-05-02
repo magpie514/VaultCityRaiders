@@ -42,6 +42,7 @@ func defeat():
 	sprDisplay.defeat()
 	display.stop()
 	group.defeat(slot, self)
+	skill.msg(str(lib.defeatMsg % name))
 
 func onSummonerDefeat():
 	print("[CHAR_ENEMY][onSummonerDefeat] %s's summoner fell!" % name)
@@ -52,6 +53,7 @@ func damage(x, data, silent = false) -> Array:
 	var info : Array = .damage(x, data, silent)
 	if sprDisplay != null:
 		sprDisplay.damage()
+		sprDisplay.damageShake()
 
 	return info
 
@@ -185,6 +187,8 @@ func thinkPattern(F, P, state, aiPattern):
 			targetHint = core.lib.enemy.AITARGET_RANDOM
 			S = core.lib.skill.getIndex(action)
 			print("[ERROR, using %s]" % [S.name])
+
+	#Try to pick a given target.
 	match targetHint:
 		core.lib.enemy.AITARGET_SELF:
 			target = [ self ]
@@ -194,8 +198,25 @@ func thinkPattern(F, P, state, aiPattern):
 				target = [ summoner ] if summoner.filter(S) else pickTarget(S, 1, F, P, state)
 			else:
 				print("[AITARGET] No summoner found, picking normally.")
-				target = [ summoner ] if summoner.filter(S) else pickTarget(S, 1, F, P, state)
+				target = pickTarget(S, 1, F, P, state)
+		core.lib.enemy.AITARGET_WEAKEST:
+			var T = group.versus.getWeakestTarget(S)
+			if T != null:
+				print("[AITARGET] Picking weakest (%s)" % T.name)
+				target = [ T ]
+			else:
+				print("[AITARGET] No weakest target found, picking normally.")
+				target = pickTarget(S, 1, F, P, state)
+		core.lib.enemy.AITARGET_ALLY_WEAKEST:
+			var T = group.getWeakestTarget(S)
+			if T != null:
+				print("[AITARGET] Picking weakest ally (%s)" % T.name)
+				target = [ T ]
+			else:
+				print("[AITARGET] No weakest ally target found, picking normally.")
+				target = pickTarget(S, 1, F, P, state)
 		_:
+			print("[AITARGET] Unknown targethint %d, picking randomly." % targetHint)
 			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])
 	if S.chargeAnim[0]:

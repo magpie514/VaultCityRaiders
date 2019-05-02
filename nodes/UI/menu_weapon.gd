@@ -80,7 +80,7 @@ func init(C, slot):
 	for i in C.skills:
 		TID = C.getSkillTID(i)
 		S = core.getSkillPtr(TID)
-		if S.type == 1:
+		if S.type == 1 and S.requiresWeapon == WP.lib.wclass:
 			button = skillNode.instance()
 			button.init(S, i[1], button.COST_WP)
 			$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)

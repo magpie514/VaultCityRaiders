@@ -190,7 +190,7 @@ func restoreAll():
 		if i != null:
 			i.status = core.skill.STATUS_NONE
 			i.fullHeal()
-			if i is core.Player: i.repairWeapons()
+			if i is core.Player: i.equip.fullRepair(true)
 
 func getRowIter(row: int) -> Array:
 	return ROW_ITER[row % 2]

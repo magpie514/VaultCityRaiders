@@ -13,33 +13,19 @@ var example = {
 		"defend" : {
 			name = "Defend",
 			description = "",
-			animations = ["/nodes/FX/basic_charge.tscn"],
+			animations = { 'main' : "/nodes/FX/basic_charge.tscn" },
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = false,
-			damageStat = core.stats.STAT.ATK,
-			modStat = core.stats.STAT.LUC,
-			inflict = skill.STATUS_NONE,
-			effect = skill.EFFECT_NONE,
-			effectType = 0,
-			effectStats = 0,
-			effectStatBonus = null,
-			effectDuration = [000, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-			effectPriority = 0,
 			filter = skill.FILTER_ALIVE,
 			ranged = true,
 			levels = 10,
-			accMod = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = [300, 200, 200, 200, 200,   200, 200, 200, 200, 200],
-			AD = [050, 049, 048, 047, 046,   045, 044, 043, 042, 041],
+			accMod = [100,100,100,100,100, 100,100,100,100,100],
+			spdMod = [300,200,200,200,200, 200,200,200,200,200],
+			AD =     [050,049,048,047,046, 045,044,043,042,041],
 			codeMN = [
-				["printmsg", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
-			],
-			codePR = null,
-			messages = [
-				["%s defends!", skill.MSG_USER]
+				["defend",   000,000,000,000,000, 000,000,000,000,000],
 			],
 		},
 		"defup": {
@@ -90,7 +76,8 @@ var example = {
 		"thunswrd": {
 			name = "Thunder Sword",
 			description = "Release a powerful energy beam using all the surrounding energy for heightened damage.",
-			animations = ["/nodes/FX/basic_charge.tscn", "/nodes/FX/basic_startup.tscn"],
+			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
+			chargeAnim = true,
 			category = skill.CAT_ATTACK,
 			type = skill.TYPE_WEAPON,
 			requiresWeapon = core.skill.WPCLASS_ARTILLERY,
@@ -107,7 +94,7 @@ var example = {
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
-				["get_chain",    000,000,000,000,000,   000,000,000,000,000, skill.OPFLAGS_TARGET_SELF],
+				["get_chain",    skill.OPFLAGS_TARGET_SELF],
 				["mul",          010,000,000,000,000,   000,000,000,000,000],
 				["dmgbonus",     000,000,000,000,000,   000,000,000,000,000, skill.OPFLAGS_USE_SVAL],
 				["attack"       ,150,125,132,132,140,   140,147,147,147,160],
@@ -266,7 +253,7 @@ var example = {
 				["attack",		  035,125,132,132,140,   140,147,147,147,160],
 			],
 			messages = [
-				["Crystals detonate inside %s!", skill.MSG_TARGET],
+				"Crystals detonate inside {TARGET}!",
 			],
 		},
 		"gatebrkr": {
@@ -331,8 +318,8 @@ var example = {
 				["playanim", 001, 002, 002, 002, 002,   002, 002, 002, 002, 002],
 			],
 			messages = [
-				["%s's limiter released!", skill.MSG_USER],
-				["%s overheats!", skill.MSG_USER],
+				"{USER}'s limiter released!",
+				"{USER}'s engine overheats!",
 			],
 			linkSkill = [
 				["debug", "selfrepr"],
@@ -433,7 +420,7 @@ var example = {
 		"ganrei": {
 			name = "Ganrei-battouzan",
 			description = "Enter a defensive stance, and counter with a powerful slash.",
-			animations = ["/nodes/FX/basic_test.tscn"],
+			animations = { 'main' : "/nodes/FX/basic.tscn", 'onfollow' : "/nodes/FX/basic_test.tscn" },
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetPost = skill.TARGET_SELF_ROW,
@@ -461,14 +448,14 @@ var example = {
 				["ad",							-05,-01,-01,-01,-01,  -01,-01,-01,-01,-01],
 			],
 			codeFL = [
-				["playanim",				001,001,001,019,022,  030,032,035,037,040],
+				#["playanim",				001,001,001,019,022,  030,032,035,037,040],
 				["attack", 					220,013,016,019,022,  030,032,035,037,040],
 			],
 		},
 		"reienzan": {
 			name = "Reienzan",
 			description = "Slashes the very soul of the target, setting it ablaze. Specially effective against targets with a spirit.",
-			animations = ["/nodes/FX/basic_test.tscn"],
+			animations = { 'main' : "/nodes/FX/basic_test.tscn" },
 			displayElement = [1, 7],
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
@@ -667,7 +654,7 @@ var example = {
 		"revitlze": {
 			name = "Revitalize",
 			description = "",
-			animations = ["/nodes/FX/basic_heal.tscn"],
+			animations = {'main' : "/nodes/FX/basic_heal.tscn"},
 			animFlags = skill.ANIMFLAGS_COLOR_FROM_ELEMENT,
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
@@ -978,7 +965,7 @@ var example = {
 		"healbio": {
 			name = "Healing",
 			category = skill.CAT_SUPPORT,
-			animations = ["/nodes/FX/basic_heal.tscn"],
+			animations = { 'main': "/nodes/FX/basic_heal.tscn" },
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
@@ -992,7 +979,7 @@ var example = {
 		"healmec": {
 			name = "Heal Machine",
 			category = skill.CAT_SUPPORT,
-			animations = ["/nodes/FX/basic_heal.tscn"],
+			animations = { 'main': "/nodes/FX/basic_heal.tscn" },
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
@@ -1006,7 +993,7 @@ var example = {
 		"revive": {
 			name = "Revive",
 			category = skill.CAT_SUPPORT,
-			animations = ["/nodes/FX/basic_heal.tscn"],
+			animations = {'main' : "/nodes/FX/basic_heal.tscn"},
 			target = skill.TARGET_SINGLE,
 			filter = skill.FILTER_DOWN,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -1057,7 +1044,6 @@ var example = {
 			codeMN = [
 				["guard", 012, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAGS_VALUE_PERCENT],
 			],
-			messages = null,
 		},
 		"solidbun": {
 			name = "Solid Bunker",
@@ -1088,7 +1074,7 @@ var example = {
 		"alertstc": {
 			name = "Situation check",
 			description = "",
-			animations = ["/nodes/FX/basic_charge.tscn"],
+			animations = { 'main' : "/nodes/FX/basic_charge.tscn" },
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -1128,7 +1114,6 @@ var example = {
 			codeMN = [
 				["guard", 010, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAGS_VALUE_PERCENT],
 			],
-			messages = null,
 		},
 		"trikshot": {
 			name = "Trick Shot",
@@ -1153,7 +1138,7 @@ var example = {
 				["wait", 100, 002, 002, 002, 002,   002, 002, 002, 002, 002],
 			],
 			messages = [
-				["%s takes aim!", skill.MSG_USER],
+				"{USER} takes aim!",
 			],
 		},
 		"focushot": {
@@ -1161,6 +1146,7 @@ var example = {
 			description = "Marks an enemy for a chase attack.",
 			category = skill.CAT_ATTACK,
 			type = skill.TYPE_WEAPON,
+			requiresWeapon = skill.WPCLASS_FIREARM,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
@@ -1199,8 +1185,8 @@ var example = {
 				["attack",    080,125,132,132,140,   140,147,147,147,160],
 			],
 			messages = [
-				["%s focuses!", skill.MSG_USER],
-				["%s breaks in!", skill.MSG_USER]
+				"{USER} focuses!",
+				"{USER} breaks {TARGET}'s defenses!"
 			],
 		},
 		"wideslsh": {
@@ -1294,6 +1280,7 @@ var example = {
 		"lunablaz": {
 			name = "Lunatic Blaze",
 			description = "Uses a temporal distortion to fuel a massive blaze, but can call anomalies from the brink of time if interrupted during charge.\nA risky move.",
+			animations = {'main': "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup2.tscn", 1: "/nodes/FX/basic_charge.tscn"},
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -1332,7 +1319,7 @@ var example = {
 			],
 		},
 		"heatngtr": {
-			name = "Thermodynamic Reversal",
+			name = "Boreal Shift",
 			description = "",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_ALL,
@@ -1475,7 +1462,7 @@ func initTemplate():
 		"category" : { loader = LIBSTD_INT },
 		"costWP" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
 		"costEP" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-		"costOV" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+		"costOV" : { loader = LIBSTD_INT, default = core.skill.OVER_COST_1 },
 		"requiresPart" : { loader = LIBSTD_INT, default = 0 },
 		"requiresWeapon" : { loader = LIBSTD_INT, default = 0 },
 		"target" : { loader = LIBSTD_SKILL_ARRAY },
@@ -1503,16 +1490,16 @@ func initTemplate():
 		"effectPriority" : { loader = LIBSTD_INT },
 
 		"chargeAnim" : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0] },
-		"animations" : { loader = LIBEXT_ANIM, default = [ "/nodes/FX/basic.tscn" ] },
+		"animations" : { loader = LIBEXT_ANIM, default = { 'main': "/nodes/FX/basic.tscn" } },
 		"animFlags" : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0]},
 
 		"ranged" : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
 		"levels" : { loader = LIBSTD_INT, default = 10 },
-		"accMod" : { loader = LIBSTD_SKILL_ARRAY, default = [090, 090, 090, 090, 090,   090, 090, 090, 090, 090] },
-		"spdMod" : { loader = LIBSTD_SKILL_ARRAY, default = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100] },
-		"critMod": { loader = LIBSTD_SKILL_ARRAY, default = [005, 005, 005, 005, 005,   005, 005, 005, 005, 005] },
-		"AD" : { loader = LIBSTD_SKILL_ARRAY, default = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100] },
-		"initAD" : { loader = LIBSTD_SKILL_ARRAY, default = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100] },
+		"accMod" : { loader = LIBSTD_SKILL_ARRAY, default = [090,090,090,090,090, 090,090,090,090,090] },
+		"spdMod" : { loader = LIBSTD_SKILL_ARRAY, default = [100,100,100,100,100, 100,100,100,100,100] },
+		"critMod": { loader = LIBSTD_SKILL_ARRAY, default = [005,005,005,005,005, 005,005,005,005,005] },
+		"AD" : { loader = LIBSTD_SKILL_ARRAY, default =     [100,100,100,100,100,100, 100,100,100,100] },
+		"initAD" : { loader = LIBSTD_SKILL_ARRAY, default = [100,100,100,100,100, 100,100,100,100,100] },
 		"filter" : { loader = LIBSTD_INT },
 		"messages" : { loader = LIBEXT_SKILL_MESSAGES },
 		"linkSkill" : { loader = LIBSTD_SKILL_LIST },
@@ -1538,14 +1525,14 @@ func initTemplate():
 
 
 func loadDebug():
+	print("[SKILL][loadDebug] Loading core skills.")
 	loadDict(example)
-	print("Skill library loaded.")
+	print("[SKILL][loadDebug] Core skills loaded.")
 	#printData()
 
 func name(id):
 	var entry = getIndex(id)
 	return entry.name if entry else "ERROR"
-
 
 func loaderSkillFilterEXArg(val):
 	if val == null:
@@ -1553,35 +1540,62 @@ func loaderSkillFilterEXArg(val):
 	else:
 		return val
 
-func loaderSkillCode(a):
-	match(typeof(a)):
+func loaderSkillCode(a): #Loads skill codes.
+	#TODO: Make template a constant in skill.gd.
+	#                SKILL OPCODE        VALUE PER LEVEL         FLAGS               TAG    DGEM TAG
+	#   _template = [skill.OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  skill.OPFLAGS_NONE, '',    '']
+	var _template = skill.LINE_TEMPLATE
+	match(typeof(a)): #Check input type
 		TYPE_NIL:
+			#Input is null, this skill isn't meant to have code, so we return null back.
 			return null
 		TYPE_ARRAY:
+			#Input is an array. This is the expected input, so we process it further.
 			var result = core.newArray(a.size())
-			var line = null
+			var line = null #Placeholder for the current line.
 			for j in a.size():
 				line = a[j]
-				result[j] = core.newArray(12)
-				result[j][0] = skill.translateOpCode(str(line[0]).to_lower()) #Ensure code is loaded as lower case.
-				for i in range(1, 11):
-					result[j][i] = int(line[i])
-				if line.size() == 12:
-					result[j][11] = int(line[11])
-				else:
-					result[j][11] = int(skill.OPFLAGS_NONE)
+				result[j] = _template.duplicate() #Initialize line as a copy of the template, saves the trouble of keeping sync.
+				match(typeof(line)): #Determine line format.
+					TYPE_STRING: #Line is just an instruction, usually a 'get' with default values.
+						result[j][0] = skill.translateOpCode(line)
+					TYPE_ARRAY:  #We have an array, the standard instruction. There are a few variants.
+						match(line.size()):
+							2:  # Instruction + flags
+								result[j][0] = skill.translateOpCode(line[0])
+								result[j][11] = int(line[1])
+							3:  # Instruction + single value + flags
+								result[j][0] = skill.translateOpCode(line[0])
+								for i in range(1, 11): result[j][i] = int(line[1])
+								result[j][11] = int(line[2])
+							11: # Instruction + values for 10 levels
+								result[j][0] = skill.translateOpCode(line[0])
+								for i in range(1, 11): result[j][i] = int(line[i])
+							12: # Instruction + values for 10 levels + flags
+								result[j][0] = skill.translateOpCode(line[0])
+								for i in range(1, 11): result[j][i] = int(line[i])
+								result[j][11] = int(line[11])
+							_:  # Unexpected line. Print an error.
+								print("\t[!!][SKILL][loaderSkillCode] Line size is not normal, returning null line.")
+					_: # Unexpected type. Print an error.
+						print("\t[!!][SKILL][loaderSkillCode] Line is neither string or array, returning null line.")
 			return result
 		_:
-			return [[skill.OPCODE_NULL, 0,0,0,0,0,  0,0,0,0,0, skill.OPFLAGS_NONE]]
+			#Input is...something else. Likely user error. Return a line with no effect as a last resort.
+			print("\t[!!][SKILL][loaderSkillCode] Provided skill code is not an array. Please verify. ")
+			return [ _template.duplicate() ]
 
-func loaderMessages(a):
-	if a == null:
-		return null
-	var messages = []
-	for i in range(a.size()):
-		messages.push_back([str(a[i][0]), int(a[i][1])])
-	return messages
-
+func loaderMessages(val): #Loads skill messages.
+	match typeof(val):
+		TYPE_NIL:   # Input is null. Return null so printing a message can just skip the process.
+			return null
+		TYPE_ARRAY: # Input is an array. This is the expected input, load all messages.
+			var messages = []
+			for i in range(val.size()): messages.push_back(str(val[i]))
+			return messages
+		_:          # Unknown input. Print error and return null.
+			print("\t[!!][SKILL][loaderMessages] Unknown input type, returning null.")
+			return null
 
 func loaderEffectStatBonus(dict):
 	if dict == null:
@@ -1627,8 +1641,13 @@ func loaderSkillLink(val):
 	return null
 
 func loaderAnim(val):
-	var result = []
+	var result = {}
 	if val != null:
 		for i in val:
-			result.push_back("res:/%s" % str(i))
+			print(i)
+			result[i] = "res:/%s" % str(val[i])
+		if not 'main' in result:
+			result['main'] = "res://nodes/FX/basic.tscn"
+		if not 1 in result:
+			result[1] = result.main
 	return result

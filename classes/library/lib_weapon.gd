@@ -96,7 +96,7 @@ var example = {
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [002, 002, 002, 002, 002, 002, 002, 002, 002, 000],
 			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ ["debug", "debug"], ["debug", "debug"] ],
+			skill = [ ["sto_wp", "jigenzan"], ["sto_wp", "retugiri"] ],
 			over = ["debug", "debug"]
 		},
 	}

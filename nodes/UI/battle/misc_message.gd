@@ -6,7 +6,7 @@ var count : float  = 0.0
 func init(n, crit, color) -> void:
 	count = 1.0
 	msg = n
-	text = str(msg)
+	text = str(">%s" % msg)
 	percent_visible = 0.0
 	if color != null: set("custom_colors/font_color", color)
 	if crit: 	$CritLabel.show()
@@ -16,7 +16,7 @@ func init(n, crit, color) -> void:
 	set_process(true)
 
 func _process(delta: float) -> void:
-	count += 1.4 * delta
+	count += 2 * delta
 	percent_visible = count
 	if count > 1.0:
 		count = 0.0

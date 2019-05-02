@@ -36,7 +36,6 @@ var racePtr = null #pointer to race index.
 var XP : int = 0 setget setXP
 var SP : int = 0
 var EP : int = 0
-var over : int = 0 setget setOver
 var race = null #tid
 var aclass = null #tid
 var skills = null #array of class ID + level
@@ -471,7 +470,7 @@ func calculateTurnOverGains() -> int:
 	return result
 
 func endBattleTurn(defer):
-	over += calculateTurnOverGains()
+	battle.over += calculateTurnOverGains()
 	.endBattleTurn(defer)
 
 func getEquipSpeedMod() -> int:
@@ -563,18 +562,6 @@ func setWeapon(WP):
 		equip.currentWeapon = WP
 		print("Switched weapon to %s" % [WP.id])
 		updateBattleStats()
-
-func addOver(val):
-	over = clamp(over + val, 0, 100) as int
-
-func setOver(val):
-	over = clamp(val, 0, 100) as int
-
-func getOverN():
-	return (float(over) / 100.0)
-
-func isFullOver():
-	return true if over >= 100 else false
 
 func getSkillTID(t):
 	return aclassPtr.skills[t[0]]

@@ -104,6 +104,34 @@ func getSpreadTargets2(row, size, S, slot):
 func getDefeated() -> int:
 	return 0
 
+func getWeakestTarget(S):
+	var candidates = []
+	for i in formation:
+		if i != null and i.filter(S):
+			candidates.push_front(i)
+	if candidates.size() > 0:
+		candidates.sort_custom(self, "_sort_Weakest")
+		return candidates[0]
+	return null
+
+func getHealthiestTarget(S):
+	var candidates = []
+	for i in formation:
+		if i != null and i.filter(S):
+			candidates.push_front(i)
+	if candidates.size() > 0:
+		candidates.sort_custom(self, "_sort_Healthiest")
+		return candidates[0]
+	return null
+
+static func _sort_Weakest(a, b):
+	if a.HP > b.HP: return 0
+	return 1
+
+static func _sort_Healthiest(a, b):
+	if a.HP < b.HP: return 0
+	return 1
+
 func getAllTargets(S):
 	var result = []
 	for i in formation:

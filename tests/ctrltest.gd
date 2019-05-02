@@ -70,6 +70,7 @@ func battle():
 	#core.playMusic("res://resources/music/EOIV_Storm.ogg")
 	while state.status():
 #Collect player actions.
+		$Panel/CurrentAction.hide()
 		if checkResolution(): return #Make sure end of turn special effects didn't cause a victory or defeat.
 		$Panel/FieldEffect.updateDisplay(state.field)
 		$Panel/BattleLog2.bbcode_text = ""
@@ -81,10 +82,12 @@ func battle():
 		$Panel/Time.text = "Time: %02d Day: %03d" % [int(core.world.time / 30), core.world.day]
 		state.enemyActions()
 		$DebugActionQueue.text = state.printQueuePanel()
+		$Panel/ActionQueue.init(state.actions())
 		islot = 0
 		playerActions.clear()
 		playerChars = testguild.activeMembers()
 		while islot < playerChars.size():
+			$Panel/ActionQueue.init(state.actions(), playerActions)
 			C = playerChars[islot]
 			reply = null
 			yield(waitFixed(0.05), "timeout")
@@ -93,7 +96,6 @@ func battle():
 			C.display.setActionText(null)
 			$Panel/BattleControls.setup(C, islot, self)
 			yield($Panel/BattleControls, "finished")
-			print(reply)
 			C.display.highlight(false)
 			if reply is state.Action:
 				#Player chose a valid action, register it and move to next.
@@ -118,6 +120,7 @@ func battle():
 		$Panel/EnemyGroupDisplay.battleTurnUpdate()
 
 # Action starts here ###########################################################
+		$Panel/ActionQueue.init(state.actions())
 		$Panel/BattleLog.hide()
 		$Panel/BattleLog2.show()
 		$Panel/BattleLog2.bbcode_text = ""
@@ -130,6 +133,9 @@ func battle():
 		while state.amount() > 0:
 			$Panel/BattleLog2.bbcode_text = ""
 			A = state.popAction()
+			$Panel/CurrentAction.show()
+			$Panel/CurrentAction.init(A)
+			$Panel/ActionQueue.init(state.actions())
 			if A.user.canAct():
 				if state.status():
 					if A.side == state.SIDE_PLAYER: A.user.display.highlight(true)

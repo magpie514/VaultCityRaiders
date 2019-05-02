@@ -25,6 +25,7 @@ class BattleStats:
 	# Core stats ################################################################################
 	var stat = core.stats.create()    #Calculated battle stats
 	var statmult : Dictionary = {}    #Stat multipliers
+	var over : int = 0								#Over counter
 	# Statistics ################################################################################
 	var accumulatedDMG : int = 0      #Damage accumulated during current battle
 	var accumulatedDealtDMG : int = 0 #Damage dealt accumulated during current battle
@@ -160,6 +161,20 @@ func getHealthN(): #Get normalized health as a float from 0 to 1.
 func fullHeal():
 	self.HP = maxHealth()
 
+
+# Over functions ##################################
+func setOver(x:int, absolute:bool = false) -> void:
+	if battle != null:
+		if absolute:
+			battle.over = x
+		else:
+			battle.over += x
+		battle.over = clamp(battle.over, 0, 100) as int
+
+func getOverN() -> float:
+	#Not meant to be called out of battle.
+	return core.percent(battle.over)
+
 func calcSPD(S, lv) -> int:
 #[(Equipment Speed Mod + 100) * AGI * Skill Speed Mod * Random number between 90 and 110 / 10000] * Modifiers
 	lv -= 1
@@ -241,17 +256,19 @@ func defeat():
 	status = skill.STATUS_DOWN
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
-	battle.follow.clear()
-	battle.chase.clear()
-	resetCounter()
-	battle.counter[0] = 0
-	battle.AD = 100
-	battle.dodge = 0
-	battle.forceDodge = 0
-	battle.buff.clear()
-	battle.debuff.clear()
-	battle.effect.clear()
-	charge(false)
+	if battle != null:
+		battle.follow.clear()
+		battle.chase.clear()
+		resetCounter()
+		battle.counter[0] = 0
+		battle.AD = 100
+		battle.dodge = 0
+		battle.forceDodge = 0
+		battle.buff.clear()
+		battle.debuff.clear()
+		battle.effect.clear()
+		charge(false)
+
 	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
 

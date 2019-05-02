@@ -1,18 +1,20 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=1]
 [ext_resource path="res://tests/ctrltest.gd" type="Script" id=2]
-[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=3]
+[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=5]
-[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=6]
-[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=7]
-[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=8]
-[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=9]
-[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=10]
-[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=11]
+[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=6]
+[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=7]
+[ext_resource path="res://nodes/UI/battle/action_queue.tscn" type="PackedScene" id=8]
+[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=9]
+[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=10]
+[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=11]
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=12]
 [ext_resource path="res://tests/SkillController.gd" type="Script" id=13]
+[ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=14]
+[ext_resource path="res://nodes/UI/battle/current_action.tscn" type="PackedScene" id=15]
 
 [sub_resource type="DynamicFont" id=1]
 size = 11
@@ -93,7 +95,7 @@ usage = 0
 render_target_update_mode = 3
 gui_disable_input = true
 
-[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 10 )]
+[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 7 )]
 
 [node name="Panel2" type="Panel" parent="Panel"]
 margin_right = 960.0
@@ -142,13 +144,13 @@ margin_bottom = 92.0
 align = 2
 
 [node name="Button" type="Button" parent="Panel/Time"]
-margin_left = -19.0
-margin_top = 18.0
-margin_right = 70.0
-margin_bottom = 36.0
+margin_left = -10.0
+margin_top = -20.0
+margin_right = 79.0
+margin_bottom = -2.0
 text = "Pass hour"
 
-[node name="FieldEffect" parent="Panel" instance=ExtResource( 8 )]
+[node name="FieldEffect" parent="Panel" instance=ExtResource( 6 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -130.0
@@ -156,32 +158,48 @@ margin_top = 79.0
 margin_right = 130.0
 margin_bottom = 114.0
 
-[node name="InfoDisplay" parent="Panel" instance=ExtResource( 9 )]
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 3 )]
 visible = false
 
-[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 11 )]
+[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 9 )]
 visible = false
 anchor_right = 1.0
 margin_right = 0.0
 
-[node name="BattleControls" parent="Panel" instance=ExtResource( 7 )]
+[node name="BattleControls" parent="Panel" instance=ExtResource( 11 )]
 margin_top = 90.0
 margin_right = 110.0
 margin_bottom = 310.0
 
-[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 6 )]
+[node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 14 )]
 margin_left = 10.0
 margin_top = 550.0
 margin_right = 952.0
 margin_bottom = 610.0
 
-[node name="GuildDisplay" parent="Panel" instance=ExtResource( 3 )]
+[node name="GuildDisplay" parent="Panel" instance=ExtResource( 10 )]
 anchor_left = 0.125
 anchor_top = 0.889
 anchor_right = 0.875
 anchor_bottom = 0.972
 margin_top = 19.92
 margin_bottom = 19.92
+
+[node name="ActionQueue" parent="Panel" instance=ExtResource( 8 )]
+anchor_left = 0.773
+anchor_top = 0.192
+anchor_right = 1.0
+anchor_bottom = 0.569
+margin_left = -0.0800781
+margin_top = -8.24001
+margin_right = 0.0
+margin_bottom = 0.320007
+
+[node name="CurrentAction" parent="Panel" instance=ExtResource( 15 )]
+margin_left = 740.0
+margin_top = 96.0
+margin_right = 960.0
+margin_bottom = 136.0
 
 [node name="Panel" type="Label" parent="Panel"]
 visible = false
@@ -199,13 +217,13 @@ align = 1
 valign = 1
 
 [node name="QuitButton" type="Button" parent="."]
-margin_left = 692.0
-margin_top = 680.0
-margin_right = 960.0
-margin_bottom = 700.0
+margin_left = 680.0
+margin_right = 948.0
+margin_bottom = 20.0
 text = "This test is too intense get me out!!"
 
 [node name="DebugActionQueue" type="RichTextLabel" parent="."]
+visible = false
 modulate = Color( 1, 1, 1, 0.266667 )
 margin_left = 770.0
 margin_top = 96.0
@@ -220,38 +238,38 @@ script = ExtResource( 13 )
 [node name="FXTimer" type="Timer" parent="SkillController"]
 
 [node name="Panel2" type="Panel" parent="."]
-margin_left = 630.0
-margin_top = 700.0
-margin_right = 962.0
-margin_bottom = 720.0
+margin_left = 670.0
+margin_top = 19.0
+margin_right = 950.0
+margin_bottom = 39.0
 
 [node name="Label" type="Label" parent="Panel2"]
 margin_right = 84.0
 margin_bottom = 20.0
-text = "Battle Speed"
+text = "Speed"
 valign = 1
 
 [node name="Button" type="Button" parent="Panel2"]
-margin_left = 92.0
-margin_right = 152.0
+margin_left = 42.0
+margin_right = 102.0
 margin_bottom = 20.0
 text = "VFAST"
 
 [node name="Button2" type="Button" parent="Panel2"]
-margin_left = 152.0
-margin_right = 212.0
+margin_left = 102.0
+margin_right = 162.0
 margin_bottom = 20.0
 text = "FAST"
 
 [node name="Button3" type="Button" parent="Panel2"]
-margin_left = 211.0
-margin_right = 271.0
+margin_left = 161.0
+margin_right = 221.0
 margin_bottom = 20.0
 text = "NORM"
 
 [node name="Button4" type="Button" parent="Panel2"]
-margin_left = 271.0
-margin_right = 331.0
+margin_left = 221.0
+margin_right = 281.0
 margin_bottom = 20.0
 text = "SLOW"
 [connection signal="pressed" from="Panel/Time/Button" to="." method="_on_Button_pressed"]

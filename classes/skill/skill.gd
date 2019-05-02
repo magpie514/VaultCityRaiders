@@ -1,9 +1,17 @@
 var stats = core.stats
 var MAX_DMG = stats.MAX_DMG
 
-const SKILL_MISSED = -1
+
+
+# Regular constants
+const SKILL_MISSED = -1  #TODO: Review these.
 const SKILL_FAILED = -2
-const MAX_LEVEL = 10
+
+const MAX_LEVEL = 10     #Max amount of levels for skills.
+
+#Skill code line template
+#                   <SKILL OPCODE> <VALUE PER LEVEL>       <FLAGS>       <TAG>  <DGEM TAG>
+var LINE_TEMPLATE = [OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  OPFLAGS_NONE, '',    '']
 
 enum { #Category
 #General category of the attacks. Determines its general context
@@ -131,15 +139,22 @@ enum {
 	REQUIRES_LEG =	0x04,
 }
 
-enum { #Skill type
-	TYPE_BODY,
-	TYPE_WEAPON,
-	TYPE_ITEM,
+# Skill type ### TODO: Are these in use?
+enum {
+	TYPE_BODY,   #Regular skill.
+	TYPE_WEAPON, #Weapon skill.
+	TYPE_ITEM,   #Item skill.
 }
 
-enum { USE_ANYWHERE, USE_COMBAT, USE_FIELD }
+enum {
+	OVER_COST_1 = 033, #Tier 1 Over skill cost.
+	OVER_COST_2 = 050, #Tier 2 Over skill cost.
+	OVER_COST_3 = 100, #Tier 3 Over skill cost.
+}
 
-enum { EFFTYPE_BUFF, EFFTYPE_DEBUFF, EFFTYPE_SPECIAL }
+enum { USE_ANYWHERE, USE_COMBAT, USE_FIELD } #Defines where the skill can be used.
+
+enum { EFFTYPE_BUFF, EFFTYPE_DEBUFF, EFFTYPE_SPECIAL } #If it's a buff, debuff or general passive effect.
 
 
 enum { #Skill effects
@@ -173,14 +188,15 @@ enum EffectStat { #Effect stat mods
 	EFFSTAT_EVASION =		0x0400,	#Change evasion bonus.
 }
 
-
+# Character status
+# TODO: Limit those to the ones that affect turn execution and set the rest as sub-status.
 enum {
 	STATUS_NONE,			#All good
 	STATUS_DOWN,			#Incapacitated (not quite dead but defeated enough)
 	STATUS_STASIS,		#Target is removed from combat for a limited time
+	STATUS_PARA,			#Target is randomly unable to move
 	STATUS_CORROSION,	#Target receives damage per turn
 	STATUS_CURSE,			#Target is damaged by a factor when it causes damage to others
-	STATUS_PARA,			#Target is randomly unable to move
 	STATUS_BLIND,			#Target has diminished accuracy
 	STATUS_SLEEP,			#Target is unable to act, but being hit will randomly wake them up.
 	STATUS_FROZEN,		#Target has been frozen and is unable to act, and weaker to physical moves. Fire unfreezes.
@@ -222,13 +238,13 @@ enum { #Parry. Reduces the damage of an attack with a given chance.
 	PARRY_ALL,
 }
 
-enum {
+enum { #On-hit effects.
 	ONHIT_FOLLOWUP,
 	ONHIT_CHASE,
 	ONHIT_COUNTER,
 }
 
-enum {
+enum { #Targeting.
 #To expedite combat, some skills don't show a target prompt.
 #Skills only allow targets within range. If only one target is in range, it'll be chosen automatically.
 	#No prompt
@@ -282,28 +298,27 @@ enum { #Code blocks
 	CODE_ED,  #[ ] Effect down code: while the skill provides a buff/debuff, use this code when defeating a target.
 }
 
-enum {
+enum { #Skill function flags. Value between [] is used in the function codes where applicable.
 	OPFLAGS_NONE =           0x0000,  #Default settings.
-	OPFLAGS_TARGET_SELF	=    0x0001,  #This opcode will affect the user if applicable.
-	OPFLAGS_VALUE_ABSOLUTE = 0x0002,  #This opcode will set a value as absolute, if applicable.
-	OPFLAGS_VALUE_PERCENT =  0x0004,  #This opcode will set a value as a percentage, if applicable.
-	OPFLAGS_HEAL_BONUS =     0x0008,  #Heal only. Uses bonus healing value.
+	OPFLAGS_TARGET_SELF	=    0x0001,  #[@] This opcode will affect the user if applicable.
+	OPFLAGS_VALUE_ABSOLUTE = 0x0002,  #[=] This opcode will set a value as absolute, if applicable.
+	OPFLAGS_VALUE_PERCENT =  0x0004,  #[%] This opcode will set a value as a percentage, if applicable.
+	OPFLAGS_HEAL_BONUS =     0x0008,  #[+] Heal only. Uses bonus healing value.
 	OPFLAGS_USE_SVAL =       0x0010,  #Use state stored value instead of passed value.
-	OPFLAGS_QUIT_ON_FALSE =  0x0020,  #In a conditional, directly quit instead of skipping next line.
+	OPFLAGS_QUIT_ON_FALSE =  0x0020,  #[X] In a conditional, directly quit instead of skipping next line.
 	OPFLAGS_BLOCK_START =    0x0040,  #In a conditional, start a block. Skips everything until a OPFLAGS_BLOCK_END is found.
 	OPFLAGS_BLOCK_END =      0x0080,  #Determines end of a code block.
-	OPFLAGS_SILENT_ATTACK =  0x0100,  #Makes an attack not output any messages, and passes previous attack as a stack for next non-silent attack.
-	OPFLAGS_LOGIC_NOT =      0x0200,  #In a conditional, reverse the outcome.
+	OPFLAGS_SILENT_ATTACK =  0x0100,  #[S] Makes an attack and certain effects not output any messages, and if an attack, passes to a stack for next non-silent attack.
+	OPFLAGS_LOGIC_NOT =      0x0200,  #[!] In a conditional, reverse the outcome.
 }
 
-enum {
-	#Flags: [@]: Can change target to user. [=]: Forces an absolute value instead of additive.
-	#       [%]: Opcode uses a percentage.  [+]: Apply healing bonus.
+enum { #Skill function codes.
 	#Null
 	OPCODE_NULL,							#No effect
 
 	# Standard combat functions ##################################################
 	OPCODE_ATTACK,						#Standard attack function with power%. Tries to inflict each hit if capable.
+	OPCODE_DEFEND,						#Standard defense function. TODO: Define defense role's further.
 	OPCODE_FORCE_INFLICT,			#[@]Attempt to inflict an ailment independent from attack.
 	OPCODE_DAMAGERAW,					#[@%]Reduce target's HP by given value (no check)
 	OPCODE_DEFEAT,						#[@]Instantly defeats target with a given chance. This bypasses regular instant death protection and is mostly used for self-destructs with potential chances of survival.
@@ -427,7 +442,6 @@ enum {
 	OPCODE_ITEM_RECHARGE,			#Gives items charge equivalent to X hours.
 	OPCODE_ITEM_REFILL,				#Fully refills chargeable items.
 
-
 	# Enemy only specials ########################################################
 	OPCODE_ENEMY_REVIVE,			#[+]Revives a fallen enemy.
 	OPCODE_ENEMY_SUMMON,			#Summons with index X. If battle formation has a summons set, those take priority, otherwise monster-specific ones are used, if neither exist or the index is out of range, summon the same type as the user.
@@ -451,6 +465,7 @@ enum {
 	OPCODE_GET_DODGES,				#Get amount of dodges for this turn.
 	OPCODE_GET_DEFEATED,			#Get amount of defeated in the target team.
 	OPCODE_GET_RANGE,					#Get distance to target. Can be used in functions that target self, precalculated on skill state init.
+	OPCODE_GET_OVER,					#Get Over of target as a 0-100 value.
 
 	# Math #######################################################################
 	OPCODE_MATH_ADD,					#Add X to stored value. (SVAL + X)
@@ -466,38 +481,43 @@ enum {
 	OPCODE_MATH_PERCENT,			#Set stored value to X% of its current value.
 
 	# Conditionals ###############################################################
-	OPCODE_IF_TRUE,											#Execute next line if X is not zero.
-	OPCODE_IF_CHANCE,                   #Chance% to execute next line.
-	OPCODE_IF_STATUS,                   #Execute next line if afflicted.
-	OPCODE_IF_SVAL_EQUAL,               #Execute next line if sval == X.
-	OPCODE_IF_SVAL_LESSTHAN,            #Execute next line if sval < X.
-	OPCODE_IF_SVAL_LESS_EQUAL_THAN,     #Execute next line if sval <= X.
-	OPCODE_IF_SVAL_MORETHAN,            #Execute next line if sval > X.
-	OPCODE_IF_SVAL_MORE_EQUAL_THAN,     #Execute next line if sval >= X.
-	OPCODE_IF_EF_BONUS_LESS_EQUAL_THAN, #Execute next line if bonus for current element <= X.
-	OPCODE_IF_EF_BONUS_MORE_EQUAL_THAN, #Execute next line if bonus for current element >= X.
-	OPCODE_IF_ACT,                      #Execute next line if target has already acted.
-	OPCODE_IF_DAMAGED,                  #Execute next line if target was damaged this turn.
-	OPCODE_IF_SELF_DAMAGED,             #Execute next line if user received damage this turn.
-	OPCODE_IF_HITCHECK,                 #Execute next line if a standard hit check succeeds.
-	OPCODE_IF_CONNECT,                  #Execute next line if last attack command hit.
-	OPCODE_IF_SYNERGY_PARTY,						#Execute next line if target's party has a given skill active, usually buffs, debuffs or passives.
-	OPCODE_IF_SYNERGY_TARGET,						#Execute next line if target has a given skill active.
-	OPCODE_IF_RACE_ASPECT,							#Execute next line if target has the given race aspects.
-	OPCODE_IF_RACE_TYPE,								#Execute next line if target has the given race type amount its list.
+	OPCODE_IF_TRUE,											#[!]Execute next line if X is not zero.
+	OPCODE_IF_OVER,                     #[!]Execute next line if target's Over is >= X.
+	OPCODE_IF_CHANCE,                   #[!]Chance% to execute next line.
+	OPCODE_IF_STATUS,                   #[!]Execute next line if afflicted.
+	OPCODE_IF_SVAL_EQUAL,               #[!]Execute next line if sval == X.
+	OPCODE_IF_SVAL_LESSTHAN,            #[!]Execute next line if sval < X.
+	OPCODE_IF_SVAL_LESS_EQUAL_THAN,     #[!]Execute next line if sval <= X.
+	OPCODE_IF_SVAL_MORETHAN,            #[!]Execute next line if sval > X.
+	OPCODE_IF_SVAL_MORE_EQUAL_THAN,     #[!]Execute next line if sval >= X.
+	OPCODE_IF_EF_BONUS_LESS_EQUAL_THAN, #[!]Execute next line if bonus for current element <= X.
+	OPCODE_IF_EF_BONUS_MORE_EQUAL_THAN, #[!]Execute next line if bonus for current element >= X.
+	OPCODE_IF_ACT,                      #[!]Execute next line if target has already acted.
+	OPCODE_IF_DAMAGED,                  #[!]Execute next line if target was damaged this turn.
+	OPCODE_IF_SELF_DAMAGED,             #[!]Execute next line if user received damage this turn.
+	OPCODE_IF_HITCHECK,                 #[!]Execute next line if a standard hit check succeeds.
+	OPCODE_IF_CONNECT,                  #[!]Execute next line if last attack command hit.
+	OPCODE_IF_SYNERGY_PARTY,						#[!]Execute next line if target's party has a given skill active, usually buffs, debuffs or passives.
+	OPCODE_IF_SYNERGY_TARGET,						#[!]Execute next line if target has a given skill active.
+	OPCODE_IF_RACE_ASPECT,							#[!]Execute next line if target has the given race aspects.
+	OPCODE_IF_RACE_TYPE,								#[!]Execute next line if target has the given race type amount its list.
 }
 
+
+#Functions that can be modified by dgems.
 const opCodesPowerable = [
-	OPCODE_ATTACK, OPCODE_DAMAGERAW, OPCODE_DAMAGE_RAW_BONUS,
-	OPCODE_HEAL, OPCODE_HEALROW, OPCODE_HEALALL, OPCODE_HEALBONUS, OPCODE_HEAL_RAW_BONUS,
-	OPCODE_BARRIER,
-	OPCODE_GUARD, OPCODE_GUARD_RAW,
+	OPCODE_ATTACK, OPCODE_DAMAGERAW, OPCODE_DAMAGE_RAW_BONUS,                             #Damaging functions
+	OPCODE_HEAL, OPCODE_HEALROW, OPCODE_HEALALL, OPCODE_HEALBONUS, OPCODE_HEAL_RAW_BONUS, #Healing functions
+	OPCODE_BARRIER,                                                                       #Miscelaneous defensive functions
+	OPCODE_GUARD, OPCODE_GUARD_RAW,                                                       #Guard functions.
 ]
 
+#Translation from strings to function codes.
 const opCode = {
 	"null" : OPCODE_NULL,
 
 	"attack" : OPCODE_ATTACK,
+	"defend" : OPCODE_DEFEND,
 	"f_inflict" : OPCODE_FORCE_INFLICT,
 	"dmgraw" : OPCODE_DAMAGERAW,
 	"defeat" : OPCODE_DEFEAT,
@@ -977,6 +997,7 @@ class SkillState:
 
 
 func translateOpCode(o : String) -> int:
+	o = o.to_lower() #Ensure string is lower case.
 	return opCode[o] if o in opCode else OPCODE_NULL
 
 func hasCodePR(S):
@@ -1263,7 +1284,7 @@ func processDamageRaw(S, user, target, value, percent) -> int:                 #
 	else:
 		dmg = value
 	if dmg > 0:                                                                   #TODO: Add damage messages, add a flag to bypass resistances.
-		target.damage(dmg, [false, false, MAX_DMG])
+		target.damage(dmg, [false, false, 0, null])
 	return dmg
 
 
@@ -1284,22 +1305,26 @@ func processHeal(S, state, user, target, value:float) -> float:
 		state.anyHit = true
 	return value
 
-func printSkillMsg(S, user, target, value):
+func printSkillMsg(S, user, target, value) -> bool:
 	if value == 0:
-		return
-	else:
-		value = value - 1
+		print("\t[SKILL][printSkillMsg] Value is zero, stopping.")
+		return false
 	if S.messages != null:
-		if value <= S.messages.size():
-			var m = S.messages[value]
-			var args = []
-			if m[1] & MSG_USER:
-				args.push_back(str("[color=#%s]%s[/color]" % [core.battle.control.state.colorName(user), user.name]))
-			if m[1] & MSG_TARGET:
-				args.push_back(str("[color=#%s]%s[/color]" % [core.battle.control.state.colorName(target), target.name]))
-			if m[1] & MSG_SKILL:
-				args.push_back(S.name)
-			msg(str(m[0] % args))
+		var colorize = funcref(core.battle.control.state, "colorName") #For convenience.
+		value -= 1 # Reduce value by one to adapt it to zero-indexed arrays.
+		if value <= S.messages.size(): #Value is valid, output message and request delay.
+			#Form the dictionary with the formatting values.
+			var dict = {
+				'USER'  : "[color=#%s]%s[/color]" % [colorize.call_func(user), user.name],
+				'TARGET': "[color=#%s]%s[/color]" % [colorize.call_func(target), target.name],
+				'SKILL' : "[color=#%s]%s[/color]" % [S.name, 'ABABAB'],
+			}
+			msg(str(S.messages[value]).format(dict)) #Use godot's builtin format(). {SUBSTITUTIONS} must be allcaps!
+			return true
+		else: # Value out of range, do not print anything, do not force delay.
+			print("\t[SKILL][printSkillMsg] Value out of range, stopping.")
+			return false
+	return false
 
 func msg(text):
 	core.battle.skillControl.echo(text)
@@ -1426,8 +1451,8 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 		user.setWeapon(WP)
 	user.charge(false)
 	var info = initSkillInfo()
-	if S.animations.size() > 1:
-		controlNode.startAnim(S, level, ANIM_STARTUP, core.battle.bg_fx)
+	if 'startup' in S.animations:
+		controlNode.startAnim(S, level, 'startup', core.battle.bg_fx)
 		yield(controlNode, "fx_finished") #Wait for animation to finish.
 		print("[SKILL][processCombatSkill] Startup animation finished")
 	info.postTargetGroup = 1 if S.codePO != null else 0 #Assume a post-main code is wanted if it's defined. Allow to cancel with codes.
@@ -1439,7 +1464,7 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
 		if tempTarget.filter(S): #Target is valid.
-			controlNode.startAnim(S, level, ANIM_ONHIT, tempTarget.display)
+			controlNode.startAnim(S, level, 'main', tempTarget.display)
 			yield(controlNode, "fx_finished") #Wait for animation to finish.
 			print("[SKILL][processCombatSkill] Standard animation finished")
 			control = controlNode.start()
@@ -1484,7 +1509,7 @@ func processSubSkill(S, level, user, target, control = core.battle.skillControl.
 	var controlNode = core.battle.skillControl
 	if target.filter(S):
 		print("Starting subskill: %s" % S.name)
-		controlNode.startAnim(S, level, 0, target.display)
+		controlNode.startAnim(S, level, 'main', target.display)
 		yield(controlNode, "fx_finished") #Wait for animation to finish.
 		print("Animation finished")
 		processSkillCode(S, level, user, target, CODE_MN, control)
@@ -1540,7 +1565,7 @@ func processFL(S, level, user, target, data, type):
 				])
 	yield(core.battle.skillControl.wait(0.1), "timeout")
 	var control = core.battle.skillControl.start()
-	core.battle.skillControl.startAnim(S, level, 0, target.display)
+	core.battle.skillControl.startAnim(S, level, 'onfollow', target.display)
 	yield(core.battle.skillControl, "fx_finished")
 	print("FL ANIMATION FINISHED")
 	processSkillCode(S, level, user, target, CODE_FL, control)
@@ -1712,6 +1737,9 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_ATTACK:
 						print(">ATTACK(%s)" % value)
 						processAttack(S, level, user, target, state, value, flags)
+					OPCODE_DEFEND:
+						print(">DEFEND(%s)" % value)
+						variableTarget.display.message("DEFEND", false, messageColors.protect)
 					OPCODE_FORCE_INFLICT:
 						print(">INFLICT(%s)" % value)
 						args = {
@@ -2235,8 +2263,9 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 # Actions ######################################################################
 					OPCODE_PRINTMSG:
 						print(">PRINT MESSAGE: %s" % value)
-						printSkillMsg(S, user, target, value)
-						yield(controlNode.wait(0.1), "timeout")
+						var do_delay : bool = printSkillMsg(S, user, target, value)
+						if do_delay:
+							yield(controlNode.wait(0.1), "timeout")
 					OPCODE_LINKSKILL:
 						print(">LINK TO SKILL: %s" % value)
 						if value > 0:
@@ -2249,7 +2278,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							yield(controlNode.wait(0.01), "timeout")
 					OPCODE_PLAYANIM:
 						print(">PLAY ANIMATION: %s" % value)
-						controlNode.startAnim(S, level, 0, target.display)
+						controlNode.startAnim(S, level, str(value) if value in S.animations else 'main', target.display)
 						yield(controlNode, "fx_finished")
 					OPCODE_WAIT:
 						print(">WAIT: %s" % value)
@@ -2378,6 +2407,10 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">GET_RANGE")
 						state.value = getRange(user, state.originalTarget)
 						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_OVER:
+						print(">GET_OVER")
+						state.value = variableTarget.battle.over
+						print(">>>>>SVAL = %s" % state.value)
 # Math #########################################################################
 					OPCODE_MATH_ADD:
 						print(">MATH_ADD: %s + %s = %s" % [state.value, value, state.value + value])
@@ -2437,6 +2470,19 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							else:
 								cond_block = (flags & OPFLAGS_BLOCK_START)
 								print("%s is zero. Skipping next line." % [int(value)])
+								skipLine = true
+					OPCODE_IF_OVER:
+						print(">IF OVER >= %s" % value)
+						if s_if(variableTarget.battle.over >= value):
+							print("\tOver(%03d%%) >= %s%%, executing next line." % [variableTarget.battle.over, value])
+						else:
+							if flags & OPFLAGS_QUIT_ON_FALSE:
+								print("\tOver(%03d%%) < %s%%. Aborting execution." % [variableTarget.battle.over, int(value)])
+								control.continueSkill()
+								return
+							else:
+								cond_block = (flags & OPFLAGS_BLOCK_START)
+								print("\tOver(%03d%%) < %s%%. Skipping next line." % [variableTarget.battle.over, int(value)])
 								skipLine = true
 					OPCODE_IF_CHANCE:
 						print(">IF_CHANCE: %s" % value)
@@ -2633,10 +2679,9 @@ func printCode(S, level, code = CODE_MN) -> String:
 		CODE_MN:
 			if S.codeMN != null:
 				for i in range(S.codeMN.size()):
-					body += "%02d:%s:%03d:%d\n" % [i,S.codeMN[i][0], S.codeMN[i][level], S.codeMN[i][11]]
+					var translated = opcodeInfo[S.codeMN[i][0]].name if S.codeMN[i][0] in opcodeInfo else str(S.codeMN[i][0])
+					body += "%02d:%s:%03d:%d\n" % [i,translated, S.codeMN[i][level], S.codeMN[i][11]]
 	return body
-
-
 
 
 func factoryLine(opcode, val, flags) -> Array:
