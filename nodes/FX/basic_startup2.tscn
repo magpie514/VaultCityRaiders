@@ -4,17 +4,16 @@
 [ext_resource path="res://nodes/FX/basic.gd" type="Script" id=2]
 [ext_resource path="res://resources/icons/dgem_round.svg" type="Texture" id=3]
 
-[sub_resource type="Curve" id=13]
+[sub_resource type="Curve" id=1]
 _data = [ Vector2( 0, 0.4736 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="Curve" id=15]
+[sub_resource type="Curve" id=2]
 _data = [ Vector2( 0, 0.4736 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="Curve" id=16]
+[sub_resource type="Curve" id=3]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="Animation" id=1]
-resource_name = "New Anim"
+[sub_resource type="Animation" id=4]
 length = 3.0
 tracks/0/type = "value"
 tracks/0/path = NodePath("Particles2D:emitting")
@@ -35,7 +34,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 2.9 ),
+"times": PoolRealArray( 3 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -71,12 +70,12 @@ tracks/4/path = NodePath("Particles2D:z_index")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/imported = false
-tracks/4/enabled = false
+tracks/4/enabled = true
 tracks/4/keys = {
 "times": PoolRealArray( 0, 2.6 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ 0, -3 ]
+"values": [ 0, -5 ]
 }
 tracks/5/type = "value"
 tracks/5/path = NodePath("Particles2D:position")
@@ -112,7 +111,7 @@ tracks/7/keys = {
 "times": PoolRealArray( 0, 0.8, 2.5 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ SubResource( 13 ), SubResource( 15 ), SubResource( 16 ) ]
+"values": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
 }
 tracks/8/type = "value"
 tracks/8/path = NodePath("Particles2D:scale")
@@ -139,33 +138,33 @@ tracks/9/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="CanvasItemMaterial" id=2]
+[sub_resource type="CanvasItemMaterial" id=5]
 blend_mode = 1
 light_mode = 1
 
-[sub_resource type="CurveTexture" id=14]
+[sub_resource type="CurveTexture" id=6]
 width = 128
-curve = SubResource( 16 )
+curve = SubResource( 3 )
 
-[sub_resource type="Gradient" id=5]
+[sub_resource type="Gradient" id=7]
 offsets = PoolRealArray( 0, 0.109677, 0.380952, 1 )
 colors = PoolColorArray( 1, 1, 1, 1, 0.484375, 0.758301, 1, 1, 0.951172, 1, 0, 1, 1, 0, 0, 1 )
 
-[sub_resource type="GradientTexture" id=11]
-gradient = SubResource( 5 )
+[sub_resource type="GradientTexture" id=8]
+gradient = SubResource( 7 )
 width = 64
 
-[sub_resource type="Curve" id=7]
+[sub_resource type="Curve" id=9]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=8]
+[sub_resource type="CurveTexture" id=10]
 width = 64
-curve = SubResource( 7 )
+curve = SubResource( 9 )
 
-[sub_resource type="ParticlesMaterial" id=12]
+[sub_resource type="ParticlesMaterial" id=11]
 trail_divisor = 64
-trail_size_modifier = SubResource( 8 )
-trail_color_modifier = SubResource( 11 )
+trail_size_modifier = SubResource( 10 )
+trail_color_modifier = SubResource( 8 )
 emission_shape = 2
 emission_box_extents = Vector3( 300, 1, 1 )
 flag_disable_z = true
@@ -176,27 +175,27 @@ orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 linear_accel = 100.0
 tangential_accel = -100.0
-scale_curve = SubResource( 14 )
+scale_curve = SubResource( 6 )
 color = Color( 0.0235294, 0, 0, 1 )
 
-[sub_resource type="Gradient" id=17]
+[sub_resource type="Gradient" id=12]
 colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 0, 0.270588 )
 
-[sub_resource type="GradientTexture" id=18]
-gradient = SubResource( 17 )
+[sub_resource type="GradientTexture" id=13]
+gradient = SubResource( 12 )
 width = 64
 
-[sub_resource type="Curve" id=19]
+[sub_resource type="Curve" id=14]
 _data = [ Vector2( 0.002551, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.5308 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=20]
+[sub_resource type="CurveTexture" id=15]
 width = 64
-curve = SubResource( 19 )
+curve = SubResource( 14 )
 
-[sub_resource type="ParticlesMaterial" id=21]
+[sub_resource type="ParticlesMaterial" id=16]
 trail_divisor = 24
-trail_size_modifier = SubResource( 20 )
-trail_color_modifier = SubResource( 18 )
+trail_size_modifier = SubResource( 15 )
+trail_color_modifier = SubResource( 13 )
 emission_shape = 2
 emission_box_extents = Vector3( 640, 1, 1 )
 flag_align_y = true
@@ -216,15 +215,16 @@ hue_variation_random = 1.0
 script = ExtResource( 2 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-"anims/New Anim" = SubResource( 1 )
+"anims/New Anim" = SubResource( 4 )
 
 [node name="Particles2D" type="Particles2D" parent="."]
-material = SubResource( 2 )
+material = SubResource( 5 )
 position = Vector2( 500, 480 )
 scale = Vector2( 0.35, 0.4 )
+z_index = -5
 emitting = false
 amount = 2048
-process_material = SubResource( 12 )
+process_material = SubResource( 11 )
 texture = ExtResource( 1 )
 
 [node name="Sprite3" type="Sprite" parent="."]
@@ -241,6 +241,6 @@ emitting = false
 amount = 1024
 lifetime = 35.03
 speed_scale = 11.32
-process_material = SubResource( 21 )
+process_material = SubResource( 16 )
 texture = ExtResource( 1 )
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

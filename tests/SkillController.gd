@@ -52,11 +52,11 @@ func wait(x):
 func startAnim(S, level, x, display) -> void:
 	var temp = S.animations[x] if x in S.animations else "res://nodes/FX/basic.tscn"
 	anim = load(temp).instance()
-	add_child(anim)
+	display.add_child(anim)
 	if S.animFlags[level] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
 		anim.modulate = core.stats.ELEMENT_DATA[S.element[level]].color
 		print("[SKILLCONTROLLER] Setting color from element! %s" % str(anim.modulate))
-	anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
+	#anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
 	anim.connect("anim_done", self, "on_anim_done")
 	anim.play(ANIM_SPEEDS[speed])
 

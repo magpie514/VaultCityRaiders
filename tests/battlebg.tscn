@@ -4,194 +4,66 @@
 [ext_resource path="res://tests/bgtest_01.tscn" type="PackedScene" id=2]
 
 [node name="BattleView" type="Node2D"]
-position = Vector2( 340, 285 )
+z_index = -10
 script = ExtResource( 1 )
 
 [node name="BG" type="Node2D" parent="."]
+z_index = -20
 
 [node name="Root" parent="BG" instance=ExtResource( 2 )]
-position = Vector2( -340, -285 )
 
 [node name="Enemy" type="Node2D" parent="."]
-position = Vector2( 220, 95 )
+position = Vector2( 480, 360 )
 
 [node name="B1" type="Position2D" parent="Enemy"]
-position = Vector2( -288, 140 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/B1"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( -192, 140 )
+rotation = 0.00574237
+z_index = -2
 
 [node name="B2" type="Position2D" parent="Enemy"]
-position = Vector2( -152, 140 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/B2"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( -96, 140 )
+rotation = 0.00574237
+z_index = -2
 
 [node name="B3" type="Position2D" parent="Enemy"]
-position = Vector2( -32, 140 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/B3"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( 0, 140 )
+rotation = 0.00574237
+z_index = -2
 
 [node name="B4" type="Position2D" parent="Enemy"]
-position = Vector2( 78, 140 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/B4"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( 96, 140 )
+rotation = 0.00574237
+z_index = -2
 
 [node name="B5" type="Position2D" parent="Enemy"]
-position = Vector2( 214, 140 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/B5"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( 192, 140 )
+rotation = 0.00574237
+z_index = -2
 
 [node name="F1" type="Position2D" parent="Enemy"]
-position = Vector2( -424, 200 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/F1"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( -384, 220 )
+rotation = 0.00574237
 
 [node name="F2" type="Position2D" parent="Enemy"]
-position = Vector2( -220, 200 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/F2"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( -192, 220 )
+rotation = 0.00574237
 
 [node name="F3" type="Position2D" parent="Enemy"]
-position = Vector2( -32, 200 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/F3"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( 0, 220 )
+rotation = 0.00574237
 
 [node name="F4" type="Position2D" parent="Enemy"]
-position = Vector2( 146, 200 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/F4"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( 192, 220 )
+rotation = 0.00574237
 
 [node name="F5" type="Position2D" parent="Enemy"]
-position = Vector2( 324, 200 )
-
-[node name="ColorRect" type="ColorRect" parent="Enemy/F5"]
-visible = false
-margin_left = -68.0
-margin_top = -260.0
-margin_right = 68.0
-margin_bottom = -10.0
-focus_neighbour_left = NodePath(".")
-focus_neighbour_top = NodePath(".")
-focus_neighbour_right = NodePath(".")
-focus_neighbour_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
-color = Color( 1, 1, 1, 0.0392157 )
+position = Vector2( 384, 220 )
+rotation = 0.00574237
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 170, 75 )
-current = true
+position = Vector2( 480, 360 )
+drag_margin_h_enabled = false
+drag_margin_v_enabled = false
 editor_draw_limits = true
 
-[node name="FXHook" type="Control" parent="."]
-margin_left = -340.0
-margin_top = -185.0
-margin_right = -340.0
-margin_bottom = -185.0
+[node name="FXHook" type="Position2D" parent="."]

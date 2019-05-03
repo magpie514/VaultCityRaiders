@@ -136,4 +136,6 @@ quality/intended_usage/framebuffer_allocation=0
 quality/intended_usage/framebuffer_allocation.mobile=0
 quality/2d/use_pixel_snap=true
 quality/voxel_cone_tracing/high_quality=false
+environment/default_clear_color=Color( 0.0196078, 0, 0.203922, 1 )
+quality/depth/hdr=false
 environment/default_environment="res://default_env.tres"

@@ -2,19 +2,19 @@
 
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=1]
 [ext_resource path="res://tests/ctrltest.gd" type="Script" id=2]
-[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=3]
+[ext_resource path="res://nodes/UI/battle/current_action.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=5]
-[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=6]
-[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=7]
-[ext_resource path="res://nodes/UI/battle/action_queue.tscn" type="PackedScene" id=8]
-[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=9]
+[ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=6]
+[ext_resource path="res://nodes/UI/battle/action_queue.tscn" type="PackedScene" id=7]
+[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=8]
+[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=9]
 [ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=10]
 [ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=11]
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=12]
 [ext_resource path="res://tests/SkillController.gd" type="Script" id=13]
 [ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=14]
-[ext_resource path="res://nodes/UI/battle/current_action.tscn" type="PackedScene" id=15]
+[ext_resource path="res://nodes/UI/battle/FieldEffect.tscn" type="PackedScene" id=15]
 
 [sub_resource type="DynamicFont" id=1]
 size = 11
@@ -95,9 +95,11 @@ usage = 0
 render_target_update_mode = 3
 gui_disable_input = true
 
-[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 7 )]
+[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 8 )]
+z_index = -10
 
 [node name="Panel2" type="Panel" parent="Panel"]
+visible = false
 margin_right = 960.0
 margin_bottom = 90.0
 
@@ -124,7 +126,7 @@ scroll_active = false
 
 [node name="ColorRect" type="ColorRect" parent="Panel"]
 anchor_right = 1.0
-margin_top = 80.0
+margin_top = 79.0
 margin_bottom = 90.0
 color = Color( 0, 0, 0, 0.258824 )
 
@@ -150,7 +152,7 @@ margin_right = 79.0
 margin_bottom = -2.0
 text = "Pass hour"
 
-[node name="FieldEffect" parent="Panel" instance=ExtResource( 6 )]
+[node name="FieldEffect" parent="Panel" instance=ExtResource( 15 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -130.0
@@ -158,10 +160,10 @@ margin_top = 79.0
 margin_right = 130.0
 margin_bottom = 114.0
 
-[node name="InfoDisplay" parent="Panel" instance=ExtResource( 3 )]
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 9 )]
 visible = false
 
-[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 9 )]
+[node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 6 )]
 visible = false
 anchor_right = 1.0
 margin_right = 0.0
@@ -185,7 +187,7 @@ anchor_bottom = 0.972
 margin_top = 19.92
 margin_bottom = 19.92
 
-[node name="ActionQueue" parent="Panel" instance=ExtResource( 8 )]
+[node name="ActionQueue" parent="Panel" instance=ExtResource( 7 )]
 anchor_left = 0.773
 anchor_top = 0.192
 anchor_right = 1.0
@@ -195,7 +197,7 @@ margin_top = -8.24001
 margin_right = 0.0
 margin_bottom = 0.320007
 
-[node name="CurrentAction" parent="Panel" instance=ExtResource( 15 )]
+[node name="CurrentAction" parent="Panel" instance=ExtResource( 3 )]
 margin_left = 740.0
 margin_top = 96.0
 margin_right = 960.0

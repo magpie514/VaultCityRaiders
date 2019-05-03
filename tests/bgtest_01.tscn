@@ -1,34 +1,23 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://tests/bgtest_01.gd" type="Script" id=1]
+[ext_resource path="res://tests/3dbg_test.tscn" type="PackedScene" id=2]
 
-[sub_resource type="Gradient" id=1]
+[sub_resource type="ViewportTexture" id=1]
+viewport_path = NodePath("Viewport")
 
-offsets = PoolRealArray( 0, 0.431953, 0.550296, 0.639053, 1 )
-colors = PoolColorArray( 0.141737, 0.136978, 0.746094, 1, 0.237821, 0.222427, 0.503906, 1, 0.20829, 0.128393, 0.290873, 1, 0, 0, 0, 1, 0.167969, 0, 0, 1 )
-
-[sub_resource type="GradientTexture" id=2]
-
-gradient = SubResource( 1 )
-width = 680
-
-[sub_resource type="CanvasItemMaterial" id=3]
-
+[sub_resource type="CanvasItemMaterial" id=4]
 blend_mode = 1
 
-[sub_resource type="Gradient" id=4]
-
+[sub_resource type="Gradient" id=5]
 offsets = PoolRealArray( 0, 0.526627, 1 )
 colors = PoolColorArray( 0.746094, 0.136978, 0.136978, 1, 0.0573918, 0.0105368, 0.0105368, 1, 0, 0, 0, 1 )
 
-[sub_resource type="GradientTexture" id=5]
-
-gradient = SubResource( 4 )
+[sub_resource type="GradientTexture" id=6]
+gradient = SubResource( 5 )
 width = 680
 
-[sub_resource type="Animation" id=6]
-
-resource_name = "New Anim"
+[sub_resource type="Animation" id=7]
 length = 10.0
 loop = true
 tracks/0/type = "value"
@@ -47,32 +36,46 @@ tracks/0/keys = {
 [node name="Root" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="Sprite6" type="Sprite" parent="."]
-position = Vector2( -1.19209e-07, 720 )
-rotation = -1.5708
-scale = Vector2( 1.05882, 1024.15 )
-texture = SubResource( 2 )
+[node name="Sprite" type="Sprite" parent="."]
+texture = SubResource( 1 )
 centered = false
 
 [node name="Sprite7" type="Sprite" parent="."]
-self_modulate = Color( 1, 1, 1, 0.0465795 )
-material = SubResource( 3 )
-position = Vector2( 2.91038e-10, 720 )
+visible = false
+self_modulate = Color( 1, 1, 1, 0.470588 )
+material = SubResource( 4 )
+position = Vector2( 0.0604193, 722.732 )
 rotation = -1.5708
-scale = Vector2( 1.05957, 1024.15 )
+scale = Vector2( 1.05957, 957.238 )
 z_index = 1
-texture = SubResource( 5 )
+texture = SubResource( 6 )
 centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "New Anim"
-"anims/New Anim" = SubResource( 6 )
+"anims/New Anim" = SubResource( 7 )
 
-[node name="Control" type="ColorRect" parent="."]
-visible = false
-margin_left = -340.0
-margin_top = -285.0
-margin_right = 340.0
-margin_bottom = 285.0
-color = Color( 0.0745098, 1, 0, 0.376471 )
+[node name="Viewport" type="Viewport" parent="."]
+size = Vector2( 960, 720 )
+handle_input_locally = false
+hdr = false
+render_target_v_flip = true
+render_target_clear_mode = 2
+render_target_update_mode = 3
+gui_disable_input = true
 
+[node name="Background" parent="Viewport" instance=ExtResource( 2 )]
+
+[node name="Main_Camera" parent="Viewport/Background" index="0"]
+current = true
+
+[node name="Gem0" parent="Viewport/Background" index="2"]
+transform = Transform( 0.33995, 0, 0, 0, 2.8351, 0, 0, 0, 0.33995, -1.5, 2.59652, -1.299 )
+
+[node name="Gem1" parent="Viewport/Background" index="3"]
+transform = Transform( 0.33995, 0, 0, 0, 2.8351, 0, 0, 0, 0.33995, 1.5, 2.59652, -1.299 )
+
+[node name="DirectionalLight" parent="Viewport/Background" index="5"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77426, 3.32932, 0 )
+
+[editable path="Viewport/Background"]
