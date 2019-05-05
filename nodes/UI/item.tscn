@@ -11,7 +11,7 @@ signal hide_info
 var I = null
 
 func init(_I, stack:int = 0) -> void:
-	I = _I
+	I = _I.data
 	var elem = null
 	$Label.text = I.lib.name
 	$Button.hint_tooltip = I.lib.description
@@ -35,6 +35,9 @@ func init(_I, stack:int = 0) -> void:
 			$USE.text = str('x%d' % stack)
 		else:
 			$USE.text = ''
+	if I.lib.skill[I.level] == 0:
+		$Button.disabled = true
+		$Button.modulate = \"AAAAFF\"
 
 func _on_Button_mouse_entered() -> void:
 	emit_signal(\"display_info\", I.lib, 2, I.level)

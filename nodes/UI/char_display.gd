@@ -109,7 +109,7 @@ func setActionText(act):
 			_:
 				if act.target[0] != null:
 					target = act.target[0].name
-	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.lib.name, target]
+	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.data.lib.name, target]
 	$Action.show()
 	if S.chargeAnim[act.level] != 0: charge(true)
 	if S.initAD[act.level] != 100: updateAD(S.initAD[act.level])

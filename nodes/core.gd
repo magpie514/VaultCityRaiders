@@ -138,6 +138,9 @@ class _tid:
 		var result = "%s/%s" % [tid[0], tid[1]]
 		return result
 
+	func compare(tid1, tid2) -> bool:
+		return true if (tid1[0] == tid2[0] and tid1[1] == tid2[2]) else false
+
 class StatClass:
 	const STAT_CAP = 255
 	const MAX_DMG = 32000
@@ -151,7 +154,8 @@ class StatClass:
 		DMG_FIRE,					#Fire attacks
 		DMG_ICE,					#Ice attacks
 		DMG_ELEC,					#Electric attacks
-		DMG_ULTIMATE,			#Spirit/Gravity/Light/Dark attacks (Use sparingly)
+		#DMG_UNKNOWN,			#Time/Light/Spirit attacks (Use sparingly)
+		DMG_ULTIMATE,			#Gravity/Dark attacks (Use sparingly)
 		DMG_KINETIC,			#Supertype for all physical damage
 		DMG_ENERGY,				#Supertype for all energy damage
 	}
@@ -163,6 +167,7 @@ class StatClass:
 		"DMG_FIRE",
 		"DMG_ICE",
 		"DMG_ELEC",
+		#"DMG_UNKNOWN",
 		"DMG_ULTIMATE",
 	]
 	const ELEMENT_DATA = [
@@ -173,7 +178,8 @@ class StatClass:
 		{name = "fire", color = "E36E6E", icon = "res://resources/icons/fire.svg"},
 		{name = "ice", color = "6ED8E3", icon = "res://resources/icons/ice.svg"},
 		{name = "elec", color = "E2E36E", icon = "res://resources/icons/elec.svg"},
-		{name = "ultimate", color = "000000", icon = "res://resources/icons/void.svg"}
+		#{name = "unknown", color = "EEEECC", icon = "res://resources/icons/void.svg"},
+		{name = "ultimate", color = "000000", icon = "res://resources/icons/void.svg"},
 	]
 
 

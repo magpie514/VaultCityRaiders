@@ -26,24 +26,24 @@ func init(C, slot):
 	$Panel/Name.text = str(W.name)
 	#$Panel/DUR.text = str("%02d/%02d" % [WP.uses, WS.DUR])
 	var durcolor = "#FFFFFF"
-	if WS.DUR > W.durability[WP.bonus]:   durcolor = "#88FF88"
-	elif WS.DUR < W.durability[WP.bonus]: durcolor = "#FF8888"
+	if WS.DUR > W.durability[WP.level]:   durcolor = "#88FF88"
+	elif WS.DUR < W.durability[WP.level]: durcolor = "#FF8888"
 	$Panel/Bar/DUR.bbcode_text = str("%02d/[color=%s]%02d[/color]" % [WP.uses, durcolor, WS.DUR])
 	$Panel/Bar.value = core.normalize(WP.uses, WS.DUR)
-	if WP.bonus > 0:
+	if WP.level > 0:
 		$Panel/Bonus.show()
-		$Panel/Bonus.text = str("+%1d" % [WP.bonus])
+		$Panel/Bonus.text = str("+%1d" % [WP.level])
 	else:
 		$Panel/Bonus.hide()
 	#ATK display. Recolor if modified by gems or effects.
 	$Panel/ATK.text = str("%03d" % WS.ATK)
-	if WS.ATK > W.ATK[WP.bonus]:   $Panel/ATK.self_modulate = "#FFFFCC"
-	elif WS.ATK < W.ATK[WP.bonus]: $Panel/ATK.self_modulate = "#FFCCFF"
+	if WS.ATK > W.ATK[WP.level]:   $Panel/ATK.self_modulate = "#FFFFCC"
+	elif WS.ATK < W.ATK[WP.level]: $Panel/ATK.self_modulate = "#FFCCFF"
 	else:                          $Panel/ATK.self_modulate = "#FFFFFF"
 	#ETK display. Same as above.
 	$Panel/ETK.text = str("%03d" % WS.ETK)
-	if WS.ETK > W.ETK[WP.bonus]:   $Panel/ETK.self_modulate = "#FFFFCC"
-	elif WS.ETK < W.ETK[WP.bonus]: $Panel/ETK.self_modulate = "#FFCCFF"
+	if WS.ETK > W.ETK[WP.level]:   $Panel/ETK.self_modulate = "#FFFFCC"
+	elif WS.ETK < W.ETK[WP.level]: $Panel/ETK.self_modulate = "#FFCCFF"
 	else:                          $Panel/ETK.self_modulate = "#FFFFFF"
 	$Panel/DGem.init(WP.DGem)
 	$Panel/DGem.set_process(true)
@@ -57,10 +57,10 @@ func init(C, slot):
 		count += 1
 		S = core.lib.skill.getIndex(i)
 		button = skillNode.instance()
-		button.init(S, WP.bonus, button.COST_WP)
+		button.init(S, WP.level, button.COST_WP)
 		$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
 		$ScrollContainer/VBoxContainer.add_child(button)
-		button.get_node("Button").connect("pressed", self, "chooseResult", [[i, WP.bonus], WP])
+		button.get_node("Button").connect("pressed", self, "chooseResult", [[i, WP.level], WP])
 		button.connect("display_info", controls.infoPanel, "showInfo")
 		button.connect("hide_info", controls.infoPanel, "hideInfo")
 		buttons.push_back(button)

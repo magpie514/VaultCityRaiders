@@ -25,6 +25,7 @@ core="*res://nodes/core.tscn"
 
 [debug]
 
+settings/fps/force_fps=30
 gdscript/completion/autocomplete_setters_and_getters=true
 gdscript/warnings/unassigned_variable=false
 gdscript/warnings/unassigned_variable_op_assign=false
@@ -135,7 +136,10 @@ limits/debugger_stdout/max_chars_per_second=20480
 quality/intended_usage/framebuffer_allocation=0
 quality/intended_usage/framebuffer_allocation.mobile=0
 quality/2d/use_pixel_snap=true
+quality/shadow_atlas/size=1024
+quality/shadows/filter_mode=0
+quality/reflections/high_quality_ggx=false
+quality/subsurface_scattering/quality=0
 quality/voxel_cone_tracing/high_quality=false
-environment/default_clear_color=Color( 0.0196078, 0, 0.203922, 1 )
 quality/depth/hdr=false
 environment/default_environment="res://default_env.tres"

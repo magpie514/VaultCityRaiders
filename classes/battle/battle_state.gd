@@ -47,6 +47,9 @@ func echo(txt):
 func colorName(user) -> String:
 	return msgColors.names[user.side]
 
+func color_name(user) -> String:
+	return "[color=#%s]%s[/color]" % [msgColors.names[user.side], user.name]
+
 func passTurn():
 	turn += 1
 	echo("TURN %s START" % turn)

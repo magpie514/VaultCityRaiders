@@ -43,6 +43,9 @@ var links = null #array of [trust, link1, link2, link3]
 
 var equip = equipClass.new()
 var currentWeapon = equip.weps[0]
+var inventory:Array = []
+var personalInventorySize:int = 2
+var personalInventory:Array = []
 
 class DragonGem:
 	const EXP_TABLE = [
@@ -233,8 +236,8 @@ class DragonGemContainer:
 class Weapon:
 	const MAX_DUR = 99
 	var DEFAULT : Dictionary = {
-		id = core.tid.create("debug", "debug"),
-		bonus = int(0),
+		tid = core.tid.create("debug", "debug"),
+		level = int(0),
 		uses  = int(0),
 		gem  = null,
 		extraData = null,
@@ -247,18 +250,20 @@ class Weapon:
 		SKL = [],
 	}
 
-	var id = null
+	var tid = null
 	var lib = null
-	var bonus : int = 0 setget setBonus
+	var level : int = 0 setget setBonus
 	var uses : int = 0
 	var DGem : DragonGemContainer
 	var extraData = null
-	var stats = null
+	var stats: Dictionary = {}
 
-	func _init(data = DEFAULT) -> void:
-		self.id = core.tid.fromArray(data.id)
-		self.lib = core.lib.weapon.getIndex(self.id)
-		self.bonus = data.bonus
+	func _init(_tid = null, data = DEFAULT) -> void:
+		var tmp_tid = _tid
+		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.id
+		self.tid = core.tid.fromArray(tmp_tid)
+		self.lib = core.lib.weapon.getIndex(self.tid)
+		self.level = data.level
 		self.uses = data.uses
 		self.DGem = DragonGemContainer.new(0, data.gem)
 		stats = STATS_DEFAULT.duplicate()
@@ -266,8 +271,8 @@ class Weapon:
 
 	func save() -> Dictionary: #Return dict for saving.
 		return {
-			id = self.id,
-			bonus = self.bonus,
+			tid = self.tid,
+			level = self.level,
 			uses = self.uses,
 			dgem = self.DGem.save(),
 		}
@@ -277,10 +282,10 @@ class Weapon:
 
 	func recalculateStats() -> void:
 		var gemstats = DGem.stats
-		stats.ATK = lib.ATK[bonus] + (gemstats.ATK if 'ATK' in gemstats else 0)
-		stats.ETK = lib.ETK[bonus] + (gemstats.ETK if 'ETK' in gemstats else 0)
-		stats.WRD = lib.weight[bonus] + (gemstats.WRD if 'WRD' in gemstats else 0)
-		stats.DUR = lib.durability[bonus] + (gemstats.DUR if 'DUR' in gemstats else 0)
+		stats.ATK = lib.ATK[level] + (gemstats.ATK if 'ATK' in gemstats else 0)
+		stats.ETK = lib.ETK[level] + (gemstats.ETK if 'ETK' in gemstats else 0)
+		stats.WRD = lib.weight[level] + (gemstats.WRD if 'WRD' in gemstats else 0)
+		stats.DUR = lib.durability[level] + (gemstats.DUR if 'DUR' in gemstats else 0)
 		for i in ['DEF', 'EDF', 'AGI', 'LUC']:
 			stats[i] = gemstats[i] if i in gemstats else 0
 		for i in ['OFF', 'RES']:
@@ -298,8 +303,8 @@ class Weapon:
 		recalculateStats()
 		return G
 
-	func setBonus(val) -> void: #Clamp value for upgrade bonus
-		bonus = int(clamp(val, 0, 9))
+	func setBonus(val) -> void: #Clamp value for upgrade level
+		level = int(clamp(val, 0, 9))
 
 	func fullRepair() -> void:
 		uses = stats.DUR
@@ -342,7 +347,7 @@ class equipClass:
 			currentWeapon.partialRepair(val)
 
 	func loadWeapon(data : Dictionary) -> Weapon:
-		var result = Weapon.new(data)
+		var result = Weapon.new(null, data)
 		return result
 
 	func loadWeapons(data) -> void:
@@ -358,8 +363,8 @@ class equipClass:
 
 	func initGearSlot() -> Dictionary:
 		return {
-			id = tid.create("debug", "debug"),
-			bonus = int(0),
+			tid = tid.create("debug", "debug"),
+			level = int(0),
 			extraData = null,
 		}
 
@@ -381,8 +386,10 @@ class equipClass:
 		return stats
 
 	func getWeaponSpeedMod(weapon) -> int:
-		var W = core.lib.weapon.getIndex(weapon.id)
-		return W.weight[weapon.bonus]
+		var W = weapon.lib
+		return W.weight[weapon.level]
+
+
 
 
 static func valueByTrust(a, v : int) -> int:
@@ -522,9 +529,16 @@ func initDict(C):	#Load the character from save data
 	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.
 	currentWeapon = equip.weps[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
 	equip.currentWeapon = equip.weps[0]
+	self.personalInventorySize = C.personalInventorySize if 'personalInventorySize' in C else 2
+	if 'personalInventory' in C:
+		for i in C.personalInventory:
+			personalInventory.push_back([int(i[0]), core.tid.fromArray(i[1]), i[2].duplicate(true)])
 	initSkillList(C.skills)                    #Init adventurer's skill list.
 	initLinkList(C.links)                      #Init adventurer's links and trust with other guild members.
-	if 'energyColor' in C: energyColor = C.energyColor
+	if 'energyColor' in C:
+		energyColor = C.energyColor
+	else:
+		energyColor = "#4466FF"
 
 	recalculateStats()
 	fullHeal()

@@ -2,18 +2,18 @@ extends Control
 signal select
 
 func init(WP, key):
-	var W = core.lib.weapon.getIndex(WP.id)
-	if WP.bonus > 0:
-		$Label.text = str("%s +%1d" % [W.name, WP.bonus])
+	var W = WP.lib
+	if WP.level > 0:
+		$Label.text = str("%s +%1d" % [W.name, WP.level])
 	else:
 		$Label.text = str("%s" % [W.name])
 	$Label2.text = str("%1s" % key)
 	$DUR.text = str("%02d" % WP.uses)
-	if WP.uses > W.durability[WP.bonus] / 2:
+	if WP.uses > W.durability[WP.level] / 2:
 		$DUR.self_modulate = Color(1.0, 1.0, 1.0)
-	elif WP.uses > W.durability[WP.bonus] / 4:
+	elif WP.uses > W.durability[WP.level] / 4:
 		$DUR.self_modulate = Color(1.0, 1.0, 0.0)
-	elif WP.uses > W.durability[WP.bonus] / 10:
+	elif WP.uses > W.durability[WP.level] / 10:
 		$DUR.self_modulate = Color(1.0, 0.0, 0.0)
 	setCurrent(false)
 

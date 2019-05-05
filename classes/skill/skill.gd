@@ -1148,14 +1148,23 @@ func calculateFieldMod(elem:int, mult:int) -> float:
 	return 1.0 + (core.battle.control.state.field.getBonus(elem) * float(mult))
 
 
-func checkHitConditions(S, level, user, target, state) -> bool:
+func checkHitConditions(S, level, user, target, state, crit = false) -> bool:
 	if target.filter(S):
 		if state.nomiss: return true
 		if target.battle.forceDodge > 0:
-			print("[SKILL][checkHitConditions] %s forced dodge!" % target.name)
+			print("\t[SKILL][checkHitConditions] %s forced dodge!" % target.name)
 			target.battle.forceDodge -= 1
 			return false
-		else: return checkHit(user.battle.stat, target.battle.stat, state.accMod, target.battle.dodge)
+		if target is core.Player:
+			if target.group.inventory.canCounter(state.element, crit, target.inventory):
+				var IT = target.group.inventory.getCounterItem(state.element, crit, target.inventory)
+				if not IT.empty():
+					target.group.inventory.takeConsumable(IT[0])
+					print("\t[SKILL][checkHitConditions] %s was protected by %s!" % [target.name, IT[0].data.lib.name])
+					msg("%s was protected by %s!" % [core.battle.control.state.color_name(target), IT[0].data.lib.name])
+					target.display.message(str(">BLOCKED BY %s" % IT[0].data.lib.name), false, "00FFFF")
+					return false
+		return checkHit(user.battle.stat, target.battle.stat, state.accMod, target.battle.dodge)
 	return false
 
 
@@ -1179,16 +1188,18 @@ func processAttack(S, level, user, target, state, value, flags):
 	var inflictInfo : String = ""
 	var output : String = ""
 	var silent : bool = bool(flags & OPFLAGS_SILENT_ATTACK)
-	print("Attack: %05d + %05d = %05d power + %05d raw damage > silent: %s, hit record: %s" % [value, state.dmgBonus, state.dmgBonus + value, state.dmgAddRaw, silent, hitInfo])
+	print("\tAttack: %05d + %05d = %05d power + %05d raw damage > silent: %s, hit record: %s" % [value, state.dmgBonus, state.dmgBonus + value, state.dmgAddRaw, silent, hitInfo])
 	state.lastHit = false
 
 	for i in range(hitnum): #For each attack, check hits individually.
 		specials.guardBreak = false; specials.barrierFullBlock = false
+		crit = calculateCrit(a.LUC, b.LUC, state.critMod) #Check if this individual attack crits beforehand.
+		if crit:
+			print("\tCritical hit check passed.")
 		#if (checkHit(a, b, state.accMod[level]) or state.nomiss == true) and target.status != STATUS_DOWN:
-		if checkHitConditions(S, level, user, target, state):
+		if checkHitConditions(S, level, user, target, state, crit):
 			state.lastHit = true                                                  #It connected. Start processing it.
 			dmg = state.dmgBonus + value
-			crit = calculateCrit(a.LUC, b.LUC, state.critMod)                         #Check if this individual attack crits.
 			args = {
 				element = state.element,
 				dmgStat = state.dmgStat,                                                #and main damage stat
@@ -1202,14 +1213,14 @@ func processAttack(S, level, user, target, state, value, flags):
 				1: user.battle.weaknessHits += 1
 				2: user.battle.resistedHits += 1
 			dmg *= calculateRangedDamage(S, level, user, target)
-			print("Damage so far: %05d, adding raw +%05d (=%05d)" % [dmg, state.dmgAddRaw, dmg+state.dmgAddRaw])
+			print("\tDamage so far: %05d, adding raw +%05d (=%05d)" % [dmg, state.dmgAddRaw, dmg+state.dmgAddRaw])
 			dmg += state.dmgAddRaw
 			if field[args.element] > 0:
 				fieldBonus = calculateFieldMod(args.element, state.fieldEffectMult)
-				print("Field effect elemental bonus: %s mult: (%s x %s) (%s x %s = %s)" % [field[state.element], core.battle.control.state.field.getBonus(state.element), state.fieldEffectMult, dmg, fieldBonus, fieldBonus*dmg])
+				print("\tField effect elemental bonus: %s mult: (%s x %s) (%s x %s = %s)" % [field[state.element], core.battle.control.state.field.getBonus(state.element), state.fieldEffectMult, dmg, fieldBonus, fieldBonus*dmg])
 				dmg *= fieldBonus
 			if crit:                                                                  #Critical hit, x1.5 damage.
-				print("Critical hit! (%s x 1.5 = %s)" % [dmg, dmg * 1.5])
+				print("\tCritical hit! (%s x 1.5 = %s)" % [dmg, dmg * 1.5])
 				dmg *= 1.5
 			totalHits += 1
 
@@ -1412,7 +1423,7 @@ func addEffect(S, level:int, user, target, state):
 func process(S, level, user, _targets, WP = null, IT = null):
 	print("[SKILL][PROCESS] ### %s's action: %s ############################################" % [user.name, S.name])
 	if IT != null:
-		msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, IT.lib.name]))
+		msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
 
 	else:
 		msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, S.name]))

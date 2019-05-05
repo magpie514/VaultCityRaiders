@@ -18,19 +18,32 @@ func init(C):
 	$Label.text = str("%s's items" % C.name)
 	var stacks : Dictionary = {}
 	var charged : Array = []
-	for i in C.group.inventory.consumables:
-		var tidString = core.tid.string(i.tid)
-		if i.lib.charge:
-			charged.push_back(i)
-		else:
-			if tidString in stacks:
-				stacks[tidString].amount += 1
+	for j in [C.inventory, C.group.inventory.general]:
+		for i in j:
+			if i.type == C.group.Item.ITEM_CONSUMABLE:
+				var tidString = core.tid.string(i.data.tid)
+				if i.data.lib.charge:
+					if i.data.lib.skill[i.data.level] > 0:
+						charged.push_front(i)
+					else:
+						charged.push_back(i)
+				else:
+					if tidString in stacks:
+						stacks[tidString].amount += 1
+					else:
+						stacks[tidString] = {I = i, amount = 1}
+		for i in charged:
+			createButton(i, 0)
+		var delay = []
+		for i in stacks:
+			if stacks[i].I.data.lib.skill[stacks[i].I.data.level] > 0:
+				createButton(stacks[i].I, stacks[i].amount)
 			else:
-				stacks[tidString] = {I = i, amount = 1}
-	for i in charged:
-		createButton(i, 0)
-	for i in stacks:
-		createButton(stacks[i].I, stacks[i].amount)
+				delay.push_back(i)
+		for i in delay:
+			createButton(delay[i].I, delay[i].amount)
+		stacks = {}
+		charged = []
 	show()
 
 func createButton(item, amount):
@@ -55,17 +68,17 @@ func finish():
 func chooseResult(x):
 	modulate.a = 0.2			#Fade menu out a bit.
 	var result = controls.state.Action.new(controls.state.ACT_ITEM)
-	var I = x.lib
+	var I = x.data.lib
 	result.IT = x
 	var S = core.lib.skill.getIndex(I.skills[0])
-	result.skill = S; result.skillTid = I.skills[0]; result.level = x.level
-	target = core.skill.selectTargetAuto(S, x.level, currentChar, controls.state)
+	result.skill = S; result.skillTid = I.skills[0]; result.level = x.data.level
+	target = core.skill.selectTargetAuto(S, x.data.level, currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()
 		result.target = target
 		emit_signal("selection", result)
 	else: #If not, show the target select dialog.
-		targetPanel.init(S, self, x.level, I)
+		targetPanel.init(S, self, x.data.level, I)
 		yield(targetPanel, "selection") #Wait for getTarget() to get called from target menu.
 		targetPanel.disconnect("selection", self, "getTarget") #TODO: Disconnect from the menu itself.
 		if target == null:

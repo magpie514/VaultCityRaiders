@@ -6,18 +6,18 @@
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("Viewport")
 
-[sub_resource type="CanvasItemMaterial" id=4]
+[sub_resource type="CanvasItemMaterial" id=2]
 blend_mode = 1
 
-[sub_resource type="Gradient" id=5]
+[sub_resource type="Gradient" id=3]
 offsets = PoolRealArray( 0, 0.526627, 1 )
 colors = PoolColorArray( 0.746094, 0.136978, 0.136978, 1, 0.0573918, 0.0105368, 0.0105368, 1, 0, 0, 0, 1 )
 
-[sub_resource type="GradientTexture" id=6]
-gradient = SubResource( 5 )
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
 width = 680
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=5]
 length = 10.0
 loop = true
 tracks/0/type = "value"
@@ -41,19 +41,18 @@ texture = SubResource( 1 )
 centered = false
 
 [node name="Sprite7" type="Sprite" parent="."]
-visible = false
 self_modulate = Color( 1, 1, 1, 0.470588 )
-material = SubResource( 4 )
+material = SubResource( 2 )
 position = Vector2( 0.0604193, 722.732 )
 rotation = -1.5708
 scale = Vector2( 1.05957, 957.238 )
 z_index = 1
-texture = SubResource( 6 )
+texture = SubResource( 4 )
 centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "New Anim"
-"anims/New Anim" = SubResource( 7 )
+"anims/New Anim" = SubResource( 5 )
 
 [node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 960, 720 )
@@ -61,21 +60,15 @@ handle_input_locally = false
 hdr = false
 render_target_v_flip = true
 render_target_clear_mode = 2
-render_target_update_mode = 3
 gui_disable_input = true
+shadow_atlas_size = 1024
+shadow_atlas_quad_1 = 0
+shadow_atlas_quad_2 = 0
+shadow_atlas_quad_3 = 0
 
 [node name="Background" parent="Viewport" instance=ExtResource( 2 )]
 
 [node name="Main_Camera" parent="Viewport/Background" index="0"]
 current = true
-
-[node name="Gem0" parent="Viewport/Background" index="2"]
-transform = Transform( 0.33995, 0, 0, 0, 2.8351, 0, 0, 0, 0.33995, -1.5, 2.59652, -1.299 )
-
-[node name="Gem1" parent="Viewport/Background" index="3"]
-transform = Transform( 0.33995, 0, 0, 0, 2.8351, 0, 0, 0, 0.33995, 1.5, 2.59652, -1.299 )
-
-[node name="DirectionalLight" parent="Viewport/Background" index="5"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77426, 3.32932, 0 )
 
 [editable path="Viewport/Background"]
