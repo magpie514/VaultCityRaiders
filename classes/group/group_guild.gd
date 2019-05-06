@@ -48,14 +48,14 @@ class Inventory:
 		for i in range(IN.size()):
 			if i < IN.size():
 				if IN[i].size() == 3: #[TYPE, TID, DATA]
-					general.push_back(Item.new(i, IN[i][0], IN[i][1], IN[i][2]))
+					general.push_back(Item.new(i, IN[i][0], IN[i][1], IN[i][2], general))
 		updateCounters()
 
 	func initPersonal(IN:Array, C) -> Array:
 		var result:Array = []
 		for i in range(C.personalInventorySize):
 			if i < IN.size():
-				if IN[i].size() == 3:
+				if IN[i].size() == 3: #[TYPE, TID, DATA]
 					result.push_back(Item.new(i, IN[i][0], IN[i][1], IN[i][2], C.inventory))
 		return result
 
@@ -71,56 +71,9 @@ class Inventory:
 					else:
 						counters.push_back(i)
 
-	func canCounter(elem = 0, crit:bool = false, personal:Array = []) -> bool:#Checks if any item can counter the incoming attack.
-		if crit: #Check for critical counter.
-			for i in personal:
-				if i.data.lib.counters[i.data.level] & core.lib.item.COUNTER_CRITICAL:
-					if i.data.lib.charge:
-						if i.data.charge >= i.data.lib.chargeUse[i.data.level]:
-							print("[ITEM][canCounter] Counter for criticals %s found in personal inventory, charged" % i.data.lib.name)
-							return true
-					else:
-						print("[ITEM][canCounter] Counter for criticals %s found in personal inventory, consumable" % i.data.lib.name)
-						return true
-			for i in counters:
-				if i.data.lib.counters[i.data.level] & core.lib.item.COUNTER_CRITICAL:
-					print("[ITEM][canCounter] Counter for criticals %s found in general inventory" % i.data.lib.name)
-					return true
-		if elem > 0: #Check for elemental counter.
-			var counter_type = core.lib.item.ELEMENT_CONV[elem]
-			for i in personal:
-				if i.data.lib.counters[i.data.level] & counter_type:
-					if i.data.lib.charge:
-						if i.data.charge >= i.data.lib.chargeUse[i.data.level]:
-							print("[ITEM][canCounter] Counter for element %s found in personal inventory, charged" % i.data.lib.name)
-							return true
-					else:
-						print("[ITEM][canCounter] Counter for element %s found in personal inventory, consumable" % i.data.lib.name)
-						return true
-			for i in counters:
-				if i.data.lib.counters[i.data.level] & counter_type:
-					print("[ITEM][canCounter] Counter for element %s found in general inventory" % i.data.lib.name)
-					return true
-		return false
-
-	func getCounterItem(elem = 0, crit:bool = false, personal:Array = []) -> Array:
+	func canCounterAttack(elem = 0, personal:Array = []) -> Array:#Checks if any item can counter the incoming attack.
 		var result:Array = []
-		#Priority: ??? > Crit > Element > ???
-		if crit:
-			for i in personal:
-				if i.data.lib.counters[i.data.level] & core.lib.item.COUNTER_CRITICAL:
-					if i.data.lib.charge:
-						if i.data.charge >= i.data.lib.chargeUse[i.data.level]:
-							print("[ITEM][canCounter] Counter for criticals %s found in personal inventory, charged" % i.data.lib.name)
-							result.push_back(i)
-					else:
-						print("[ITEM][canCounter] Counter for criticals %s found in personal inventory, consumable" % i.data.lib.name)
-						result.push_back(i)
-			for i in counters:
-				if i.data.lib.counters[i.data.level] & core.lib.item.COUNTER_CRITICAL:
-					print("[ITEM][canCounter] Counter for criticals %s found in general inventory" % i.data.lib.name)
-					result.push_back(i)
-		elif elem > 0:
+		if elem > 0: #Only have effect on elemental attacks.
 			var counter_type = core.lib.item.ELEMENT_CONV[elem]
 			for i in personal:
 				if i.data.lib.counters[i.data.level] & counter_type:
@@ -135,6 +88,32 @@ class Inventory:
 				if i.data.lib.counters[i.data.level] & counter_type:
 					print("[ITEM][canCounter] Counter for element %s found in general inventory" % i.data.lib.name)
 					result.push_back(i)
+		#TODO: Sort them, prioritize lowest quality and charge items over consumables.
+		return result
+
+	func canCounterEvent(type:int = 0, personal:Array = []) -> Array:
+		var result:Array = []
+		for what in [
+			[core.lib.item.COUNTER_CRITICAL, 'critical'],
+			[core.lib.item.COUNTER_BUFF, 'buff'],
+			[core.lib.item.COUNTER_DEBUFF, 'debuff'],
+			[core.lib.item.COUNTER_DISABLE, 'disable'],
+			[core.lib.item.COUNTER_DEFEAT, 'defeat'],
+		]:
+			if what[0] == type:
+				for i in personal:
+					if i.data.lib.counters[i.data.level] & what[0]:
+						if i.data.lib.charge:
+							if i.data.charge >= i.data.lib.chargeUse[i.data.level]:
+								print("[ITEM][canCounterEffect] Counter for %s %s found in personal inventory, charged" % [what[1], i.data.lib.name])
+								result.push_back(i)
+						else:
+							print("[ITEM][canCounterEffect] Counter for %s %s found in personal inventory, consumable" % [what[1], i.data.lib.name])
+							result.push_back(i)
+				for i in counters:
+					if i.data.lib.counters[i.data.level] & what[0]:
+						print("[ITEM][canCounter] Counter for %s %s found in general inventory" % [what[1], i.data.lib.name])
+						result.push_back(i)
 		#TODO: Sort them, prioritize lowest quality and charge items over consumables.
 		return result
 
@@ -160,7 +139,11 @@ class Inventory:
 				I.data.charge -= I.data.lib.chargeUse[I.data.level]
 		else:
 			print("[INVENTORY][takeConsumable] Taking %s (slot %d)" % [str(I), I.slot])
-			I.container.erase(I)
+			if I.container != null:
+				I.container.erase(I)
+			else:
+				print("[!!][INVENTORY][takeConsumable] Null container on %s (slot %d)" % [str(I), I.slot])
+				I = null
 		updateCounters()
 
 	func giveConsumable(I):
@@ -171,7 +154,7 @@ class Inventory:
 		if I.data.lib.charge:
 			I.data.charge += I.data.lib.chargeUse[I.level]
 		else:
-			general.push_front(I)
+			I.container.push_front(I)
 		updateCounters()
 
 	func find(lib = null, levelFilter:int = 1, type:int = 0, tid = null) -> Array:
@@ -251,9 +234,9 @@ class Item: #Item container class.
 		if _data != null:
 			data = tmp_data.new(_tid, _data)
 		else:
-			print("[!!][ITEM][_init] No item data specified, using defaults.")
+			print("[ITEM][_init] No item data specified, using defaults.")
 			data = tmp_data.new(_tid)
-		if container != null:
+		if _container != null:
 			container = _container
 
 

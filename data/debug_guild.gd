@@ -18,6 +18,7 @@ var data = {
 			energyColor = "#0000FF",
 			equip = [
 				{ tid = ["story", "orbicann"], level = 0, uses = 25, extra = null, gem = [ [["core", "speed"], 1001], [["core", "speed"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1000], [["core", "shock"], 1000], [["core", "power"], 1000] ] },
+				{ tid = ["story", "fomablad"], level = 0, uses = 25, extra = null, gem = [ [["core", "shock"], 1001], [["core", "reson"], 1001] ] },
 			 ],
 			skills = [ [0, 1], [1, 1], [2, 1], [3, 1] ],
 			links = [
@@ -120,6 +121,8 @@ var data = {
 		[1, ["core", "lifeshrd"], { level = 1 }],
 		[1, ["debug", "grenade"], { level = 1 }],
 		[1, ["core", "defshrd"],  { level = 1 }],
+		[1, ["core", "blaklotu"],  { level = 1 }],
+		[1, ["core", "blaklotu"],  { level = 1 }],
 		[1, ["core", "erthward"], { level = 1, charge = 0}],
 		[1, ["core", "fortcoin"], { level = 1, charge = 100}],
 	],

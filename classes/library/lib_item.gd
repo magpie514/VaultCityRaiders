@@ -1,25 +1,26 @@
 extends "res://classes/library/lib_base.gd"
 
 enum {
-	COUNTER_NONE =          0x0000, #No counter.
-	COUNTER_BUFF =          0x0001, #Counter a buff.
-	COUNTER_DEBUFF =        0x0002, #Counter a debuff.
-	COUNTER_CRITICAL =      0x0004, #Counter a critical hit.
+	COUNTER_NONE =          0x000000, #No counter.
+	COUNTER_BUFF =          0x000001, #Counter a buff.
+	COUNTER_DEBUFF =        0x000002, #Counter a debuff.
+	COUNTER_CRITICAL =      0x000004, #Counter a critical hit.
+	COUNTER_DEFEAT = 				0x000008, #Counter a defeat with 1%Vital.
 
-	COUNTER_DMG_CUT =       0x0008, #Counter a cut/wind hit.
-	COUNTER_DMG_PIERCE =    0x0010, #Counter a pierce/earth hit.
-	COUNTER_DMG_BLUNT =     0x0020, #Counter a blunt/water hit.
-	COUNTER_DMG_FIRE =      0x0040, #Counter a fire hit.
-	COUNTER_DMG_COLD =      0x0080, #Counter a cold hit.
-	COUNTER_DMG_ELEC =      0x0100, #Counter an electric hit.
-	COUNTER_DMG_UNKNOWN =   0x0200, #Counter a time/light/spirit hit.
-	COUNTER_DMG_ULTIMATE =  0x0400, #Counter a gravity/dark/ultimate hit.
+	COUNTER_DMG_CUT =       0x000010, #Counter a cut/wind hit.
+	COUNTER_DMG_PIERCE =    0x000020, #Counter a pierce/earth hit.
+	COUNTER_DMG_BLUNT =     0x000040, #Counter a blunt/water hit.
+	COUNTER_DMG_FIRE =      0x000080, #Counter a fire hit.
+	COUNTER_DMG_COLD =      0x000100, #Counter a cold hit.
+	COUNTER_DMG_ELEC =      0x000200, #Counter an electric hit.
+	COUNTER_DMG_UNKNOWN =   0x000400, #Counter a time/light/spirit hit.
+	COUNTER_DMG_ULTIMATE =  0x000800, #Counter a gravity/dark/ultimate hit.
 
-	COUNTER_DISABLE =       0x0800, #Counter a disable arm/leg/head effect.
+	COUNTER_DISABLE =       0x001000, #Counter a disable arm/leg/head effect.
 
-	COUNTER_STATUS_PARA =   0x1000, #Counter paralysis effect.
-	COUNTER_STATUS_STUN =   0x2000, #Counter stun effect.
-	COUNTER_STATUS_DEFEAT = 0x4000, #Counter defeat effect.
+	COUNTER_STATUS_PARA =   0x002000, #Counter paralysis effect.
+	COUNTER_STATUS_STUN =   0x004000, #Counter stun effect.
+	COUNTER_STATUS_DEFEAT = 0x008000, #Counter defeat effect.
 
 }
 
@@ -152,6 +153,15 @@ var example = {
 			chargeUse =  [100,100,100,100,100, 100,100,100,100,100],
 			counter = true,
 			counters = COUNTER_CRITICAL,
+		},
+		"blaklotu": {
+			name = "Black Lotus",
+			description = "A very valuable flower, ripe with energy. It can prevent a party member from passing out at zero health.",
+			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
+			category = 0,
+			maxLevel = 10,
+			counter = true,
+			counters = COUNTER_DEFEAT,
 		}
 	}
 }

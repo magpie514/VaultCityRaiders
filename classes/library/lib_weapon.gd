@@ -34,17 +34,9 @@ var example = {
 			skill = [ ["debug", "kiragrd"], ["debug", "kiraprtc"] ],
 			over = ["debug", "debug"]
 		},
-		"spllcard": {
-			name = "Spell Card", wclass = core.skill.WPCLASS_GRIMOIRE,
-			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
-			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
-			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
-			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ ["debug", "debugi2"], ["debug", "unanlove"] ],
-			over = ["debug", "debug"]
-		},
 		"soldrifl": {
 			name = "MTM-GA23 Solid Rifle", wclass = core.skill.WPCLASS_FIREARM,
+			description = "Magpie's custom sniper rail accelerator, created by herself. It fires solid metal rails containing a G-crystal spike at high velocities.'",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
@@ -54,15 +46,27 @@ var example = {
 		},
 		"boostbld": {
 			name = "MTM-GA12 Boost Glaive", wclass = core.skill.WPCLASS_POLEARM,
+			description = "Magpie's custom glaive, created by herself. It's a glaive equipped with rocket boosters, G-crystals and shotgun shells, and is reinforced by graviton reflow.",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
-			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
+			weight = [001, 001, 001, 001, 001, 001, 001, 001, 001, 000],
 			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
 			skill = [ ["debug", "shckstab"], ["debug", "wideslsh"] ],
 			over = ["debug", "debug"]
 		},
 		"hellfngr": {
 			name = "Hellfanger", wclass = core.skill.WPCLASS_LONGSWORD,
+			description = "Anna's custom sword. It's basically a chainsaw shaped like a sword, spinning at logic-defying speed thanks to Anna's own power.'",
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
+			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
+			skill = [ ["debug", "fireslsh"], ["debug", "wideslsh"] ],
+			over = ["debug", "debug"]
+		},
+		"deviclaw": {
+			name = "Devil's Claw'", wclass = core.skill.WPCLASS_ARTILLERY,
+			description = "Custom made for Anna's strength. A monstrous antitank cannon equipped with foldable blades, allowing it to slash like a scythe at close quarters.'",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
@@ -74,15 +78,27 @@ var example = {
 	"story" : {
 		"orbicann": {
 			name = "ORBITAL Cannon", wclass = core.skill.WPCLASS_ARTILLERY,
-			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
-			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			description = "Jay's personal energy weapon. Despite having a shield, it's very lightweight. It also has a foldable barrel extension for focused shots.'",
+			ATK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			ETK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
 			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
 			skill = [ ["sto_wp", "sever"], ["sto_wp", "orbishld"] ],
 			over = ["debug", "debug"]
 		},
+		"fomablad": {
+			name = "FOMALHAUT Blade", wclass = core.skill.WPCLASS_LONGSWORD,
+			description = "Energy blade belonging to Jay's mentor, Fomalhaut. It's capable of ranged combat as well as close quarters.",
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
+			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
+			skill = [ ["sto_wp", "dualshrs"], ["sto_wp", "thoukniv"] ],
+			over = ["sto_wp", "lighflam"]
+		},
 		"ganrei": {
 			name = "Ganreitou", wclass = core.skill.WPCLASS_LONGSWORD,
+			description = "Shiro's personal blade and family heirloom. Bloodthirsty sword forged by the legendary Muramasa out of Orihalcon. It has occult properties and is bound to Shiro's very soul. It's virtually indestructible.",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [002, 002, 002, 002, 002, 002, 002, 002, 002, 000],
@@ -92,6 +108,7 @@ var example = {
 		},
 		"kokukou": {
 			name = "Kokukouga", wclass = core.skill.WPCLASS_SHORTSWORD,
+			description = "Shiro's custom pair of support blades. Forged from Black Orihalconium, they are very lightweight and durable.",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [002, 002, 002, 002, 002, 002, 002, 002, 002, 000],
@@ -105,7 +122,7 @@ var example = {
 func initTemplate():
 	return {
 		"name" : { loader = LIBSTD_STRING },
-		"desc" : { loader = LIBSTD_STRING },
+		"description" : { loader = LIBSTD_STRING },
 		"wclass" : { loader = LIBSTD_INT, default = core.skill.WPCLASS_NONE },
 		"ATK" : { loader = LIBSTD_SKILL_ARRAY },
 		"ETK" : { loader = LIBSTD_SKILL_ARRAY },

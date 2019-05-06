@@ -1156,14 +1156,22 @@ func checkHitConditions(S, level, user, target, state, crit = false) -> bool:
 			target.battle.forceDodge -= 1
 			return false
 		if target is core.Player:
-			if target.group.inventory.canCounter(state.element, crit, target.inventory):
-				var IT = target.group.inventory.getCounterItem(state.element, crit, target.inventory)
+			var IT:Array
+			if crit:
+				IT = target.group.inventory.canCounterEvent(core.lib.item.COUNTER_CRITICAL, target.inventory)
 				if not IT.empty():
 					target.group.inventory.takeConsumable(IT[0])
 					print("\t[SKILL][checkHitConditions] %s was protected by %s!" % [target.name, IT[0].data.lib.name])
 					msg("%s was protected by %s!" % [core.battle.control.state.color_name(target), IT[0].data.lib.name])
-					target.display.message(str(">BLOCKED BY %s" % IT[0].data.lib.name), false, "00FFFF")
+					target.display.message(str(">CRIT BLOCKED BY %s" % IT[0].data.lib.name), false, "00FFFF")
 					return false
+			IT = target.group.inventory.canCounterAttack(state.element, target.inventory)
+			if not IT.empty():
+				target.group.inventory.takeConsumable(IT[0])
+				print("\t[SKILL][checkHitConditions] %s was protected by %s!" % [target.name, IT[0].data.lib.name])
+				msg("%s was protected by %s!" % [core.battle.control.state.color_name(target), IT[0].data.lib.name])
+				target.display.message(str(">ELEM BLOCKED BY %s" % IT[0].data.lib.name), false, "00FFFF")
+				return false
 		return checkHit(user.battle.stat, target.battle.stat, state.accMod, target.battle.dodge)
 	return false
 
@@ -1418,7 +1426,22 @@ func calculateTarget(S, level:int, user, _targets):
 	return finalTargets
 
 func addEffect(S, level:int, user, target, state):
-	target.addEffect(S, level, user)
+	if target is core.Player:
+		var what:int = 0
+		match S.effectType:
+			EFFTYPE_BUFF:    what = core.lib.item.COUNTER_BUFF
+			EFFTYPE_DEBUFF:  what = core.lib.item.COUNTER_DEBUFF
+		if what != 0:
+			var IT:Array = target.group.inventory.canCounterEvent(what)
+			if not IT.empty():
+				target.group.inventory.takeConsumable(IT[0])
+				print("\t[SKILL][addEffect] %s was protected by %s!" % [target.name, IT[0].data.lib.name])
+				msg("%s was protected by %s!" % [core.battle.control.state.color_name(target), IT[0].data.lib.name])
+				target.display.message(str(">EFFECT BLOCKED BY %s" % IT[0].data.lib.name), false, "00FFFF")
+			else:
+				target.addEffect(S, level, user)
+	else:
+		target.addEffect(S, level, user)
 
 func process(S, level, user, _targets, WP = null, IT = null):
 	print("[SKILL][PROCESS] ### %s's action: %s ############################################" % [user.name, S.name])
@@ -1611,9 +1634,9 @@ func processSkillCode(S, level, user, target, _code, control = core.battle.skill
 	yield(control, "skill_continue")
 	print("[SKILL][PROCESSSKILLCODE] skill_continue received for %s, checking effects" % S.name)
 	if state.setEffect and _code == CODE_MN:
-		print("Effect from %s " % [S.name])
+		print("\t[SKILL][processSkillCode] Effect from %s " % [S.name])
 		addEffect(S, level, user, target, state)
-		msg("%s was affected!" % [target.name])
+		#msg("%s was affected!" % [target.name])
 		state.anyHit = true
 
 	print("[SKILL][processSkillCode] Hit record:\n", state.hitRecord)

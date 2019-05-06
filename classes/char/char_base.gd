@@ -158,6 +158,9 @@ func maxHealth():
 func getHealthN(): #Get normalized health as a float from 0 to 1.
 	return float(float(HP) / float(maxHealth()))
 
+func getHealthPercent(x:int):
+	return round(float(maxHealth()) * core.percent(x)) as int
+
 func fullHeal():
 	self.HP = maxHealth()
 
@@ -253,6 +256,16 @@ func setAD(x : int, absolute : bool = false):
 	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
 func defeat():
+	if self is core.Player:
+		var IT:Array = group.inventory.canCounterEvent(core.lib.item.COUNTER_DEFEAT, self.inventory)
+		if not IT.empty():
+			group.inventory.takeConsumable(IT[0])
+			print("\t[CHAR_BASE][defeat] %s was protected by %s!" % [name, IT[0].data.lib.name])
+			if battle != null:
+				skill.msg("%s was hurt, but held on thanks to the %s!" % [name, IT[0].data.lib.name])
+				display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), false, "00FFFF")
+				HP = getHealthPercent(IT[0].data.level + 1)
+				return
 	status = skill.STATUS_DOWN
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
@@ -268,7 +281,6 @@ func defeat():
 		battle.debuff.clear()
 		battle.effect.clear()
 		charge(false)
-
 	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
 

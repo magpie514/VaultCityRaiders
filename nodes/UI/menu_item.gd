@@ -38,10 +38,10 @@ func init(C):
 		for i in stacks:
 			if stacks[i].I.data.lib.skill[stacks[i].I.data.level] > 0:
 				createButton(stacks[i].I, stacks[i].amount)
-			else:
-				delay.push_back(i)
+			else: #Items that don't have an associated skill are shown below the rest.
+				delay.push_back(stacks[i])
 		for i in delay:
-			createButton(delay[i].I, delay[i].amount)
+			createButton(i.I, i.amount)
 		stacks = {}
 		charged = []
 	show()
