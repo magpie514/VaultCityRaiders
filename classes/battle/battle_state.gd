@@ -120,7 +120,6 @@ class Action:
 		act = _act
 
 
-
 func addAction(side, slot, act: Action):
 	var user = formations[side].formation[slot]
 	act.user = user

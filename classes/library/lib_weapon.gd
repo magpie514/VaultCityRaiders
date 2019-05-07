@@ -8,7 +8,7 @@ const LIBEXT_SKILL_LIST = "loaderSkillList"
 var example = {
 	"debug" : {
 		"debug": {
-			name = "Unarmed", wclass = core.skill.WPCLASS_FIST,
+			name = "Unarmed", wclass = core.skill.WPCLASS_NONE,
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
@@ -84,7 +84,7 @@ var example = {
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
 			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
 			skill = [ ["sto_wp", "sever"], ["sto_wp", "orbishld"] ],
-			over = ["debug", "debug"]
+			over = ["story", "thunswrd"]
 		},
 		"fomablad": {
 			name = "FOMALHAUT Blade", wclass = core.skill.WPCLASS_LONGSWORD,

@@ -42,7 +42,7 @@ func init(_S, _level, costs = COST_NONE, gem : bool = false):
 		COST_EP:
 			$USE.text = "%d" % S.costEP[level]
 		COST_OV:
-			$USE.text = "%d%%" % S.costOV[level]
+			$USE.text = "%d%%" % S.costOV
 		COST_WP:
 			$USE.text = "%d" % S.costWP[level]
 
