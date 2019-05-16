@@ -27,7 +27,7 @@ func popDamageNums():
 	if damageQueue.size() > 0:
 		var v = damageQueue.pop_front()
 		var d = _dmgNum.instance()
-		$Position2D.add_child(d)
+		$EffectHook.add_child(d)
 		d.init(v)
 		damageDelay = 32
 
