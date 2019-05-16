@@ -21,8 +21,8 @@ The game will be structured in 3 main modes:
 
 * Classic mode: *You create your party from the various available classes and set to raid the titular Vaults, a dimensional maze where anything can happen. This is mostly similar to the Etrian series, but with a world arranged more in the fashion of Might and Magic 2, very exploration heavy.*
 
-* Board mode: *You import your story or classic party into a roguelite experience, neglecting exploration in favor of just events and combat for shorter bursts of gameplay. *
+* Board mode: *You import your story or classic party into a roguelite experience, neglecting exploration in favor of just events and combat for shorter bursts of gameplay, presented as a board game like SugoroQuest or for a more modern example, Slay the Spire. *
 
-Combat is fairly complex with multiple systems to exploit for optimal strategies. Similarly, enemies are also adept at working together to ruin your day.
+Combat is fairly complex with multiple systems to exploit for optimal strategies. Similarly, enemies are also adept at working together to ruin your day. It's meant to have a general "teamwork" theme to it. There is a high emphasis on buffs, debuffs, and using all your resources efficiently to defeat the strongest enemies and bosses.
 
-So far, only combat is in a semi-operating state.
+So far, only combat is in a semi-operating state. Battles can be played from start to finish, with multiple skills and systems to use, but a couple major mechanics are still missing and there are only a few enemy formations used for debugging.
