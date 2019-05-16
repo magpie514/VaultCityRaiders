@@ -6,6 +6,8 @@ signal hide_info
 var _dmgNum = preload("res://nodes/UI/damage_numbers.tscn")
 var _miscMsg = preload("res://nodes/UI/battle/misc_message.tscn")
 
+onready var effectHook = get_node("EffectHook")
+
 var chr = null
 var origPosition = Vector2()
 var lastVital = int()
@@ -21,7 +23,7 @@ func popDamageNums():
 	if damageQueue.size() > 0:
 		var v = damageQueue.pop_front()
 		var d = _dmgNum.instance()
-		add_child(d)
+		effectHook.add_child(d)
 		d.init(v)
 		damageDelay = 32
 

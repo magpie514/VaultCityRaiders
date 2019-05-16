@@ -11,6 +11,7 @@ var style = core._charPanel.new(self, "res://resources/tres/char_display.tres", 
 var fade = 1.0
 var damageQueue = []
 var damageDelay = 0
+var effectHook #Set from sprite init
 
 func init(c):
 	chr = c
@@ -26,7 +27,7 @@ func popDamageNums():
 	if damageQueue.size() > 0:
 		var v = damageQueue.pop_front()
 		var d = _dmgNum.instance()
-		add_child(d)
+		$Position2D.add_child(d)
 		d.init(v)
 		damageDelay = 32
 

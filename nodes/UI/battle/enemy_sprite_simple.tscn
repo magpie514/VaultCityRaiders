@@ -107,4 +107,7 @@ anims/DEFEAT = SubResource( 5 )
 
 [node name="Charge" parent="." instance=ExtResource( 3 )]
 position = Vector2( 0, -100 )
+
+[node name="EffectHook" type="Position2D" parent="."]
+position = Vector2( 0, -100 )
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

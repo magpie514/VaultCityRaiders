@@ -11,12 +11,12 @@
 [ext_resource path="res://resources/tres/fonts/name_font.tres" type="DynamicFont" id=9]
 [ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=10]
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=1]
 size = 14
 use_mipmaps = true
 font_data = ExtResource( 5 )
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=2]
 content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
@@ -29,7 +29,7 @@ border_blend = true
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=3]
 size = 14
 outline_size = 1
 outline_color = Color( 0.298691, 0.560132, 0.566406, 0.484549 )
@@ -40,17 +40,17 @@ extra_spacing_char = -1
 extra_spacing_space = -1
 font_data = ExtResource( 4 )
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="DynamicFont" id=4]
 size = 10
 outline_size = 1
 outline_color = Color( 0.0862745, 0.858824, 0.878431, 0.231961 )
 use_mipmaps = true
 font_data = ExtResource( 6 )
 
-[sub_resource type="CanvasItemMaterial" id=6]
+[sub_resource type="CanvasItemMaterial" id=5]
 blend_mode = 1
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=6]
 script/source = "extends Panel
 onready var tween = get_node(\"Tween\")
 var fade: float = 0
@@ -132,7 +132,7 @@ margin_top = 16.0
 margin_right = 60.0
 margin_bottom = 31.0
 rect_min_size = Vector2( 1, 1 )
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 1 )
 text = "999"
 valign = 3
 clip_text = true
@@ -143,7 +143,7 @@ margin_top = 16.0
 margin_right = 180.0
 margin_bottom = 31.0
 rect_min_size = Vector2( 1, 1 )
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0, 0.435294, 1, 1 )
 text = "999"
 align = 1
@@ -155,7 +155,7 @@ margin_left = 183.0
 margin_top = 16.0
 margin_right = 217.0
 margin_bottom = 31.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0, 0.956863, 1, 1 )
 text = "999"
 align = 2
@@ -173,8 +173,8 @@ margin_left = 20.0
 margin_top = 1.0
 margin_right = 210.0
 margin_bottom = 30.0
-custom_styles/normal = SubResource( 3 )
-custom_fonts/font = SubResource( 4 )
+custom_styles/normal = SubResource( 2 )
+custom_fonts/font = SubResource( 3 )
 text = "ATTACK NAME DISPLAY THINGY
 TARGET NAME THINGY"
 align = 1
@@ -185,7 +185,7 @@ margin_left = 190.0
 margin_top = 1.0
 margin_right = 208.0
 margin_bottom = 10.0
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 4 )
 text = "CND"
 
 [node name="AD" parent="." instance=ExtResource( 8 )]
@@ -204,7 +204,7 @@ position = Vector2( 110, 16 )
 
 [node name="LookAtMePanel" type="Panel" parent="."]
 visible = false
-material = SubResource( 6 )
+material = SubResource( 5 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -213,9 +213,13 @@ mouse_filter = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 custom_styles/panel = ExtResource( 1 )
-script = SubResource( 7 )
+script = SubResource( 6 )
 
 [node name="Tween" type="Tween" parent="LookAtMePanel"]
+
+[node name="EffectHook" type="Position2D" parent="."]
+position = Vector2( 110, 16 )
+z_index = 2
 [connection signal="mouse_entered" from="." to="." method="_on_CharDisplay_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_CharDisplay_mouse_exited"]
 [connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]

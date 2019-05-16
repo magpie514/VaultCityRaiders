@@ -1,5 +1,7 @@
 extends Node2D
 
+onready var effectHook = get_node("EffectHook")
+
 var lock : bool = false
 var chr = null
 var origPosition : Vector2
@@ -16,6 +18,7 @@ func init(spr, C, slot):
 		scale = Vector2(1.2, 1.2)
 	else:
 		modulate.v = 0.8
+	chr.display.effectHook = effectHook #Set effect hook for associated display.
 	begin()
 
 func begin():
