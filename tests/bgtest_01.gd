@@ -1,10 +1,8 @@
 extends Node2D
 
-var count = 0
-var dir = false
-
-func _ready():
-	$Viewport.size = get_viewport().size
+func _ready() -> void:
 	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
+	var viewport = get_viewport()
+	$Sprite.show()
+	#$Viewport.size = viewport.size
 

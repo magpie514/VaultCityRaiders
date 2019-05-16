@@ -41,7 +41,7 @@ texture = SubResource( 1 )
 centered = false
 
 [node name="Sprite7" type="Sprite" parent="."]
-self_modulate = Color( 1, 1, 1, 0.470588 )
+self_modulate = Color( 1, 1, 1, 0.168449 )
 material = SubResource( 2 )
 position = Vector2( 0.0604193, 722.732 )
 rotation = -1.5708
@@ -59,7 +59,7 @@ size = Vector2( 960, 720 )
 handle_input_locally = false
 hdr = false
 render_target_v_flip = true
-render_target_clear_mode = 2
+render_target_clear_mode = 1
 gui_disable_input = true
 shadow_atlas_size = 1024
 shadow_atlas_quad_1 = 0
@@ -67,8 +67,3 @@ shadow_atlas_quad_2 = 0
 shadow_atlas_quad_3 = 0
 
 [node name="Background" parent="Viewport" instance=ExtResource( 2 )]
-
-[node name="Main_Camera" parent="Viewport/Background" index="0"]
-current = true
-
-[editable path="Viewport/Background"]

@@ -5,8 +5,6 @@ signal hide_info
 
 var _dmgNum = preload("res://nodes/UI/damage_numbers.tscn")
 var _miscMsg = preload("res://nodes/UI/battle/misc_message.tscn")
-export(Color) var dmgCountColor = "ff9444"
-
 
 var chr = null
 var origPosition = Vector2()
@@ -45,8 +43,6 @@ func message(msg, data, color):
 
 func init(C):
 	chr = C
-	$DMG.hide()
-	$DMG.add_color_override("font_color", dmgCountColor)
 	$Action.hide()
 	shakeTimer = 0
 	resetDamageCount()
@@ -79,9 +75,7 @@ func _process(delta):
 			popDamageNums()
 
 func resetDamageCount():
-	$DMG.text = ""
 	lastVital = chr.HP
-	$DMG.hide()
 	$Action.hide()
 	action = null
 
@@ -115,20 +109,26 @@ func setActionText(act):
 	if S.initAD[act.level] != 100: updateAD(S.initAD[act.level])
 	action = true
 
-func highlight(b):
+func highlight(b): #Highlights this character to show it's acting or choosing actions.
 	style.highlight(b)
 	if b:
-		if action != null:
-			$Action.hide()
+		if action != null: $Action.hide() #Hide action display.
+		#Pulsing indicator for improved visual feedback.
+		$LookAtMePanel.show()
+		$LookAtMePanel.pulse()
+		$LookAtMePanel.set_process(true)
 	else:
-		if action != null:
-			$Action.show()
+		if action != null: $Action.show() #Show action display.
+		#Hide the pulsing indicator so it stops processing.
+		$LookAtMePanel.hide()
+		$LookAtMePanel.set_process(false)
+		$LookAtMePanel/Tween.stop($LookAtMePanel)
 
-func charge(b : bool = false):
+func charge(b : bool = false) -> void: #Charge effect
 	$Charge.emitting = b
 	$Charge.self_modulate = Color(chr.energyColor)
 
-func updateAD(x:int) -> void:
+func updateAD(x:int) -> void: #Update Active Defense display.
 	if chr.battle != null:
 		$AD.value = x
 
@@ -137,9 +137,9 @@ func update():
 		var vital = int(chr.HP)
 		var vitalN = chr.getHealthN()
 		var vitalDiff = lastVital - vital
-		if chr.battle != null:
+		if chr.battle != null: #Show battle-only stuff.
 			updateAD(chr.battle.AD)
-			if chr.battle.guard > 0:
+			if chr.battle.guard > 0: #Show Guard indicator.
 				$Guard.show()
 				$ComplexBar/GuardBlock.show()
 				$Guard.text = str(chr.battle.guard)
@@ -150,23 +150,19 @@ func update():
 			$ComplexBar/GuardBlock.hide()
 			$Guard.hide()
 
-		if vitalN < 0.15:			blink = -1
-		elif blink == -1:			blink = 0
+		#Make the panel blink if health is under 15%.
+		if vitalN < 0.15 and vitalN > 0.0: blink = -1
+		elif blink == -1:                  blink = 0
 
+
+		#Set colors from active condition.
 		style.fromStatus(chr.status)
 		$Status.text = core.skill.statusInfo[chr.status].short
 
-
 		$Name.text = chr.name
-		$HP.text = str(vital)
+		$HP.text = str("%03d" % vital)
 		$ComplexBar.value = vitalN
-		if vital != lastVital:
-			$DMG.text = str(abs(vitalDiff))
-			if vitalDiff < 0:
-				$DMG.add_color_override("font_color", "44ff94")
-			else:
-				$DMG.add_color_override("font_color", "ff9444")
-			$DMG.show()
+		$DMG.text = str("%03d" % chr.EP)
 
 func _ready():
 	shakeTimer = 0

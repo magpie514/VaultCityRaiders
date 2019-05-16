@@ -1444,12 +1444,11 @@ func addEffect(S, level:int, user, target, state):
 		target.addEffect(S, level, user)
 
 func process(S, level, user, _targets, WP = null, IT = null):
-	print("[SKILL][PROCESS] ### %s's action: %s ############################################" % [user.name, S.name])
+	print("\n[SKILL][PROCESS] ### %s's action: %s ############################################\n" % [user.name, S.name])
 	if IT != null:
-		msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
-
+		msg(str("[color=#%s]%s[/color] used [color=#80E36E]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
 	else:
-		msg(str("[color=#%s]%s[/color] used %s!" % [core.battle.control.state.colorName(user), user.name, S.name]))
+		msg(str("[color=#%s]%s[/color] used [color=#EEFF80]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, S.name]))
 
 	if _targets.size() == 0:
 		print("[SKILL][PROCESS][!] No targets specified, trying to autotarget.")

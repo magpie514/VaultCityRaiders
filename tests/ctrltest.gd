@@ -11,54 +11,37 @@ var state = preload("res://classes/battle/battle_state.gd").new()
 var reply = null
 var battleSpeed : int = 0
 
-func getBattleDelay(x):
-	return float(x) * (BATTLE_SPEED_MULTIPLIER[battleSpeed])
+func _ready():
+	testguild = core.guild
+	testmform = core.battle.enemy
+	testmform.versus = testguild
+	testguild.versus = testmform
+	$SkillController.speed = battleSpeed
+	core.battle.control = self
+	core.battle.skillControl = $SkillController
+	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
+	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
+	state.init(testguild, testmform, self)
+	$Panel/BattleControls.init(state, self)
+	$Panel/BattleControls.hide()
+	$Panel/GuildDisplay.init(testguild)
+	$Panel/EnemyGroupDisplay.init(testmform)
+	$Panel/WinPanel.hide() #Hide the VICTORY panel if I forget it.
 
-func echo(text):
-	text = str(text)
-	$Panel/BattleLog.addLine(text)
-	$Panel/BattleLog2.bbcode_text += "%s\n" % text
-
-func wait(time):
-	$Timer.wait_time = getBattleDelay(time)
-	$Timer.start()
-	return $Timer
-
-func waitFixed(time):
-	$Timer.wait_time = time
-	$Timer.start()
-	return $Timer
-
-func checkResolution():
-	state.checkResolution()		#Check for battle resolution.
-	match state.resolution: 	#Done very action, so no useless actions take place.
-		state.RESULT_VICTORY:
-			echo("Victory!")
-			$Panel/Panel.show()
-			#TODO: Show EXP and loot tally.
-			testguild.stats.wins += 1
-			emit_signal("battle_finished")
-			return true
-		state.RESULT_DEFEAT:
-			echo("Defeat...")
-			#TODO: Show game over screen and go back to HQ.
-			testguild.stats.defeats += 1
-			emit_signal("battle_finished")
-			return true
-		state.RESULT_GUILD_ESCAPE:
-			echo("You ran away successfully!")
-			#TODO: Show EXP tally anyway as long as any enemy was defeated.
-			emit_signal("battle_finished")
-			return true
-		state.RESULT_ENEMY_ESCAPE:
-			echo("Enemies fled!")
-			#TODO: Same as above.
-			testguild.stats.wins += 1
-			emit_signal("battle_finished")
-			return true
-		_:
-			return false
-
+	$Panel/GuildDisplay.connectUISignals(self)
+	$Panel/EnemyGroupDisplay.connectUISignals(self)
+	$Panel/InfoDisplay.init(self)
+	echo("[color=#EEEE77]%s[/color] appeared!" % testmform.name)
+	$Panel/ViewportContainer/Viewport/BattleView.init(testmform)
+	battle()
+	yield(self, "battle_finished")
+	print("We are done here!")
+	core.stopMusic()
+	yield(wait(24.0), "timeout")
+	$Panel/GuildDisplay.disconnectUISignals(self)
+	print("Done")
+	core.world.passTime(1)
+	core.changeScene("res://tests/debug_menu.tscn")
 
 func battle():
 	var A = null
@@ -69,7 +52,7 @@ func battle():
 	$Panel/BattleControls.hide()
 	#core.playMusic("res://resources/music/EOIV_Storm.ogg")
 	while state.status():
-#Collect player actions.
+#Collect player actions. ==========================================================================
 		$Panel/CurrentAction.hide()
 		if checkResolution(): return #Make sure end of turn special effects didn't cause a victory or defeat.
 		$Panel/FieldEffect.updateDisplay(state.field)
@@ -160,47 +143,66 @@ func battle():
 		if checkResolution(): return
 		print("Actual end of turn")
 
-func _ready():
-	testguild = core.guild
-	testmform = core.battle.enemy
-	testmform.versus = testguild
-	testguild.versus = testmform
-	$SkillController.speed = battleSpeed
-	core.battle.control = self
-	core.battle.skillControl = $SkillController
-	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
-	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
-	state.init(testguild, testmform, self)
-	$Panel/BattleControls.init(state, self)
-	$Panel/BattleControls.hide()
-	$Panel/GuildDisplay.init(testguild)
-	$Panel/EnemyGroupDisplay.init(testmform)
+# Support functions ###########################################################
+func getBattleDelay(x):
+	return float(x) * (BATTLE_SPEED_MULTIPLIER[battleSpeed])
 
-	$Panel/GuildDisplay.connectUISignals(self)
-	$Panel/EnemyGroupDisplay.connectUISignals(self)
-	$Panel/InfoDisplay.init(self)
-	echo("[color=#EEEE77]%s[/color] appeared!" % testmform.name)
-	$Panel/ViewportContainer/Viewport/BattleView.init(testmform)
-	battle()
-	yield(self, "battle_finished")
-	print("We are done here!")
-	core.stopMusic()
-	yield(wait(24.0), "timeout")
-	$Panel/GuildDisplay.disconnectUISignals(self)
-	print("Done")
-	core.world.passTime(1)
-	core.changeScene("res://tests/debug_menu.tscn")
+func echo(text):
+	text = str(text)
+	$Panel/BattleLog.addLine(text)
+	$Panel/BattleLog2.bbcode_text += "%s\n" % text
 
+func wait(time, absolute = false): #Wait some time (affected by battle speed)
+	$Timer.wait_time = time if absolute else getBattleDelay(time)
+	$Timer.start()
+	return $Timer
 
-func _on_BattleControls_finished(a):
+func waitFixed(time): #Wait some time (not affected by battle speed)
+	var result = wait(time, true)
+	print("[DD][CTRLTEST][waitFixed] Deprecated.")
+	return result
+
+func checkResolution():
+	state.checkResolution()		#Check for battle resolution.
+	match state.resolution: 	#Done very action, so no useless actions take place.
+		state.RESULT_VICTORY:
+			echo("Victory!")
+			$Panel/WinPanel.show()
+			#TODO: Show EXP and loot tally.
+			testguild.stats.wins += 1
+			emit_signal("battle_finished")
+			return true
+		state.RESULT_DEFEAT:
+			echo("Defeat...")
+			#TODO: Show game over screen and go back to HQ.
+			testguild.stats.defeats += 1
+			emit_signal("battle_finished")
+			return true
+		state.RESULT_GUILD_ESCAPE:
+			echo("You ran away successfully!")
+			#TODO: Show EXP tally anyway as long as any enemy was defeated.
+			emit_signal("battle_finished")
+			return true
+		state.RESULT_ENEMY_ESCAPE:
+			echo("Enemies fled!")
+			#TODO: Same as above.
+			testguild.stats.wins += 1
+			emit_signal("battle_finished")
+			return true
+		_:
+			return false
+
+# Signals #####################################################################
+
+func _on_BattleControls_finished(a): #Pick result from player input.
 	$Panel/BattleControls.hide()
 	#print("->",a)
 	reply = a
 
-func _on_QuitButton_pressed():
+func _on_QuitButton_pressed(): #Quit button.
 	core.changeScene("res://tests/debug_menu.tscn")
 
-func showInfo(what, type, level = 0):
+func showInfo(what, type, level = 0): #Show the info panel.
 	match type:
 		0:
 			$Panel/InfoDisplay.showPlayer(what)
@@ -210,14 +212,12 @@ func showInfo(what, type, level = 0):
 			$Panel/InfoDisplay.showSkill(what, level)
 	$Panel/InfoDisplay.show()
 
-func hideInfo():
+func hideInfo(): #Hide the info panel.
 	$Panel/InfoDisplay.hide()
 
-
-func _on_Speed_pressed(x:int) -> void:
+func _on_Speed_pressed(x:int) -> void: #Speed control debug buttons.
 	battleSpeed = x
 	$SkillController.speed = x
 
-
-func _on_Button_pressed() -> void:
+func _on_Button_pressed() -> void: #PASS HOUR debug button.
 	core.world.passTime()

@@ -383,7 +383,7 @@ func initEffect(E, runEF = false) -> void:
 	if S.effect & skill.EFFECT_STATS:
 		calculateEffectStats(S, lv)
 	if S.effect & skill.EFFECT_SPECIAL and runEF:
-		skill.runExtraCode(S, level + 1, E[3], skill.CODE_EF, self)
+		skill.runExtraCode(S, lv + 1, E[3], skill.CODE_EF, self)
 
 func calculateEffectStats(S, lv):
 	var temp = null

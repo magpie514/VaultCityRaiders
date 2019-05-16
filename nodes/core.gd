@@ -397,7 +397,8 @@ func changeScene(path):
 	call_deferred("changeScene2", path)
 
 func changeScene2(path):
-	scene.free()
-	scene = load(path).instance()
-	get_tree().get_root().add_child(scene)
-	get_tree().set_current_scene(scene)
+	if scene != null: scene.free()
+	var newscene = load(path).instance()
+	get_tree().get_root().add_child(newscene)
+	get_tree().set_current_scene(newscene)
+	scene = newscene

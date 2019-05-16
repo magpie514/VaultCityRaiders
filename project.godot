@@ -25,7 +25,7 @@ core="*res://nodes/core.tscn"
 
 [debug]
 
-settings/fps/force_fps=30
+settings/fps/force_fps=60
 gdscript/completion/autocomplete_setters_and_getters=true
 gdscript/warnings/unassigned_variable=false
 gdscript/warnings/unassigned_variable_op_assign=false
@@ -43,7 +43,7 @@ window/size/test_height=720
 
 [gui]
 
-theme/custom_font="res://resources/tres/std_font.tres"
+theme/custom_font="res://resources/tres/fonts/std_font.tres"
 
 [input]
 
@@ -133,10 +133,18 @@ limits/debugger_stdout/max_chars_per_second=20480
 
 [rendering]
 
-quality/intended_usage/framebuffer_allocation=0
-quality/intended_usage/framebuffer_allocation.mobile=0
+quality/2d/gles2_use_nvidia_rect_flicker_workaround=true
+quality/intended_usage/framebuffer_allocation.mobile=2
 quality/2d/use_pixel_snap=true
+quality/filters/anisotropic_filter_level=1
+quality/directional_shadow/size=2048
+quality/directional_shadow/size.mobile=1024
 quality/shadow_atlas/size=1024
+quality/shadow_atlas/size.mobile=512
+quality/shadow_atlas/quadrant_0_subdiv=2
+quality/shadow_atlas/quadrant_1_subdiv=0
+quality/shadow_atlas/quadrant_2_subdiv=0
+quality/shadow_atlas/quadrant_3_subdiv=0
 quality/shadows/filter_mode=0
 quality/reflections/high_quality_ggx=false
 quality/subsurface_scattering/quality=0

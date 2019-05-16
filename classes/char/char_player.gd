@@ -311,7 +311,7 @@ class Weapon:
 		print("[WEAPON][fullRepair] Fully repaired!")
 
 	func partialRepair(val:int) -> void:
-		uses = float(stats.DUR) * core.percent(val)
+		uses = round(float(stats.DUR) * core.percent(val)) as int
 		print("[WEAPON][partialRepair] Durability is now %02d" % uses)
 
 
@@ -574,7 +574,6 @@ func setWeapon(WP):
 	if currentWeapon != WP:
 		currentWeapon = WP
 		equip.currentWeapon = WP
-		print("Switched weapon to %s" % [WP.id])
 		updateBattleStats()
 
 func getSkillTID(t):
