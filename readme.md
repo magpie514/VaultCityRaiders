@@ -2,6 +2,8 @@
 
 A JRPG developed with Godot Engine.
 
+![Quaint little screenshot, placeholder city.](screenshot.png)
+
 *Still incomplete, only combat works so far, please wait patiently as the rest is being completed.*
 
 ## What to expect

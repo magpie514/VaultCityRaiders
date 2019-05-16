@@ -91,7 +91,7 @@ var example = {
 				["debug", "overclck"],
 				["debug", "lunablaz"],
 			],
-		}
+		},
 		"esper" : {
 			name = "ESPer",
 			description = "A physically weak fighter but with powerful psychic abilities. Their physical fragility makes them better on the back row.",
