@@ -80,17 +80,21 @@ func resetActionQueue():
 	actionQueue.clear()
 
 static func sortActionQueue(a, b):
-	return true if a.spd > b.spd else false
+	return (a.spd > b.spd)
+
+static func sortActionQueueOverPass(a, b):
+	return (a.act == ACT_OVER)
 
 func prepareActionQueue():
 	self.printQueue()
-	actionQueue.sort_custom(self, "sortActionQueue")
+	sort()
 
 func pushAction(act):
 	actionQueue.push_back(act)
 
 func sort():
 	actionQueue.sort_custom(self, "sortActionQueue")
+	actionQueue.sort_custom(self, "sortActionQueueOverPass")
 
 func popAction():
 	return actionQueue.pop_front()

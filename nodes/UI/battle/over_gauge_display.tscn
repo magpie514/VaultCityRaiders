@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+var act:Array
+
+func _ready() -> void:
+	pass # Replace with function body.
+
+func init(actions:Array) -> void:
+	self.act = actions
+	update()
+
+func _draw() -> void:
+	if not act.empty():
+		var l:float = 0.0
+		for i in act:
+			var l2 = rect_size.x * core.percent(i.skill.costOV)
+			draw_rect(Rect2(Vector2(l, 0), Vector2(l2, rect_size.y)), \"#40875E00\")
+			draw_rect(Rect2(Vector2(l, 0), Vector2(l2, rect_size.y)), \"#FFEEDD\", false)
+			l += l2
+
+
+"
+
+[node name="OverDisplay" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -860.0
+margin_bottom = -700.0
+script = SubResource( 1 )

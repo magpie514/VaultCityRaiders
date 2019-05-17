@@ -145,3 +145,4 @@ align = 1
 valign = 1
 [connection signal="pressed" from="Back" to="." method="_on_Back_pressed"]
 [connection signal="pressed" from="Panel/Cancel" to="." method="_on_Cancel_pressed"]
+[connection signal="pressed" from="Panel/Accept" to="." method="_on_Accept_pressed"]

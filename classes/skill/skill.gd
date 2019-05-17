@@ -1196,6 +1196,7 @@ func processAttack(S, level, user, target, state, value, flags):
 	var inflictInfo : String = ""
 	var output : String = ""
 	var silent : bool = bool(flags & OPFLAGS_SILENT_ATTACK)
+	var defeats:bool = false
 	print("\tAttack: %05d + %05d = %05d power + %05d raw damage > silent: %s, hit record: %s" % [value, state.dmgBonus, state.dmgBonus + value, state.dmgAddRaw, silent, hitInfo])
 	state.lastHit = false
 
@@ -1246,6 +1247,8 @@ func processAttack(S, level, user, target, state, value, flags):
 
 			var info = target.damage(dmg, [crit, false, temp[1], specials], true)                                #Deal the final amount here
 			hitInfo.push_back([dmg, crit, info[0], temp[1], specials])
+			if info[1]: #If target is defeated
+				defeats = true
 			if not target.filter(S) or info[1]: #Abort loop if target doesn't fit filter criteria (like being defeated)
 				break
 
@@ -1259,7 +1262,7 @@ func processAttack(S, level, user, target, state, value, flags):
 			target.dodgeAttack(user)
 			state.lastHit = false
 
-	if not silent:
+	if not silent or defeats:
 		if hitInfo.size() > 1:
 			output = str("Hit [color=#%s]%s[/color] %s times for %.2f%% (" % [
 				core.battle.control.state.colorName(target), target.name, hitInfo.size(), dmgPercentTotal,
@@ -1285,15 +1288,16 @@ func processAttack(S, level, user, target, state, value, flags):
 			]
 		target.display.damage(hitInfo)
 		hitInfo = [] #Clear accumulated attack info.
-
 	user.battle.turnHits += totalHits
 	state.finalDMG += totalDmg as int
 
-	if state.drainLife > 0:                                                       #Drain life effects
-		print("Life drain (%s)" % state.drainLife)
-		user.heal(int(float(totalDmg)* (float(state.drainLife) * 0.01)))
+	if defeats: output += str(" %s" % target.defeatMessage())
+	
+	if state.drainLife > 0: #Drain life effects
+		print("\tLife drain (%s)" % state.drainLife)
+		user.heal( int(float(totalDmg) * core.percent(state.drainLife)) )
 		#output += (str(" Drained %s health!" % [int(float(totalDmg)* (float(state.drainLife) * 0.01))]))
-	if not silent:
+	if not silent or defeats:
 		msg(str(output, " ", inflictInfo))
 
 func processDamageRaw(S, user, target, value, percent) -> int:                 #Cause raw damage to target.
@@ -1305,7 +1309,6 @@ func processDamageRaw(S, user, target, value, percent) -> int:                 #
 	if dmg > 0:                                                                   #TODO: Add damage messages, add a flag to bypass resistances.
 		target.damage(dmg, [false, false, 0, null])
 	return dmg
-
 
 func processHeal(S, state, user, target, value:float) -> float:
 	var field = core.battle.control.state.field.bonus
@@ -1497,7 +1500,7 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
 		if tempTarget.filter(S): #Target is valid.
-			controlNode.startAnim(S, level, 'main', tempTarget.display)
+			controlNode.startAnim(S, level, 'main', tempTarget.display.effectHook)
 			yield(controlNode, "fx_finished") #Wait for animation to finish.
 			print("[SKILL][processCombatSkill] Standard animation finished")
 			control = controlNode.start()
@@ -1542,7 +1545,7 @@ func processSubSkill(S, level, user, target, control = core.battle.skillControl.
 	var controlNode = core.battle.skillControl
 	if target.filter(S):
 		print("Starting subskill: %s" % S.name)
-		controlNode.startAnim(S, level, 'main', target.display)
+		controlNode.startAnim(S, level, 'main', target.display.effectHook)
 		yield(controlNode, "fx_finished") #Wait for animation to finish.
 		print("Animation finished")
 		processSkillCode(S, level, user, target, CODE_MN, control)
@@ -1598,7 +1601,7 @@ func processFL(S, level, user, target, data, type):
 				])
 	yield(core.battle.skillControl.wait(0.1), "timeout")
 	var control = core.battle.skillControl.start()
-	core.battle.skillControl.startAnim(S, level, 'onfollow', target.display)
+	core.battle.skillControl.startAnim(S, level, 'onfollow', target.display.effectHook)
 	yield(core.battle.skillControl, "fx_finished")
 	print("FL ANIMATION FINISHED")
 	processSkillCode(S, level, user, target, CODE_FL, control)
@@ -1769,10 +1772,18 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 # Standard combat functions ####################################################
 					OPCODE_ATTACK:
 						print(">ATTACK(%s)" % value)
-						processAttack(S, level, user, target, state, value, flags)
+						if variableTarget.filter(S):
+							processAttack(S, level, user, variableTarget, state, value, flags)
+						else:
+							print("[!!]Target doesn't meet targetting filter anymore, skipping.")
 					OPCODE_DEFEND:
 						print(">DEFEND(%s)" % value)
 						variableTarget.display.message("DEFEND", false, messageColors.protect)
+						if variableTarget is core.Player: #TODO: Enemies too!
+							var overGain:int = variableTarget.calculateTurnOverGains() / 2
+							variableTarget.battle.over += overGain
+							print("Defend over gain: %d" % overGain)
+
 					OPCODE_FORCE_INFLICT:
 						print(">INFLICT(%s)" % value)
 						args = {
@@ -2311,7 +2322,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							yield(controlNode.wait(0.01), "timeout")
 					OPCODE_PLAYANIM:
 						print(">PLAY ANIMATION: %s" % value)
-						controlNode.startAnim(S, level, str(value) if value in S.animations else 'main', target.display)
+						controlNode.startAnim(S, level, str(value) if value in S.animations else 'main', target.display.effectHook)
 						yield(controlNode, "fx_finished")
 					OPCODE_WAIT:
 						print(">WAIT: %s" % value)

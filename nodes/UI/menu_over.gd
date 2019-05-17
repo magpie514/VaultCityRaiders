@@ -1,33 +1,35 @@
 extends Panel
 signal selection(x)
 
-var skillNode = load("res://nodes/UI/skill.tscn")
-var overNode = load("res://nodes/UI/battle/over_skill_2.tscn")
+var skillNode = load("res://nodes/UI/skill.tscn") #Skill buttons.
+var overNode =  load("res://nodes/UI/battle/over_skill_2.tscn") #Over display list buttons.
 
-var buttons = []
-var buttons2 = []
-var target = null
+var buttons:Array =  [] #Stores skill list
+var buttons2:Array = [] #Stores selected Over skill displays
+var actions:Array =  [] #Holds the formed actions to return.
 var currentChar = null
-var controls = null #Set externally from battle_controls. It should never change. ...right?
+var target =      null
+var controls =    null #Set externally from battle_controls. It should never change. ...right?
 var targetPanel = null #Node for the target selector. Set externally as well.
-var actions = []
 
 onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
 
 func init(C):
 	clear()
-	actions.empty()
+	if currentChar != C: #Only clean up if the character has changed.
+		while buttons2.size() > 0: #Clear over gauge buttons
+			var button = buttons2.pop_back()
+			button.queue_free()
+			actions.clear()
 	currentChar = C
 	$Panel/Bar.value = C.getOverN()
-	var button = null
-	var S = null
 	var TID = null
-	$ColorRect/Label.text = str("%s's skills" % C.name)
-	for i in C.equip.weps:
+	$ColorRect/Label.text = str("%s's Over skills" % C.name)
+	for i in C.equip.weps: #Get weapon-provided Over skills.
 		if i != null:
 			if i.lib.wclass != core.skill.WPCLASS_NONE:
-				S = core.getSkillPtr(i.lib.over)
-				button = skillNode.instance()
+				var S = core.getSkillPtr(i.lib.over)
+				var button = skillNode.instance()
 				button.init(S, 1, button.COST_OV)
 				$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
 				$ScrollContainer/VBoxContainer.add_child(button)
@@ -35,11 +37,11 @@ func init(C):
 				button.connect("display_info", controls.infoPanel, "showInfo")
 				button.connect("hide_info", controls.infoPanel, "hideInfo")
 				buttons.push_back(button)
-	for i in C.skills:
+	for i in C.skills: #Get race/class Over skills.
 		TID = C.getSkillTID(i)
-		S = core.getSkillPtr(TID)
+		var S = core.getSkillPtr(TID)
 		if S.type == 0:
-			button = skillNode.instance()
+			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_OV)
 			$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
 			$ScrollContainer/VBoxContainer.add_child(button)
@@ -51,7 +53,7 @@ func init(C):
 
 func clear() -> void:
 	modulate.a = 1.0
-	while buttons.size() > 0:
+	while buttons.size() > 0:  #Clear skill buttons
 		var button = buttons.pop_back()
 		button.queue_free()
 
@@ -75,13 +77,9 @@ func updateList() -> void:
 			buttons2.push_back(button)
 	else:
 		$Panel/Cancel.disabled = true
-		$Panel/Accept.disabled = true
+		#$Panel/Accept.disabled = true
 	for i in buttons:
-		if i.S.costOV > remainingOver:
-			i.get_node("Button").disabled = true
-		else:
-			i.get_node("Button").disabled = false
-
+		i.get_node("Button").disabled = (i.S.costOV > remainingOver)
 
 
 func finish() -> void:
@@ -117,10 +115,17 @@ func _on_Back_pressed() -> void:
 	emit_signal("selection", null)
 	finish()
 
-
 func _on_Cancel_pressed() -> void:
 	while buttons2.size() > 0:
 		var button = buttons2.pop_back()
 		button.queue_free()
 	actions.clear()
 	updateList()
+
+func _on_Accept_pressed() -> void:
+	currentChar.battle.overAction.clear()
+	for i in actions:
+		currentChar.battle.overAction.push_back(i)
+	print("[MENU_OVER][Accept] Actions for %s:\n%s" % [currentChar.name, currentChar.battle.overAction])
+	emit_signal("selection", null)
+	finish()

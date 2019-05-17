@@ -6,14 +6,14 @@
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=5]
 [ext_resource path="res://resources/tres/fonts/squared_huge.tres" type="DynamicFont" id=6]
-[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=7]
-[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=8]
+[ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=7]
+[ext_resource path="res://nodes/UI/battle/current_action.tscn" type="PackedScene" id=8]
 [ext_resource path="res://tests/info_display.tscn" type="PackedScene" id=9]
-[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=10]
-[ext_resource path="res://nodes/UI/battle/action_queue.tscn" type="PackedScene" id=11]
-[ext_resource path="res://nodes/UI/battle/current_action.tscn" type="PackedScene" id=12]
+[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=10]
+[ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=11]
+[ext_resource path="res://nodes/UI/guild_display.tscn" type="PackedScene" id=12]
 [ext_resource path="res://tests/SkillController.gd" type="Script" id=13]
-[ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=14]
+[ext_resource path="res://nodes/UI/battle/action_queue.tscn" type="PackedScene" id=14]
 [ext_resource path="res://nodes/UI/battle/enemyg_display.tscn" type="PackedScene" id=15]
 
 [sub_resource type="DynamicFont" id=1]
@@ -87,7 +87,7 @@ usage = 0
 render_target_update_mode = 3
 gui_disable_input = true
 
-[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 7 )]
+[node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 11 )]
 
 [node name="Panel2" type="Panel" parent="Panel"]
 visible = false
@@ -151,7 +151,7 @@ margin_top = 79.0
 margin_right = 130.0
 margin_bottom = 114.0
 
-[node name="InfoDisplay" parent="Panel" instance=ExtResource( 8 )]
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 7 )]
 visible = false
 
 [node name="InfoDisplay_old" parent="Panel" instance=ExtResource( 9 )]
@@ -159,7 +159,7 @@ visible = false
 anchor_right = 1.0
 margin_right = 0.0
 
-[node name="BattleControls" parent="Panel" instance=ExtResource( 14 )]
+[node name="BattleControls" parent="Panel" instance=ExtResource( 10 )]
 margin_top = 90.0
 margin_right = 110.0
 margin_bottom = 310.0
@@ -170,7 +170,7 @@ margin_top = 550.0
 margin_right = 952.0
 margin_bottom = 610.0
 
-[node name="GuildDisplay" parent="Panel" instance=ExtResource( 10 )]
+[node name="GuildDisplay" parent="Panel" instance=ExtResource( 12 )]
 anchor_left = 0.125
 anchor_top = 0.889
 anchor_right = 0.875
@@ -178,7 +178,7 @@ anchor_bottom = 0.972
 margin_top = 19.92
 margin_bottom = 19.92
 
-[node name="ActionQueue" parent="Panel" instance=ExtResource( 11 )]
+[node name="ActionQueue" parent="Panel" instance=ExtResource( 14 )]
 anchor_left = 0.773
 anchor_top = 0.192
 anchor_right = 1.0
@@ -188,7 +188,7 @@ margin_top = -8.24001
 margin_right = 0.0
 margin_bottom = 0.320007
 
-[node name="CurrentAction" parent="Panel" instance=ExtResource( 12 )]
+[node name="CurrentAction" parent="Panel" instance=ExtResource( 8 )]
 margin_left = 590.0
 margin_top = 96.0
 margin_right = 960.0

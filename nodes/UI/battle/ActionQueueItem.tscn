@@ -10,7 +10,7 @@ var style = null
 func init(A, pos) -> void: #A:Action
 	style = _style.duplicate()
 	set(\"custom_styles/panel\", style)
-	$Label.text = A.user.name
+	$Label.text = str(\"%s\" % [A.user.name])
 	if A.user is core.Player:
 		style.bg_color = \"55000088\"
 	elif A.user is core.Enemy:

@@ -20,12 +20,11 @@ var row : int = 0											#Character's calculated row
 var side : int = 0										#Quick ally/enemy reference. Mostly for text coloring.
 var group = null											#Reference to the character's group.
 
-
 class BattleStats:
 	# Core stats ################################################################################
 	var stat = core.stats.create()    #Calculated battle stats
 	var statmult : Dictionary = {}    #Stat multipliers
-	var over : int = 0								#Over counter
+	var over:int = 33 setget set_over #Over counter
 	# Statistics ################################################################################
 	var accumulatedDMG : int = 0      #Damage accumulated during current battle
 	var accumulatedDealtDMG : int = 0 #Damage dealt accumulated during current battle
@@ -66,6 +65,10 @@ class BattleStats:
 	# Misc stats ################################################################################
 	var overheat : int = 0            #Reduces by 1 per turn. Prevents overheat skills from being used.
 	var lastAction = null
+	var overAction:Array = []					#Temporary storage for Over actions while AI or player are choosing.
+	func set_over(x:int) -> void:
+		over = core.clampi(x, 0, 100)
+
 
 func createBattleStats():
 	return BattleStats.new()
@@ -112,6 +115,7 @@ func initBattleTurn() -> void:
 	battle.protectedBy.clear()
 	battle.follow.clear()
 	battle.chase.clear()
+	battle.overAction.clear()
 	battle.AD = 100
 	resetCounter()
 	checkEffects(battle.buff, true)
@@ -147,6 +151,7 @@ func endBattleTurn(defer) -> void:
 			battle.overheat = 0
 	battle.buff = updateEffects(battle.buff, defer)
 	battle.debuff = updateEffects(battle.debuff, defer)
+	battle.overAction.clear()
 
 func initBattle() -> void:
 	battle = createBattleStats()
@@ -229,6 +234,9 @@ func finalizeDamage(x, info) -> int:
 	#var finalDmg : float = x * (float(battle.AD) * .01)
 	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info)
 	return clamp(finalDmg, 1, core.skill.MAX_DMG) as int
+
+func defeatMessage() -> String:
+	return "%s is down!" % name
 
 func damage(x : int, data, silent = false) -> Array:
 	var temp = HP - x

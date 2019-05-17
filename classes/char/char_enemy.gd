@@ -35,6 +35,9 @@ func initDict(C):
 func getTooltip():
 	return "%s Lv.%s\n%s" % [name, level, core.stats.print(statFinal)]
 
+func defeatMessage() -> String:
+	return str(lib.defeatMsg % name)
+
 func defeat():
 	.defeat()
 	core.battle.control.state.EXP += (100 * XPMultiplier)
@@ -42,7 +45,7 @@ func defeat():
 	sprDisplay.defeat()
 	display.stop()
 	group.defeat(slot, self)
-	skill.msg(str(lib.defeatMsg % name))
+	#skill.msg(str(lib.defeatMsg % name))
 
 func onSummonerDefeat():
 	print("[CHAR_ENEMY][onSummonerDefeat] %s's summoner fell!" % name)

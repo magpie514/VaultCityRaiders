@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://nodes/UI/battle/battle_controls.gd" type="Script" id=1]
 [ext_resource path="res://nodes/UI/battle/WeaponPanel.gd" type="Script" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=11]
 [ext_resource path="res://nodes/UI/menu_over.tscn" type="PackedScene" id=12]
 [ext_resource path="res://resources/tres/fonts/std_font_big.tres" type="DynamicFont" id=13]
+[ext_resource path="res://nodes/UI/battle/over_gauge_display.tscn" type="PackedScene" id=14]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.417969, 0.740814, 1, 1 )
@@ -281,6 +282,10 @@ margin_right = 212.0
 margin_bottom = 16.0
 color = Color( 0.00392157, 0.0980392, 0.0980392, 0.505882 )
 
+[node name="OverDisplay" parent="Main/OverBar" instance=ExtResource( 14 )]
+margin_right = 0.0
+margin_bottom = 0.0
+
 [node name="OverLabel" type="Label" parent="Main"]
 margin_top = 260.0
 margin_right = 20.0
@@ -351,10 +356,10 @@ visible = false
 [node name="ItemMenu" parent="." instance=ExtResource( 9 )]
 visible = false
 
-[node name="TargetPanel" parent="." instance=ExtResource( 10 )]
+[node name="OverMenu" parent="." instance=ExtResource( 12 )]
 visible = false
 
-[node name="OverMenu" parent="." instance=ExtResource( 12 )]
+[node name="TargetPanel" parent="." instance=ExtResource( 10 )]
 visible = false
 [connection signal="select" from="Main/WeaponPanel/Weapon1" to="." method="_on_Weapon_pressed" binds= [ 0 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon2" to="." method="_on_Weapon_pressed" binds= [ 1 ]]

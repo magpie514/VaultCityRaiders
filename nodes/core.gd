@@ -322,6 +322,9 @@ static func normalize(v:int, m:int) -> float: #I was tired of doing the casting 
 static func percent(v:int) -> float:
 	return float(v) * .01
 
+static func clampi(x:int, mi:int, ma:int):
+	return clamp(x, mi, ma) as int
+
 static func randomPick(val):
 	match typeof(val):
 		TYPE_ARRAY:

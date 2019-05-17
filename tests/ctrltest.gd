@@ -46,57 +46,77 @@ func _ready():
 func battle():
 	var A = null
 	var islot = 0
-	var playerActions = []
+	var playerActions:Array = []
 	var C = null
 	var playerChars = null
 	$Panel/BattleControls.hide()
 	#core.playMusic("res://resources/music/EOIV_Storm.ogg")
 	while state.status():
-#Collect player actions. ==========================================================================
+		# Turn initialization #########################################################################
 		$Panel/CurrentAction.hide()
 		if checkResolution(): return #Make sure end of turn special effects didn't cause a victory or defeat.
 		$Panel/FieldEffect.updateDisplay(state.field)
+		#Show battle log and hide large action text.
 		$Panel/BattleLog2.bbcode_text = ""
 		$Panel/BattleLog2.hide()
 		$Panel/BattleLog.show()
+
+		#From now on it's the new turn.
 		state.passTurn()
-		$Panel/GuildDisplay.update()
 		$Panel/Turn.text = "Turn %s" % state.turn
 		$Panel/Time.text = "Time: %02d Day: %03d" % [int(core.world.time / 30), core.world.day]
+
+		#Collect enemy actions and show them in the side queue.
 		state.enemyActions()
-		$DebugActionQueue.text = state.printQueuePanel()
 		$Panel/ActionQueue.init(state.actions())
-		islot = 0
+
+		$Panel/GuildDisplay.update()
+
 		playerActions.clear()
 		playerChars = testguild.activeMembers()
+		islot = 0
+
+		# Collect player actions ######################################################################
 		while islot < playerChars.size():
 			$Panel/ActionQueue.init(state.actions(), playerActions)
 			C = playerChars[islot]
-			reply = null
-			yield(waitFixed(0.05), "timeout")
-			C.display.highlight(true)
+			#yield(waitFixed(0.05), "timeout")
 			C.charge(false)
+			C.display.highlight(true)
 			C.display.setActionText(null)
+
+			# Show controls to pick action. It's stored in reply.
+			reply = null
 			$Panel/BattleControls.setup(C, islot, self)
 			yield($Panel/BattleControls, "finished")
+			# Action or cancel.
 			C.display.highlight(false)
 			if reply is state.Action:
 				#Player chose a valid action, register it and move to next.
 				C.display.setActionText(reply)
 				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
 				islot += 1
-			elif islot > 0: #Player cancelled current action, so back to the previous character.
+			elif islot > 0:
+				#Player cancelled current action, clean up and go back.
+				C.battle.overAction.clear() #Remove Over skills.
 				var temp = playerActions.pop_back()
 				if temp[2].IT: #If player selected items, give them back to inventory or give charge back.
-					#TODO: Check for the usual item duplication exploit shenanigans.
+					#TODO: Check for standard item duplication exploit shenanigans.
 					testguild.inventory.returnConsumable(temp[2].IT)
+					temp[2].IT = null
 				islot -= 1
 			$Panel/BattleControls.closeAll()
 
 		yield(waitFixed(0.25), "timeout")
 		for i in playerActions:
+			C = testguild.formation[i[1]]
+			if not C.battle.overAction.empty():
+				for j in C.battle.overAction:
+					state.addAction(i[0], i[1], j)
+				C.battle.overAction.clear() #We don't need them anymore.
 			state.addAction(i[0], i[1], i[2])
 
+		# Done collecting player actions from here ####################################################
 		state.prepareActionQueue()
 		$DebugActionQueue.text = state.printQueuePanel()
 		$Panel/GuildDisplay.battleTurnUpdate() 			#Reset turn counters (accumulated damage, etc)

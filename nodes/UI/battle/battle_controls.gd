@@ -11,6 +11,7 @@ var action = null
 var parent = null
 var inputs = []
 var infoPanel = null
+var currentPanel = self
 
 
 func init(st, info):
@@ -28,17 +29,29 @@ func _ready():
 	$OverMenu.controls = self
 	$OverMenu.targetPanel = $TargetPanel
 
-func setup(C, place, node):
+func setup(C, place:int, node) -> void:
 	parent = node
-	$Main/OverBar.value = C.getOverN()
-	$Main/OverLabel/Label.text = str("%03d%%" % int(C.getOverN() * 100)) #...
-	if C.getOverN() > 0.33:
-		$Main/Over.disabled = false
-	else:
-		$Main/Over.disabled = false
-	$Main/WeaponPanel.init(C)
 	currentChar = C
 	$Main/Name.text = C.name
+
+	if place == 0: #Only show party-wide actions on the first character.
+		$Main/Switch.show(); $Main/Macro.show()
+		$Main/Talk.show();   $Main/Back.hide()
+	else:
+		$Main/Switch.hide(); $Main/Macro.hide()
+		$Main/Talk.hide();   $Main/Back.show()
+
+	#Set up Over gauge.
+	$Main/OverBar.value = C.getOverN()
+	$Main/OverLabel/Label.text = str("%03d%%" % int(C.battle.over))
+	#Only enable Over menu if there's enough Over for a tier 1 Over skill (33%).
+	$Main/Over.disabled = (C.getOverN() > core.skill.OVER_COST_1)
+	$Main/Over.disabled = false #TODO: For testing, remove when done.
+	$Main/OverBar/OverDisplay.init(C.battle.overAction)
+
+	#Inialize weapons.
+	$Main/WeaponPanel.init(C)
+
 	if C.battle.chain > 0: #Show chain counter if pertinent.
 		$Main/Chain/Label.text = str(C.battle.chain)
 		$Main/Chain.show()
@@ -46,17 +59,6 @@ func setup(C, place, node):
 		$Main/Chain.hide()
 	show()
 	$Main.show()
-
-	if place == 0: #Only show party-wide actions on the first character.
-		$Main/Switch.show()
-		$Main/Macro.show()
-		$Main/Talk.show()
-		$Main/Back.hide()
-	else:
-		$Main/Switch.hide()
-		$Main/Macro.hide()
-		$Main/Talk.hide()
-		$Main/Back.show()
 
 	if not canRepeat(C.battle.lastAction):
 		$Main/Repeat.disabled = true
@@ -66,8 +68,8 @@ func setup(C, place, node):
 		var RS = C.battle.lastAction.skill if C.battle.lastAction.IT == null else C.battle.lastAction.IT.data.lib
 		$Main/Repeat.text = str("Repeat %s" % RS.name)
 
-func _process(delta: float) -> void: #Just a quick hack for now
-	if $Main.visible:
+func _process(delta: float) -> void: #Just a quick hack for now. Do this with signals.
+	if $Main.visible and currentPanel == self:
 		if Input.is_key_pressed(KEY_1):
 			_on_Weapon_pressed(0)
 		elif Input.is_key_pressed(KEY_2):
@@ -82,40 +84,45 @@ func _process(delta: float) -> void: #Just a quick hack for now
 			_on_Defend_pressed()
 		elif Input.is_key_pressed(KEY_E):
 			_on_Item_pressed()
+		elif Input.is_key_pressed(KEY_R):
+			_on_Over_pressed()
 
 
-func exit(val):
+func exit(val) -> void:
 	closeAll()
 	if "user" in val: val.user = currentChar
 	emit_signal("finished", val)
 
-func closeAll():
+func closeAll() -> void:
 	$WeaponMenu.finish()
 	$SkillMenu.finish()
 	$ItemMenu.finish()
+	$OverMenu.finish()
 	$TargetPanel.clear()
 
 func _on_Weapon_pressed(slot:int) -> void:
 	var display = null
 	var W = null
 	$Main.hide()
+	currentPanel = $WeaponMenu
 	$WeaponMenu.init(currentChar, slot)
 	action = null
 	yield($WeaponMenu, "selection") #This receives the menu's selection() signal with the skill and target.
 	if action != null: exit(action)
 	else: $Main.show()
 
-func _on_Skill_pressed():
+func _on_Skill_pressed() -> void:
 	var display = null
 	var S = null
 	$Main.hide()
 	$SkillMenu.init(currentChar)
+	currentPanel = $SkillMenu
 	action = null
 	yield($SkillMenu, "selection") #This receives the menu's selection() signal with the skill and target.
 	if action != null: exit(action)
 	else: $Main.show()
 
-func _on_Defend_pressed():#
+func _on_Defend_pressed() -> void:
 	var result = state.Action.new(state.ACT_DEFEND)
 	result.skillTid = ["core", "defend"]
 	result.skill = core.lib.skill.getIndex(result.skillTid)
@@ -125,11 +132,12 @@ func _on_Defend_pressed():#
 	result.WP = currentChar.currentWeapon
 	exit(result)
 
-func _on_Item_pressed():
+func _on_Item_pressed() -> void:
 	var display = null
 	var S = null
 	$Main.hide()
 	$ItemMenu.init(currentChar)
+	currentPanel = $ItemMenu
 	action = null
 	yield($ItemMenu, "selection") #This receives the menu's selection() signal with the skill and target.
 	if action != null:
@@ -137,26 +145,30 @@ func _on_Item_pressed():
 	else:
 		$Main.show()
 
-func _on_Over_pressed():
+func _on_Over_pressed() -> void:
 	var display = null
 	var S = null
 	$Main.hide()
 	$OverMenu.init(currentChar)
+	currentPanel = $OverMenu
 	action = null
 	yield($OverMenu, "selection") #This receives the menu's selection() signal with the skill and target.
 	if action != null: exit(action)
-	else: $Main.show()
+	else:
+		$Main.show()
+		if currentChar.battle.overAction.size() > 0:
+			$Main/OverBar/OverDisplay.init(currentChar.battle.overAction)
 
-func _on_Run_pressed():#
+func _on_Run_pressed() -> void: #TODO: Run.
 	exit([state.ACT_RUN])
 
-func _on_Macro_pressed():
+func _on_Macro_pressed() -> void:
 	pass # replace with function body
 
-func _on_Back_pressed():
+func _on_Back_pressed() -> void:
 	exit([-1])
 
-func _on_Switch_pressed():
+func _on_Switch_pressed() -> void:
 	pass # replace with function body
 
 func canRepeat(act) -> bool:
@@ -194,14 +206,17 @@ func _on_Repeat_pressed() -> void:
 
 func _on_WeaponMenu_selection(x) -> void:
 	print("[BATTLECONTROLS][_on_WeaponMenu_selection]\n\t%s" % str(x))
+	currentPanel = self
 	action = x
 
 func _on_SkillMenu_selection(x) -> void:
 	print("[BATTLECONTROLS][_on_SkillMenu_selection]\n\t%s" % str(x))
+	currentPanel = self
 	action = x
 
 func _on_ItemMenu_selection(x) -> void:
 	print("[BATTLECONTROLS][_on_ItemMenu_selection]\n\t%s" % str(x))
+	currentPanel = self
 	if x != null: # Consume item here.
 		if not x.IT.data.lib.charge:
 			currentChar.group.inventory.takeConsumable(x.IT)
@@ -211,4 +226,5 @@ func _on_ItemMenu_selection(x) -> void:
 
 func _on_OverMenu_selection(x) -> void:
 	print("[BATTLECONTROLS][_on_OverMenu_selection]\n\t%s" % str(x))
+	currentPanel = self
 	action = x
