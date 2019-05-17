@@ -1292,7 +1292,7 @@ func processAttack(S, level, user, target, state, value, flags):
 	state.finalDMG += totalDmg as int
 
 	if defeats: output += str(" %s" % target.defeatMessage())
-	
+
 	if state.drainLife > 0: #Drain life effects
 		print("\tLife drain (%s)" % state.drainLife)
 		user.heal( int(float(totalDmg) * core.percent(state.drainLife)) )

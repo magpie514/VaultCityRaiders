@@ -23,6 +23,7 @@ func init(C):
 			actions.clear()
 	currentChar = C
 	$Panel/Bar.value = C.getOverN()
+	$Panel/Bar/Label.text = str("%03d%%" % C.battle.over)
 	var TID = null
 	$ColorRect/Label.text = str("%s's Over skills" % C.name)
 	for i in C.equip.weps: #Get weapon-provided Over skills.
