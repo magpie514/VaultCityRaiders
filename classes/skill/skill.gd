@@ -1311,8 +1311,8 @@ func damageRaw(S, level, user, target, state, value:int, flags:int = 0, bonus:bo
 	var temp:float = ( float(target.maxHealth()) * core.percent(value) ) if flags & OPFLAGS_VALUE_PERCENT else value
 	if bonus: #Add elemental bonuses.
 		temp = core.battle.control.state.field.calculate(temp, state.element, state.fieldEffectMult)
-	if dmg > 0:
-		var info = target.damage(dmg, [false, false, 0, null])
+	if temp > 0:
+		var info = target.damage(temp, [false, false, 0, null])
 		if info[1]:
 			defeats = true
 
