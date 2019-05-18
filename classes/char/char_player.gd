@@ -232,6 +232,31 @@ class DragonGemContainer:
 		result += "]"
 		return result
 
+class Gear:
+	var lib:Dictionary
+
+class Armor:
+	var DEFAULT : Dictionary = {
+		tid = core.tid.create("debug", "debug"),
+		gem = null,
+		extraData = null
+	}
+	var STATS_DEFAULT : Dictionary = {
+		MHP = int(0), MEP = int(0),
+		ATK = int(0), ETK = int(0), WRD = int(0), DUR = int(0),
+		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
+		OFF = core.stats.createElementData(),
+		RES = core.stats.createElementData(),
+		SKL = [],
+	}
+	var tid = null
+	var lib:Dictionary
+	var DGem:DragonGemContainer
+	var extraData = null #Frame / Vehicle data
+	var stats:Dictionary = {}
+	func _init(_tid = null, data = DEFAULT )-> void:
+		var tmp_tid = _tid
+
 
 class Weapon:
 	const MAX_DUR = 99

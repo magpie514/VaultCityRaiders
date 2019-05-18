@@ -148,7 +148,7 @@ var example = {
 		"medic" : {
 			name = "Medic",
 			description = "Specialized healers trying to keep the party alive.",
-			weapons = [skill.WPCLASS_HANDGUN, skill.WPCLASS_SHIELD, skill.WPCLASS_ROD],
+			weapons = [skill.WPCLASS_HANDGUN, skill.WPCLASS_SHIELD],
 			statSpread = [ [002, 001, 001, 002, 004, 000, 002], [020, 016, 008, 022, 048, 008, 024] ],
 			skills = [
 				["debug", "heal"],

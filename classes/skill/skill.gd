@@ -17,7 +17,7 @@ enum { #Category
 #General category of the attacks. Determines its general context
 	CAT_ATTACK = 0,		#Combat actions that target enemies (attacks, debuffs, etc)
 	CAT_SUPPORT,			#Combat actions that target allies (heals, buffs, etc) (no acc check)
-	CAT_OVER					#Skill is an Over skill and only available in battle, similar to CAT_ATTACK (always hits)
+	CAT_OVER					#Skill is an Over skill and only available in battle, similar to CAT_ATTACK
 	CAT_STATUP,				#Skill has no combat or passive effects, only raises stats/resists
 	CAT_PASSIVE,			#Skill that have passive effects
 	CAT_FIELD,				#Skill that can be used for events
@@ -93,19 +93,18 @@ const racetypes = {
 }
 
 enum { #Weapon classes
-	WPCLASS_NONE,
-	WPCLASS_FIST,
-	WPCLASS_SHORTSWORD,
-	WPCLASS_LONGSWORD,
-	WPCLASS_POLEARM,
-	WPCLASS_HAMMER,
-	WPCLASS_AXE,
-	WPCLASS_ROD,
-	WPCLASS_GRIMOIRE,
-	WPCLASS_HANDGUN,
-	WPCLASS_FIREARM,
-	WPCLASS_ARTILLERY,
-	WPCLASS_SHIELD,
+	WPCLASS_NONE = 0,     # None: Nothing whatsoever.
+	WPCLASS_FIST,         # Fist: Fists, gloves and arms. Martial skills and all that stuff.
+	WPCLASS_SHORTSWORD,   # Short Swords: Knives, daggers, machetes, any sort of short blade.
+	WPCLASS_LONGSWORD,    # Long Swords: Bastard swords, nihon-tou, zweihanders, ideal for your spiky haired characters.
+	WPCLASS_POLEARM,      # Polearms: Spears, lances, glaives, naginatas, the works.
+	WPCLASS_HAMMER,       # Hammers: Bats, maces, stun batons, staves, general blunt things.
+	WPCLASS_AXE,          # Axes: Hammers with blades. Hatchets, war axes, not a broad category but effective.
+	WPCLASS_HANDGUN,      # Handguns: Pistols, stun guns, revolvers. Portable and lightweight firearms.
+	WPCLASS_FIREARM,      # Firearms: Shotguns, rifles, grenade launchers. Bigger caliber guns, like law enforcement tier.
+	WPCLASS_ARTILLERY,    # Artillery: Cannons, missile launchers, howitzers. Powerful weaponry, military tier and above.
+	WPCLASS_SHIELD,       # Shields: Portable defensive devices.
+	WPCLASS_ONBOARD,      # Onboard: Special weapons available only to vehicles and robot equipment.
 }
 
 const weapontypes = {
@@ -116,13 +115,13 @@ const weapontypes = {
 	WPCLASS_POLEARM : { name = "Polearm", icon = "" },
 	WPCLASS_HAMMER : { name = "Hammer", icon = "" },
 	WPCLASS_AXE : { name = "Axe", icon = "" },
-	WPCLASS_ROD : { name = "Rod", icon = "" },
-	WPCLASS_GRIMOIRE : { name = "Grimoire", icon = "" },
 	WPCLASS_HANDGUN : { name = "Handgun", icon = "" },
 	WPCLASS_FIREARM : { name = "Firearm", icon = "" },
 	WPCLASS_ARTILLERY : { name = "Artillery", icon = "" },
 	WPCLASS_SHIELD : { name = "Shield", icon = "" },
+	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
 }
+
 
 enum { #Race Aspect
 	RACEF_NON = 0x00,
@@ -362,10 +361,12 @@ enum { #Skill function codes.
 	OPCODE_BARRIER,						#[@=]Set target's barrier (all incoming damage is reduced by X) for the rest of the turn.
 	OPCODE_GUARD, 						#[@=%]Set target's guard (a total of X damage is negated) for the rest of the turn.
 	OPCODE_GUARD_RAW,					#[@=%]Set target's guard for the rest of the turn. Not modified by elemental bonuses.
+	OPCODE_ABSOLUTE_GUARD,		#[@]Special type of guard that isn't depleted over turns.
 	OPCODE_DODGE,							#[@=]Set target's dodge rate for the rest of the turn.
 	OPCODE_FORCE_DODGE,				#[@=]Set target's forced dodges for the rest of the turn. Automatically dodges without checks.
 	OPCODE_PROTECT,						#[@]User protects target with an X% chance until the end of the turn.
 	OPCODE_RAISE_OVER,				#[@]Increases Over gauge by X.
+	OPCODE_BREAK_GUARD,				#[@%]Decreases Guard/Absolute Guard and Barrier by X.
 
 	# Standard support functions #################################################
 	OPCODE_SCAN,							#Scans target with 1 or 2 power. Anything beyond 2 is reduced to 2, has no effect if 0.
@@ -882,6 +883,7 @@ const statusInfo = {
 	STATUS_SLEEP: 	{ name = "Sleep", desc = "put to sleep", color = "0000FF", short = "SLP" },
 }
 
+
 var messageColors = {
 	buff = "62EAFF",
 	debuff = "FFA9B0",
@@ -1022,7 +1024,7 @@ static func getRange(user, target) -> int:
 			result = 2
 	return result
 
-func calculateDamage(a, b, args):
+func calculateDamage(a, b, args) -> float:
 	var field = core.battle.control.state.field.bonus
 	var ATK : float = float(a[core.stats.STATS[args.dmgStat]])
 	var DEF : float = float(b.EDF if args.energyDMG else b.DEF)
@@ -1144,10 +1146,6 @@ func calculateRangedDamage(S, level, user, target) -> float:
 			print("Range check: Melee, normal damage!")
 			return 1.0
 
-func calculateFieldMod(elem:int, mult:int) -> float:
-	return 1.0 + (core.battle.control.state.field.getBonus(elem) * float(mult))
-
-
 func checkHitConditions(S, level, user, target, state, crit = false) -> bool:
 	if target.filter(S):
 		if state.nomiss: return true
@@ -1191,7 +1189,6 @@ func processAttack(S, level, user, target, state, value, flags):
 	var specials : Dictionary = { guardBreak = false, barrierFullBlock = false }
 	var crit = false
 	var field = core.battle.control.state.field.bonus
-	var fieldBonus : float = 0.0
 	var hitInfo : Array = state.hitRecord
 	var inflictInfo : String = ""
 	var output : String = ""
@@ -1225,16 +1222,14 @@ func processAttack(S, level, user, target, state, value, flags):
 			print("\tDamage so far: %05d, adding raw +%05d (=%05d)" % [dmg, state.dmgAddRaw, dmg+state.dmgAddRaw])
 			dmg += state.dmgAddRaw
 			if field[args.element] > 0:
-				fieldBonus = calculateFieldMod(args.element, state.fieldEffectMult)
-				print("\tField effect elemental bonus: %s mult: (%s x %s) (%s x %s = %s)" % [field[state.element], core.battle.control.state.field.getBonus(state.element), state.fieldEffectMult, dmg, fieldBonus, fieldBonus*dmg])
-				dmg *= fieldBonus
+				dmg = core.battle.control.state.field.calculate(dmg, args.element, state.fieldEffectMult)
 			if crit:                                                                  #Critical hit, x1.5 damage.
 				print("\tCritical hit! (%s x 1.5 = %s)" % [dmg, dmg * 1.5])
 				dmg *= 1.5
 			totalHits += 1
 
 			dmg = round(dmg)                                                          #Final damage
-			dmg = target.finalizeDamage(dmg, specials)
+			dmg = target.finalizeDamage(dmg, specials, state.ignoreDefs)
 
 			totalDmg += dmg                                                           #Add to action total
 			dmgPercent = (dmg / float(target.maxHealth())) * 100
@@ -1310,6 +1305,19 @@ func processDamageRaw(S, user, target, value, percent) -> int:                 #
 		target.damage(dmg, [false, false, 0, null])
 	return dmg
 
+
+func damageRaw(S, level, user, target, state, value:int, flags:int = 0, bonus:bool = false) -> void:
+	var defeats:bool = false
+	var temp:float = ( float(target.maxHealth()) * core.percent(value) ) if flags & OPFLAGS_VALUE_PERCENT else value
+	if bonus: #Add elemental bonuses.
+		temp = core.battle.control.state.field.calculate(temp, state.element, state.fieldEffectMult)
+	if dmg > 0:
+		var info = target.damage(dmg, [false, false, 0, null])
+		if info[1]:
+			defeats = true
+
+
+
 func processHeal(S, state, user, target, value:float) -> float:
 	var field = core.battle.control.state.field.bonus
 	var fieldBonus : float = 0.0
@@ -1321,9 +1329,7 @@ func processHeal(S, state, user, target, value:float) -> float:
 		print("User elemental modifier: %d %d%% = %d + %d raw" % [state.element, user.battle.stat.OFF[elementKey], value * core.percent(user.battle.stat.OFF[elementKey]), field[state.element]])
 		value += field[state.element]
 		value *= core.percent(user.battle.stat.OFF[elementKey])
-		fieldBonus = calculateFieldMod(state.element, state.fieldEffectMult)
-		print("Field effect elemental bonus : %s (%s x %s = %s)" % [field[state.element], value, fieldBonus, fieldBonus*value])
-		value *= fieldBonus
+		value = core.battle.control.state.field.calculate(value, state.element, state.fieldEffectMult)
 		state.anyHit = true
 	return value
 
@@ -1982,22 +1988,11 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print("Total: %s" % variableTarget.barrier)
 					OPCODE_GUARD:
 						print(">GUARD(%s)" % value)
-						if flags & OPFLAGS_VALUE_PERCENT: dmg = int(float(variableTarget.maxHealth()) * (float(value) * 0.01))
-						else: dmg = value
-						var fieldBonus = calculateFieldMod(state.element, state.fieldEffectMult)
-						print("Field effect elemental bonus: %s mult: (%s x %s) (%s x %s = %s)" % [core.battle.control.state.field.bonus[state.element], core.battle.control.state.field.getBonus(state.element), state.fieldEffectMult, dmg, fieldBonus, fieldBonus*dmg])
-						dmg *= fieldBonus
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
-							variableTarget.battle.guard = int(dmg)
-						else:
-							variableTarget.battle.guard += int(dmg)
+						variableTarget.setGuard(value, state.element, flags, state.fieldEffectMult)
 						print("Total: %s" % variableTarget.battle.guard)
 					OPCODE_GUARD_RAW:
 						print(">GUARD RAW(%s)" % value)
-						if flags & OPFLAGS_VALUE_PERCENT: dmg = int(float(variableTarget.maxHealth()) * (float(value) * 0.01))
-						else: dmg = value
-						if flags & OPFLAGS_VALUE_ABSOLUTE: variableTarget.battle.guard = int(dmg)
-						else: variableTarget.battle.guard += int(dmg)
+						variableTarget.setGuard(value, 0, flags)
 						print("Total: %s" % variableTarget.battle.guard)
 					OPCODE_DODGE:
 						print(">DODGE RATE: %s" % value)

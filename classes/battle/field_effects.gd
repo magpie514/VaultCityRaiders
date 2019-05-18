@@ -39,6 +39,21 @@ func getBonus(elem:int, side:int = 0) -> float:
 	else:
 		return (float(bonus[elem]) * .01)
 
+func fieldMod(elem:int, mult:float) -> float:
+	return 1.0 + ( getBonus(elem) * mult )
+
+func calculate(x:float, elem:int = 0, mult:float = 1.0) -> float:
+	if elem == 0: return x #No element mod so don't mess the current value.
+	var rawBonus:int = round(float(bonus[elem]) * mult) as int
+	var FEbonus:float = fieldMod(elem, mult)
+	print("[FIELD EFFECT][calculate] Element: %d | FE Bonus: %d | (%d x %d) ((%d + %d) x %d = %d)" % [
+		elem, bonus[elem],
+		getBonus(elem), mult,
+		x, rawBonus, FEbonus,
+		(rawBonus + x) * FEbonus
+	])
+	return round((rawBonus + x) * FEbonus)
+
 func update() -> void: #TODO: Count number of chains and individual elements
 	var last : int = 0
 	var temp : int = 0

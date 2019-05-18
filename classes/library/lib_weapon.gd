@@ -3,8 +3,6 @@ extends "res://classes/library/lib_base.gd"
 const LIBEXT_SKILL_LIST = "loaderSkillList"
 
 
-
-
 var example = {
 	"debug" : {
 		"debug": {

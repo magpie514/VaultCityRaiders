@@ -1,6 +1,12 @@
 var stats = core.stats
 var skill = core.skill
 
+enum { #Flags for scripted fights.
+	EVENTFLAGS_NONE =       0x0000,     #Normal operation
+	EVENTFLAGS_INVINCIBLE = 0x0001,     #Character has plot armor and negates most damage.
+}
+
+
 # Basic stats ##################################################################
 var name = ""													#Name of the character
 var level = int()											#XP level
@@ -50,22 +56,24 @@ class BattleStats:
 	var counter : Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
 	var delayed : Array = []          #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
 	# Defensive stats ###########################################################################
-	var AD : int = 100                #Active Defense. Global final damage multiplier.
-	var decoy : int = 0               #Chance to draw enemy attacks to self.
-	var guard : int = 0               #Prevents an amount of damage. Like a health buffer.
-	var barrier : int = 0             #Nullifies X damage from the received total.
-	var dodge: int = 0								#Dodge rate%
-	var forceDodge : int = 0          #Always dodges X attacks this turn unless they are set to not miss
-	var chain : int = 0               #Chain counter.
-	var parry : Array = [100, 33, core.skill.PARRY_NONE]
-	var protectedBy : Array = []	    #Array of arrays, [pointer to defender, chance of defending]
+	var AD:int = 100                 #Active Defense. Global final damage multiplier.
+	var decoy:int = 0                #Chance to draw enemy attacks to self.
+	var guard:int = 0                #Prevents an amount of damage. Like a health buffer.
+	var absoluteGuard:int = 20       #Absolute Guard. Is it not depleted over turns and takes over regular guard until depleted.
+	var barrier:int = 0              #Nullifies X damage from the received total.
+	var dodge:int = 0                #Dodge rate%
+	var forceDodge:int = 0           #Always dodges X attacks this turn unless they are set to not miss
+	var chain:int = 0                #Chain counter.
+	var parry:Array = [100, 33, core.skill.PARRY_NONE]
+	var protectedBy:Array = []	     #Array of arrays, [pointer to defender, chance of defending]
 	# Item use stats ############################################################################
-	var itemSPD : int = 090						#Item use speed.
-	var itemAD : int = 110            #Item use AD set.
+	var itemSPD:int = 090            #Item use speed.
+	var itemAD:int = 110             #Item use AD set.
 	# Misc stats ################################################################################
-	var overheat : int = 0            #Reduces by 1 per turn. Prevents overheat skills from being used.
+	var eventFlags:int = 0           #Event special flags such as plot armor.
+	var overheat : int = 0           #Reduces by 1 per turn. Prevents overheat skills from being used.
 	var lastAction = null
-	var overAction:Array = []					#Temporary storage for Over actions while AI or player are choosing.
+	var overAction:Array = []        #Temporary storage for Over actions while AI or player are choosing.
 	func set_over(x:int) -> void:
 		over = core.clampi(x, 0, 100)
 
@@ -80,7 +88,24 @@ func checkParalysis() -> bool:
 		return true if core.chance(50) else false
 
 func clampHealth() -> void:
-	HP = int(clamp(HP, 0, maxHealth()))
+	HP = core.clampi(HP, 0, maxHealth())
+
+func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:
+	var temp:float = .0
+	if flags & core.skill.OPFLAGS_VALUE_PERCENT:
+		temp = float(maxHealth()) * core.percent(x)
+	else:
+		temp = float(x)
+	if elem != 0:
+		temp = core.battle.control.state.field.calculate(temp, elem, elemMult)
+	var result:int = round(temp) as int
+	if flags & core.skill.OPFLAGS_VALUE_ABSOLUTE:
+		battle.guard = result
+	else:
+		if battle.absoluteGuard > 0:
+			battle.absoluteGuard += result
+		else:
+			battle.guard += result
 
 func recalculateStats():
 	pass
@@ -177,7 +202,7 @@ func setOver(x:int, absolute:bool = false) -> void:
 			battle.over = x
 		else:
 			battle.over += x
-		battle.over = clamp(battle.over, 0, 100) as int
+		battle.over = core.clampi(battle.over, 0, 100)
 
 func getOverN() -> float:
 	#Not meant to be called out of battle.
@@ -196,24 +221,43 @@ func calcSPD(S, lv) -> int:
 func getEquipSpeedMod():
 	return 0
 
-func damageProtectionPass(x : int, info) -> int:
-	if battle.guard > 0:
-		var check = battle.guard - x
+func damageProtectionPass(x:int, info, ignoreDefs = false) -> int:
+	# Modify damage according to defenses and deplete said defenses if applicable.
+	if battle.eventFlags & EVENTFLAGS_INVINCIBLE:
+		info.barrierFullBlock = true
+		print("[CHAR_BASE][damageProtectionPass] %s has plot armor." % name)
+		return 0 #Character has plot armor, act as a full barrier block.
+
+	if ignoreDefs: return x #Incoming damage ignores defenses.
+
+	if battle.absoluteGuard > 0: #Absolute Guard is active, prioritize over regular.
+		var check:int = battle.absoluteGuard - x
 		if check > 0:
-			x = x - battle.guard
-			battle.guard = check
-		else:
-			x = x - battle.guard
+			x = x - battle.absoluteGuard
+			battle.absoluteGuard = check
+		else: #Guard Break.
+			x -= battle.absoluteGuard
+			battle.absoluteGuard = 0
 			battle.guard = 0
 			info.guardBreak = true
-	if battle.barrier > 0:
+	else: #No Absolute Guard, check regular.
+		if battle.guard > 0:
+			var check:int = battle.guard - x
+			if check > 0:
+				x -= battle.guard
+				battle.guard = check
+			else: #Guard Break
+				x -= battle.guard
+				battle.guard = 0
+				info.guardBreak = true
+	if battle.barrier > 0: #Process barrier afterwards.
 		x = x - battle.barrier
-		if x <= 0:
+		if x <= 0: #Full block, damage was completely negated.
 			info.barrierFullBlock = true
 	return x
 
-func damageResistModifier(x : float, _type : int, energyDMG : bool) -> Array:
-	# Apply Kinetic/Energy damage modifiers.
+func damageResistModifier(x:float, _type:int, energyDMG:bool) -> Array:
+	# Apply Kinetic/Energy damage modifiers first..
 	if energyDMG: x = x * core.percent(battle.stat.RES.DMG_ENERGY)
 	else:         x = x * core.percent(battle.stat.RES.DMG_KINETIC)
 
@@ -229,16 +273,16 @@ func damageResistModifier(x : float, _type : int, energyDMG : bool) -> Array:
 	var result = x * resistMod
 	return [result, weak]
 
-func finalizeDamage(x, info) -> int:
+func finalizeDamage(x, info, ignoreDefs:bool = false) -> int:
 	#Apply active defense, reduce damage from guard or barrier.
 	#var finalDmg : float = x * (float(battle.AD) * .01)
-	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info)
-	return clamp(finalDmg, 1, core.skill.MAX_DMG) as int
+	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info, ignoreDefs)
+	return core.clampi(finalDmg, 1, core.skill.MAX_DMG)
 
 func defeatMessage() -> String:
 	return "%s is down!" % name
 
-func damage(x : int, data, silent = false) -> Array:
+func damage(x:int, data, silent:bool = false) -> Array:
 	var temp = HP - x
 	var overkill : bool = false
 	var defeat : bool = false
@@ -254,7 +298,7 @@ func damage(x : int, data, silent = false) -> Array:
 		display.damage([[x, data[0], overkill, data[2], data[3]]])
 	return [overkill, defeat]
 
-func setAD(x : int, absolute : bool = false):
+func setAD(x:int, absolute:bool = false):
 	if absolute:
 		battle.AD = x
 	else:

@@ -141,10 +141,13 @@ func update():
 		var vitalDiff = lastVital - vital
 		if chr.battle != null: #Show battle-only stuff.
 			updateAD(chr.battle.AD)
-			if chr.battle.guard > 0: #Show Guard indicator.
+			if chr.battle.guard > 0 or chr.battle.absoluteGuard > 0: #Show Guard indicator.
 				$Guard.show()
 				$ComplexBar/GuardBlock.show()
-				$Guard.text = str(chr.battle.guard)
+				if chr.battle.absoluteGuard > 0:
+					$Guard.text = str(chr.battle.absoluteGuard)
+				else:
+					$Guard.text = str(chr.battle.guard)
 			else:
 				$ComplexBar/GuardBlock.hide()
 				$Guard.hide()
