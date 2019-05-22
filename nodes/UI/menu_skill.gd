@@ -17,7 +17,7 @@ func init(C):
 	var button = null
 	var S = null
 	var TID = null
-	$Label.text = str("%s's skills" % C.name)
+	$ColorRect/Label.text = str("%s's skills" % C.name)
 	for i in C.skills:
 		TID = C.getSkillTID(i)
 		S = core.getSkillPtr(TID)

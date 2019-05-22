@@ -10,7 +10,9 @@ enum { #Flags for scripted fights.
 # Basic stats ##################################################################
 var name = ""													#Name of the character
 var level = int()											#XP level
-var status = core.skill.STATUS_NONE		#Status
+var status:int = 0										#Status (Primary) #TODO:Rename to condition1
+var condition2:int = 0								#Condition (Secondary)
+var condition3:Array = []							#Condition (Damage over time)
 
 var HP : int = 0											#Character's vital (HP)
 var statBase = stats.create()					#Base stats
@@ -45,27 +47,29 @@ class BattleStats:
 	# Switches ##################################################################################
 	var turnActed : bool = false      #True if character acted this turn
 	var paralyzed : bool = false      #If true, character is unable to act due to paralysis this turn.
+	var panic:bool = false						#If true, character is panicing and unable to act for this turn.
 	var scanned : bool = false        #If scanned, use the scanned resists set.
 	# Buffs/Debuffs/Effects #####################################################################
-	var buff : Array = []             #Active buffs (stack of 3)
-	var debuff : Array = []           #Active debuffs (stack of 3)
-	var effect : Array = []           #Active special effects (max 8, will fail if no slots)
+	var buff:Array = []              #Active buffs (stack of 3)
+	var debuff:Array = []            #Active debuffs (stack of 3)
+	var effect:Array = []            #Active special effects (max 8, will fail if no slots)
   # Onhit activations #########################################################################
-	var follow : Array = []           #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
-	var chase : Array = []            #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
-	var counter : Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
-	var delayed : Array = []          #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
+	var follow:Array = []            #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
+	var chase:Array = []             #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
+	var counter:Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
+	var delayed:Array = []           #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
 	# Defensive stats ###########################################################################
 	var AD:int = 100                 #Active Defense. Global final damage multiplier.
 	var decoy:int = 0                #Chance to draw enemy attacks to self.
 	var guard:int = 0                #Prevents an amount of damage. Like a health buffer.
-	var absoluteGuard:int = 20       #Absolute Guard. Is it not depleted over turns and takes over regular guard until depleted.
+	var absoluteGuard:int = 0        #Absolute Guard. Is it not depleted over turns and takes over regular guard until depleted.
 	var barrier:int = 0              #Nullifies X damage from the received total.
 	var dodge:int = 0                #Dodge rate%
 	var forceDodge:int = 0           #Always dodges X attacks this turn unless they are set to not miss
 	var chain:int = 0                #Chain counter.
 	var parry:Array = [100, 33, core.skill.PARRY_NONE]
 	var protectedBy:Array = []	     #Array of arrays, [pointer to defender, chance of defending]
+	var defending:bool = false       #Character is marked as defending until the end of the turn.
 	# Item use stats ############################################################################
 	var itemSPD:int = 090            #Item use speed.
 	var itemAD:int = 110             #Item use AD set.
@@ -138,6 +142,7 @@ func initBattleTurn() -> void:
 	battle.barrier = 0
 	battle.forceDodge = 0
 	battle.protectedBy.clear()
+	battle.defending = false
 	battle.follow.clear()
 	battle.chase.clear()
 	battle.overAction.clear()
@@ -329,6 +334,7 @@ func defeat():
 		battle.AD = 100
 		battle.dodge = 0
 		battle.forceDodge = 0
+		battle.defending = false
 		battle.buff.clear()
 		battle.debuff.clear()
 		battle.effect.clear()
@@ -510,28 +516,47 @@ func dodgeAttack(user):
 	battle.turnDodges += 1
 	display.message("Dodged!", false, "EFEFEF")
 
-func canAct() -> bool:
-	match status:
+func canAct() -> bool: #Checks if char can perform a regular action.
+	match status: #Main Condition check.
 		skill.STATUS_DOWN:    return false
 		skill.STATUS_STASIS:  return false
 		skill.STATUS_PARA:    return battle.paralyzed
 		skill.STATUS_STUN:    return false
-		_:                    return true
+#		skill.CONDITION_DOWN:      return false
+#		skill.CONDITION_PARALYSIS: return battle.paralyzed
+#		skill.CONDITION_NARCOSIS:  return false
+#		skill.CONDITION_CRYO:      return false
+#		skill.CONDITION_CONTAINED: return false
+	# Secondary Condition checks.
+	if condition2 & skill.CONDITION_STUN:   return false
+	if condition2 & skill.CONDITION_PANIC:  return battle.panic
+	if condition2 & skill.CONDITION_STASIS: return false
+	return true
+		
+		
+func canOver() -> bool: #Checks if char can perform Over actions.
+	match status:
+		skill.CONDITION_DOWN:      return false #Is defeated and cannot use Over.
+		skill.CONDITION_CRYO:      return false #Is frozen and cannot use Over.
+		skill.CONDITION_CONTAINED: return false #Is contained and cannot use Over.
+	if condition2 & skill.CONDITION_STASIS: return false
+	if condition2 & skill.CONDITION_PANIC:  return false
+	return true
 
-func canFollow(S, lv, target) -> bool:
+func canFollow(S:Dictionary, lv:int, target) -> bool: #Checks if char can do a followup action like a combo.
 	if canAct():
 		if target.filter(S):
 			return true
 	return false
 
-func updateFollows() -> void:
+func updateFollows() -> void: #Updates followup actions..
 	var newFollows : Array = []
 	for i in battle.follow:
 		if i[1] > 0:
 			newFollows.push_front(i)
 	battle.follow = newFollows
 
-func canCounter(target, element: int, data: Array):
+func canCounter(target, element:int, data:Array): #Checks if char is able to perform a counter skill.
 	var C = battle.counter
 	print("[CHAR_BASE][canCounter] Checking for counter...")
 	if C[2] != null and C[5] > 0: #Check if skill isn't null and there are enough uses left.
@@ -544,10 +569,10 @@ func canCounter(target, element: int, data: Array):
 				return [true, [self, C[0], C[1], C[2], C[3], C[4]]]
 	return [false, null]
 
-func isAble() -> bool:
+func isAble() -> bool: #Checks if character is active.
 	return false if status == skill.STATUS_DOWN else true
 
-func filter(S:Dictionary) -> bool:
+func filter(S:Dictionary) -> bool: #Checks if character meets the conditions to be targeted.
 	match S.filter:
 		skill.FILTER_ALIVE:
 			return false if (status == skill.STATUS_DOWN or status == skill.STATUS_STASIS) else true
@@ -557,17 +582,19 @@ func filter(S:Dictionary) -> bool:
 			return false if status != skill.STATUS_DOWN else true
 		skill.FILTER_STASIS:
 			return true if status == skill.STATUS_STASIS else false
+			#return true if status == skill.CONDITION_STASIS else false
 		skill.FILTER_STATUS:
 			return false if ( status != skill.STATUS_NONE and status != skill.STATUS_DOWN ) else true
+			#return false if (status != skill.CONDITION_GREEN and status != skill.CONDITION_DOWN ) else true
 		skill.FILTER_DISABLE:
 			return true
 		_:
 			return true
 
-func refreshRow() -> void:
+func refreshRow() -> void: #Updates the value of current row based on position.
 	row = 0 if slot < group.ROW_SIZE else 1
 
-func setInitAD(S, lv) -> void:
+func setInitAD(S:Dictionary, lv:int) -> void: #Sets Active Defense before battle resolution.
 	setAD(S.initAD[lv], true)
 	print("[SKILL][setInitAD] Active Defense set to %d" % battle.AD)
 

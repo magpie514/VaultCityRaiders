@@ -1,11 +1,10 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://nodes/UI/battle/battle_controls.gd" type="Script" id=1]
 [ext_resource path="res://nodes/UI/battle/WeaponPanel.gd" type="Script" id=2]
 [ext_resource path="res://nodes/UI/weapon.tscn" type="PackedScene" id=3]
 [ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=4]
 [ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=5]
-[ext_resource path="res://resources/tres/fonts/name_font.tres" type="DynamicFont" id=6]
 [ext_resource path="res://nodes/UI/menu_weapon.tscn" type="PackedScene" id=7]
 [ext_resource path="res://nodes/UI/menu_skill.tscn" type="PackedScene" id=8]
 [ext_resource path="res://nodes/UI/menu_item.tscn" type="PackedScene" id=9]
@@ -305,7 +304,7 @@ margin_top = 2.0
 margin_right = 250.0
 margin_bottom = 25.0
 custom_styles/normal = SubResource( 6 )
-custom_fonts/font = ExtResource( 6 )
+custom_fonts/font = ExtResource( 13 )
 text = "NAME"
 valign = 1
 

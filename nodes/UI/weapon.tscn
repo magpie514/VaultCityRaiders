@@ -131,8 +131,8 @@ margin_top = 3.0
 margin_right = 227.0
 margin_bottom = 20.0
 text = "XX"
-align = 1
-valign = 2
+align = 2
+valign = 1
 
 [node name="Label2" type="Label" parent="."]
 modulate = Color( 1, 1, 1, 0.760784 )
@@ -152,20 +152,20 @@ margin_top = 3.0
 margin_right = 200.0
 margin_bottom = 20.0
 text = "XXXXXXXX"
-valign = 2
+valign = 1
 
 [node name="WeaponIcon" type="Panel" parent="."]
 margin_left = 11.0
 margin_top = 3.0
-margin_right = 27.0
+margin_right = 30.0
 margin_bottom = 19.0
 mouse_filter = 2
 custom_styles/panel = SubResource( 9 )
 
 [node name="Sprite" type="Sprite" parent="WeaponIcon"]
 self_modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 9, 7 )
-scale = Vector2( 0.101562, 0.101562 )
+position = Vector2( 8.75002, 8 )
+scale = Vector2( 0.097656, 0.09375 )
 texture = ExtResource( 4 )
 
 [node name="Current" type="Panel" parent="."]
@@ -173,5 +173,4 @@ margin_right = 230.0
 margin_bottom = 23.0
 mouse_filter = 2
 custom_styles/panel = SubResource( 10 )
-
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

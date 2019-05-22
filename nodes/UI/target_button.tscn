@@ -1,7 +1,7 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://nodes/UI/target_button.gd" type="Script" id=1]
-[ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://resources/tres/fonts/sml_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=4]
 
@@ -16,14 +16,6 @@ corner_radius_top_right = 4
 corner_radius_bottom_left = 8
 corner_detail = 1
 anti_aliasing = false
-
-[sub_resource type="DynamicFont" id=2]
-size = 10
-outline_color = Color( 0.0901961, 0.933333, 0.956863, 0.293804 )
-use_mipmaps = true
-extra_spacing_top = -6
-extra_spacing_char = -1
-font_data = ExtResource( 2 )
 
 [sub_resource type="StyleBoxFlat" id=3]
 border_width_top = 1
@@ -52,8 +44,8 @@ script = ExtResource( 1 )
 margin_left = 6.0
 margin_top = 3.0
 margin_right = 78.0
-margin_bottom = 15.0
-custom_fonts/font = SubResource( 2 )
+margin_bottom = 13.0
+custom_fonts/font = ExtResource( 2 )
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 valign = 2
 clip_text = true
@@ -74,16 +66,16 @@ clip_text = true
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_left = 13.0
 margin_top = 15.0
-margin_right = 70.0
-margin_bottom = 20.0
+margin_right = 77.0
+margin_bottom = 21.0
 mouse_filter = 2
 color = Color( 0, 0, 0, 0.309804 )
 
 [node name="Bar" parent="." instance=ExtResource( 4 )]
 margin_left = 14.0
 margin_top = 16.0
-margin_right = 69.0
-margin_bottom = 19.0
+margin_right = 76.0
+margin_bottom = 20.0
 color = Color( 0.94902, 0.745098, 0.0431373, 1 )
 
 [node name="Button" type="Button" parent="."]

@@ -1,8 +1,6 @@
 var stats = core.stats
 var MAX_DMG = stats.MAX_DMG
 
-
-
 # Regular constants
 const SKILL_MISSED = -1  #TODO: Review these.
 const SKILL_FAILED = -2
@@ -36,44 +34,27 @@ enum { #Filter
 	FILTER_STASIS,					#Target must be in stasis (special case)
 }
 
-# enum { #Filter Extra #TODO:Remove entirely. Makes more sense to store some args in skill data and use opcodes to check for them.
-# #When any skill activates (for every number of activations), the skill will produce an extra effect
-# #if it matches the filter. If failed, the extra effect doesn't activate.
-# #A single argument is provided.
-# 	FILTER_EX_NONE,			#Extra effect is ignored entirely.								arg: null
-# 	FILTER_EX_ALIVE, 		#Activates if target is alive.										arg: null
-# 	FILTER_EX_DOWN,			#Activates if target is incapacitated. 						arg: null
-# 	FILTER_EX_STATUS,		#Activates if target has a specific status ID. 		arg: int
-# 	FILTER_EX_ANY_STATUS, #Activates if target has any status ID.					arg: null
-# 	FILTER_EX_BUFF,			#Activates if target has a specific buff.					arg: TID
-# 	FILTER_EX_DEBUFF,		#Activates if target has a specific debuff.				arg: TID
-# 	FILTER_EX_ANY_BUFF,	#Activates if target has any buff.								arg: null
-# 	FILTER_EX_ANY_DEBUFF, #Activates if target has any debuff.						arg: null
-# 	FILTER_EX_ANY_BUFF_DEBUFF, #Activates if target has any buff/debuff		arg: null
-# 	FILTER_EX_DEFEND,		#Activates if target is or isn't defending.				arg: bool
-# 	FILTER_EX_ACT_ORDER,#Activates if target acts before/after user.			arg: bool
-# 	FILTER_EX_MAINRACE,	#Activates if target matches a general race.			arg: int
-# 	FILTER_EX_TID,			#Activates if target is a specific TID.						arg: TID
-# }
-
 enum { #General race types
-	RACE_NONE,
-	RACE_HUMAN,
-	RACE_CONSTRUCT,
-	RACE_MACHINE,
-	RACE_SPIRIT,
-	RACE_ELEMENTAL,
-	RACE_ANGEL,
-	RACE_DEMON,
-	RACE_DRAGON,
-	RACE_FAIRY,
-	RACE_UNDEAD,
-	RACE_BEAST,
-	RACE_GOD,
-	RACE_ELDRITCH,
-	RACE_ORIGINATOR,
+	#TODO: Make use of these for weapon "Brand" stuff, where hitting a target of the
+	#specified race gives a damage bonus.
+	RACE_NONE,       #Shouldn't happen.
+	RACE_HUMAN,      #A regular human. Or the breed that produces adventurers.
+	RACE_CONSTRUCT,  #An artificial, non-strictly-mechanical lifeform.
+	RACE_MACHINE,    #An artificial, strictly mechanical lifeform.
+	RACE_SPIRIT,     #A spiritual being such as a ghost, youkai or similar.
+	RACE_ELEMENTAL,  #A specialized form of spirit born from the forces of the universe.
+	RACE_ANGEL,      #A divine being or beast, usually servants to the ghosts.
+	RACE_DEMON,      #A usually malevolent lifeform created by evil desires.
+	RACE_DRAGON,     #A powerful being attuned to the primal chaos, usually winged reptiles.
+	RACE_FAIRY,      #A powerful being attuned to natural forces.
+	RACE_UNDEAD,     #A deceased lifeform kept functioning by external energies.
+	RACE_BEAST,      #A primal being of varying characteristics. Usually non-sapient.
+	RACE_GOD,        #A powerful being born from the power of faith.
+	RACE_ELDRITCH,   #An alien lifeform directly born from primal chaos. Wildcards.
+	RACE_ORIGINATOR, #Only for Tiamat and Cromwell. The most powerful beings with the power to create lifeforms.
 }
 
+#TODO: Write some sort of function to check if all lists like this have a proper match.
 const racetypes = {
 	RACE_NONE: { name = "Unknown", desc = "???" },
 	RACE_HUMAN: { name = "Human", desc = "" },
@@ -90,6 +71,13 @@ const racetypes = {
 	RACE_GOD: { name = "God", desc = "" },
 	RACE_ELDRITCH: { name = "Eldritch", desc = "" },
 	RACE_ORIGINATOR: { name = "Originator", desc = "" },
+}
+
+enum { #Race Aspect
+	RACEF_NON = 0x00,
+	RACEF_MEC = 0x01, #Race has mechanical parts
+	RACEF_BIO = 0x02, #Race has organic parts
+	RACEF_SPI = 0x04, #Race has a soul
 }
 
 enum { #Weapon classes
@@ -122,14 +110,6 @@ const weapontypes = {
 	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
 }
 
-
-enum { #Race Aspect
-	RACEF_NON = 0x00,
-	RACEF_MEC = 0x01, #Race has mechanical parts
-	RACEF_BIO = 0x02, #Race has organic parts
-	RACEF_SPI = 0x04, #Race has a soul
-}
-
 enum { MODSTAT_NONE, MODSTAT_ATK, MODSTAT_DEF, MODSTAT_ETK, MODSTAT_EDF, MODSTAT_AGI, MODSTAT_LUC }
 enum {
 	REQUIRES_NONE =	0x00,
@@ -145,7 +125,7 @@ enum {
 	TYPE_ITEM,   #Item skill.
 }
 
-enum {
+enum { #Over skill costs.
 	OVER_COST_1 = 033, #Tier 1 Over skill cost.
 	OVER_COST_2 = 050, #Tier 2 Over skill cost.
 	OVER_COST_3 = 100, #Tier 3 Over skill cost.
@@ -165,11 +145,11 @@ enum { #Skill effects
 	EFFECT_SPECIAL = 	0x1000, #Runs effect code ES at the start of a turn
 }
 
-enum { #What to do in case of effect collision
+enum { #What to do in case of effect collision (same effect active on target)
 	EFFCOLL_REFRESH,	#Default, reset effect to maximum duration.
 	EFFCOLL_ADD,			#Add maximum duration to current duration.
 	EFFCOLL_FAIL,			#Effect fails
-	EFFCOLL_NULLIFY,	#Cancels effect
+	EFFCOLL_NULLIFY,	#Cancels or toggles the effect
 }
 
 enum EffectStat { #Effect stat mods
@@ -189,6 +169,7 @@ enum EffectStat { #Effect stat mods
 
 # Character status
 # TODO: Limit those to the ones that affect turn execution and set the rest as sub-status.
+# TODO: Rename to "Condition"
 enum {
 	STATUS_NONE,			#All good
 	STATUS_DOWN,			#Incapacitated (not quite dead but defeated enough)
@@ -204,7 +185,49 @@ enum {
 	STATUS_STUN,			#Target cannot act for the current turn.
 }
 
+# Conditions:
+# Machines are inherently immune to Narcosis. Dragons cannot be contained.
 enum {
+	CONDITION_GREEN = 0,  #All good.
+# Primaries: Only one can be active at once. Last overrides current.
+	CONDITION_DOWN,       #Target is incapacitated, but not dead, can still be brought back to action. Resistance to this status is used for insta-kills.
+	CONDITION_PARALYSIS,  #Target is paralyzed and has a 50% chance of being unable to execute normal actions. Over actions ignore this.
+	CONDITION_NARCOSIS,   #Target is in an artifical stupor and won't be able to execute normal or Over actions, but receiving hits will randomly cancel it.
+	CONDITION_CRYO,       #Target is frozen and unable to execute normal or Over actions, and weaker to kinetic damage. Fire does extra damage but unfreezes early.
+	CONDITION_CONTAINED,  #Target is contained in an energy field and unable to execute normal or Over actions, and weaker to energy damage, but more resistant of kinetic damage.
+# Secondaries: Any can be active at any time.
+	CONDITION_STUN,       #Target is unable to act for this turn.
+	CONDITION_BLIND,      #Target skill accuracy is halved.
+	CONDITION_CURSE,      #Target is damaged by a factor when it damages other targets.
+	CONDITION_PANIC,      #Target is unable to execute Over actions, and has a 30% chance of being unable to act.
+	CONDITION_STASIS,     #Target is put in stasis and removed from normal combat until expiring. Skills can specifically aim for targets in stasis.
+}
+
+enum { TARGET_GROUP_ALLY, TARGET_GROUP_ENEMY, TARGET_GROUP_BOTH }
+
+const statusInfo = {
+	STATUS_NONE : 	{ name = "OK", desc = "restored", color = "00FF88", short = "" },
+	STATUS_DOWN : 	{ name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = "DWN" },
+	STATUS_STASIS : { name = "Stasis", desc = "put in stasis", color = "440088", short = "STA" },
+	STATUS_PARA :		{ name = "Paralysis", desc = "paralized", color = "FFFF00", short = "PAR" },
+	STATUS_BLIND:		{ name = "Blind", desc = "blinded", color = "333333", short = "BLI" },
+	STATUS_CURSE: 	{ name = "Curse", desc = "cursed", color = "FF00FF", short = "CUR" },
+	STATUS_SLEEP: 	{ name = "Sleep", desc = "put to sleep", color = "0000FF", short = "SLP" },
+}
+
+
+var messageColors = {
+	buff = "62EAFF",
+	debuff = "FFA9B0",
+	statup = "FFDAE0",
+	statdown = "E3E2FF",
+	chain = "FBFFA5",
+	protect = "BEFFCE",
+	followup = "DEF0FC",
+}
+
+enum { #Skill message settings
+#TODO: Remove, they are not needed anymore, just pass a dictionary with these values and specify the value like {USER} or so.
 	MSG_NONE = 			0x00,
 	MSG_USER = 			0x01,
 	MSG_TARGET = 		0x02,
@@ -319,7 +342,8 @@ enum { #Skill function codes.
 	OPCODE_ATTACK,						#Standard attack function with power%. Tries to inflict each hit if capable.
 	OPCODE_DEFEND,						#Standard defense function. TODO: Define defense role's further.
 	OPCODE_FORCE_INFLICT,			#[@]Attempt to inflict an ailment independent from attack.
-	OPCODE_DAMAGERAW,					#[@%]Reduce target's HP by given value (no check)
+	OPCODE_DAMAGERAW,					#[@%]Reduce target's HP by given value (no accuracy check)
+	OPCODE_SELF_DAMAGE,       #[%]Shortcut for delivering recoil/self damage to the user.
 	OPCODE_DEFEAT,						#[@]Instantly defeats target with a given chance. This bypasses regular instant death protection and is mostly used for self-destructs with potential chances of survival.
 
 	# Followup functions #########################################################
@@ -352,16 +376,17 @@ enum { #Skill function codes.
 	OPCODE_HEALALL,						#[=+]Heal user's party with power X.
 	OPCODE_CURE,							#[@]Restores target's status to normal.
 	OPCODE_RESTOREPART,				#[@]Restores up to X disabled body parts. 3+ restores them all.
-	OPCODE_REVIVE,						#[+]Target is revived with X health.
+	OPCODE_REVIVE,						#[+]Target is revived with X health. TODO: Modify to [@] so it can be used to prevent a death as well?
 	OPCODE_OVERHEAL,					#[@]Sets amount of healing allowed to go past maximum health for this turn.
 
 	# Standard effect functions ##################################################
+	# TODO: Move a few of these to stat mods.
 	OPCODE_AD,								#[@=]Set target's active defense% for the rest of the turn.
 	OPCODE_DECOY,							#[@=]Set target's decoy% for the rest of the turn.
 	OPCODE_BARRIER,						#[@=]Set target's barrier (all incoming damage is reduced by X) for the rest of the turn.
 	OPCODE_GUARD, 						#[@=%]Set target's guard (a total of X damage is negated) for the rest of the turn.
 	OPCODE_GUARD_RAW,					#[@=%]Set target's guard for the rest of the turn. Not modified by elemental bonuses.
-	OPCODE_ABSOLUTE_GUARD,		#[@]Special type of guard that isn't depleted over turns.
+	OPCODE_ABSOLUTE_GUARD,		#[@%]Special type of guard that isn't depleted over turns.
 	OPCODE_DODGE,							#[@=]Set target's dodge rate for the rest of the turn.
 	OPCODE_FORCE_DODGE,				#[@=]Set target's forced dodges for the rest of the turn. Automatically dodges without checks.
 	OPCODE_PROTECT,						#[@]User protects target with an X% chance until the end of the turn.
@@ -392,7 +417,7 @@ enum { #Skill function codes.
 	OPCODE_NUMHITS,						#Sets both MINHITS and MAXHITS to the given value.
 
 	OPCODE_NOMISS,						#If 1, following combat effects won't miss.
-	OPCODE_NOCAP,							#If 1, damage can go over cap (32000).
+	OPCODE_NOCAP,							#If 1, damage can go over cap (32000). #TODO: Make it an event flag.
 	OPCODE_IGNORE_DEFS,				#Attack ignores target's guard, barrier and defender.
 	OPCODE_RANGE,							#Switch ranged property to true (if not 0) or false (if 0).
 	OPCODE_ENERGY,						#Switch energy property to true (if not 0) or false (if 0).
@@ -494,6 +519,12 @@ enum { #Skill function codes.
 	OPCODE_IF_EF_BONUS_LESS_EQUAL_THAN, #[!]Execute next line if bonus for current element <= X.
 	OPCODE_IF_EF_BONUS_MORE_EQUAL_THAN, #[!]Execute next line if bonus for current element >= X.
 	OPCODE_IF_ACT,                      #[!]Execute next line if target has already acted.
+	OPCODE_IF_GUARDING,                 #[!]Execute next line if target is defending.
+#TODO: Think of a better mechanism to specify TIDs or lists of TIDs for these.
+	OPCODE_IF_BUFF,											#[!]Execute next line if target has active buff with given TID. -1 for any.
+	OPCODE_IF_DEBUFF,										#[!]Execute next line if target has active debuff with given TID. -1 for any.
+	OPCODE_IF_TARGET_TID,								#[!]Execute next line if target matches given TID.
+###/###
 	OPCODE_IF_DAMAGED,                  #[!]Execute next line if target was damaged this turn.
 	OPCODE_IF_SELF_DAMAGED,             #[!]Execute next line if user received damage this turn.
 	OPCODE_IF_HITCHECK,                 #[!]Execute next line if a standard hit check succeeds.
@@ -871,28 +902,6 @@ var opcodeInfo = {
 	},
 }
 
-enum { TARGET_GROUP_ALLY, TARGET_GROUP_ENEMY, TARGET_GROUP_BOTH }
-
-const statusInfo = {
-	STATUS_NONE : 	{ name = "OK", desc = "restored", color = "00FF88", short = "" },
-	STATUS_DOWN : 	{ name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = "DWN" },
-	STATUS_STASIS : { name = "Stasis", desc = "put in stasis", color = "440088", short = "STA" },
-	STATUS_PARA :		{ name = "Paralysis", desc = "paralized", color = "FFFF00", short = "PAR" },
-	STATUS_BLIND:		{ name = "Blind", desc = "blinded", color = "333333", short = "BLI" },
-	STATUS_CURSE: 	{ name = "Curse", desc = "cursed", color = "FF00FF", short = "CUR" },
-	STATUS_SLEEP: 	{ name = "Sleep", desc = "put to sleep", color = "0000FF", short = "SLP" },
-}
-
-
-var messageColors = {
-	buff = "62EAFF",
-	debuff = "FFA9B0",
-	statup = "FFDAE0",
-	statdown = "E3E2FF",
-	chain = "FBFFA5",
-	protect = "BEFFCE",
-	followup = "DEF0FC",
-}
 
 class SkillState:
 	# Core attack stats #########################
@@ -914,7 +923,7 @@ class SkillState:
 	var ranged : bool =           false    #If true, ignore range penalties and targetting restrictions.
 	var ignoreDefs : bool =       false    #If true, ignore special defenses (guard, barrier).
 	# Infliction stats ##########################
-	var inflictPow : int =        0
+	var inflictPow : int =        0        #TODO: Redo this to use for Disables instead, move status inflict to gauge-based.
 	var inflictBonus : int =      0
 	# Effect ####################################
 	var setEffect : bool =        false    #If true, try to set an effect.
@@ -1308,7 +1317,7 @@ func processDamageRaw(S, user, target, value, percent) -> int:                 #
 
 func damageRaw(S, level, user, target, state, value:int, flags:int = 0, bonus:bool = false) -> void:
 	var defeats:bool = false
-	var temp:float = ( float(target.maxHealth()) * core.percent(value) ) if flags & OPFLAGS_VALUE_PERCENT else value
+	var temp:float = ( float(target.maxHealth()) * core.percent(value) ) if flags & OPFLAGS_VALUE_PERCENT else value as float
 	if bonus: #Add elemental bonuses.
 		temp = core.battle.control.state.field.calculate(temp, state.element, state.fieldEffectMult)
 	if temp > 0:
@@ -1785,6 +1794,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_DEFEND:
 						print(">DEFEND(%s)" % value)
 						variableTarget.display.message("DEFEND", false, messageColors.protect)
+						variableTarget.battle.defending = true
 						if variableTarget is core.Player: #TODO: Enemies too!
 							var overGain:int = variableTarget.calculateTurnOverGains() / 2
 							variableTarget.battle.over += overGain
@@ -2640,6 +2650,34 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								cond_block = (flags & OPFLAGS_BLOCK_START)
 								print("Element bonus for %s: %s < %s. Skipping next line." % [state.element, core.battle.control.state.field.bonus[state.element], value])
 								skipLine = true
+
+					OPCODE_IF_ACT:
+						print(">IF TARGET HAS ACTED %s" % value)
+						if s_if(variableTarget.battle.turnActed and value != 0, flags):
+							print("%s has acted. Executing next line" % [int(value)])
+						else:
+							if flags & OPFLAGS_QUIT_ON_FALSE:
+								print("%s has not acted. Aborting execution." % [int(value)])
+								control.continueSkill()
+								return
+							else:
+								cond_block = (flags & OPFLAGS_BLOCK_START)
+								print("%s has not acted. Skipping next line." % [int(value)])
+								skipLine = true
+					OPCODE_IF_GUARDING:
+						print(">IF GUARDING %s" % value)
+						if s_if(variableTarget.battle.guarding and value != 0, flags):
+							print("%s is guarding. Executing next line" % [int(value)])
+						else:
+							if flags & OPFLAGS_QUIT_ON_FALSE:
+								print("%s is not guarding. Aborting execution." % [int(value)])
+								control.continueSkill()
+								return
+							else:
+								cond_block = (flags & OPFLAGS_BLOCK_START)
+								print("%s is not guarding. Skipping next line." % [int(value)])
+								skipLine = true
+
 					OPCODE_IF_SYNERGY_PARTY:
 						print(">IF SYNERGY IN PARTY %02d (using %02d)" % [value, value - 1])
 						value = int(value - 1)

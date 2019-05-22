@@ -1,10 +1,10 @@
 [gd_resource type="DynamicFont" load_steps=2 format=2]
 
-[ext_resource path="res://resources/fonts/ume-tgo5.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://resources/fonts/khdotfont-20150527/KH-Dot-Kodenmachou-16.ttf" type="DynamicFontData" id=1]
 
 [resource]
 outline_size = 1
-outline_color = Color( 0, 0.27451, 0.317647, 1 )
+outline_color = Color( 0.0862745, 0.160784, 0.215686, 1 )
 use_mipmaps = true
-use_filter = true
+extra_spacing_char = 1
 font_data = ExtResource( 1 )

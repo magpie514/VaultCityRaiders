@@ -1,8 +1,8 @@
-[gd_resource type="Theme" load_steps=17 format=2]
+[gd_resource type="Theme" load_steps=16 format=2]
 
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://resources/fonts/ume-tgo5.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.146362, 0.147957, 0.171875, 1 )
@@ -135,16 +135,8 @@ border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="DynamicFont" id=13]
-size = 13
-outline_size = 1
-outline_color = Color( 0.0313726, 0.858824, 0.858824, 0.290196 )
-use_mipmaps = true
-font_data = ExtResource( 2 )
-fallback/0 = ExtResource( 3 )
-
 [resource]
-default_font = SubResource( 13 )
+default_font = ExtResource( 3 )
 Button/styles/disabled = SubResource( 1 )
 Button/styles/focus = SubResource( 2 )
 Button/styles/hover = SubResource( 3 )
