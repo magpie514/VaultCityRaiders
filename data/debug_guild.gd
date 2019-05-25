@@ -33,7 +33,7 @@ var data = {
 			race = ["debug", "choujin"],
 			aclass = ["debug", "gdriver"],
 			portrait = null,
-			energyColor = "#0033DD",
+			energyColor = "#0033AA",
 			equip = [
 				{ tid = ["debug", "soldrifl"], level = 0, uses = 25, extra = null, gem = [ [["core", "void"], 900], [["core", "charge"], 900] ] },
 				{ tid = ["debug", "boostbld"], level = 0, uses = 50, extra = null, gem = [ [["core", "protect"], 900], [["core", "power"], 900], [["core", "protect"], 0], [["core", "rebierth"], 0], [["core", "protect"], 0], [["core", "accel"], 900] ] },

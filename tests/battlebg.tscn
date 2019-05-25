@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://tests/battlebg.gd" type="Script" id=1]
-[ext_resource path="res://tests/bgtest_01.tscn" type="PackedScene" id=2]
 
 [node name="BattleView" type="Node2D"]
 z_index = -10
@@ -9,8 +8,6 @@ script = ExtResource( 1 )
 
 [node name="BG" type="Node2D" parent="."]
 z_index = -20
-
-[node name="Root" parent="BG" instance=ExtResource( 2 )]
 
 [node name="Enemy" type="Node2D" parent="."]
 position = Vector2( 480, 360 )

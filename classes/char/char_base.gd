@@ -522,6 +522,7 @@ func canAct() -> bool: #Checks if char can perform a regular action.
 		skill.STATUS_STASIS:  return false
 		skill.STATUS_PARA:    return battle.paralyzed
 		skill.STATUS_STUN:    return false
+		_: pass
 #		skill.CONDITION_DOWN:      return false
 #		skill.CONDITION_PARALYSIS: return battle.paralyzed
 #		skill.CONDITION_NARCOSIS:  return false
@@ -532,13 +533,14 @@ func canAct() -> bool: #Checks if char can perform a regular action.
 	if condition2 & skill.CONDITION_PANIC:  return battle.panic
 	if condition2 & skill.CONDITION_STASIS: return false
 	return true
-		
-		
+
+
 func canOver() -> bool: #Checks if char can perform Over actions.
 	match status:
 		skill.CONDITION_DOWN:      return false #Is defeated and cannot use Over.
 		skill.CONDITION_CRYO:      return false #Is frozen and cannot use Over.
 		skill.CONDITION_CONTAINED: return false #Is contained and cannot use Over.
+		_: pass
 	if condition2 & skill.CONDITION_STASIS: return false
 	if condition2 & skill.CONDITION_PANIC:  return false
 	return true

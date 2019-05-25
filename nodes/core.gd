@@ -402,6 +402,8 @@ func changeScene(path):
 func changeScene2(path):
 	if scene != null: scene.free()
 	var newscene = load(path).instance()
-	get_tree().get_root().add_child(newscene)
-	get_tree().set_current_scene(newscene)
+	var tree = get_tree()
+	var root = tree.get_root()
 	scene = newscene
+	root.add_child(newscene)
+	tree.set_current_scene(newscene)
