@@ -3,8 +3,9 @@ var raceLib = core.lib.race
 var classLib = core.lib.aclass
 var tid = core.tid
 
-const WEAPON_SLOTS = 4
-const GEAR_SLOTS = 4
+const WEAPON_SLOT = [0, 1, 2, 3]
+const ARMOR_SLOT =  [4]
+const GEAR_SLOT =   [5, 6, 7]
 
 enum {
 	LINK_NONE,
@@ -42,7 +43,7 @@ var skills = null #array of class ID + level
 var links = null #array of [trust, link1, link2, link3]
 
 var equip = equipClass.new()
-var currentWeapon = equip.weps[0]
+var currentWeapon = equip.slot[0]
 var inventory:Array = []
 var personalInventorySize:int = 2
 var personalInventory:Array = []
@@ -254,8 +255,40 @@ class Armor:
 	var DGem:DragonGemContainer
 	var extraData = null #Frame / Vehicle data
 	var stats:Dictionary = {}
-	func _init(_tid = null, data = DEFAULT )-> void:
+	var upgraded:bool = false
+
+	func _init(_tid = null, data = DEFAULT) -> void:
 		var tmp_tid = _tid
+		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.tid
+		self.tid = core.tid.fromArray(tmp_tid)
+		self.lib = core.lib.armor.getIndex(self.tid)
+		self.DGem = DragonGemContainer.new(0, data.gem)
+		stats = STATS_DEFAULT.duplicate()
+		recalculateStats()
+
+	func save() -> Dictionary:
+		return {
+			tid = self.tid,
+			dgem = self.DGem.save()
+		}
+	func clampStats() -> void:
+		pass
+	func recalculateStats() -> void:
+		var gemstats = DGem.stats
+		stats.DEF = lib.DEF[1 if upgraded else 0] + (gemstats.DEF if 'DEF' in gemstats else 0)
+		stats.EDF = lib.EDF[1 if upgraded else 0] + (gemstats.EDF if 'EDF' in gemstats else 0)
+		for i in ['ATK', 'ETK', 'AGI', 'LUC']:
+			stats[i] = gemstats[i] if i in gemstats else 0
+		for i in ['OFF', 'RES']:
+			if i in gemstats:
+				for j in core.stats.ELEMENTS:
+					stats[i][j] = gemstats[i][j] if j in gemstats[i] else 0
+		if lib.vehicle != null:
+			print("[ARMOR][recalculateStats] Vehicle <TODO>")
+		if lib.frame != null:
+			var frameStats = core.stats.create()
+			core.stats.setFromSpread(frameStats, lib.frame.statSpread, 5) #TODO: Get user level somehow.
+		clampStats()
 
 
 class Weapon:
@@ -285,7 +318,7 @@ class Weapon:
 
 	func _init(_tid = null, data = DEFAULT) -> void:
 		var tmp_tid = _tid
-		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.id
+		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.tid
 		self.tid = core.tid.fromArray(tmp_tid)
 		self.lib = core.lib.weapon.getIndex(self.tid)
 		self.level = data.level
@@ -341,65 +374,56 @@ class Weapon:
 
 
 class equipClass:
-	const WEAPON_SLOTS = 4
-	const GEAR_SLOTS = 4
-	var weps = core.newArray(WEAPON_SLOTS)
-	var currentWeapon : Weapon
-	var gear = core.newArray(GEAR_SLOTS)
 	var tid = core.tid
+
+	const TOTAL_SLOTS = 8
+	const WEAPON_SLOT =  [ 0, 1, 2, 3 ]
+	const ARMOR_SLOT =   [ 4 ]
+	const GEAR_SLOT =    [ 5, 6, 7 ]
+
+	var slot:Array = core.newArray(TOTAL_SLOTS)
+	var currentWeapon : Weapon
+
 	func _init() -> void:
-		for i in range(WEAPON_SLOTS):
-			weps[i] = null
-		for i in range(GEAR_SLOTS):
-			gear[i] = null
-
-	func fullRepair(all:bool) -> void:
-		print("[EQUIP][fullRepair] Repairing all weapons.")
-		if all:
-			for i in weps:
-				if i != null:
-					i.fullRepair()
-		else:
-			currentWeapon.fullRepair()
-
-	func partialRepair(val:int, all:bool) -> void:
-		print("[EQUIP][partialRepair] Repairing %d%% to all weapons." % val)
-		if all:
-			for i in weps:
-				if i != null:
-					i.partialRepair(val)
-		else:
-			currentWeapon.partialRepair(val)
-
-	func loadWeapon(data : Dictionary) -> Weapon:
-		var result = Weapon.new(null, data)
-		return result
-
-	func loadWeapons(data) -> void:
-		for i in range(WEAPON_SLOTS):
-			if i < data.size():
-				weps[i] = loadWeapon(data[i])
-			else:
-				weps[i] = Weapon.new()
-
-	func initWeaponSlot() -> Weapon:
-		print("[EQUIP] New weapon slot")
-		return Weapon.new()
-
-	func initGearSlot() -> Dictionary:
-		return {
-			tid = tid.create("debug", "debug"),
-			level = int(0),
-			extraData = null,
-		}
+		for i in range(TOTAL_SLOTS):
+			slot[i] = null
 
 	func calculateStatBonuses():
 		var stats = core.stats.create()
-		for i in range(gear.size()):
-			if i != null:
-				print(i)
 
-	func calculateWeaponBonuses(weapon):
+	func fullRepair(all:bool) -> void:
+		if all:
+			print("[EQUIP][fullRepair] Repairing all weapons.")
+			for i in WEAPON_SLOT:
+				if slot[i] is Weapon:
+					slot[i].fullRepair()
+				#TODO: Check onboard weapons here.
+		else:
+			print("[EQUIP][fullRepair] Repairing current weapon.")
+			currentWeapon.fullRepair()
+
+	func partialRepair(val:int, all:bool) -> void:
+		if all:
+			print("[EQUIP][partialRepair] Repairing %d%% to all weapons." % val)
+			for i in WEAPON_SLOT:
+				if slot[i] is Weapon:
+					slot[i].partialRepair(val)
+		else:
+			print("[EQUIP][partialRepair] Repairing %d%% to current weapon." % val)
+			currentWeapon.partialRepair(val)
+
+	func loadWeapons(data) -> void:
+		for i in WEAPON_SLOT:
+			if data[i] != null:
+				slot[i] = Weapon.new(null, data[i])
+			else:
+				slot[i] = Weapon.new()
+
+	func initWeaponSlot() -> Weapon: #Is this used?
+		print("[EQUIP][initWeaponSlot] New weapon slot")
+		return Weapon.new()
+
+	func calculateWeaponBonuses(weapon): #->core.stats ?
 		var wstats = weapon.stats
 		var stats = core.stats.create()
 		for i in ['ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
@@ -410,9 +434,40 @@ class equipClass:
 					stats[i][j] = wstats[i][j] if j in wstats[i] else 0
 		return stats
 
+	func calculateArmorBonuses(armor): #->core.stats: ?
+		var astats = armor.stats
+		var stats = core.stats.create()
+		for i in ['MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
+			stats[i] += astats[i] if i in astats else 0
+		for i in ['OFF', 'RES']:
+			if i in astats:
+				for j in core.stats.ELEMENTS:
+					stats[i][j] = astats[i][j] if j in astats[i] else 0
+		return stats
+
+
 	func getWeaponSpeedMod(weapon) -> int:
 		var W = weapon.lib
 		return W.weight[weapon.level]
+
+	func loadArmor(data) -> void:
+		for i in ARMOR_SLOT: #Make it a loop anyway in case there's a reason to increase later.
+			if data[i] != null:
+				slot[i] = Armor.new(null, data[i]) #loadArmor(data[i])
+			else:
+				slot[i] = Armor.new() #TODO: Load class or race default instead.
+
+	func loadGear(data) -> void:
+		for i in GEAR_SLOT:
+			if data[i] != null:
+				pass
+
+	func initGearSlot() -> Dictionary:
+		return {
+			tid = tid.create("debug", "debug"),
+			level = int(0),
+			extraData = null,
+		}
 
 
 
@@ -551,9 +606,11 @@ func initDict(C):	#Load the character from save data
 	setCharRace(C.race)                        #Init adventurer's race and set pointer to it for easy reference.
 	setCharClass(C.aclass)                     #Init adventurer's class and set pointer.
 	self.level = int(C.level)                  #Set character level. TODO: Read EXP instead?
-	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.
-	currentWeapon = equip.weps[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
-	equip.currentWeapon = equip.weps[0]
+	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.    (Slots 0-3)
+	equip.loadArmor(C.equip)                   #Init armor, vehicle or frame. (Slot 4)
+	equip.loadGear(C.equip)                    #Init gear/accesories.         (Slots 5-7)
+	currentWeapon = equip.slot[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
+	equip.currentWeapon = equip.slot[0]
 	self.personalInventorySize = C.personalInventorySize if 'personalInventorySize' in C else 2
 	if 'personalInventory' in C:
 		for i in C.personalInventory:

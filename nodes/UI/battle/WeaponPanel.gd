@@ -15,7 +15,8 @@ func init(C):
 	var button = null
 	clear()
 	currentChar = C
-	for i in C.equip.weps:
+	for t in C.equip.WEAPON_SLOT:
+		var i = C.equip.slot[t] #TODO: Remember this hack.
 		if i != null:
 			count += 1
 			W = i.lib

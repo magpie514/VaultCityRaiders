@@ -58,7 +58,7 @@ var example = {
 		"choujin" : { #Mostly story mode exclusive. Could probably look into making it a stronger but less versatile version of robots, like you get some initial picks and you get stuck with them.
 			name = "Choujin",
 			description = "One of the potential ultimate forms of humanity. A human soul in a full machine body. Being a type of robot, their potential is also tied to their equipment",
-			statSpread = [ [060, 015, 015, 015, 010, 010, 005], [520, 150, 165, 120, 090, 110, 085] ],
+			statSpread = [ [000, 000, 000, 000, 000, 000, 000], [000, 000, 000, 000, 000, 000, 000] ],
 			aspect = skill.RACEF_SPI|skill.RACEF_MEC,
 			player = false,
 			flags = [ skill.RACE_MACHINE ],

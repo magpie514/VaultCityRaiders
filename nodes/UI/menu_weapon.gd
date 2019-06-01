@@ -14,7 +14,7 @@ onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
 
 func init(C, slot):
 	var button = null
-	var WP = C.equip.weps[slot]
+	var WP = C.equip.slot[slot]
 	var W = WP.lib
 	var WS = WP.stats
 	var S = null

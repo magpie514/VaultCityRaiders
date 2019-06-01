@@ -344,7 +344,7 @@ func playMusic(path):
 func stopMusic():
 	$AudioStreamPlayer.playing = false
 
-func initLibs():
+func initLibs() -> void:
 	skill = load("res://classes/skill/skill.gd").new()
 	lib.skill = load("res://classes/library/lib_skill.gd").new()
 	lib.skill.loadDebug()
@@ -362,6 +362,8 @@ func initLibs():
 	lib.item.loadDebug()
 	lib.dgem = load("res://classes/library/lib_gem.gd").new()
 	lib.dgem.loadDebug()
+	lib.armor = load("res://classes/library/lib_armor.gd").new()
+	lib.armor.loadDebug()
 
 
 func getSkillPtr(TID):

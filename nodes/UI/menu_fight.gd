@@ -21,7 +21,8 @@ func init(C):
 	var W = null
 	var count = 0
 	$Label.text = str("%s's gear" % C.name)
-	for i in C.equip.weps:
+	for t in C.equip.WEAPON_SLOT:
+		var i = C.equip.slot[t] #TODO: Remember this h...is this file even used?
 		count += 1
 		W = core.lib.weapon.getIndex(i.id)
 		button = weaponNode.instance()

@@ -26,7 +26,8 @@ func init(C):
 	$Panel/Bar/Label.text = str("%03d%%" % C.battle.over)
 	var TID = null
 	$ColorRect/Label.text = str("%s's Over skills" % C.name)
-	for i in C.equip.weps: #Get weapon-provided Over skills.
+	for t in C.equip.WEAPON_SLOT: #Get weapon-provided Over skills.
+		var i = C.equip.slot[t] #TODO: Remember this hack.
 		if i != null:
 			if i.lib.wclass != core.skill.WPCLASS_NONE:
 				var S = core.getSkillPtr(i.lib.over)

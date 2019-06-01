@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://tests/debug_menu.gd" type="Script" id=1]
-[ext_resource path="res://tests/debug_dgem.tscn" type="PackedScene" id=2]
-[ext_resource path="res://tests/debug_partydisplay.tscn" type="PackedScene" id=3]
+[ext_resource path="res://tests/debug_partydisplay.tscn" type="PackedScene" id=2]
+[ext_resource path="res://tests/debug_dgem.tscn" type="PackedScene" id=3]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Panel
@@ -27,15 +27,15 @@ var connected : bool = false
 func init(ch, parent) -> void:
 	C = ch
 	$Label.text = \"Equipment for %s\" % C.name
-	for i in [0, 1, 2, 3]:
+	for i in C.equip.WEAPON_SLOT:
 		var N = get_node(\"DGem%1d\" % i)
-		N.init(C.equip.weps[i])
+		N.init(C.equip.slot[i])
 		if not connected: N.connect(\"openMenu\", parent, \"_on_DGem_select\")
 	connected = true
 
 func close(parent) -> void:
 	if not connected: return
-	for i in [0, 1, 2, 3]:
+	for i in C.equip.WEAPON_SLOT:
 		var N = get_node(\"DGem%1d\" % i)
 		N.disconnect(\"openMenu\", parent, \"_on_DGem_select\")
 "
@@ -253,7 +253,7 @@ margin_bottom = 300.0
 text = "RANK"
 valign = 1
 
-[node name="PartyDisplay" parent="Panel2" instance=ExtResource( 3 )]
+[node name="PartyDisplay" parent="Panel2" instance=ExtResource( 2 )]
 margin_left = 10.0
 margin_top = 90.0
 margin_right = 460.0
@@ -336,19 +336,19 @@ text = "Lorem Ipsum"
 align = 1
 valign = 1
 
-[node name="DGem0" parent="Panel5" instance=ExtResource( 2 )]
+[node name="DGem0" parent="Panel5" instance=ExtResource( 3 )]
 margin_top = 30.0
 margin_bottom = 80.0
 
-[node name="DGem1" parent="Panel5" instance=ExtResource( 2 )]
+[node name="DGem1" parent="Panel5" instance=ExtResource( 3 )]
 margin_top = 80.0
 margin_bottom = 130.0
 
-[node name="DGem2" parent="Panel5" instance=ExtResource( 2 )]
+[node name="DGem2" parent="Panel5" instance=ExtResource( 3 )]
 margin_top = 130.0
 margin_bottom = 180.0
 
-[node name="DGem3" parent="Panel5" instance=ExtResource( 2 )]
+[node name="DGem3" parent="Panel5" instance=ExtResource( 3 )]
 margin_top = 180.0
 margin_bottom = 230.0
 

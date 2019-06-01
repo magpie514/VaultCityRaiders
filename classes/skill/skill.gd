@@ -487,6 +487,7 @@ enum { #Skill function codes.
 	OPCODE_GET_HEALTH_PERCENT,#Get health percentage from target.
 	OPCODE_GET_MAX_HEALTH,		#Get target's max health.
 	OPCODE_GET_HEALTH,        #Get target's health.
+	OPCODE_GET_LEVEL,             #Get target's level.
 	OPCODE_GET_LAST_HURT,			#Get amount of health lost from last skill.
 	OPCODE_GET_DODGES,				#Get amount of dodges for this turn.
 	OPCODE_GET_DEFEATED,			#Get amount of defeated in the target team.
@@ -666,12 +667,14 @@ const opCode = {
 	"get_turn" :      	OPCODE_GET_TURN,
 	"get_chain" :     	OPCODE_GET_CHAIN,
 	"get_last_element":	OPCODE_GET_LAST_ELEMENT,
-	"get_health%" :			OPCODE_GET_HEALTH_PERCENT,
+	"get_health%" :		OPCODE_GET_HEALTH_PERCENT,
 	"get_max_health" :	OPCODE_GET_MAX_HEALTH,
 	"get_health" :			OPCODE_GET_HEALTH,
+	"get_level" : 			OPCODE_GET_LEVEL,
 	"get_dodges" :			OPCODE_GET_DODGES,
 	"get_defeated" : 		OPCODE_GET_DEFEATED,
-	"get_range":				OPCODE_GET_RANGE,
+	"get_range" :			OPCODE_GET_RANGE,
+	"get_over" :			OPCODE_GET_OVER,
 
 	"add" :  OPCODE_MATH_ADD,
 	"sub" :  OPCODE_MATH_SUB,
@@ -2444,6 +2447,14 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">GET CURRENT HEALTH")
 						state.value = variableTarget.HP
 						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_LEVEL:
+						print(">GET TARGET LEVEL")
+						state.value = variableTarget.level
+						print(">>>>>SVAL = %s" % state.value)
+#					OPCODE_GET_ATK:
+	#					print(">GET TARGET ATK")
+		#				#state.value = variableTarget.stats.ATK
+			#			print(">>>>>SVAL = %s" % state.value)
 					OPCODE_GET_DODGES:
 						print(">GET DODGES")
 						state.value = variableTarget.battle.turnDodges

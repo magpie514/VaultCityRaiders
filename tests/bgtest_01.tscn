@@ -3,18 +3,18 @@
 [ext_resource path="res://tests/bgtest_01.gd" type="Script" id=1]
 [ext_resource path="res://tests/3dbg_test.tscn" type="PackedScene" id=2]
 
-[sub_resource type="CanvasItemMaterial" id=2]
+[sub_resource type="CanvasItemMaterial" id=1]
 blend_mode = 1
 
-[sub_resource type="Gradient" id=3]
+[sub_resource type="Gradient" id=2]
 offsets = PoolRealArray( 0, 0.526627, 1 )
 colors = PoolColorArray( 0.746094, 0.136978, 0.136978, 1, 0.0573918, 0.0105368, 0.0105368, 1, 0, 0, 0, 1 )
 
-[sub_resource type="GradientTexture" id=4]
-gradient = SubResource( 3 )
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
 width = 680
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=4]
 length = 10.0
 loop = true
 tracks/0/type = "value"
@@ -38,17 +38,17 @@ centered = false
 
 [node name="Sprite7" type="Sprite" parent="."]
 self_modulate = Color( 1, 1, 1, 0.168449 )
-material = SubResource( 2 )
+material = SubResource( 1 )
 position = Vector2( 0.0604193, 722.732 )
 rotation = -1.5708
 scale = Vector2( 1.05957, 957.238 )
 z_index = 1
-texture = SubResource( 4 )
+texture = SubResource( 3 )
 centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "New Anim"
-"anims/New Anim" = SubResource( 5 )
+"anims/New Anim" = SubResource( 4 )
 
 [node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 960, 720 )
