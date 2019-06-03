@@ -6,6 +6,7 @@ const LIBSTD_INT = "loaderInt"
 const LIBSTD_FLOAT = "loaderFloat"
 const LIBSTD_STRING = "loaderString"
 const LIBSTD_TID = "loaderTID"
+const LIBSTD_TID_OR_NULL = "loaderTIDorNull"
 const LIBSTD_TID_ARRAY = "loaderTIDArray"
 const LIBSTD_VARIABLEARRAY = "loaderVariableArray"
 const LIBSTD_STATSPREAD = "loaderStatSpread"
@@ -42,14 +43,14 @@ func loadDict(dict):
 		for key2 in dict[key]:
 			data[key][key2] = initEntry(dict[key][key2])
 
-func copyIntegerArray(a):
+func copyIntegerArray(a:Array) -> Array:
 	var size = a.size()
 	var result = core.newArray(size)
 	for i in range(size):
 		result[i] = int(a[i])
 	return result
 
-func getIndex(id):
+func getIndex(id:Array):
 	if typeof(id) != TYPE_ARRAY:
 		print("[!!] Given library TID is not an array. Attempting to return failsafe.")
 		return data["debug"]["debug"]
@@ -71,16 +72,19 @@ func loadKey(loader, val):
 	var result = call(loader, val)
 	return result
 
-func parseTemplate(dict):
-	var result = {}
-	for key in template:
+func parseTemplate(dict:Dictionary) -> Dictionary:
+	return parseSubTemplate(template, dict)
+
+func parseSubTemplate(sub:Dictionary, dict:Dictionary):
+	var result:Dictionary = {}
+	for key in sub:
 		if key in dict:
-			result[key] = loadKey(template[key].loader, dict[key])
+			result[key] = loadKey(sub[key].loader, dict[key])
 		else:
-			if "default" in template[key]:
-				result[key] = loadKey(template[key].loader, template[key].default)
+			if 'default' in sub[key]:
+				result[key] = loadKey(sub[key].loader, sub[key].default)
 			else:
-				result[key] = loadKey(template[key].loader, null)
+				result[key] = loadKey(sub[key].loader, null)
 	return result
 
 # Standard loaders #############################################################
@@ -146,6 +150,12 @@ func loaderTID(val):
 	if val == null:
 		return core.tid.create("debug", "debug")
 	else:
+		return core.tid.create(val[0], val[1])
+
+func loaderTIDorNull(val):
+	if val == null: return null
+	else:
+		#TODO: Verify if it's properly constructed.
 		return core.tid.create(val[0], val[1])
 
 func loaderTIDArray(val):

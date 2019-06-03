@@ -24,6 +24,7 @@ enum { #Vehicle classes
 }
 
 enum {
+	#TODO:Make them sequential numbers and add to array instead?
 	PARTS_NONE =      0x0000,
 	PARTS_ENGINE =    0x0001,
 	PARTS_SENSORS =   0x0002,
@@ -86,13 +87,28 @@ func initTemplate():
 		"EDF" : { loader = LIBEXT_ARMOR_STATS, default = [0, 1] },
 		"vehicle" : { loader = LIBEXT_VEHICLE, default = null },
 		"frame" : { loader = LIBEXT_FRAME, default = null },
+		"over" : { loader = LIBSTD_TID_OR_NULL, default = null }
 	}
 
+func vehicleTemplate():
+	return {
+		"onboard" : { loader = LIBSTD_INT },
+		"description" : { loader = LIBSTD_STRING, default = "???" },
+		"veclass" : { loader = LIBSTD_INT }
+	}
+
+func frameTemplate():
+	return {
+		"onboard" : { loader = LIBSTD_INT },
+		"description" : { loader = LIBSTD_STRING, default = "???" },
+		"statSpread" : { loader = LIBSTD_STATSPREAD }
+	}
 
 func loadDebug():
 	print("[ARMOR][loadDebug] Loading armor lib.")
 	loadDict(example)
 	print("[ARMOR][loadDebug] Armor loaded.")
+	printData()
 
 func loaderArmorStats(val) -> Array:
 	if val == null:
@@ -103,11 +119,9 @@ func loaderArmorStats(val) -> Array:
 		return [0, 1]
 
 func loaderVehicle(val):
-	if val == null:
-		return null
-	return null
+	if val == null: return null
+	return parseSubTemplate(vehicleTemplate(), val)
 
 func loaderFrame(val):
-	if val == null:
-		return null
-	return null
+	if val == null: return null
+	return parseSubTemplate(frameTemplate(), val)

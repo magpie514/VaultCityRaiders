@@ -234,13 +234,25 @@ class DragonGemContainer:
 		return result
 
 class Gear:
+	var DEFAULT : Dictionary = {
+		tid = core.tid.create("debug", "debug"),
+		extraData = null
+	}
+	var STATS_DEFAULT : Dictionary = {
+		MHP = int(0), MEP = int(0),
+		ATK = int(0), ETK = int(0), WRD = int(0), DUR = int(0),
+		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
+		OFF = core.stats.createElementData(),
+		RES = core.stats.createElementData(),
+		SKL = [],
+	}
 	var lib:Dictionary
 
 class Armor:
 	var DEFAULT : Dictionary = {
 		tid = core.tid.create("debug", "debug"),
 		gem = null,
-		extraData = null
+		extraData = {}
 	}
 	var STATS_DEFAULT : Dictionary = {
 		MHP = int(0), MEP = int(0),
@@ -253,7 +265,7 @@ class Armor:
 	var tid = null
 	var lib:Dictionary
 	var DGem:DragonGemContainer
-	var extraData = null #Frame / Vehicle data
+	var extraData:Dictionary = {} #Frame / Vehicle data
 	var stats:Dictionary = {}
 	var upgraded:bool = false
 
@@ -273,21 +285,22 @@ class Armor:
 		}
 	func clampStats() -> void:
 		pass
-	func recalculateStats() -> void:
+	func recalculateStats() -> void: #TODO: Move DGem stuff to the character instead?
 		var gemstats = DGem.stats
-		stats.DEF = lib.DEF[1 if upgraded else 0] + (gemstats.DEF if 'DEF' in gemstats else 0)
-		stats.EDF = lib.EDF[1 if upgraded else 0] + (gemstats.EDF if 'EDF' in gemstats else 0)
-		for i in ['ATK', 'ETK', 'AGI', 'LUC']:
-			stats[i] = gemstats[i] if i in gemstats else 0
-		for i in ['OFF', 'RES']:
-			if i in gemstats:
-				for j in core.stats.ELEMENTS:
-					stats[i][j] = gemstats[i][j] if j in gemstats[i] else 0
 		if lib.vehicle != null:
 			print("[ARMOR][recalculateStats] Vehicle <TODO>")
 		if lib.frame != null:
-			var frameStats = core.stats.create()
-			core.stats.setFromSpread(frameStats, lib.frame.statSpread, 5) #TODO: Get user level somehow.
+			print("[ARMOR][recalculateStats] Frame")
+			core.stats.setFromSpread(stats, lib.frame.statSpread, 5) #TODO: Get user level somehow.
+
+		stats.DEF += lib.DEF[1 if upgraded else 0] + (gemstats.DEF if 'DEF' in gemstats else 0)
+		stats.EDF += lib.EDF[1 if upgraded else 0] + (gemstats.EDF if 'EDF' in gemstats else 0)
+		for i in ['ATK', 'ETK', 'AGI', 'LUC']:
+			stats[i] += gemstats[i] if i in gemstats else 0
+		for i in ['OFF', 'RES']:
+			if i in gemstats:
+				for j in core.stats.ELEMENTS:
+					stats[i][j] += gemstats[i][j] if j in gemstats[i] else 0
 		clampStats()
 
 
@@ -434,15 +447,16 @@ class equipClass:
 					stats[i][j] = wstats[i][j] if j in wstats[i] else 0
 		return stats
 
-	func calculateArmorBonuses(armor): #->core.stats: ?
-		var astats = armor.stats
+	func calculateArmorBonuses(): #->core.stats: ?
 		var stats = core.stats.create()
-		for i in ['MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
-			stats[i] += astats[i] if i in astats else 0
-		for i in ['OFF', 'RES']:
-			if i in astats:
-				for j in core.stats.ELEMENTS:
-					stats[i][j] = astats[i][j] if j in astats[i] else 0
+		for a in ARMOR_SLOT:
+			var astats = slot[a].stats
+			for i in ['MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
+				stats[i] += astats[i] if i in astats else 0
+			for i in ['OFF', 'RES']:
+				if i in astats:
+					for j in core.stats.ELEMENTS:
+						stats[i][j] = astats[i][j] if j in astats[i] else 0
 		return stats
 
 
@@ -563,16 +577,23 @@ func endBattleTurn(defer):
 func getEquipSpeedMod() -> int:
 	return equip.getWeaponSpeedMod(currentWeapon)
 
-func recalculateStats():
+func recalculateStats() -> void:
+	#Get stats from race/class.
 	var raceStats = stats.create()
+	#TODO: Reset it to race defaults instead.
 	stats.resetElementData(raceStats.OFF)
 	stats.resetElementData(raceStats.RES)
-	stats.setFromSpread(raceStats, raceLib.getStatSpread(race), level)
+	stats.setFromSpread(raceStats, racePtr.statSpread, level)
 	var classStats = stats.create()
-	stats.setFromSpread(classStats, classLib.getStatSpread(aclass), level)
+	stats.setFromSpread(classStats, aclassPtr.statSpread, level)
 	stats.sumInto(statBase, raceStats, classStats)
-	var weaponStats = equip.calculateWeaponBonuses(currentWeapon)
-	stats.sumInto(statFinal, statBase, weaponStats)
+
+	#Get stats from equipment.
+	var gearStats = stats.create()
+	stats.sum(gearStats, equip.calculateWeaponBonuses(currentWeapon))
+	stats.sum(gearStats, equip.calculateArmorBonuses())
+	#stats.sum(gearStats, equip.calculateGearBonuses())
+	stats.sumInto(statFinal, statBase, gearStats)
 
 func setCharClass(t) -> void:
 	aclass = tid.fromArray(t)
@@ -610,7 +631,7 @@ func initDict(C):	#Load the character from save data
 	equip.loadArmor(C.equip)                   #Init armor, vehicle or frame. (Slot 4)
 	equip.loadGear(C.equip)                    #Init gear/accesories.         (Slots 5-7)
 	currentWeapon = equip.slot[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
-	equip.currentWeapon = equip.slot[0]
+	equip.currentWeapon = currentWeapon
 	self.personalInventorySize = C.personalInventorySize if 'personalInventorySize' in C else 2
 	if 'personalInventory' in C:
 		for i in C.personalInventory:

@@ -129,7 +129,7 @@ file_logging/max_log_files=3
 
 [network]
 
-limits/debugger_stdout/max_chars_per_second=20480
+limits/debugger_stdout/max_chars_per_second=40960
 
 [rendering]
 

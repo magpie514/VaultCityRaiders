@@ -77,7 +77,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["debug", "frame"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["debug", "debug"], vehicle = {}, frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
