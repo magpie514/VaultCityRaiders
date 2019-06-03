@@ -2,7 +2,7 @@
 
 A JRPG developed with Godot Engine.
 
-![Quaint little screenshot, placeholder city.](screenshot.png)
+![Quaint little screenshot, placeholder city.](docs/screenshot.png)
 
 *Still incomplete, only combat works so far, please wait patiently as the rest is being completed.*
 
@@ -11,7 +11,7 @@ Vault City Raiders (project name, actual title to determine) is an old-school st
 
 I basically took elements from every RPG I enjoyed and put them in a blender, the challenge being managing to balance it in a way that's enjoyable for enthusiasts of the genre.
 
-Main influences for this project are Might and Magic 2, Phantasy Star 4, SaGa 1-3 (AKA Final Fantasy Legends), Final Fantasy 7, the Etrian series, and many others.
+Main influences for this project are Might and Magic 2, Phantasy Star 4, SaGa 1-3 (AKA Final Fantasy Legends), Final Fantasy 7, the Etrian series, Metal Max, and many others.
 
 The final result will be set in a futuristic cyberpunk-lite urban fantasy with a dash of eldritch thrown in, something like Shadowrun but with more robots and old ones.
 
