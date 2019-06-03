@@ -131,6 +131,10 @@ file_logging/max_log_files=3
 
 limits/debugger_stdout/max_chars_per_second=40960
 
+[physics]
+
+3d/active_soft_world=false
+
 [rendering]
 
 quality/2d/gles2_use_nvidia_rect_flicker_workaround=true
