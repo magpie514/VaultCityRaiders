@@ -23,7 +23,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["debug", "frame"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "orbitfrm"], vehicle = {}, frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -50,7 +50,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["debug", "frame"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "KSSGfrm1"], vehicle = {}, frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -77,7 +77,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["debug", "debug"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "redbrig"], vehicle = {}, frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -104,7 +104,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["debug", "frame"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "soulfrm"], vehicle = {}, frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -138,7 +138,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["debug", "frame"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "murafrm"], vehicle = {}, frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
