@@ -20,7 +20,7 @@ func init(C):
 	var charged : Array = []
 	for j in [C.inventory, C.group.inventory.general]:
 		for i in j:
-			if i.type == C.group.Item.ITEM_CONSUMABLE:
+			if i.type == core.Inventory.Item.ITEM_CONSUMABLE:
 				var tidString = core.tid.string(i.data.tid)
 				if i.data.lib.charge:
 					if i.data.lib.skill[i.data.level] > 0:

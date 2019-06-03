@@ -9,14 +9,17 @@ var battle = {
 	bg_fx = null,
 }
 var world : WorldClass = WorldClass.new()
+# Internal Data libraries #####################################################
 var lib = {
+	skill = null,
 	race = null,
 	aclass = null,
 	weapon = null,
+	item = null,
+	dgem = null,
+	armor = null,
 	enemy = null,
 	mform = null,
-	skill = null,
-	item = null
 }
 var stats = StatClass.new()
 var tid = _tid.new()
@@ -24,8 +27,10 @@ var skill = null
 var guild = null
 var init = false
 
-var Enemy = load("res://classes/char/char_enemy.gd")
-var Player = load("res://classes/char/char_player.gd")
+# Important shared classes ####################################################
+const Enemy = preload("res://classes/char/char_enemy.gd")
+const Player = preload("res://classes/char/char_player.gd")
+const Inventory = preload("res://classes/inventory/item.gd")
 
 class WorldClass:
 	var time : int = 0 #30 steps or turns => one hour.
@@ -204,7 +209,7 @@ class StatClass:
 		result += printElementData(S.OFF)
 		result += printElementData(S.RES)
 		return result
-	
+
 	func reset(S) -> void:
 		for i in STATS:
 			S[i] = 0
@@ -358,19 +363,18 @@ func initLibs() -> void:
 	lib.race.loadDebug()
 	lib.aclass = load("res://classes/library/lib_class.gd").new()
 	lib.aclass.loadDebug()
-	lib.enemy = load("res://classes/library/lib_enemy.gd").new()
-	lib.enemy.loadDebug()
 	lib.weapon = load("res://classes/library/lib_weapon.gd").new()
 	lib.weapon.loadDebug()
-	lib.mform = load("res://classes/library/lib_group_enemy.gd").new()
-	lib.mform.loadDebug()
 	lib.item = load("res://classes/library/lib_item.gd").new()
 	lib.item.loadDebug()
 	lib.dgem = load("res://classes/library/lib_gem.gd").new()
 	lib.dgem.loadDebug()
 	lib.armor = load("res://classes/library/lib_armor.gd").new()
 	lib.armor.loadDebug()
-
+	lib.enemy = load("res://classes/library/lib_enemy.gd").new()
+	lib.enemy.loadDebug()
+	lib.mform = load("res://classes/library/lib_group_enemy.gd").new()
+	lib.mform.loadDebug()
 
 func getSkillPtr(TID):
 	return lib.skill.getIndex(TID)
