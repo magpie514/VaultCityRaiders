@@ -118,8 +118,7 @@ enum {
 	REQUIRES_LEG =	0x04,
 }
 
-# Skill type ### TODO: Are these in use?
-enum {
+enum { # Skill type ### TODO: Are these in use?
 	TYPE_BODY,   #Regular skill.
 	TYPE_WEAPON, #Weapon skill.
 	TYPE_ITEM,   #Item skill.
@@ -301,7 +300,7 @@ enum { #Code blocks
 	CODE_PP,	#[ ] Priority post code: if present, run this code on self or defined targetPost targets of the same group as the user.
 
 	#Main skill body
-	CODE_ST,  #[*] Setup code: if the skill has multiple targets, run this code to do stuff that should only happen once, not once per target.
+	CODE_ST,  #[*] Setup code: Targets self. If the skill has multiple targets, run this code to do stuff that should only happen once, not once per target.
 	CODE_MN,	#[*] Main code: the main body of the skill.
 	CODE_PO,	#[*] Post action code. It's used on self or defined targetPost targets of the same group after the end of a code MN.
 
@@ -471,6 +470,8 @@ enum { #Skill function codes.
 	# Enemy only specials ########################################################
 	OPCODE_ENEMY_REVIVE,			#[+]Revives a fallen enemy.
 	OPCODE_ENEMY_SUMMON,			#Summons with index X. If battle formation has a summons set, those take priority, otherwise monster-specific ones are used, if neither exist or the index is out of range, summon the same type as the user.
+	OPCODE_ENEMY_ARMED,				#Sets enemy as armed or not. 0 makes no change. 1 makes it armed, 2 makes it disarmed.
+
 
 	# Control flow ###############################################################
 	OPCODE_STOP,							#Stop execution.
@@ -493,6 +494,7 @@ enum { #Skill function codes.
 	OPCODE_GET_DEFEATED,			#Get amount of defeated in the target team.
 	OPCODE_GET_RANGE,					#Get distance to target. Can be used in functions that target self, precalculated on skill state init.
 	OPCODE_GET_OVER,					#Get Over of target as a 0-100 value.
+	OPCODE_GET_WEAPON_DUR,		#Get weapon durability. In enemies this is always 100 if armed, 0 if not. In players it's current remaining weapon DUR.
 
 	# Math #######################################################################
 	OPCODE_MATH_ADD,					#Add X to stored value. (SVAL + X)
@@ -667,14 +669,15 @@ const opCode = {
 	"get_turn" :      	OPCODE_GET_TURN,
 	"get_chain" :     	OPCODE_GET_CHAIN,
 	"get_last_element":	OPCODE_GET_LAST_ELEMENT,
-	"get_health%" :		OPCODE_GET_HEALTH_PERCENT,
+	"get_health%" :     OPCODE_GET_HEALTH_PERCENT,
 	"get_max_health" :	OPCODE_GET_MAX_HEALTH,
 	"get_health" :			OPCODE_GET_HEALTH,
 	"get_level" : 			OPCODE_GET_LEVEL,
 	"get_dodges" :			OPCODE_GET_DODGES,
 	"get_defeated" : 		OPCODE_GET_DEFEATED,
-	"get_range" :			OPCODE_GET_RANGE,
-	"get_over" :			OPCODE_GET_OVER,
+	"get_range" :       OPCODE_GET_RANGE,
+	"get_over" :        OPCODE_GET_OVER,
+	"get_weapon_dur" :  OPCODE_GET_WEAPON_DUR,
 
 	"add" :  OPCODE_MATH_ADD,
 	"sub" :  OPCODE_MATH_SUB,
@@ -1511,9 +1514,9 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 		print("[SKILL][processCombatSkill] Startup animation finished")
 	info.postTargetGroup = 1 if S.codePO != null else 0 #Assume a post-main code is wanted if it's defined. Allow to cancel with codes.
 	if S.codeST != null: #Has a setup part. Initialize state here, copy for individual targets.
-		state = initSkillState(S, level, user, targets[0])
+		state = initSkillState(S, level, user, user)
 		control = controlNode.start()
-		setupSkillCode(S, level, user, targets[0], CODE_ST, control, state)
+		setupSkillCode(S, level, user, user, CODE_ST, control, state)
 		yield(control, "skill_end")
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
@@ -2394,6 +2397,18 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							user.group.revive(value)
 						else:
 							print("User is not an enemy, no effect.")
+					OPCODE_ENEMY_ARMED:
+						print(">ENEMY ARMED STATUS: %s" % value)
+						if variableTarget is core.Enemy:
+							match(value):
+								1:
+									print("Set.")
+									variableTarget.armed = true
+								2:
+									print("Unset.")
+									variableTarget.armed = false
+								_:
+									print("No changes made.")
 # Flow control #################################################################
 					OPCODE_STOP:
 						print(">STOP")
@@ -2471,6 +2486,15 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">GET_OVER")
 						state.value = variableTarget.battle.over
 						print(">>>>>SVAL = %s" % state.value)
+					OPCODE_GET_WEAPON_DUR:
+						print(">GET WEAPON DURABILITY")
+						print("\tGetting durability for %s" % variableTarget.currentWeapon.lib.name)
+						if variableTarget is core.Player:
+							state.value = variableTarget.currentWeapon.uses
+						elif variableTarget is core.Enemy:
+							state.value = 100 if variableTarget.armed else 0
+						print(">>>>>SVAL = %s" % state.value)
+
 # Math #########################################################################
 					OPCODE_MATH_ADD:
 						print(">MATH_ADD: %s + %s = %s" % [state.value, value, state.value + value])
@@ -2743,6 +2767,8 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								cond_block = (flags & OPFLAGS_BLOCK_START)
 								print("Race aspect %d not found on %s. Skipping next %s" % [value, variableTarget.name, 'block' if cond_block else 'line'])
 								skipLine = true
+					_:
+						print(">[!!]UNKNOWN OPCODE: %d VALUE: %s" % [line[0], value])
 			else:
 				print("[%s]%02d>SKIP %s" % [S.name, j, 'LINE' if not cond_block else 'BLOCK'])
 				if cond_block:

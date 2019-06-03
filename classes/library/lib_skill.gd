@@ -1303,6 +1303,29 @@ var example = {
 				["attack", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 			],
 		},
+		"savaripp": {
+			name = "Savage Ripper",
+			description = "Slashes at a single target. If current weapon is out of durability, the slash is much stronger. A last resort.",
+			category = skill.CAT_OVER,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_FIRE,
+			energyDMG = true,
+			damageStat = core.stats.STAT.ETK,
+			modStat = core.stats.STAT.LUC,
+			ranged = true,
+			spdMod = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeST = [
+				["get_weapon_dur"],
+				["if_sval<=", 1, skill.OPFLAGS_BLOCK_START],
+					["drainlife", 025,125,132,132,140, 140,147,147,147,160],
+					["dmgbonus", 100, skill.OPFLAGS_BLOCK_END],
+			],
+			codeMN = [
+				["attack", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+			],
+		},
 		"overclck": {
 			name = "Overclock",
 			description = "",
@@ -1623,6 +1646,8 @@ func loaderSkillCode(a): #Loads skill codes.
 						result[j][0] = skill.translateOpCode(line)
 					TYPE_ARRAY:  #We have an array, the standard instruction. There are a few variants.
 						match(line.size()):
+							1:  # Instruction only, in case one wants to keep it as array for consistency.
+								result[j][0] = skill.translateOpCode(line[0])
 							2:  # Instruction + flags
 								result[j][0] = skill.translateOpCode(line[0])
 								result[j][11] = int(line[1])

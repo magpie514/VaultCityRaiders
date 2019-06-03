@@ -190,6 +190,7 @@ func initTemplate():
 		"canResurrect" : { loader = LIBSTD_BOOL, default = true },#If the enemy can be resurrected. If not, it won't be added to the resurrect list.
 		"description" : { loader = LIBSTD_STRING },								#Enemy description
 		"statSpread" : { loader = LIBSTD_STATSPREAD },						#Stat spread
+		"armed" : { loader = LIBSTD_BOOL, default = false },			#If enemy is supposed to be wielding a weapon or not.
 		"OFF" : { loader = LIBSTD_ELEMENTDATA },									#Elemental offense
 		"RES" : { loader = LIBSTD_ELEMENTDATA },									#Elemental defense
 		"race" : { loader = LIBSTD_INT },													#Race type (for "slayer" effects)

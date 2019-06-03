@@ -2,7 +2,31 @@ extends "res://classes/char/char_base.gd"
 var raceLib = core.lib.race
 var classLib = core.lib.aclass
 var tid = core.tid
-
+const EXP_TABLE = {
+	normal = [
+		0000000000,	0000000100,	0000000200,	0000000300,	0000000400,
+		0000000500,	0000000600,	0000000700,	0000000800,	0000000900,
+		0000001000,	0000001100,	0000001200,	0000001300,	0000001400,
+		0000001500,	0000001600,	0000001700,	0000001800,	0000001900,
+		0000002000,	0000002100,	0000002200,	0000002300,	0000002400,
+		0000002500,	0000002600,	0000002700,	0000002800,	0000002900,
+		0000003000,	0000003100,	0000003200,	0000003300,	0000003400,
+		0000003500,	0000003600,	0000003700,	0000003800,	0000003900,
+		0000004000,	0000004100,	0000004200,	0000004300,	0000004400,
+		0000004500,	0000004600,	0000004700,	0000004800,	0000004900,
+		0000005000,	0000005100,	0000005200,	0000005300,	0000005400,
+		0000005500,	0000005600,	0000005700,	0000005800,	0000005900,
+		0000006000,	0000006100,	0000006200,	0000006300,	0000006400,
+		0000006500,	0000006600,	0000006700,	0000006800,	0000006900,
+		0000007000,	0000007100,	0000007200,	0000007300,	0000007400,
+		0000007500,	0000007600,	0000007700,	0000007800,	0000007900,
+		0000008000,	0000008100,	0000008200,	0000008300,	0000008400,
+		0000008500,	0000008600,	0000008700,	0000008800,	0000008900,
+		0000009000,	0000009100,	0000009200,	0000009300,	0000009400,
+		0000009500,	0000009600,	0000009700,	0000009800,	0000009900,
+		0000010000,
+	]
+}
 const WEAPON_SLOT = [0, 1, 2, 3]
 const ARMOR_SLOT =  [4]
 const GEAR_SLOT =   [5, 6, 7]
@@ -30,13 +54,13 @@ enum {
 	LINK_MENTOR,
 }
 
-var guildIndex : int #reference to character's position in the guild list.
+var guildIndex:int   #reference to character's position in the guild list.
 var aclassPtr = null #pointer to class index.
-var racePtr = null #pointer to race index.
+var racePtr = null   #pointer to race index.
 
-var XP : int = 0 setget setXP
-var SP : int = 0
-var EP : int = 0
+var XP:int = 0       #Experience points.
+var SP:int = 0       #Skill Points. Gained at level up to raise skills.
+var EP:int = 0
 var race = null #tid
 var aclass = null #tid
 var skills = null #array of class ID + level
@@ -276,7 +300,7 @@ class Armor:
 		self.lib = core.lib.armor.getIndex(self.tid)
 		self.DGem = DragonGemContainer.new(0, data.gem)
 		stats = STATS_DEFAULT.duplicate()
-		recalculateStats()
+		recalculateStats(1)
 
 	func save() -> Dictionary:
 		return {
@@ -285,13 +309,14 @@ class Armor:
 		}
 	func clampStats() -> void:
 		pass
-	func recalculateStats() -> void: #TODO: Move DGem stuff to the character instead?
+	func recalculateStats(lv:int) -> void: #TODO: Move DGem stuff to the character instead?
 		var gemstats = DGem.stats
+		core.stats.reset(stats)
 		if lib.vehicle != null:
 			print("[ARMOR][recalculateStats] Vehicle <TODO>")
 		if lib.frame != null:
 			print("[ARMOR][recalculateStats] Frame")
-			core.stats.setFromSpread(stats, lib.frame.statSpread, 5) #TODO: Get user level somehow.
+			core.stats.setFromSpread(stats, lib.frame.statSpread, lv) #TODO: Get user level somehow.
 
 		stats.DEF += lib.DEF[1 if upgraded else 0] + (gemstats.DEF if 'DEF' in gemstats else 0)
 		stats.EDF += lib.EDF[1 if upgraded else 0] + (gemstats.EDF if 'EDF' in gemstats else 0)
@@ -447,9 +472,10 @@ class equipClass:
 					stats[i][j] = wstats[i][j] if j in wstats[i] else 0
 		return stats
 
-	func calculateArmorBonuses(): #->core.stats: ?
+	func calculateArmorBonuses(lv): #->core.stats: ?
 		var stats = core.stats.create()
 		for a in ARMOR_SLOT:
+			slot[a].recalculateStats(lv)
 			var astats = slot[a].stats
 			for i in ['MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
 				stats[i] += astats[i] if i in astats else 0
@@ -591,7 +617,7 @@ func recalculateStats() -> void:
 	#Get stats from equipment.
 	var gearStats = stats.create()
 	stats.sum(gearStats, equip.calculateWeaponBonuses(currentWeapon))
-	stats.sum(gearStats, equip.calculateArmorBonuses())
+	stats.sum(gearStats, equip.calculateArmorBonuses(level))
 	#stats.sum(gearStats, equip.calculateGearBonuses())
 	stats.sumInto(statFinal, statBase, gearStats)
 
@@ -626,7 +652,7 @@ func initDict(C):	#Load the character from save data
 	print("[CHAR][initDict] Initializing %s" % [name])
 	setCharRace(C.race)                        #Init adventurer's race and set pointer to it for easy reference.
 	setCharClass(C.aclass)                     #Init adventurer's class and set pointer.
-	self.level = int(C.level)                  #Set character level. TODO: Read EXP instead?
+	#self.level = int(C.level)                  #Set character level. TODO: Read EXP instead?
 	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.    (Slots 0-3)
 	equip.loadArmor(C.equip)                   #Init armor, vehicle or frame. (Slot 4)
 	equip.loadGear(C.equip)                    #Init gear/accesories.         (Slots 5-7)
@@ -642,7 +668,7 @@ func initDict(C):	#Load the character from save data
 		energyColor = C.energyColor
 	else:
 		energyColor = "#4466FF"
-
+	setXP(C.XP)                                #Set level from experience points.
 	recalculateStats()
 	fullHeal()
 	print(getTooltip())
@@ -666,17 +692,29 @@ func charge(x : bool = false) -> void:
 func getTooltip():
 	return "%s\nLv.%s %s %s\n%s" % [name, level, raceLib.name(race), classLib.name(aclass), core.stats.print(statFinal)]
 
-func giveXP(val):
-	self.XP = XP + val
 
-func setXP(val):
+func setXP(val:int) -> void: #Silently set level from experience. Used at initialization.
 	XP = val
-	##TODO: Check for level increase etc etc.
+	var levelup = setLevel()
+	recalculateStats()
 
-func setWeapon(WP):
+func giveXP(val:int) -> void: #Increases party member's experience by val.
+	self.XP = XP + val
+	var levelup = setLevel()
+	if levelup: #TODO: Notify the interface to show a warning and play some jingle.
+		recalculateStats()
+
+func setLevel() -> bool: #Calculate current level based on EXP.
+	var levelup = false
+	while level < 100 and XP >= EXP_TABLE['normal'][self.level]:
+		self.level += 1
+		levelup = true
+	return levelup
+
+func setWeapon(WP) -> void: #Sets current weapon.
 	if currentWeapon != WP:
-		currentWeapon = WP
 		equip.currentWeapon = WP
+		currentWeapon = WP
 		updateBattleStats()
 
 func getSkillTID(t):

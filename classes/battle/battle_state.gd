@@ -175,7 +175,7 @@ func checkForAction(tid) -> bool:
 			return true
 	return false
 
-func checkResolution():
+func checkResolution() -> void:
 	var guildActive = formations[SIDE_PLAYER].activeCount()
 	var enemyActive = formations[SIDE_ENEMY].activeCount()
 	if guildActive == 0:
@@ -184,12 +184,13 @@ func checkResolution():
 	elif enemyActive == 0:
 		quit = true
 		resolution = RESULT_VICTORY
-		print("You should get %d EXP here!" % EXP)
+		print("[BATTLE_STATE][checkResolution] Awarding %d EXP!" % EXP)
+		core.guild.giveXP(EXP)
 	else:
 		quit = false
 		resolution = RESULT_ONGOING
 
-func enemyActions():
+func enemyActions() -> void: #Think enemy actions.
 	var F = formations[SIDE_ENEMY]
 	var P = formations[SIDE_PLAYER]
 	var action = null
@@ -215,7 +216,7 @@ func checkActionExecution(user, target) -> bool:
 		return true
 	return false
 
-func initAction(act):
+func initAction(act) -> void:
 	if checkActionExecution(act.user, act.target):
 		act.user.useBattleSkill(self, act.act, act.skill, act.level, act.target, act.WP, act.IT)
 		yield(core.battle.skillControl, "skill_finished")

@@ -90,6 +90,7 @@ var example = {
 				["debug", "vampdran"],
 				["debug", "overclck"],
 				["debug", "lunablaz"],
+				["debug", "savaripp"],
 			],
 		},
 		"esper" : {
@@ -132,8 +133,8 @@ var example = {
 		"rider" : {
 			name = "Rider",
 			description = "Adventurers that compensate their lack of combat skills with various machines to ride. While their growth is fully dependent on their ride, that makes them highly versatile.",
-			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_HAMMER],
-			statSpread = [ [005, 002, 005, 000, 001, 000, 002], [050, 020, 048, 000, 012, 004, 016] ],
+			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD],
+			statSpread = [ [000, 000, 000, 000, 000, 000, 000], [010, 000, 000, 000, 000, 000, 008] ],
 			skills = [
 			],
 		},

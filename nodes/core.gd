@@ -204,6 +204,12 @@ class StatClass:
 		result += printElementData(S.OFF)
 		result += printElementData(S.RES)
 		return result
+	
+	func reset(S) -> void:
+		for i in STATS:
+			S[i] = 0
+		resetElementData(S.OFF)
+		resetElementData(S.RES)
 
 	func setFromArray(S, aStat, aOFF, aRES, aRESscan):
 		if aStat != null:
@@ -248,7 +254,7 @@ class StatClass:
 			else:
 				if S[i] < 0: S[i] = int(000)
 
-	static func interpolateStat(spread, key, level):
+	static func interpolateStat(spread, key, level:int):
 		return int( lerp( float(spread[0][key]), float(spread[1][key]), float(level) * .01 ) )
 
 	func createElementData():

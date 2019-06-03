@@ -4,8 +4,9 @@ var tid = null
 var sprDisplay = null
 var skills = []
 var lib = null
-var XPMultiplier : float = 1.0
+var XPMultiplier:float = 1.0
 var summoner = null
+var armed:bool = true #If the enemy is supposed to be wielding weapons or not.
 
 func recalculateStats():
 	var S = stats.create()
@@ -57,7 +58,6 @@ func damage(x, data, silent = false) -> Array:
 	if sprDisplay != null:
 		sprDisplay.damage()
 		sprDisplay.damageShake()
-
 	return info
 
 func charge(x : bool = false) -> void:

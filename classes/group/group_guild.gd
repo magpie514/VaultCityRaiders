@@ -294,6 +294,12 @@ func init(dict):
 func getRowSize():
 	return ROW_SIZE
 
+func giveXP(amount:int) -> void: #Gives <amount> experience to all party members in formation.
+	for i in formation:
+		if i != null:
+			print("[GROUP_GUILD][giveXP] Giving %d XP to %s" % [amount, i.name])
+			i.giveXP(amount)
+
 func giveDGem(G):
 	dragonGems.push_back(G)
 	sortDGems()

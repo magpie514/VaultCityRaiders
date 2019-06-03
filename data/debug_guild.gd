@@ -14,6 +14,7 @@ var data = {
 		{ name = "Jay",
 			race = ["debug", "choujin"],
 			aclass = ["debug", "ofight"],
+			XP = 500,
 			portrait = null,
 			energyColor = "#0000FF",
 			equip = [
@@ -41,6 +42,7 @@ var data = {
 		{ name = "Magpie",
 			race = ["debug", "choujin"],
 			aclass = ["debug", "gdriver"],
+			XP = 500,
 			portrait = null,
 			energyColor = "#0033AA",
 			equip = [
@@ -68,11 +70,12 @@ var data = {
 		{ name = "Anna",
 			race = ["debug", "vampire"],
 			aclass = ["debug", "incinera"],
+			XP = 500,
 			portrait = null,
 			energyColor = "#DD0000",
 			equip = [
 				# Weapons
-				{ tid = ["debug", "hellfngr"], level = 0, uses = 25, extra = null, gem = [ [["core", "speed"], 101], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 1], [["core", "decel"], 800],[["core", "cut"], 901] ] },
+				{ tid = ["debug", "hellfngr"], level = 0, uses = 1, extra = null, gem = [ [["core", "speed"], 101], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 1], [["core", "decel"], 800],[["core", "cut"], 901] ] },
 				null,
 				null,
 				null,
@@ -83,7 +86,7 @@ var data = {
 				null,
 				null,
 			 ],
-		 	skills = [ [0, 1], [1, 1], [2, 1] ],
+		 	skills = [ [0, 1], [1, 1], [2, 1], [3, 1] ],
 			links = [
 				[010, A.LINK_NAKAMA, A.LINK_NONE, A.LINK_NONE],
 				[010, A.LINK_NAKAMA, A.LINK_NONE, A.LINK_NONE],
@@ -95,6 +98,7 @@ var data = {
 		{ name = "Yukiko",
 			race = ["debug", "choujin"],
 			aclass = ["debug", "akashic"],
+			XP = 500,
 			portrait = null,
 			energyColor = "#4477FF",
 			equip = [
@@ -130,6 +134,7 @@ var data = {
 		{ name = "Shiro",
 			race = ["debug", "choujin"],
 			aclass = ["debug", "muramasa"],
+			XP = 500,
 			portrait = null,
 			equip = [
 				# Weapons
