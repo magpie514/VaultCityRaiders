@@ -1,6 +1,4 @@
 extends "res://classes/char/char_base.gd"
-var raceLib = core.lib.race
-var classLib = core.lib.aclass
 var tid = core.tid
 const EXP_TABLE = {
 	normal = [
@@ -55,16 +53,16 @@ enum {
 }
 
 var guildIndex:int   #reference to character's position in the guild list.
-var aclassPtr = null #pointer to class index.
+var classlib = null #pointer to class index.
 var racePtr = null   #pointer to race index.
 
 var XP:int = 0       #Experience points.
 var SP:int = 0       #Skill Points. Gained at level up to raise skills.
 var EP:int = 0
-var race = null #tid
-var aclass = null #tid
-var skills = null #array of class ID + level
-var links = null #array of [trust, link1, link2, link3]
+var race = null      #tid
+var aclass = null    #tid
+var skills = null    #array of class ID + level
+var links = null     #array of [trust, link1, link2, link3]
 
 var equip = core.Inventory.Equip.new()
 var currentWeapon = equip.slot[0]
@@ -72,7 +70,7 @@ var inventory:Array = []
 var personalInventorySize:int = 2
 var personalInventory:Array = []
 
-static func valueByTrust(a, v : int) -> int:
+static func valueByTrust(a, v:int) -> int: #Return Over gain value based on trust.
 	if v >= 100:   return a[2]
 	elif v >= 50:  return a[1]
 	else:          return a[0]
@@ -171,7 +169,7 @@ func recalculateStats() -> void:
 	stats.resetElementData(raceStats.RES)
 	stats.setFromSpread(raceStats, racePtr.statSpread, level)
 	var classStats = stats.create()
-	stats.setFromSpread(classStats, aclassPtr.statSpread, level)
+	stats.setFromSpread(classStats, classlib.statSpread, level)
 	stats.sumInto(statBase, raceStats, classStats)
 
 	#Get stats from equipment.
@@ -183,7 +181,7 @@ func recalculateStats() -> void:
 
 func setCharClass(t) -> void:
 	aclass = tid.fromArray(t)
-	aclassPtr = core.lib.aclass.getIndex(t)
+	classlib = core.lib.aclass.getIndex(t)
 
 func setCharRace(t) -> void:
 	race = tid.fromArray(t)
@@ -245,12 +243,24 @@ func damage(x, data, silent = false) -> Array:
 func revive(x: int) -> void:
 	.revive(x)
 
+func defeat() -> void:
+	var IT:Array = group.inventory.canCounterEvent(core.lib.item.COUNTER_DEFEAT, self.inventory)
+	if not IT.empty():
+		group.inventory.takeConsumable(IT[0])
+		print("\t[CHAR_BASE][defeat] %s was protected by %s!" % [name, IT[0].data.lib.name])
+		if battle != null:
+			skill.msg("%s was hurt, but held on thanks to the %s!" % [name, IT[0].data.lib.name])
+			display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), false, "00FFFF")
+			HP = getHealthPercent(IT[0].data.level + 1)
+			return
+	.defeat()
+
 func charge(x : bool = false) -> void:
 	if display != null:
 		display.charge(x)
 
-func getTooltip():
-	return "%s\nLv.%s %s %s\n%s" % [name, level, raceLib.name(race), classLib.name(aclass), core.stats.print(statFinal)]
+func getTooltip() -> String:
+	return "%s\nLv.%s %s %s\n%s" % [name, level, racePtr.name, classlib.name, core.stats.print(statFinal)]
 
 
 func setXP(val:int) -> void: #Silently set level from experience. Used at initialization.
@@ -278,7 +288,7 @@ func setWeapon(WP) -> void: #Sets current weapon.
 		updateBattleStats()
 
 func getSkillTID(t):
-	return aclassPtr.skills[t[0]]
+	return classlib.skills[t[0]]
 
 func checkRaceType(type:int) -> bool:
 	var result : bool = false

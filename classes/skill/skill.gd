@@ -344,6 +344,8 @@ enum { #Skill function codes.
 	OPCODE_DAMAGERAW,					#[@%]Reduce target's HP by given value (no accuracy check)
 	OPCODE_SELF_DAMAGE,       #[%]Shortcut for delivering recoil/self damage to the user.
 	OPCODE_DEFEAT,						#[@]Instantly defeats target with a given chance. This bypasses regular instant death protection and is mostly used for self-destructs with potential chances of survival.
+	OPCODE_TRYRUN,						#[@]Tries to run from battle with a X% chance check.
+	OPCODE_RUN,								#[@]If not zero, runs from battle bypassing checks. Will still fail on battles where running is disabled.
 
 	# Followup functions #########################################################
 	# Use before OPCODE_FOLLOW
@@ -556,6 +558,8 @@ const opCode = {
 	"f_inflict" : OPCODE_FORCE_INFLICT,
 	"dmgraw" : OPCODE_DAMAGERAW,
 	"defeat" : OPCODE_DEFEAT,
+	"tryrun" : OPCODE_TRYRUN,
+	"run" : OPCODE_RUN,
 
 	"follow_set" : OPCODE_FOLLOW,
 	"follow_el"  : OPCODE_FOLLOW_ELEMENT,
@@ -1830,6 +1834,10 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								print("[SKILL][processSkillCode2][DEFEAT] User is not active, aborting execution")
 						else:
 							print("Check failed, no effect.")
+					OPCODE_TRYRUN:
+						print(">[TODO] TRY TO RUN: %s" % value)
+					OPCODE_RUN:
+						print(">[TODO] RUN: %s" % value)
 # Chains and follows ###########################################################
 					OPCODE_FOLLOW:
 						print(">FOLLOW SET: %s" % value)

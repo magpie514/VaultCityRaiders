@@ -1,47 +1,70 @@
-enum { ACT_DEFEND, ACT_FIGHT, ACT_SKILL, ACT_ITEM, ACT_RUN, ACT_OVER }
-enum { SIDE_PLAYER, SIDE_ENEMY, SIDE_SPECIAL }
-enum { RESULT_ONGOING, RESULT_VICTORY, RESULT_DEFEAT, RESULT_GUILD_ESCAPE, RESULT_ENEMY_ESCAPE, RESULT_SPECIAL }
 
 #signal skill_finished
-const FIELD_EFFECT_SIZE = 12
 
-var turn : int = 0
-var quit : bool = false
-var resolution : int = 0
-var formations = core.newArray(2)
-var actionQueue = core.newArray(1)
-var field = preload("res://classes/battle/field_effects.gd").new()
-var lastElement : int = 0    #Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
-var onhit = []
-var UI = null
-var lastAct = []
-var nextAct = []
-var EXP = 0
-var msgColors = {
+const FIELD_EFFECT_SIZE = 12
+const ElementField = preload("res://classes/battle/field_effects.gd")
+const msgColors = {
 	names = ["9999FF", "FF9999", "99FF99"],
 	damage = ["FF7842", "FC4547", "FFC542"],
 	healing = ["44FF94"],
 }
 
-func dprint(text : String):
+enum { ACT_DEFEND, ACT_FIGHT, ACT_SKILL, ACT_ITEM, ACT_RUN, ACT_OVER }
+enum { SIDE_PLAYER, SIDE_ENEMY, SIDE_SPECIAL }
+enum { RESULT_ONGOING, RESULT_VICTORY, RESULT_DEFEAT, RESULT_GUILD_ESCAPE, RESULT_ENEMY_ESCAPE, RESULT_SPECIAL }
+
+class Action:
+	var user = null          #Pointer to user.
+	var act:int = ACT_SKILL  #Action type.
+	var side:int = 0         #User's group.
+	var slot:int = 0         #User's slot.
+	var spd:int = 0          #Action speed.
+	var level:int = 0        #Action level.
+	var skill                #Pointer to action's skill definition.
+	var skillTid             #TID of skill definition.
+	var target: Array        #List of targets.
+	var override = null      #Pointer to skill override (mostly dragon gems)
+	var cancel:bool = false  #TODO: What?
+	#Player only.
+	var WP = null            #Pointer to weapon in use.
+	var IT = null            #Pointer to item in use.
+
+	func _init(_act:int = ACT_SKILL) -> void:
+		act = _act
+
+var turn:int = 0                         #Current turn for this battle. Influences AI.
+var quit:bool = false                    #If battle should continue or not.
+var resolution:int = 0                   #Result for the encounter when quitting.
+var formations:Array = core.newArray(2)  #Pointers to the participating groups.
+var actionQueue = core.newArray(1)       #Action queue.
+var field = ElementField.new()           #Elemental field.
+var lastElement:int = 0                  #Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
+var onhit = []                           #Temporary var to store extra onhit effects.
+var UI = null                            #Pointer to user interface.
+var lastAct = []                         #Last action?
+var nextAct = []                         #Next action?
+var EXP:int = 0                          #Accumulated EXP reward for the encounter.
+
+
+func dprint(text:String) -> void: #TODO: Convert this into a proper debug printer.
 	print(text)
 
-
-func _init():
-	dprint("[battle_state]Initializing internal battle state...")
+func _init() -> void:
+	#This print here is only to see when the state is initialized in the logs.
+	dprint("[BATTLE_STATE][_init]Initializing internal battle state...")
 	turn = 0
 	quit = false
 
-func init(player, enemy, ui_node):
+func init(player, enemy, ui_node) -> void: #Actual initialization of the battle queue.
 	UI = ui_node
 	formations[SIDE_PLAYER] = player
 	formations[SIDE_ENEMY] = enemy
 	resetActionQueue()
-	field.init()
-	for i in formations:
+	field.init() #Initialize elemental field.
+	for i in formations: #Initialize both formations. Iterated in case I add more factions at once.
 		i.initBattle()
 
-func echo(txt):
+func echo(txt) -> void: #Sends a message to the action log.
 	UI.echo(txt)
 
 func colorName(user) -> String:
@@ -50,12 +73,12 @@ func colorName(user) -> String:
 func color_name(user) -> String:
 	return "[color=#%s]%s[/color]" % [msgColors.names[user.side], user.name]
 
-func passTurn():
+func passTurn(): #Advances the turn counter and makes groups update its members.
 	turn += 1
 	echo("TURN %s START" % turn)
 	field.passTurn()
-	resetActionQueue()
-	for i in formations:
+	resetActionQueue() #Relieve the queue from any potential trash data.
+	for i in formations: #Make participating groups update their members.
 		i.initBattleTurn()
 
 func endTurn():
@@ -76,89 +99,74 @@ func endTurn():
 			print("....ED CODE RETURNED....")
 	controlNode.emit_signal("skill_special_finished")
 
-func resetActionQueue():
+func resetActionQueue() -> void: #Resets the action queue.
+	dprint("[BATTLE_STATE][resetActionQueue] Resetting action queue.")
 	actionQueue.clear()
 
-static func sortActionQueue(a, b):
-	return (a.spd > b.spd)
-
-static func sortActionQueueOverPass(a, b):
-	return (a.act == ACT_OVER)
-
-func prepareActionQueue():
+func prepareActionQueue() -> void:
 	self.printQueue()
 	sort()
 
-func pushAction(act):
+func pushAction(act:Action) -> void: #Push an action into the queue.
 	actionQueue.push_back(act)
 
-func sort():
-	actionQueue.sort_custom(self, "sortActionQueue")
-	actionQueue.sort_custom(self, "sortActionQueueOverPass")
-
-func popAction():
+func popAction() -> Action: #Pop the front of the queue and return it.
 	return actionQueue.pop_front()
 
-func status():
-	return not quit
-
-func amount():
+func amount() -> int: #Returns amount of actions in the queue.
 	return actionQueue.size()
 
-class Action:
-	var side: int = 0
-	var slot: int = 0
-	var user = null
-	var spd: int = 0
-	var level: int = 0
-	var skill
-	var skillTid
-	var target: Array
-	var act: int = ACT_SKILL
-	var WP = null
-	var IT = null
-	var override = null
-	var cancel: bool = false
+func sort() -> void: #Sorts the action queue by action speed.
+	actionQueue.sort_custom(self, "sortActionQueue")
+	#Over actions take special priority and are put in front but are also sorted by speed besides that.
+	actionQueue.sort_custom(self, "sortActionQueueOverPass")
 
-	func _init(_act = ACT_SKILL) -> void:
-		act = _act
+static func sortActionQueue(a, b): #Sorts actions, faster first.
+	return (a.spd > b.spd)
+
+static func sortActionQueueOverPass(a, b): #Sorts actions, Over first.
+	return (a.act == ACT_OVER)
+
+func status() -> bool: #Checks if battle should continue or not.
+	return not quit
 
 
-func addAction(side, slot, act: Action):
+func addAction(side, slot, act:Action) -> void:
 	var user = formations[side].formation[slot]
 	act.user = user
 	act.side = side
 	act.slot = slot
-	match act.act:
-		ACT_DEFEND:
+
+	match act.act: #These action types are special.
+		ACT_DEFEND: #TODO: Set defensive action if any here.
 			act.skillTid = core.tid.create("core", "defend")
 			act.skill = core.lib.skill.getIndex(act.skillTid)
 			act.target = [ user ]
-		ACT_RUN:
+		ACT_RUN: #Running is not a real skill, but internally it's treated as such.
+			#TODO: Set up an actual running skill.
 			act.skillTid = core.tid.create("debug", "debugi")
 			act.skill = core.lib.skill.getIndex(act.skillTid)
 			act.target = [ user ]
-	if act.override != null:
-			print("[BATTLE STATE][addAction] Using override %s" % act.override)
-	act.spd = user.calcSPD(act.skill, 1)
-	# var A = {
-	# 	side = int(side),
-	# 	user = user,
-	# 	spd = int(spd),
-	# 	level = int(act[2]),
-	# 	skillTid = skill,
-	# 	skill = S,
-	# 	target = T,
-	# 	act = int(act[0]),
-	# 	WP = act[4],
-	# 	IT = null,
-	# }
+
+	if act.override != null: #Something, usually a dragon gem, is overriding the regular skill pointer.
+		print("[BATTLE STATE][addAction] Using override %s" % act.override)
+
+	#Action speed.
+	if act.IT != null and act.act == ACT_ITEM: #Using an item, ignore skill speed.
+		act.spd = user.calcSPD(user.battle.itemSPD)
+	else: #Using a skill.
+		act.spd = user.calcSPD(act.skill.spdMod[0])
+		#act.spd = user.calcSPD(act.skill.spdMod[act.level]) #TODO: Enable this once all level data has been normalized.
+
+	#Set action as last used for the character. Mostly relevant to players to redo actions from the battle menu.
 	user.battle.lastAction = act
+
+	# Visual and interface related functions go here.
 	if act.skill.chargeAnim[act.level] != 0: user.charge(true)
 	if act.skill.initAD[act.level] != 100: user.display.updateAD(act.skill.initAD[act.level])
 	pushAction(act)
 
-func updateActions(A):
+func updateActions(A) -> void:
 	lastAct = [A.side, A.user, A.skill, A.level]
 	print("[BATTLE_STATE][UPDATEACTIONS] lastAct: %s %s LV%2d" % [lastAct[1].name, lastAct[2].name, lastAct[3]])
 	var tmp = null
@@ -193,26 +201,24 @@ func checkResolution() -> void:
 func enemyActions() -> void: #Think enemy actions.
 	var F = formations[SIDE_ENEMY]
 	var P = formations[SIDE_PLAYER]
-	var action = null
 	for i in F.activeMembers():
-		i.display.update()
-		action = i.thinkBattleAction(F, P, self)
+		var action = i.thinkBattleAction(F, P, self)
 		var result = Action.new(ACT_SKILL)
 		result.skillTid = action[0]
 		result.skill = core.lib.skill.getIndex(action[0])
 		result.level = action[1]
 		result.target = action[2]
+		i.display.update()
 		addAction(SIDE_ENEMY, i.slot, result)
 
-
-func checkActionExecution(user, target) -> bool:
-	if quit == true:
+func checkActionExecution(user, target) -> bool: #Check if an action can be performed before getting to details.
+	if quit == true: #Battle is over, no further actions are performed.
 		return false
-	if user.canAct() == false:
-		if user.battle.paralyzed == true:
+	if user.canAct() == false: #Check if user can act.
+		if user.battle.paralyzed == true: #Intercept paralysis status in particular so a message can be printed.
 			echo("%s is paralyzed!" % user.name)
 		return false
-	elif target != null:
+	elif target != null: #If user can act and there are valid targets, proceed.
 		return true
 	return false
 
@@ -255,21 +261,23 @@ func checkFollow(F, last) -> void:
 		controlNode.finishFollows()
 
 
-func collectPriorityActions(act, temp):
+func collectPriorityActions(act, temp) -> void:
 	if checkActionExecution(act.user, act.target):
 		if core.skill.hasCodePR(act.skill):
 			temp.push_back( [ act.skill, act.level, act.user, act.side ] )
 
-func checkPriorityActions():
+func checkPriorityActions() -> void:
 	var controlNode = core.battle.skillControl
-	var temp = []
+	var temp:Array = []
 	for i in actions():
-		collectPriorityActions(i, temp)
+		collectPriorityActions(i, temp) #Store priority actions in temp if any.
 		#Set Active Defense for all participants
 		#TODO: Ensure this isn't done twice for Over skills or multiple actions?
+		#TODO: This should perhaps be elsewhere.
 		i.user.setInitAD(i.skill, i.level - 1)
 	if temp.size() > 0:
 		for i in temp:
+			#Execute PR code blocks of involved skills.
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(true)
 			else: i[2].sprDisplay.act()
@@ -280,18 +288,17 @@ func checkPriorityActions():
 			print("[BATTLE_STATE][checkPriorityActions] PR returned!")
 			yield(core.battle.control.wait(0.5), "timeout")
 			print("[BATTLE_STATE][checkPriorityActions]")
-	yield(core.battle.control.wait(0.1), "timeout")
-	controlNode.emit_signal("skill_special_finished")
+	yield(core.battle.control.wait(0.1), "timeout") #Small pause.
+	controlNode.emit_signal("skill_special_finished") #Notify we are done processing all priority special actions.
 
-func actions():
-	var act = []
+func actions() -> Array: #Returns a total list of actions without popping them.
+	var result:Array = []
 	for i in range(actionQueue.size()): #Return them in order, that way they are already sorted by speed.
-		act.push_back(actionQueue[i])
-	return act
+		result.push_back(actionQueue[i])
+	return result
 
-
-##Debug functions
-func echoArray(a):
+# Debug functions #############################################################
+func echoArray(a) -> void: #Prints all the contents of an array.
 	for i in a:
 		echo(i)
 
@@ -301,7 +308,7 @@ func printQueueTargets(a):
 		result += str("[%s:%s]" % [i.slot, i.name])
 	return result
 
-func printQueue():
+func printQueue() -> void:
 	print("= Action queue =")
 	print("Actions: %s" % actionQueue.size())
 	print("Revive enemies: %s" % str(formations[SIDE_ENEMY].defeated))

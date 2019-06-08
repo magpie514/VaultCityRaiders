@@ -1,5 +1,5 @@
 extends "res://classes/group/group_base.gd"
-const adventurer = preload("res://classes/char/char_player.gd")
+const Adventurer = preload("res://classes/char/char_player.gd")
 const Inventory = preload("res://classes/inventory/item.gd")
 const DragonGem = Inventory.DragonGem
 
@@ -8,19 +8,17 @@ const MAX_SIZE = ROW_SIZE * 2
 
 const ROW_ITER = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 
-
-
-
-
-var roster : Array = core.newArray(24)
-var formationSlots : Array = core.newArray(MAX_SIZE)
-var dragonGems : Array = []
-var mons : Array = core.newArray(6) #Monster party.
-var guest : adventurer = null
-var funds : int = 0
-var inventory = null
-var display = null
-var stats = null
+var roster:Array = core.newArray(24)         #All characters in the guild.
+var formationSlots:Array = core.newArray(MAX_SIZE) #???
+var dragonGems:Array = []                    #Dragon Gem inventory.
+var monsFormation:Array = core.newArray(6)   #Monster party.
+var monCards:Array = core.newArray(1024)     #All monsters.
+var guest:Adventurer = null                  #Guest character, if any. Only for events.
+var funds:int = 0                            #Guild's shared money.
+var inventory = null                         #Guild's shared inventory.
+var display = null                           #Pointer to GUI.
+var stats = null                             #Guild stats.
+var FO = null                                #Guild's Field Officer.
 
 func init(dict):
 	formation = core.newArray(MAX_SIZE)
@@ -53,7 +51,7 @@ func init(dict):
 	for i in range(MAX_SIZE):                                                     #Load individual characters now.
 		if formationSlots[i] != null:
 			A = roster[formationSlots[i]]
-			formation[i] = adventurer.new()
+			formation[i] = Adventurer.new()
 			formation[i].initDict(A)
 			formation[i].slot = i
 			formation[i].row = 0 if i < ROW_SIZE else 1

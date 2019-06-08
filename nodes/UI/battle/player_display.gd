@@ -5,7 +5,7 @@ func _ready():
 
 func showChar(c):
 	show()
-	$Name.text = str("%s %s %-24s" % [c.racePtr.name, c.aclassPtr.name, c.name])
+	$Name.text = str("%s %s %-24s" % [c.racePtr.name, c.classlib.name, c.name])
 	$Level.text = str("LV.%03d" % c.level)
 	$StatStatic/ATK.text = str(c.battle.stat.ATK)
 	$StatStatic/BATK.init([float(c.statBase.ATK) / 255.0, float(c.statFinal.ATK - c.statBase.ATK) / 255.0, float(c.battle.stat.ATK - c.statFinal.ATK) / 255.0], ["FF0000", "FF9900", "0088FF"] )

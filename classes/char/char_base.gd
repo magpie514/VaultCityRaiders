@@ -8,25 +8,25 @@ enum { #Flags for scripted fights.
 
 
 # Basic stats ##################################################################
-var name = ""													#Name of the character
-var level = int()											#XP level
-var status:int = 0										#Status (Primary) #TODO:Rename to condition1
-var condition2:int = 0								#Condition (Secondary)
-var condition3:Array = []							#Condition (Damage over time)
+var name = ""												#Character's given name.
+var level = int()										#EXP level
+var status:int = 0									#Status (Primary) #TODO:Rename to condition1
+var condition2:int = 0							#Condition (Secondary)
+var condition3:Array = []						#Condition (Damage over time)
 
-var HP : int = 0											#Character's vital (HP)
-var statBase = stats.create()					#Base stats
-var statFinal = stats.create()				#Calculated stats
-var battle = null 										#Battle stats (See createBattleStats())
+var HP:int = 0											#Character's vital (HP)
+var statBase = stats.create()				#Base stats
+var statFinal = stats.create()			#Calculated stats
+var battle = null 									#Battle stats (See createBattleStats())
 
 # Battle display ###############################################################
-var display = null										#Reference to the character's UI element for quick access.
-var energyColor = "#AAFFFF"           #Color used for certain effects.
+var display = null									#Reference to the character's UI element for quick access.
+var energyColor = "#AAFFFF"         #Color used for certain effects.
 # Various shortcut vars ########################################################
-var slot : int = 0										#Character's position slot in its group.
-var row : int = 0											#Character's calculated row
-var side : int = 0										#Quick ally/enemy reference. Mostly for text coloring.
-var group = null											#Reference to the character's group.
+var slot:int = 0									  #Character's position slot in its group.
+var row:int = 0										  #Character's calculated row
+var side:int = 0									  #Quick ally/enemy reference. Mostly for text coloring.
+var group = null										#Reference to the character's group.
 
 class BattleStats:
 	# Core stats ################################################################################
@@ -213,21 +213,17 @@ func getOverN() -> float:
 	#Not meant to be called out of battle.
 	return core.percent(battle.over)
 
-func calcSPD(S, lv) -> int:
-#[(Equipment Speed Mod + 100) * AGI * Skill Speed Mod * Random number between 90 and 110 / 10000] * Modifiers
-	lv -= 1
-	var equipSpeedMod = float(getEquipSpeedMod() + 100)
-	var AGI = battle.stat.AGI
-	var mod = 100 #90 + ( randi() % 20 )
-	var skillSpeedMod = float(S.spdMod[lv]) * 0.01
+func calcSPD(spd:int) -> int:
+	var AGI:float = battle.stat.AGI as float
+	var equipSpeedMod:float = float(getEquipSpeedMod() + 100)
+	var skillSpeedMod:float = float(spd) * 0.01
 	#return (equipSpeedMod * AGI * skillSpeedMod * mod * statBonus.mult.SPD) / 10000
-	return int((equipSpeedMod * AGI * skillSpeedMod * mod) / 10000)
+	return int((equipSpeedMod * AGI * skillSpeedMod * 100) / 10000)
 
 func getEquipSpeedMod():
 	return 0
 
-func damageProtectionPass(x:int, info, ignoreDefs = false) -> int:
-	# Modify damage according to defenses and deplete said defenses if applicable.
+func damageProtectionPass(x:int, info, ignoreDefs = false) -> int: # Modify damage according to defenses and deplete said defenses if applicable.
 	if battle.eventFlags & EVENTFLAGS_INVINCIBLE:
 		info.barrierFullBlock = true
 		print("[CHAR_BASE][damageProtectionPass] %s has plot armor." % name)
@@ -303,7 +299,7 @@ func damage(x:int, data, silent:bool = false) -> Array:
 		display.damage([[x, data[0], overkill, data[2], data[3]]])
 	return [overkill, defeat]
 
-func setAD(x:int, absolute:bool = false):
+func setAD(x:int, absolute:bool = false) -> void: #Set active defense.
 	if absolute:
 		battle.AD = x
 	else:
@@ -312,18 +308,8 @@ func setAD(x:int, absolute:bool = false):
 		display.updateAD(battle.AD)
 	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
-func defeat():
-	if self is core.Player:
-		var IT:Array = group.inventory.canCounterEvent(core.lib.item.COUNTER_DEFEAT, self.inventory)
-		if not IT.empty():
-			group.inventory.takeConsumable(IT[0])
-			print("\t[CHAR_BASE][defeat] %s was protected by %s!" % [name, IT[0].data.lib.name])
-			if battle != null:
-				skill.msg("%s was hurt, but held on thanks to the %s!" % [name, IT[0].data.lib.name])
-				display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), false, "00FFFF")
-				HP = getHealthPercent(IT[0].data.level + 1)
-				return
-	status = skill.STATUS_DOWN
+func defeat() -> void: #Process defeat.
+	status = skill.STATUS_DOWN #TODO: Set condition instead.
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
 	if battle != null:
