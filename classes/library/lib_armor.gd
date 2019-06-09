@@ -32,6 +32,8 @@ enum { #Vehicle parts. (Frames need no check, they use all)
 	# Frame only
 	PARTS_ARMS,
 	PARTS_BOOSTER,
+	# Goes in extra slot
+	PARTS_EXTRA,
 }
 
 const VEPARTS = {

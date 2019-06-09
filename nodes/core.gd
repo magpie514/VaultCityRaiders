@@ -356,25 +356,29 @@ func stopMusic():
 	$AudioStreamPlayer.playing = false
 
 func initLibs() -> void:
+	#Load skill interpreter and keep in memory.
 	skill = load("res://classes/skill/skill.gd").new()
-	lib.skill = load("res://classes/library/lib_skill.gd").new()
-	lib.skill.loadDebug()
-	lib.race = load("res://classes/library/lib_race.gd").new()
-	lib.race.loadDebug()
-	lib.aclass = load("res://classes/library/lib_class.gd").new()
-	lib.aclass.loadDebug()
-	lib.weapon = load("res://classes/library/lib_weapon.gd").new()
-	lib.weapon.loadDebug()
-	lib.item = load("res://classes/library/lib_item.gd").new()
-	lib.item.loadDebug()
-	lib.dgem = load("res://classes/library/lib_gem.gd").new()
-	lib.dgem.loadDebug()
-	lib.armor = load("res://classes/library/lib_armor.gd").new()
-	lib.armor.loadDebug()
-	lib.enemy = load("res://classes/library/lib_enemy.gd").new()
-	lib.enemy.loadDebug()
-	lib.mform = load("res://classes/library/lib_group_enemy.gd").new()
-	lib.mform.loadDebug()
+	#Skill library.
+	lib.skill = load("res://classes/library/lib_skill.gd").new();           lib.skill.loadDebug()
+	#Player race library
+	lib.race = load("res://classes/library/lib_race.gd").new();             lib.race.loadDebug()
+	#Adventurer class library.
+	lib.aclass = load("res://classes/library/lib_class.gd").new();          lib.aclass.loadDebug()
+	#Weapon library.
+	lib.weapon = load("res://classes/library/lib_weapon.gd").new();         lib.weapon.loadDebug()
+	#Item library.
+	lib.item = load("res://classes/library/lib_item.gd").new();             lib.item.loadDebug()
+	#Dragon gem library.
+	lib.dgem = load("res://classes/library/lib_gem.gd").new();              lib.dgem.loadDebug()
+	#Armor/Vehicle/Frame parts library.
+	lib.armorparts = load("res://classes/library/lib_armorparts.gd").new(); lib.armorparts.loadDebug()
+	#Armor/Vehicle/Frame library.
+	lib.armor = load("res://classes/library/lib_armor.gd").new();           lib.armor.loadDebug()
+	#Enemy library.
+	lib.enemy = load("res://classes/library/lib_enemy.gd").new();           lib.enemy.loadDebug()
+	#TODO: Mon library
+	#Enemy formation library.
+	lib.mform = load("res://classes/library/lib_group_enemy.gd").new();     lib.mform.loadDebug()
 
 func getSkillPtr(TID):
 	return lib.skill.getIndex(TID)

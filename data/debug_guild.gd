@@ -24,7 +24,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["story", "orbitfrm"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "orbitfrm"], frame = {}, gem = []},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,

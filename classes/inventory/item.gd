@@ -381,6 +381,7 @@ class Item: #Item container class.
 		ITEM_CONSUMABLE,
 		ITEM_SAMPLE
 		ITEM_WEAPON,
+		ITEM_ARMOR,
 		ITEM_GEAR,
 	}
 	var type:int = ITEM_NONE
@@ -470,20 +471,32 @@ class Armor:
 		}
 	func clampStats() -> void:
 		pass
+
+	func setPartStats(parts) -> void: #Add part bonuses into _stats
+		for i in core.lib.armorparts.PARTS:
+			if i in parts:
+				var part = parts[i]
+				for j in ['stat1', 'stat2']:
+					if part.lib[j][0] in [ 'MHP','ATK','DEF','ETK','EDF','AGI','LUC' ]:
+						stats[part[j][0]] += part.lib[j][6]
+
 	func recalculateStats(lv:int) -> void: #TODO: Move DGem stuff to the character instead?
 		var gemstats = DGem.stats
 		core.stats.reset(stats)
 		if lib.vehicle != null:
 			print("[ARMOR][recalculateStats] Vehicle <TODO>")
+			#core.stats.setFromSpread(stats, lib.frame.statSpread, lv)
+			if 'vehicle' in extraData: setPartStats(extraData.vehicle)
 		if lib.frame != null:
 			print("[ARMOR][recalculateStats] Frame")
-			core.stats.setFromSpread(stats, lib.frame.statSpread, lv) #TODO: Get user level somehow.
+			core.stats.setFromSpread(stats, lib.frame.statSpread, lv)
+			if 'frame' in extraData: setPartStats(extraData.frame)
 
 		stats.DEF += lib.DEF[1 if upgraded else 0] + (gemstats.DEF if 'DEF' in gemstats else 0)
 		stats.EDF += lib.EDF[1 if upgraded else 0] + (gemstats.EDF if 'EDF' in gemstats else 0)
-		for i in ['ATK', 'ETK', 'AGI', 'LUC']:
+		for i in [ 'MHP','ATK','ETK','AGI','LUC' ]:
 			stats[i] += gemstats[i] if i in gemstats else 0
-		for i in ['OFF', 'RES']:
+		for i in [ 'OFF','RES' ]:
 			if i in gemstats:
 				for j in core.stats.ELEMENTS:
 					stats[i][j] += gemstats[i][j] if j in gemstats[i] else 0
