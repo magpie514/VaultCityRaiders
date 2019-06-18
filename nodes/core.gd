@@ -119,31 +119,56 @@ class _charPanel:
 		else: #Back to normal theme
 			T = UIthemes[theme]
 			setColors(T[0], T[1])
-class _tid:
-	func create(a, b):
+
+class _tid: #TID (Thing ID) helper class.
+#A TID is a way to organize data in a nested dictionary. "Libraries" use this format to store data as section/item.
+	func create(a, b) -> Array: #Create a new TID array from two strings.
 		return [str(a), str(b)]
 
-	func validateArray(tid):
-		if typeof(tid) != TYPE_ARRAY: return false
-		else:
-			if tid[0] == null: return false
-			if tid[1] == null: return false
-			return true
+	func validateArray(tid) -> bool: #Validate a TID array.
+		#Validation rules.
+		if tid.size() != 2: return false #TID isn't the right size.
+		if tid[0] == null:  return false #Value 1 is not valid.
+		if tid[1] == null:  return false #Value 2 is not valid.
+		#All basic fail checks pass. It's valid.
+		return true
 
-	func fromArray(a):
+	func validateString(tid) -> bool: #Validate a TID string.
+		#Validation rules.
+		if tid.split('/') != -1: return false #Must use / as a separator.
+		#All basic fail checks pass. It's valid.
+		return true
+
+	func fromArray(a) -> Array: #Create a TID using an array in the format ["section", "item"]
 		if validateArray(a):
 			return create(a[0], a[1])
 		else:
 			return create("debug", "debug")
 
-	func copy(tid):
-		create(tid[0], tid[1])
+	func fromString(st) -> Array: #Create a TID using a string in the format "section/item"
+		if validateString(st):
+			var parts = st.split('/', false, 2)
+			return create(parts[0], parts[1])
+		else:
+			return create("debug", "debug")
 
-	func string(tid) -> String:
-		var result = "%s/%s" % [tid[0], tid[1]]
+	func from(a) -> Array: #Create a TID from an unknown definition.
+		match(typeof(a)):
+			TYPE_STRING:
+				return fromString(a)
+			TYPE_ARRAY:
+				return fromArray(a)
+			_:
+				return create("debug", "debug")
+
+	func copy(tid) -> Array: #Makes a copy of a TID.
+		return create(tid[0], tid[1])
+
+	func string(tid) -> String: #Prints a TID as a string in the format "section/item"
+		var result:String = "%s/%s" % [tid[0], tid[1]]
 		return result
 
-	func compare(tid1, tid2) -> bool:
+	func compare(tid1, tid2) -> bool: #Compare two TIDs.
 		return true if (tid1[0] == tid2[0] and tid1[1] == tid2[2]) else false
 
 class StatClass:
@@ -303,19 +328,25 @@ class StatClass:
 			if E[i] < 1: E[i] = int(001)
 			if E[i] > 999: E[i] = int(999)
 
-static func newArray(size) -> Array:
+
+
+
+
+# Helper functions ############################################################
+
+static func newArray(size) -> Array: #Creates and returns an array with the given size.
 	var a = []
 	a.resize(size)
 	return a
 
-static func valArray(val, size):
+static func valArray(val, size) -> Array: #Creates an array of given size where all values are val.
 	var a = []
 	a.resize(size)
 	for i in a:
 		i = val
 	return a
 
-static func copyArray(array):
+static func copyArray(array) -> Array: #TODO: Maybe it should be a duplicate() instead?
 	var result = []
 	var size = array.size()
 	result.resize(size)
@@ -323,30 +354,34 @@ static func copyArray(array):
 		result[i] = array[i]
 	return result
 
-static func chance(val) -> bool:
+static func chance(val) -> bool: #Calculate a random chance in a way humans can understand it easily.
 	if val >= 100: return true
 	else:	return true if val > (randi() % 100) else false
 
 static func normalize(v:int, m:int) -> float: #I was tired of doing the casting by hand don't judge me.
 	return float(float(v) / float(m))
 
-static func percent(v:int) -> float:
+static func percent(v:int) -> float: #Cast a X% number into something more suitable for multiplications.
 	return float(v) * .01
 
-static func clampi(x:int, mi:int, ma:int):
+static func clampi(x:int, mi:int, ma:int) -> int: #Equivalent to clamp() but uses ints only.
 	return clamp(x, mi, ma) as int
 
-static func randomPick(val):
+static func randomPick(val): #TODO: Don't gdscript arrays have this feature already?
 	match typeof(val):
 		TYPE_ARRAY:
 			var r = randi() % val.size()
 			return val[r]
 
 
-func quit():
+###############################################################################
+
+
+
+func quit(): #Quits the game.
 	get_tree().quit()
 
-func playMusic(path):
+func playMusic(path): #Plays music file at path in default audio stream player.
 	var bgm = load(path)
 	if bgm != null:
 		$AudioStreamPlayer.set_stream(bgm)
