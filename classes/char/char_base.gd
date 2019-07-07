@@ -53,6 +53,7 @@ class BattleStats:
 	var buff:Array = []              #Active buffs (stack of 3)
 	var debuff:Array = []            #Active debuffs (stack of 3)
 	var effect:Array = []            #Active special effects (max 8, will fail if no slots)
+	var eventEffect:Array = []       #Active event-based effects (max 8)
   # Onhit activations #########################################################################
 	var follow:Array = []            #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
 	var chase:Array = []             #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
@@ -70,16 +71,43 @@ class BattleStats:
 	var parry:Array = [100, 33, core.skill.PARRY_NONE]
 	var protectedBy:Array = []	     #Array of arrays, [pointer to defender, chance of defending]
 	var defending:bool = false       #Character is marked as defending until the end of the turn.
+	var endure:bool = false          #Character is enduring, will remain at 1HP.
+	var sturdy:bool = false          #Character will endure a fatal blow if at full health.
 	# Item use stats ############################################################################
 	var itemSPD:int = 090            #Item use speed.
 	var itemAD:int = 110             #Item use AD set.
 	# Misc stats ################################################################################
+	var FEbonus:int = 0              #Added to elemental field bonus.
 	var eventFlags:int = 0           #Event special flags such as plot armor.
 	var overheat : int = 0           #Reduces by 1 per turn. Prevents overheat skills from being used.
 	var lastAction = null
 	var overAction:Array = []        #Temporary storage for Over actions while AI or player are choosing.
 	func set_over(x:int) -> void:
 		over = core.clampi(x, 0, 100)
+
+	func turn_reset() -> void: #Standard reset when a new battle turn begins.
+		self.turnDMG = 0
+		self.turnDealtDMG = 0
+		self.turnDodges = 0
+		self.turnHeal = 0
+		self.turnActed = false
+		self.turnHits = 0
+		self.resistedHits = 0
+		self.weaknessHits = 0
+		self.decoy = 0
+		self.guard = 0
+		self.barrier = 0
+		self.forceDodge = 0
+		self.protectedBy.clear()
+		self.defending = false
+		self.endure = false
+		#self.sturdy = false #Might be better to not unset it per turn. We'll see.
+		self.follow.clear()
+		self.chase.clear()
+		self.overAction.clear()
+		self.AD = 100
+
+
 
 
 func createBattleStats():
@@ -128,31 +156,17 @@ func initBattleTurn() -> void:
 	recalculateStats()
 	stats.copy(battle.stat, statFinal)
 	resetBattleStatMultipliers()
-	battle.turnDMG = 0
-	battle.turnDealtDMG = 0
-	battle.turnDodges = 0
-	battle.turnHeal = 0
-	battle.turnActed = false
-	battle.turnHits = 0
-	battle.resistedHits = 0
-	battle.weaknessHits = 0
-	battle.paralyzed = checkParalysis()
-	battle.decoy = 0
-	battle.guard = 0
-	battle.barrier = 0
-	battle.forceDodge = 0
-	battle.protectedBy.clear()
-	battle.defending = false
-	battle.follow.clear()
-	battle.chase.clear()
-	battle.overAction.clear()
-	battle.AD = 100
+	battle.turn_reset()                      #Reset battle specific stats.
+	battle.paralyzed = checkParalysis()      #Check for paralysis effect...well, paralysis. If true, the character can't act normally.
+	battle.AD = 100                          #Reset Active Defense. Done here in case a base modifier is eventually put in place.
 	resetCounter()
-	checkEffects(battle.buff, true)
-	checkEffects(battle.debuff, true)
+	checkEffects(battle.buff, true)          #Calculate effects from buffs.
+	checkEffects(battle.debuff, true)        #Same with debuffs.
+	#checkEffects(battle.effect, true)       #Then special effects such as active passives and such.
+	#checkEffects(battle.eventEffect, true)  #And finally effects from scripted events.
 	applyBattleStatMultipliers()
 
-func resetCounter():
+func resetCounter() -> void:
 	battle.counter[0] = 100 #Counter chance
 	battle.counter[1] = 100 #Counter decrease
 	battle.counter[2] = null #Counter skill TID
@@ -196,7 +210,7 @@ func getHealthN(): #Get normalized health as a float from 0 to 1.
 func getHealthPercent(x:int):
 	return round(float(maxHealth()) * core.percent(x)) as int
 
-func fullHeal():
+func fullHeal() -> void: #Set health to max health.
 	self.HP = maxHealth()
 
 

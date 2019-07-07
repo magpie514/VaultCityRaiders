@@ -1,5 +1,3 @@
-const adventurer = preload("res://classes/char/char_player.gd")
-
 class DragonGem:
 	const EXP_TABLE = [
 		[0, 100, 200, 300, 400,  500, 600, 700, 800, 900]
@@ -406,7 +404,7 @@ class Item: #Item container class.
 			ITEM_WEAPON:
 				print("[ITEM][_init] %d Weapon.\ntype: %d\ttid:%s\tdata:%s" % [_slot, _type, str(_tid), _data])
 				lib = core.lib.weapon
-				tmp_data = adventurer.Weapon
+				tmp_data = core.Player.Weapon
 			ITEM_GEAR:
 				print("[ITEM][_init] %d Gear.\ntype: %d\ttid:%s\tdata:%s" % [_slot, _type, str(_tid), _data])
 				#tmp_lib = core.lib.item.getIndex(tid)
@@ -450,7 +448,7 @@ class Armor:
 	}
 	var tid = null
 	var lib:Dictionary
-	var DGem:DragonGemContainer
+	#var DGem:DragonGemContainer
 	var extraData:Dictionary = {} #Frame / Vehicle data
 	var stats:Dictionary = {}
 	var upgraded:bool = false
@@ -460,7 +458,7 @@ class Armor:
 		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.tid
 		self.tid = core.tid.fromArray(tmp_tid)
 		self.lib = core.lib.armor.getIndex(self.tid)
-		self.DGem = DragonGemContainer.new(0, data.gem)
+		#self.DGem = DragonGemContainer.new(0, data.gem)
 		stats = STATS_DEFAULT.duplicate()
 		recalculateStats(1)
 
@@ -480,26 +478,19 @@ class Armor:
 					if part.lib[j][0] in [ 'MHP','ATK','DEF','ETK','EDF','AGI','LUC' ]:
 						stats[part[j][0]] += part.lib[j][6]
 
-	func recalculateStats(lv:int) -> void: #TODO: Move DGem stuff to the character instead?
-		var gemstats = DGem.stats
+	func recalculateStats(lv:int) -> void: #TODO: Move DGem stuff to the character instead
 		core.stats.reset(stats)
 		if lib.vehicle != null:
-			print("[ARMOR][recalculateStats] Vehicle <TODO>")
-			#core.stats.setFromSpread(stats, lib.frame.statSpread, lv)
+			print("[ARMOR][recalculateStats] Vehicle")
+			core.stats.setFromSpread(stats, lib.vehicle.statSpread, lv)
 			if 'vehicle' in extraData: setPartStats(extraData.vehicle)
 		if lib.frame != null:
 			print("[ARMOR][recalculateStats] Frame")
 			core.stats.setFromSpread(stats, lib.frame.statSpread, lv)
 			if 'frame' in extraData: setPartStats(extraData.frame)
 
-		stats.DEF += lib.DEF[1 if upgraded else 0] + (gemstats.DEF if 'DEF' in gemstats else 0)
-		stats.EDF += lib.EDF[1 if upgraded else 0] + (gemstats.EDF if 'EDF' in gemstats else 0)
-		for i in [ 'MHP','ATK','ETK','AGI','LUC' ]:
-			stats[i] += gemstats[i] if i in gemstats else 0
-		for i in [ 'OFF','RES' ]:
-			if i in gemstats:
-				for j in core.stats.ELEMENTS:
-					stats[i][j] += gemstats[i][j] if j in gemstats[i] else 0
+		stats.DEF += lib.DEF[1 if upgraded else 0]
+		stats.EDF += lib.EDF[1 if upgraded else 0]
 		clampStats()
 
 

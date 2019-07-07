@@ -1,5 +1,6 @@
 extends "res://classes/char/char_base.gd"
-var tid = core.tid
+const DragonGem = preload("res://classes/inventory/item.gd").DragonGem
+const DragonGemContainer = preload("res://classes/inventory/item.gd").DragonGemContainer
 const EXP_TABLE = {
 	normal = [
 		0000000000,	0000000100,	0000000200,	0000000300,	0000000400,
@@ -56,16 +57,19 @@ var guildIndex:int   #reference to character's position in the guild list.
 var classlib = null #pointer to class index.
 var racePtr = null   #pointer to race index.
 
+var EP:int = 0       #Energy Points. To use non-weapon skills.
 var XP:int = 0       #Experience points.
 var SP:int = 0       #Skill Points. Gained at level up to raise skills.
-var EP:int = 0
 var race = null      #tid
 var aclass = null    #tid
 var skills = null    #array of class ID + level
-var links = null     #array of [trust, link1, link2, link3]
+
+var links = null     #Party links. Array of [trust, link1, link2, link3]
 
 var equip = core.Inventory.Equip.new()
 var currentWeapon = equip.slot[0]
+var DGem:DragonGemContainer
+
 var inventory:Array = []
 var personalInventorySize:int = 2
 var personalInventory:Array = []
@@ -180,11 +184,11 @@ func recalculateStats() -> void:
 	stats.sumInto(statFinal, statBase, gearStats)
 
 func setCharClass(t) -> void:
-	aclass = tid.fromArray(t)
+	aclass = core.tid.fromArray(t)
 	classlib = core.lib.aclass.getIndex(t)
 
 func setCharRace(t) -> void:
-	race = tid.fromArray(t)
+	race = core.tid.fromArray(t)
 	racePtr = core.lib.race.getIndex(t)
 
 func initLinkList(ln) -> void:

@@ -62,9 +62,9 @@ var example = {
 				["debug", "speedup"],
 				["debug", "srnauror"],
 				["debug", "elemshot"],
-				["debug", "heatngtr"],
+				["story", "borealsf"],
 				["story", "dncsword"],
-				["debug", "kamaita"],
+				["story", "kamaita"],
 			],
 		},
 		"muramasa" : { #Kurohara Shiro's story mode base class.
@@ -88,9 +88,9 @@ var example = {
 			skills = [
 				#Define Anna's roles better.
 				["debug", "vampdran"],
-				["debug", "overclck"],
-				["debug", "lunablaz"],
-				["debug", "savaripp"],
+				["story", "overclck"],
+				["story", "lunablaz"],
+				["story", "savaripp"],
 			],
 		},
 		"esper" : {

@@ -10,10 +10,8 @@ enum { #Vehicle parts. (Frames need no check, they use all)
 	PARTS_ENGINE = 1,
 	PARTS_SENSORS,
 	PARTS_FCS,
-	PARTS_MOBILITY,
 	PARTS_COOLING,
 	# Frame only
-	PARTS_ARMS,
 	PARTS_BOOSTER,
 	# Goes in extra slot
 	PARTS_EXTRA,
@@ -23,9 +21,7 @@ const LOAD_TRANSLATE = {
 	"ENGINE":   PARTS_ENGINE,
 	"SENSOR":   PARTS_SENSORS,
 	"FCS":      PARTS_FCS,
-	"MOBILITY": PARTS_MOBILITY,
 	"COOLING":  PARTS_COOLING,
-	"ARMS":     PARTS_ARMS,
 	"BOOSTER":  PARTS_BOOSTER,
 	"EXTRA":    PARTS_EXTRA,
 }
@@ -34,9 +30,7 @@ const PARTS = {
 	PARTS_ENGINE:   { name = "Engine" },
 	PARTS_SENSORS:  { name = "Sensors" },
 	PARTS_FCS:      { name = "FCS" },
-	PARTS_MOBILITY: { name = "Mobility" },
 	PARTS_COOLING:  { name = "Cooling" },
-	PARTS_ARMS:     { name = "Arms" },
 	PARTS_BOOSTER:  { name = "Booster" },
 	PARTS_EXTRA:    { name = "Extra" },
 }
@@ -66,10 +60,18 @@ var example = {
 			stat1 = ['OFF_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = [["debug","gatebrkr"], 010,008,006,004,002, 001, 001,001,000,000,000],
 		},
+		"plasdr" : {
+			name = "Plasma Driver",
+			description = "Jay's generator. A powerful generator capable of converting Jay's Over into superheated plasma. The properties of the plasma field can even defy conventional physics.",
+			slot = PARTS_SENSORS,
+			stat1 = ['OFF_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = [["debug","gatebrkr"], 010,008,006,004,002, 001, 001,001,000,000,000],
+		},
 	},
 	"debug" : {
 		"debug" : {
 			name = "Debug Part",
+			description = "You should not be seeing this part normally, this means something went wrong.",
 			slot = PARTS_EXTRA,
 			value = [0, 1, 2, 3, 4],
 			stat1 = ['ATK', 012,010,009,008,007, 005, 003,002,001,000,000 ],

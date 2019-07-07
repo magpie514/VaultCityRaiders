@@ -452,6 +452,7 @@ enum { #Skill function codes.
 	OPCODE_EDF_MOD,						#Modify target's EDF for the current turn
 	OPCODE_AGI_MOD,						#Modify target's AGI for the current turn
 	OPCODE_LUC_MOD,						#Modify target's LUC for the current turn
+	OPCODE_FE_BONUS_MOD,      #Field Element add bonus. Adds +X elements for the current turn.
 
 	# General specials ###########################################################
 	OPCODE_PRINTMSG,					#Print message X of the defined skill messages. Use 0 to print nothing.
@@ -485,6 +486,7 @@ enum { #Skill function codes.
 	OPCODE_GET_FIELD_UNIQUE,	#Get amount of unique elements.
 	OPCODE_GET_SYNERGY_PARTY, #Get amount of synergies found in the party.
 	OPCODE_GET_TURN,          #Get current turn.
+	OPCODE_GET_TIME,					#Get current day time (0-3600).
 	OPCODE_GET_CHAIN,         #Get current chain value.
 	OPCODE_GET_LAST_ELEMENT,  #Get last element used by a party member.
 	OPCODE_GET_HEALTH_PERCENT,#Get health percentage from target.

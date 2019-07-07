@@ -27,21 +27,19 @@ enum { #Vehicle parts. (Frames need no check, they use all)
 	PARTS_ENGINE = 1,
 	PARTS_SENSORS,
 	PARTS_FCS,
-	PARTS_MOBILITY,
 	PARTS_COOLING,
 	# Frame only
-	PARTS_ARMS,
 	PARTS_BOOSTER,
 	# Goes in extra slot
 	PARTS_EXTRA,
 }
 
 const VEPARTS = {
-	VECLASS_SMALL:    [ PARTS_ENGINE,PARTS_FCS,PARTS_MOBILITY,PARTS_COOLING ],
-	VECLASS_LARGE:    [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_MOBILITY,PARTS_COOLING ],
-	VECLASS_HEAVY:    [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_MOBILITY,PARTS_COOLING ],
+	VECLASS_SMALL:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
+	VECLASS_LARGE:    [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_COOLING ],
+	VECLASS_HEAVY:    [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_COOLING ],
 	VECLASS_AERIAL:   [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_COOLING,PARTS_BOOSTER ],
-	VECLASS_VANGUARD: [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_MOBILITY,PARTS_COOLING,PARTS_ARMS,PARTS_BOOSTER ],
+	VECLASS_VANGUARD: [ PARTS_ENGINE,PARTS_SENSORS,PARTS_FCS,PARTS_COOLING,PARTS_BOOSTER ],
 }
 
 const armortypes = {
@@ -74,8 +72,8 @@ var example = {
 				onboard = 1,
 				statSpread = [ [042, 010, 010, 014, 011, 010, 010], [460, 090, 125, 140, 155, 125, 135] ],
 				defaultParts = {
-					"engine" : { tid = ["story", "hollow"], level = 1 },
-					"sensor" : { tid = ["story", "dimeye"], level = 1 }
+					"engine" : { tid = ["story", "hollow"], tune = 5 },
+					"sensor" : { tid = ["story", "dimeye"], tune = 5 }
 				}
 			}
 		},
@@ -138,6 +136,7 @@ var example = {
 			vehicle = {
 				onboard = 3,
 				veclass = VECLASS_HEAVY,
+				statSpread = [ [005, 002, 005, 000, 001, 000, 002], [050, 020, 048, 000, 012, 004, 016] ],
 			}
 		},
 		"frame" : {
@@ -166,7 +165,8 @@ func vehicleTemplate():
 	return {
 		"onboard" : { loader = LIBSTD_INT },
 		"description" : { loader = LIBSTD_STRING, default = "???" },
-		"veclass" : { loader = LIBSTD_INT }
+		"veclass" : { loader = LIBSTD_INT },
+		"statSpread" : { loader = LIBSTD_STATSPREAD }
 	}
 
 func frameTemplate():

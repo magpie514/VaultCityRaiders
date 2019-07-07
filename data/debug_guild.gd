@@ -16,7 +16,7 @@ var data = {
 			aclass = ["debug", "ofight"],
 			XP = 500,
 			portrait = null,
-			energyColor = "#0000FF",
+			energyColor = "#1100FF",
 			equip = [
 				# Weapons
 				{ tid = ["story", "orbicann"], level = 0, uses = 25, extra = null, gem = [ [["core", "speed"], 1001], [["core", "speed"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1000], [["core", "shock"], 1000], [["core", "power"], 1000] ] },
@@ -24,7 +24,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["story", "orbitfrm"], frame = {}, gem = []},
+				{ tid = ["story", "orbitfrm"], frame = {} },
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -52,7 +52,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["story", "KSSGfrm1"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "KSSGfrm1"], vehicle = {}, frame = {}},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -80,7 +80,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["story", "redbrig"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "redbrig"], vehicle = {}, frame = {}},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -108,7 +108,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["story", "soulfrm"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "soulfrm"], vehicle = {}, frame = {}},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -143,7 +143,7 @@ var data = {
 				null,
 				null,
 				# Armor
-				{ tid = ["story", "murafrm"], vehicle = {}, frame = {}, gem = []},
+				{ tid = ["story", "murafrm"], vehicle = {}, frame = {}},
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -158,10 +158,32 @@ var data = {
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
 			],
 			level = 4 },
+		{ name = "Elodie",
+			race = ["debug", "human"],
+			aclass = ["debug", "rider"],
+			XP = 500,
+			portrait = null,
+			equip = [
+				# Weapons
+				{ tid = ["story", "debugg"], level = 0, uses = 25, extra = null, gem = null },
+				null,
+				null,
+				null,
+				# Armor
+				{ tid = ["debug", "vehicle"], vehicle = {	"engine":["debug/debug", 1] } },
+				# Gear
+				null,
+				null,
+				null,
+			 ],
+		 	skills = [],
+			links = [
+			],
+			level = 4 },
 	],
 	formationSlots = [
  		0, 2, 4,
-		1, 3, null,
+		1, 3, 5,
 	],
 	inventory = [
 		[1, ["core", "nostrum"],  { level = 1 }],
