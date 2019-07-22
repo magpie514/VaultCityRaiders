@@ -14,15 +14,14 @@ onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
 func init(C):
 	clear()
 	currentChar = C
-	var button = null
-	var S = null
-	var TID = null
 	$ColorRect/Label.text = str("%s's skills" % C.name)
+	$DGem.init(C.DGem)
+	$DGem.set_process(true)
 	for i in C.skills:
-		TID = C.getSkillTID(i)
-		S = core.getSkillPtr(TID)
+		var TID = C.getSkillTID(i)
+		var S = core.getSkillPtr(TID)
 		if S.type == 0:
-			button = skillNode.instance()
+			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_EP)
 			$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
 			$ScrollContainer/VBoxContainer.add_child(button)
@@ -30,7 +29,19 @@ func init(C):
 			button.connect("display_info", controls.infoPanel, "showInfo")
 			button.connect("hide_info", controls.infoPanel, "hideInfo")
 			buttons.push_back(button)
-		show()
+	if not C.extraSkills.empty():
+		for i in C.extraSkills:
+			var S = core.getSkillPtr(i[0])
+			if S.type == 0:
+				var button = skillNode.instance()
+				button.init(S, i[1], button.COST_EP, true)
+				$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
+				$ScrollContainer/VBoxContainer.add_child(button)
+				button.get_node("Button").connect("pressed", self, "chooseResult", [ [i[0], i[1]] ])
+				button.connect("display_info", controls.infoPanel, "showInfo")
+				button.connect("hide_info", controls.infoPanel, "hideInfo")
+				buttons.push_back(button)
+	show()
 
 func clear() -> void:
 	var button = null

@@ -51,7 +51,7 @@ func init(C):
 			button.connect("display_info", controls.infoPanel, "showInfo")
 			button.connect("hide_info", controls.infoPanel, "hideInfo")
 			buttons.push_back(button)
-		show()
+	show()
 
 func clear() -> void:
 	modulate.a = 1.0

@@ -114,6 +114,16 @@ var example = {
 			skill = [ ["sto_wp", "jigenzan"], ["sto_wp", "retugiri"] ],
 			over = ["debug", "debug"]
 		},
+		"plndevie": {
+			name = "SGN-33-G Pleine-de-vie", wclass = core.skill.WPCLASS_FIREARM,
+			description = "Elodie's custom rifle. Uses fully-charged Neo-Heliolite crystals as ammunition, which can be released as solid, explosive shots, or as a potent energy burst.",
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [009, 009, 009, 009, 005, 005, 005, 005, 004, 003],
+			durability = [12, 14, 14, 16, 18, 18, 20, 22, 22, 24],
+			skill = [ "sto_wp/solbull", "sto_wp/solbeam"],
+			over = "sto_wp/heliosph",
+		},
 	}
 }
 
@@ -145,7 +155,7 @@ func loaderSkillList(val):
 		return [ null, null ]
 	else:
 		var result = [
-			core.tid.create(val[0][0], val[0][1]) if val[0] != null else null,
-			core.tid.create(val[1][0], val[1][1]) if val[1] != null else null,
+			core.tid.from(val[0]) if val[0] != null else null,
+			core.tid.from(val[1]) if val[1] != null else null,
 		]
 		return result

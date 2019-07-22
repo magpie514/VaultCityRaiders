@@ -1,3 +1,72 @@
+enum { #Armor classes
+	ARCLASS_NONE = 0,
+	ARCLASS_LIGHT,
+	ARCLASS_HEAVY,
+	ARCLASS_BARRIER,
+	ARCLASS_VEHICLE,
+	ARCLASS_FRAME,
+}
+
+enum { #Vehicle classes
+	VECLASS_NONE = 0,
+	VECLASS_SMALL,
+	VECLASS_LARGE,
+	VECLASS_HEAVY,
+	VECLASS_AERIAL,
+	VECLASS_VANGUARD,
+}
+
+enum { #Vehicle parts. (Frames need no check, they use all)
+	PARTS_ENGINE = 1,
+	PARTS_FCS,
+	PARTS_COOLING,
+	# Frame only
+	PARTS_BOOSTER,
+	# Goes in extra slot
+	PARTS_EXTRA,
+}
+
+const ARCLASS_TRANSLATE = {
+	'LIGHT':		ARCLASS_LIGHT,
+	'HEAVY':		ARCLASS_HEAVY,
+	'BARRIER':	ARCLASS_BARRIER,
+	'VEHICLE':	ARCLASS_VEHICLE,
+	'FRAME':		ARCLASS_FRAME,
+}
+
+const ARMORPARTS_TRANSLATE = {
+	"ENGINE":   PARTS_ENGINE,
+	"FCS":      PARTS_FCS,
+	"COOLING":  PARTS_COOLING,
+	"BOOSTER":  PARTS_BOOSTER,
+	"EXTRA":    PARTS_EXTRA,
+}
+const ARMORPARTS = {
+	PARTS_ENGINE:   { name = "Engine" },
+	PARTS_FCS:      { name = "FCS" },
+	PARTS_COOLING:  { name = "Cooling" },
+	PARTS_BOOSTER:  { name = "Booster" },
+	PARTS_EXTRA:    { name = "Extra" },
+}
+
+const VEPARTS = {
+	VECLASS_SMALL:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
+	VECLASS_LARGE:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
+	VECLASS_HEAVY:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
+	VECLASS_AERIAL:   [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_BOOSTER ],
+	VECLASS_VANGUARD: [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_BOOSTER ],
+}
+
+const armortypes = {
+	ARCLASS_NONE :    { name = "???",     icon = "" },
+	ARCLASS_LIGHT :   { name = "Light",   icon = "" },
+	ARCLASS_HEAVY :   { name = "Heavy",   icon = "" },
+	ARCLASS_BARRIER : { name = "Barrier", icon = "" },
+	ARCLASS_VEHICLE : { name = "Vehicle", icon = "" },
+	ARCLASS_FRAME :   { name = "Frame",   icon = "" },
+}
+
+
 class DragonGem:
 	const EXP_TABLE = [
 		[0, 100, 200, 300, 400,  500, 600, 700, 800, 900]
@@ -7,7 +76,7 @@ class DragonGem:
 	var XP : int = 0
 	var lib = null
 	func _init(type, xp):
-		self.id = core.tid.fromArray(type)
+		self.id = core.tid.from(type)
 		self.lib = core.lib.dgem.getIndex(id)
 		self.XP = xp
 		self.level = 1
@@ -432,15 +501,27 @@ class Gear:
 	}
 	var lib:Dictionary
 
+class ArmorPart:
+	var DEFAULT : Dictionary = {
+		data = [6,6]
+	}
+	var tid = null
+	var lib:Dictionary
+	var data:Array = [6,6]
+	func _init(_tid = null, stat1:int = DEFAULT.data[0], stat2:int = DEFAULT.data[1]) -> void:
+		self.tid = core.tid.from(_tid)
+		self.lib = core.lib.armorparts.getIndex(self.tid)
+		data[0] = stat1 + 1
+		data[1] = stat2 + 1
+
 class Armor:
 	var DEFAULT : Dictionary = {
-		tid = core.tid.create("debug", "debug"),
+		tid = core.tid.from("debug/debug"),
 		gem = null,
-		extraData = {}
 	}
 	var STATS_DEFAULT : Dictionary = {
 		MHP = int(0), MEP = int(0),
-		ATK = int(0), ETK = int(0), WRD = int(0), DUR = int(0),
+		ATK = int(0), ETK = int(0),
 		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
 		OFF = core.stats.createElementData(),
 		RES = core.stats.createElementData(),
@@ -448,47 +529,65 @@ class Armor:
 	}
 	var tid = null
 	var lib:Dictionary
-	#var DGem:DragonGemContainer
-	var extraData:Dictionary = {} #Frame / Vehicle data
+	var parts:Dictionary = {} #Frame / Vehicle data
 	var stats:Dictionary = {}
 	var upgraded:bool = false
 
 	func _init(_tid = null, data = DEFAULT) -> void:
 		var tmp_tid = _tid
 		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.tid
-		self.tid = core.tid.fromArray(tmp_tid)
+		self.tid = core.tid.from(tmp_tid)
 		self.lib = core.lib.armor.getIndex(self.tid)
-		#self.DGem = DragonGemContainer.new(0, data.gem)
-		stats = STATS_DEFAULT.duplicate()
-		recalculateStats(1)
+		stats = STATS_DEFAULT.duplicate(true)
+		if 'parts' in data:
+			if data.parts != null:
+				for i in data.parts:
+					if i in ARMORPARTS_TRANSLATE:
+						var part:int = ARMORPARTS_TRANSLATE[i]
+						parts[part] = ArmorPart.new(data.parts[i][0], data.parts[i][1], data.parts[i][2])
+			else: #Unitialized parts.
+				if 'parts' in lib:
+					if 'default' in lib.parts:
+						print("[ARMOR][_init] Initializing parts for %s" % lib.name)
+						for i in lib.parts.default:
+							if i in ARMORPARTS_TRANSLATE:
+								var part:int = ARMORPARTS_TRANSLATE[i]
+								parts[part] = ArmorPart.new(lib.parts.default[i][0])
 
 	func save() -> Dictionary:
 		return {
 			tid = self.tid,
-			dgem = self.DGem.save()
 		}
 	func clampStats() -> void:
 		pass
 
-	func setPartStats(parts) -> void: #Add part bonuses into _stats
-		for i in core.lib.armorparts.PARTS:
-			if i in parts:
-				var part = parts[i]
-				for j in ['stat1', 'stat2']:
-					if part.lib[j][0] in [ 'MHP','ATK','DEF','ETK','EDF','AGI','LUC' ]:
-						stats[part[j][0]] += part.lib[j][6]
+	func setPartStats(_parts) -> void: #Add part bonuses into _stats
+		for i in ARMORPARTS:
+			if i in _parts:
+				var part:ArmorPart = _parts[i]
+				print("[ARMOR][setPartStarts] Part: ", part.lib.name)
+				for j in [['stat1', 0], ['stat2', 1]]:
+					var ind = j[0]
+					var val = part.data[j[1]]
+					match typeof(part.lib[ind][0]):
+						TYPE_STRING:
+							if part.lib[ind][0] in [ 'MHP','MEP','ATK','DEF','ETK','EDF','AGI','LUC' ]:
+								print("%s > %s:%s (tune:%s)" % [part.lib.name, part.lib[ind][0], part.lib[ind][val], val])
+								stats[part.lib[ind][0]] += part.lib[ind][val]
+							elif core.stats.elementalModStringValidate(part.lib[ind][0]):
+								print("%s > %s:%s (tune:%s)" % [part.lib.name, part.lib[ind][0], part.lib[ind][val], val])
+								core.stats.elementalModApply(stats, part.lib[ind][0], part.lib[ind][val])
+						TYPE_ARRAY, TYPE_STRING_ARRAY:
+							if part.lib[ind][val] > 0:
+								stats.SKL.push_back([part.lib[ind][0], part.lib[ind][val]])
+		print(stats)
 
-	func recalculateStats(lv:int) -> void: #TODO: Move DGem stuff to the character instead
-		core.stats.reset(stats)
-		if lib.vehicle != null:
-			print("[ARMOR][recalculateStats] Vehicle")
-			core.stats.setFromSpread(stats, lib.vehicle.statSpread, lv)
-			if 'vehicle' in extraData: setPartStats(extraData.vehicle)
-		if lib.frame != null:
-			print("[ARMOR][recalculateStats] Frame")
-			core.stats.setFromSpread(stats, lib.frame.statSpread, lv)
-			if 'frame' in extraData: setPartStats(extraData.frame)
-
+	func recalculateStats(lv:int) -> void:
+		core.stats.reset(stats, 0) #Reset stats with an element value of 0, so they can be added later.
+		if lib.parts != null:
+			print("[ARMOR][recalculateStats] Part stats for %s (level %d)" % [lib.name, lv])
+			core.stats.setFromSpread(stats, lib.parts.statSpread, lv)
+			setPartStats(parts)
 		stats.DEF += lib.DEF[1 if upgraded else 0]
 		stats.EDF += lib.EDF[1 if upgraded else 0]
 		clampStats()
@@ -522,7 +621,7 @@ class Weapon:
 	func _init(_tid = null, data = DEFAULT) -> void:
 		var tmp_tid = _tid
 		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.tid
-		self.tid = core.tid.fromArray(tmp_tid)
+		self.tid = core.tid.from(tmp_tid)
 		self.lib = core.lib.weapon.getIndex(self.tid)
 		self.level = data.level
 		self.uses = data.uses
@@ -585,7 +684,8 @@ class Equip:
 	const GEAR_SLOT =    [ 5, 6, 7 ]
 
 	var slot:Array = core.newArray(TOTAL_SLOTS)
-	var currentWeapon : Weapon
+	var currentWeapon:Weapon
+	var weight:int = 0 #TODO: Calculate weight from all items and place it here so it can be read in char_player.gd directly.
 
 	func _init() -> void:
 		for i in range(TOTAL_SLOTS):
@@ -626,7 +726,7 @@ class Equip:
 		print("[EQUIP][initWeaponSlot] New weapon slot")
 		return Weapon.new()
 
-	func calculateWeaponBonuses(weapon): #->core.stats ?
+	func calculateWeaponBonuses(tmpSkill:Array, weapon): #->core.stats ?
 		var wstats = weapon.stats
 		var stats = core.stats.create()
 		for i in ['ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
@@ -635,19 +735,30 @@ class Equip:
 			if i in wstats:
 				for j in core.stats.ELEMENTS:
 					stats[i][j] = wstats[i][j] if j in wstats[i] else 0
+		if 'SKL' in wstats:
+			print("[EQUIP][calculateWeaponBonuses] SKL: ", wstats.SKL)
+			for i in wstats.SKL:
+				tmpSkill.push_back([ i[0], i[1] ])
 		return stats
 
-	func calculateArmorBonuses(lv): #->core.stats: ?
+	func calculateArmorBonuses(tmpSkill:Array, lv): #->core.stats: ?
 		var stats = core.stats.create()
 		for a in ARMOR_SLOT:
 			slot[a].recalculateStats(lv)
 			var astats = slot[a].stats
-			for i in ['MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
-				stats[i] += astats[i] if i in astats else 0
+			for i in ['MHP', 'MEP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
+				if not i in stats:
+					stats[i] = 0
+				stats[i] += (astats[i] if i in astats else 0)
 			for i in ['OFF', 'RES']:
 				if i in astats:
 					for j in core.stats.ELEMENTS:
 						stats[i][j] = astats[i][j] if j in astats[i] else 0
+			if 'SKL' in astats:
+				print("[EQUIP][calculateArmorBonuses] SKL: ", astats.SKL)
+				for i in astats.SKL:
+					print(i)
+					tmpSkill.push_back([ i[0], i[1] ])
 		return stats
 
 

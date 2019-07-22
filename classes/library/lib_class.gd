@@ -45,8 +45,6 @@ var example = {
 				["debug", "restshrd"],
 				["story", "gravrefl"],
 				["story", "gmissile"],
-				["story", "gatebrkr"], #Make an Over skill?
-				["story", "codexalt"], #Make an Over skill?
 				# Glaive/Auger skills #
 				["story", "gemshrap"], #Move to Boost Glaive.
 				["story", "spirbost"],
@@ -134,8 +132,9 @@ var example = {
 			name = "Rider",
 			description = "Adventurers that compensate their lack of combat skills with various machines to ride. While their growth is fully dependent on their ride, that makes them highly versatile.",
 			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD],
-			statSpread = [ [000, 000, 000, 000, 000, 000, 000], [010, 000, 000, 000, 000, 000, 008] ],
+			statSpread = [ [003, 000, 000, 000, 000, 000, 000], [010, 000, 000, 000, 000, 000, 008] ],
 			skills = [
+				"core/accel",
 			],
 		},
 		"salarymn" : {

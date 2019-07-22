@@ -14,6 +14,9 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 10
 corner_detail = 1
+__meta__ = {
+
+}
 
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.560784, 0.905882, 0.615686, 1 )
@@ -24,6 +27,9 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 10
 corner_detail = 1
+__meta__ = {
+
+}
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.167969, 0.219971, 1, 1 )
@@ -36,6 +42,9 @@ corner_radius_bottom_left = 10
 corner_detail = 1
 shadow_color = Color( 0.5578, 0.864588, 0.593451, 0.6 )
 anti_aliasing = false
+__meta__ = {
+
+}
 
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.146362, 0.147957, 0.171875, 1 )
@@ -47,6 +56,9 @@ corner_radius_bottom_right = 1
 corner_radius_bottom_left = 10
 corner_detail = 1
 shadow_size = 1
+__meta__ = {
+
+}
 
 [sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0.167969, 0.219971, 1, 1 )
@@ -57,12 +69,18 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 10
 corner_detail = 1
+__meta__ = {
+
+}
 
 [node name="OverMenu" type="Panel"]
 self_modulate = Color( 1, 1, 1, 0.501961 )
 margin_right = 360.0
 margin_bottom = 360.0
 script = ExtResource( 1 )
+__meta__ = {
+
+}
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 margin_left = 2.0
@@ -70,8 +88,14 @@ margin_top = 120.0
 margin_right = 358.0
 margin_bottom = 350.0
 scroll_horizontal_enabled = false
+__meta__ = {
+
+}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+__meta__ = {
+
+}
 
 [node name="Back" type="Button" parent="."]
 margin_top = 2.0
@@ -84,6 +108,9 @@ custom_styles/disabled = SubResource( 4 )
 custom_styles/normal = SubResource( 5 )
 text = "BACK"
 clip_text = true
+__meta__ = {
+
+}
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_left = 62.0
@@ -91,18 +118,27 @@ margin_top = 2.0
 margin_right = 358.0
 margin_bottom = 22.0
 color = Color( 0, 0, 0, 0.192118 )
+__meta__ = {
+
+}
 
 [node name="Label" type="Label" parent="ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 valign = 1
 clip_text = true
+__meta__ = {
+
+}
 
 [node name="Panel" type="Panel" parent="."]
 margin_top = 30.0
 margin_right = 359.0
 margin_bottom = 102.0
 custom_styles/panel = ExtResource( 4 )
+__meta__ = {
+
+}
 
 [node name="Cancel" type="Button" parent="Panel"]
 margin_left = 220.0
@@ -113,6 +149,9 @@ disabled = true
 shortcut_in_tooltip = false
 text = "Cancel"
 align = 0
+__meta__ = {
+
+}
 
 [node name="Accept" type="Button" parent="Panel"]
 margin_left = 296.0
@@ -123,6 +162,9 @@ disabled = true
 shortcut_in_tooltip = false
 text = "DO IT!!"
 align = 0
+__meta__ = {
+
+}
 
 [node name="ColorRect2" type="ColorRect" parent="Panel"]
 anchor_right = 1.0
@@ -132,6 +174,9 @@ margin_top = 8.0
 margin_right = -1.0
 margin_bottom = -35.0
 color = Color( 0, 0, 0, 0.192157 )
+__meta__ = {
+
+}
 
 [node name="Bar" parent="Panel" instance=ExtResource( 3 )]
 anchor_right = 1.0

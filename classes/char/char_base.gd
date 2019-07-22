@@ -72,7 +72,7 @@ class BattleStats:
 	var protectedBy:Array = []	     #Array of arrays, [pointer to defender, chance of defending]
 	var defending:bool = false       #Character is marked as defending until the end of the turn.
 	var endure:bool = false          #Character is enduring, will remain at 1HP.
-	var sturdy:bool = false          #Character will endure a fatal blow if at full health.
+	var adamant:bool = false          #Character will endure a fatal blow if at full health.
 	# Item use stats ############################################################################
 	var itemSPD:int = 090            #Item use speed.
 	var itemAD:int = 110             #Item use AD set.
@@ -101,7 +101,7 @@ class BattleStats:
 		self.protectedBy.clear()
 		self.defending = false
 		self.endure = false
-		#self.sturdy = false #Might be better to not unset it per turn. We'll see.
+		self.adamant = false #Might be better to not unset it per turn. We'll see.
 		self.follow.clear()
 		self.chase.clear()
 		self.overAction.clear()
@@ -299,14 +299,20 @@ func defeatMessage() -> String:
 
 func damage(x:int, data, silent:bool = false) -> Array:
 	var temp = HP - x
-	var overkill : bool = false
-	var defeat : bool = false
+	var overkill:bool = false
+	var defeat:bool = false
+	var full:bool = true if HP >= maxHealth() else false
 	HP = int(clamp(temp, 0.0, maxHealth()))
 	if HP == 0: #Defeated!
 		if int(abs(temp)) >= maxHealth() / 2: #Check for overkill.
 			overkill = true
-		defeat()
-		defeat = true
+		if battle.adamant and full:
+			HP = 1
+			display.message("Survived!", false, "EFEFEF")
+			#TODO: Should display some animation and play a sound here.
+		else:
+			defeat()
+			defeat = true
 	battle.accumulatedDMG += x
 	battle.turnDMG += x
 	if not silent:

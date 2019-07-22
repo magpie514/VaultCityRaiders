@@ -150,13 +150,13 @@ func loaderTID(val):
 	if val == null:
 		return core.tid.create("debug", "debug")
 	else:
-		return core.tid.create(val[0], val[1])
+		return core.tid.from(val)
 
 func loaderTIDorNull(val):
 	if val == null: return null
 	else:
 		#TODO: Verify if it's properly constructed.
-		return core.tid.create(val[0], val[1])
+		return core.tid.from(val)
 
 func loaderTIDArray(val):
 	if val == null:

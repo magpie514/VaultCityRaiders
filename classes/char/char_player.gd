@@ -1,6 +1,7 @@
 extends "res://classes/char/char_base.gd"
 const DragonGem = preload("res://classes/inventory/item.gd").DragonGem
 const DragonGemContainer = preload("res://classes/inventory/item.gd").DragonGemContainer
+const DEFAULT = { energyColor = "#4466FF" }
 const EXP_TABLE = {
 	normal = [
 		0000000000,	0000000100,	0000000200,	0000000300,	0000000400,
@@ -63,22 +64,159 @@ var SP:int = 0       #Skill Points. Gained at level up to raise skills.
 var race = null      #tid
 var aclass = null    #tid
 var skills = null    #array of class ID + level
+var extraSkills = [] #Skills given by equipment or other special things.
 
 var links = null     #Party links. Array of [trust, link1, link2, link3]
 
 var equip = core.Inventory.Equip.new()
 var currentWeapon = equip.slot[0]
-var DGem:DragonGemContainer
+var DGem:DragonGemContainer #Equipped dragon gems.
 
 var inventory:Array = []
 var personalInventorySize:int = 2
 var personalInventory:Array = []
 
-static func valueByTrust(a, v:int) -> int: #Return Over gain value based on trust.
-	if v >= 100:   return a[2]
-	elif v >= 50:  return a[1]
-	else:          return a[0]
+func endBattleTurn(defer):
+	battle.over += calculateTurnOverGains()
+	.endBattleTurn(defer)
 
+func getEquipSpeedMod() -> int:
+	return equip.getWeaponSpeedMod(currentWeapon)
+
+func recalculateStats() -> void:
+	#Get stats from race/class.
+	var raceStats = stats.create()
+	#TODO: Reset it to race defaults instead.
+	stats.resetElementData(raceStats.OFF)
+	stats.resetElementData(raceStats.RES)
+	stats.setFromSpread(raceStats, racePtr.statSpread, level)
+	var classStats = stats.create()
+	stats.setFromSpread(classStats, classlib.statSpread, level)
+	stats.sumInto(statBase, raceStats, classStats)
+
+	#Get stats from equipment.
+	extraSkills.clear()
+	var gearStats = stats.create()
+	stats.sum(gearStats, equip.calculateWeaponBonuses(extraSkills, currentWeapon))
+	stats.sum(gearStats, equip.calculateArmorBonuses(extraSkills, level))
+	#stats.sum(gearStats, equip.calculateGearBonuses())
+	print("[CHAR_PLAYER][recalculateStats] ", extraSkills)
+
+	stats.sumInto(statFinal, statBase, gearStats)
+
+func setCharClass(t) -> void:
+	aclass = core.tid.from(t)
+	classlib = core.lib.aclass.getIndex(aclass)
+
+func setCharRace(t) -> void:
+	race = core.tid.from(t)
+	racePtr = core.lib.race.getIndex(race)
+
+func initSkillList(sk) -> void:
+	skills = []
+	for i in sk:
+		skills.push_back([ int(i[0]), int(i[1]) ]) #skill TID, level
+
+
+func initDict(C):	#Load the character from save data
+	side = 0
+	self.DGem = DragonGemContainer.new(0)
+	self.name = str(C.name)                    #Init adventurer's name
+	print("[CHAR][initDict] Initializing %s" % [name])
+	setCharRace(C.race)                        #Init adventurer's race and set pointer to it for easy reference.
+	setCharClass(C.aclass)                     #Init adventurer's class and set pointer.
+	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.    (Slots 0-3)
+	equip.loadArmor(C.equip)                   #Init armor, vehicle or frame. (Slot 4)
+	equip.loadGear(C.equip)                    #Init gear/accesories.         (Slots 5-7)
+	currentWeapon = equip.slot[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
+	equip.currentWeapon = currentWeapon
+	self.personalInventorySize = C.personalInventorySize if 'personalInventorySize' in C else 2
+	if 'personalInventory' in C:
+		for i in C.personalInventory:
+			personalInventory.push_back([int(i[0]), core.tid.fromArray(i[1]), i[2].duplicate(true)])
+	initSkillList(C.skills)                    #Init adventurer's skill list.
+	initLinkList(C.links)                      #Init adventurer's links and trust with other guild members.
+	if 'energyColor' in C:
+		energyColor = C.energyColor
+	else:
+		energyColor = DEFAULT.energyColor
+	setXP(C.XP)                                #Set level from experience points.
+	recalculateStats()
+	fullHeal()
+	print(getTooltip())
+
+func initJson(json):
+	pass
+
+func damage(x, data, silent = false) -> Array:
+	var info : Array = .damage(x, data, silent)
+	if display != null and not silent:
+		display.damageShake()
+	return info
+
+func revive(x: int) -> void:
+	.revive(x)
+
+func defeat() -> void:
+	var IT:Array = group.inventory.canCounterEvent(core.lib.item.COUNTER_DEFEAT, self.inventory)
+	if not IT.empty():
+		group.inventory.takeConsumable(IT[0])
+		print("\t[CHAR_BASE][defeat] %s was protected by %s!" % [name, IT[0].data.lib.name])
+		if battle != null:
+			skill.msg("%s was hurt, but held on thanks to the %s!" % [name, IT[0].data.lib.name])
+			display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), false, "00FFFF")
+			HP = getHealthPercent(IT[0].data.level + 1)
+			return
+	.defeat()
+
+func charge(x : bool = false) -> void:
+	if display != null:
+		display.charge(x)
+
+func getTooltip() -> String:
+	return "%s\nLv.%s %s %s\n%s" % [name, level, racePtr.name, classlib.name, core.stats.print(statFinal)]
+
+func setXP(val:int) -> void: #Silently set level from experience. Used at initialization.
+	XP = val
+	var levelup = setLevel()
+	recalculateStats()
+
+func giveXP(val:int) -> void: #Increases party member's experience by val.
+	self.XP = XP + val
+	var levelup = setLevel()
+	if levelup: #TODO: Notify the interface to show a warning and play some jingle.
+		recalculateStats()
+
+func setLevel() -> bool: #Calculate current level based on EXP.
+	var levelup = false
+	while level < 100 and XP >= EXP_TABLE['normal'][self.level]:
+		self.level += 1
+		levelup = true
+	return levelup
+
+func setWeapon(WP) -> void: #Sets current weapon.
+	if currentWeapon != WP:
+		equip.currentWeapon = WP
+		currentWeapon = WP
+		updateBattleStats()
+
+func getSkillTID(t):
+	return classlib.skills[t[0]]
+
+func checkRaceType(type:int) -> bool:
+	var result : bool = false
+	if type in race.lib.race:
+		result = true
+	return result
+
+func fullRepair(all:bool=true) -> void:
+	equip.fullRepair(all)
+
+func partialRepair(val:int, all:bool=true) -> void:
+	equip.partialRepair(val,all)
+
+
+# Over calculation ############################################################
 
 func calculateTurnOverLink(who) -> int:
 	var gain : int = 0
@@ -148,49 +286,6 @@ func calculateTurnOverLink(who) -> int:
 					gain += valueByTrust([1, 1, 2], trust)
 	return gain
 
-
-func calculateTurnOverGains() -> int:
-	var result : int = 0
-	for i in group.formation:
-		if i != null:
-			if i.slot != slot:
-				if links[i.slot][1] != LINK_NONE:
-					result += calculateTurnOverLink(i)
-	return result
-
-func endBattleTurn(defer):
-	battle.over += calculateTurnOverGains()
-	.endBattleTurn(defer)
-
-func getEquipSpeedMod() -> int:
-	return equip.getWeaponSpeedMod(currentWeapon)
-
-func recalculateStats() -> void:
-	#Get stats from race/class.
-	var raceStats = stats.create()
-	#TODO: Reset it to race defaults instead.
-	stats.resetElementData(raceStats.OFF)
-	stats.resetElementData(raceStats.RES)
-	stats.setFromSpread(raceStats, racePtr.statSpread, level)
-	var classStats = stats.create()
-	stats.setFromSpread(classStats, classlib.statSpread, level)
-	stats.sumInto(statBase, raceStats, classStats)
-
-	#Get stats from equipment.
-	var gearStats = stats.create()
-	stats.sum(gearStats, equip.calculateWeaponBonuses(currentWeapon))
-	stats.sum(gearStats, equip.calculateArmorBonuses(level))
-	#stats.sum(gearStats, equip.calculateGearBonuses())
-	stats.sumInto(statFinal, statBase, gearStats)
-
-func setCharClass(t) -> void:
-	aclass = core.tid.fromArray(t)
-	classlib = core.lib.aclass.getIndex(t)
-
-func setCharRace(t) -> void:
-	race = core.tid.fromArray(t)
-	racePtr = core.lib.race.getIndex(t)
-
 func initLinkList(ln) -> void:
 	links = []
 	links.resize(24)
@@ -201,107 +296,16 @@ func initLinkList(ln) -> void:
 			links[i] = [int(ln[i][0]), int(ln[i][1]), int(ln[i][2]), int(ln[i][3])]
 			print("[OVER][initLinkList] links to %s [trust: %s, %s, %s, %s]" % [i, links[i][0], links[i][1], links[i][2], links[i][3]])
 
-
-func initSkillList(sk) -> void:
-	skills = []
-	for i in sk:
-		skills.push_back([ int(i[0]), int(i[1]) ]) #skill TID, level
-
-
-func initDict(C):	#Load the character from save data
-	side = 0
-	self.name = str(C.name)                    #Init adventurer's name
-	print("[CHAR][initDict] Initializing %s" % [name])
-	setCharRace(C.race)                        #Init adventurer's race and set pointer to it for easy reference.
-	setCharClass(C.aclass)                     #Init adventurer's class and set pointer.
-	#self.level = int(C.level)                  #Set character level. TODO: Read EXP instead?
-	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.    (Slots 0-3)
-	equip.loadArmor(C.equip)                   #Init armor, vehicle or frame. (Slot 4)
-	equip.loadGear(C.equip)                    #Init gear/accesories.         (Slots 5-7)
-	currentWeapon = equip.slot[0]              #Set main weapon as slot 0. TODO: Save last used slot as int?
-	equip.currentWeapon = currentWeapon
-	self.personalInventorySize = C.personalInventorySize if 'personalInventorySize' in C else 2
-	if 'personalInventory' in C:
-		for i in C.personalInventory:
-			personalInventory.push_back([int(i[0]), core.tid.fromArray(i[1]), i[2].duplicate(true)])
-	initSkillList(C.skills)                    #Init adventurer's skill list.
-	initLinkList(C.links)                      #Init adventurer's links and trust with other guild members.
-	if 'energyColor' in C:
-		energyColor = C.energyColor
-	else:
-		energyColor = "#4466FF"
-	setXP(C.XP)                                #Set level from experience points.
-	recalculateStats()
-	fullHeal()
-	print(getTooltip())
-
-func initJson(json):
-	pass
-
-func damage(x, data, silent = false) -> Array:
-	var info : Array = .damage(x, data, silent)
-	if display != null and not silent:
-		display.damageShake()
-	return info
-
-func revive(x: int) -> void:
-	.revive(x)
-
-func defeat() -> void:
-	var IT:Array = group.inventory.canCounterEvent(core.lib.item.COUNTER_DEFEAT, self.inventory)
-	if not IT.empty():
-		group.inventory.takeConsumable(IT[0])
-		print("\t[CHAR_BASE][defeat] %s was protected by %s!" % [name, IT[0].data.lib.name])
-		if battle != null:
-			skill.msg("%s was hurt, but held on thanks to the %s!" % [name, IT[0].data.lib.name])
-			display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), false, "00FFFF")
-			HP = getHealthPercent(IT[0].data.level + 1)
-			return
-	.defeat()
-
-func charge(x : bool = false) -> void:
-	if display != null:
-		display.charge(x)
-
-func getTooltip() -> String:
-	return "%s\nLv.%s %s %s\n%s" % [name, level, racePtr.name, classlib.name, core.stats.print(statFinal)]
-
-
-func setXP(val:int) -> void: #Silently set level from experience. Used at initialization.
-	XP = val
-	var levelup = setLevel()
-	recalculateStats()
-
-func giveXP(val:int) -> void: #Increases party member's experience by val.
-	self.XP = XP + val
-	var levelup = setLevel()
-	if levelup: #TODO: Notify the interface to show a warning and play some jingle.
-		recalculateStats()
-
-func setLevel() -> bool: #Calculate current level based on EXP.
-	var levelup = false
-	while level < 100 and XP >= EXP_TABLE['normal'][self.level]:
-		self.level += 1
-		levelup = true
-	return levelup
-
-func setWeapon(WP) -> void: #Sets current weapon.
-	if currentWeapon != WP:
-		equip.currentWeapon = WP
-		currentWeapon = WP
-		updateBattleStats()
-
-func getSkillTID(t):
-	return classlib.skills[t[0]]
-
-func checkRaceType(type:int) -> bool:
-	var result : bool = false
-	if type in race.lib.race:
-		result = true
+func calculateTurnOverGains() -> int:
+	var result : int = 0
+	for i in group.formation:
+		if i != null:
+			if i.slot != slot:
+				if links[i.slot][1] != LINK_NONE:
+					result += calculateTurnOverLink(i)
 	return result
-
-func fullRepair(all:bool=true) -> void:
-	equip.fullRepair(all)
-
-func partialRepair(val:int, all:bool=true) -> void:
-	equip.partialRepair(val,all)
+	
+static func valueByTrust(a, v:int) -> int: #Return Over gain value based on trust.
+	if v >= 100:   return a[2]
+	elif v >= 50:  return a[1]
+	else:          return a[0]

@@ -32,6 +32,7 @@ func init(dict):
 	var world = {
 		time = dict.world.time if 'time' in dict.world else 29,
 		day = dict.world.day if 'day' in dict.world else 1,
+		IDcounter = dict.world.IDcounter if 'IDcounter' in dict.world else 1,
 	}
 	core.world.init(world)
 	#Load item inventory
@@ -48,7 +49,8 @@ func init(dict):
 		roster[i] = dict.roster[i].duplicate()
 	formationSlots = dict.formationSlots.duplicate()
 	var A = null
-	for i in range(MAX_SIZE):                                                     #Load individual characters now.
+	#Load individual characters now.
+	for i in range(MAX_SIZE):
 		if formationSlots[i] != null:
 			A = roster[formationSlots[i]]
 			formation[i] = Adventurer.new()

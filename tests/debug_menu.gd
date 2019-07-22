@@ -9,7 +9,7 @@ func _ready():
 		$Panel2.show()
 		$Panel2/Guild.text = str("The %s guild" % core.guild.name)
 		$Panel2/Funds.text = str("Funds: %010d" % [core.guild.funds])
-		$Panel2/Time.text = str("Time: %02d(%02d) Day: %02d" % [core.world.time / 30, core.world.time, core.world.day])
+		$Panel2/Time.text = str("Time: %02d(%02d) Day: %02d" % [int(core.world.time / 30), core.world.time, core.world.day])
 		$Panel2/Wins.text = str("Wins: %03d" % [core.guild.stats.wins])
 		rank = core.guild.stats.wins
 		$Panel2/Loses.text = str("Defeats: %03d" % [core.guild.stats.defeats])

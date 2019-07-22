@@ -1,79 +1,76 @@
 extends "res://classes/library/lib_base.gd"
 var skill = core.skill
 
-#TODO: How it should work.
-# Parts should have a -5===0===5 slider. You can upgrade the part up to +5 to allow moving the slider up to -X===+X.
-# 0 is a balanced state.
-
-enum { #Vehicle parts. (Frames need no check, they use all)
-	#TODO: This should be in some common area to avoid desync as changes happen. Where, though?
-	PARTS_ENGINE = 1,
-	PARTS_SENSORS,
-	PARTS_FCS,
-	PARTS_COOLING,
-	# Frame only
-	PARTS_BOOSTER,
-	# Goes in extra slot
-	PARTS_EXTRA,
-}
-
-const LOAD_TRANSLATE = {
-	"ENGINE":   PARTS_ENGINE,
-	"SENSOR":   PARTS_SENSORS,
-	"FCS":      PARTS_FCS,
-	"COOLING":  PARTS_COOLING,
-	"BOOSTER":  PARTS_BOOSTER,
-	"EXTRA":    PARTS_EXTRA,
-}
-
-const PARTS = {
-	PARTS_ENGINE:   { name = "Engine" },
-	PARTS_SENSORS:  { name = "Sensors" },
-	PARTS_FCS:      { name = "FCS" },
-	PARTS_COOLING:  { name = "Cooling" },
-	PARTS_BOOSTER:  { name = "Booster" },
-	PARTS_EXTRA:    { name = "Extra" },
-}
+# Parts should have a -5===0===5 slider (which translates to 1==6==11 internally).
+# You can upgrade the part up to +5 to allow moving the slider up to -X===+X.
+# 0(6) is a balanced state and default.
 
 const LIBEXT_PARTSTAT_ARRAY = "loaderPartStatArray"
 
 var example = {
 	"story" : {
-		"hollow" : {
-			name = "Hollow Engine",
-			description = "Magpie's engine. Uses the properties of the G-Crystal to generate energy from the flow of gravitons. A safety limiter prevents Magpie from using her full power.",
-			slot = PARTS_ENGINE,
-			stat1 = ['RES_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
-			stat2 = [["debug","codexalt"], 010,008,006,004,002, 001, 001,001,000,000,000],
-		},
-		"reacta" : {
-			name = "G-Pulse Drive Mk.III REACTA",
-			description = "Magpie's true engine. With the REACTA limiter released, it's able to harness the full power of the G-Crystal, allowing Magpie to manipulate space.",
-			slot = PARTS_ENGINE,
-			stat1 = ['RES_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
-			stat2 = [["debug","codexalt"], 010,008,006,004,002, 001, 001,001,000,000,000], #TODO: Change to G-Dominion and assign Code「EXALT」to KSSGfrm2 instead.
-		},
-		"dimeye" : {
-			name = "Dimension Eye",
-			description = "A perfect replica of Professor Millennium's advanced dimensional sensor system. It's the only successful replica ever developed, and only Magpie can use it properly.",
-			slot = PARTS_SENSORS,
-			stat1 = ['OFF_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
-			stat2 = [["debug","gatebrkr"], 010,008,006,004,002, 001, 001,001,000,000,000],
-		},
 		"plasdr" : {
 			name = "Plasma Driver",
 			description = "Jay's generator. A powerful generator capable of converting Jay's Over into superheated plasma. The properties of the plasma field can even defy conventional physics.",
-			slot = PARTS_SENSORS,
+			slot = "ENGINE",
+			stat1 = ['OFF_ELE',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = ['AGI',                012,008,006,004,002, 001, 001,001,000,000,000],
+		},
+		"hollow" : {
+			name = "Hollow Engine",
+			description = "Magpie's engine. Uses the properties of the G-Crystal to generate energy from the flow of gravitons. A safety limiter prevents Magpie from using her full power.",
+			slot = "ENGINE",
+			stat1 = ['RES_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = [["story","codexalt"], 010,008,006,004,002, 001, 001,001,001,001,001],
+		},
+		"reacta" : {
+			name = "G-Pulse Drive Mk.III REACTA",
+			description = "Magpie's true engine. With the REACTA limiter released, it's able to harness the full power of the G-Crystal, allowing Magpie to create and manipulate full dimensions through G-Dominion. Its efficiency peaks near the presence of Over.",
+			slot = "ENGINE",
+			stat1 = ['ALL_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = [["story","codexalt"], 010,008,006,004,002, 001, 001,001,001,001,001], #TODO: Change to G-Dominion and assign Code「EXALT」to KSSGfrm2 instead.
+		},
+		"dimeye" : {
+			name = "Dimension Eye",
+			description = "A perfect replica of Professor Millennium's advanced dimensional sensor system. It's the only successful replica ever developed, and only Magpie can use it properly. Someone not attuned to dimensional scouting will be instantly driven mad by the sights beyond space.",
+			slot = "FCS",
 			stat1 = ['OFF_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
-			stat2 = [["debug","gatebrkr"], 010,008,006,004,002, 001, 001,001,000,000,000],
+			stat2 = [["story","gatebrkr"], 010,008,006,004,002, 001, 001,001,001,001,001],
+		},
+		"kokurei" : {
+			name = "Kokureiro",
+			description = "Shiro's engine, 酷霊炉, the \"Cruel Spirit Furnace\". It feeds on the negative energies of those cut by the Ganreitou. The process is said to be like witnessing a legion of hungry spirits, drawing closer and closer every cut.",
+			slot = "ENGINE",
+			stat1 = ['RES_KIN',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = ['RES_ENE',            020,012,009,007,005, 005, 005,004,002,001,000],
+		},
+		"tindal" : {
+			name = "Tindalos Furnace",
+			description = "Anna's engine, powered by the temporal anomalies accumulated by Mr.Raven's constant time travel. Receives energy from all points in time simultaneously, it will keep running after time has ended.",
+			slot = "ENGINE",
+			stat1 = ['AGI',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = ['STR',            020,012,009,007,005, 005, 005,004,002,001,000],
+		},
+		"shira" : {
+			name = "Shirayuki",
+			description = "Yukiko's reactor, crafted from a modified G-Crystal. It's unable to generate more energy than she normally would, but it can store excess energy, allowing for higher stamina and power in bursts. Losing synchronization with her body can temporarily halt energy production.",
+			slot = "ENGINE",
+			stat1 = ['RES_ENE',        000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = ['WIS',            020,012,009,007,005, 005, 005,004,002,001,000],
+		},
+		"shira2" : {
+			name = "Shirayuki PERFECT BLUE",
+			description = "Yukiko's modified reactor. Fused with the Prime Blue, it produces a staggering amount of energy by gathering Over, specially that born from feelings of hope. It won't desynch anymore as long as Yukiko keeps altering the Akashic Records to adapt to potential damage.",
+			slot = "ENGINE",
+			stat1 = ['OFF_ENE',        000,001,002,004,005, 005, 005,007,009,012,020],
+			stat2 = ['MEP',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},
 	},
 	"debug" : {
 		"debug" : {
 			name = "Debug Part",
 			description = "You should not be seeing this part normally, this means something went wrong.",
-			slot = PARTS_EXTRA,
-			value = [0, 1, 2, 3, 4],
+			slot = "EXTRA",
 			stat1 = ['ATK', 012,010,009,008,007, 005, 003,002,001,000,000 ],
 			stat2 = ['DEF', 000,000,001,002,003, 005, 007,008,009,010,012 ],
 		},
@@ -85,13 +82,14 @@ func initTemplate():
 		"name" : { loader = LIBSTD_STRING },
 		"description" : { loader = LIBSTD_STRING, default = "Sponsored by Ryuutei Corporation."},
 		"slot" : { loader = LIBSTD_INT },
-		"value" : {loader = LIBSTD_VARIABLEARRAY, default = [1, 1, 1, 1, 1] },
+		"value" : {loader = LIBSTD_INT, default = 1000 },
 		'stat1' : { loader = LIBEXT_PARTSTAT_ARRAY },
 		'stat2' : { loader = LIBEXT_PARTSTAT_ARRAY },
 	}
 
 func loadDebug():
 	loadDict(example)
+	printData()
 
 func loaderPartStatArray(val) -> Array:
 	var result = ['NONE', 0,0,0,0,0, 0, 0,0,0,0,0]
@@ -101,7 +99,7 @@ func loaderPartStatArray(val) -> Array:
 		TYPE_ARRAY:
 			result[0] = core.tid.fromArray(val[0])
 		TYPE_STRING:
-			result[0] = str(val[0])
+			result[0] = str(val[0]).to_upper() #We want this to be LOUD for Stats.elementalModStringConvert
 	for i in range(1, 12):
 		result[i] = int(val[i])
 	return result

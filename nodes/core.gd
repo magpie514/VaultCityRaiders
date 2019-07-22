@@ -33,21 +33,24 @@ const Player = preload("res://classes/char/char_player.gd")
 const Inventory = preload("res://classes/inventory/item.gd")
 
 class WorldClass:
-	var time : int = 0 #30 steps or turns => one hour.
-	var day : int = 0
+	var time:int = 0        #30 steps or turns => one hour.
+	var day:int = 0         #30 days => one month.
+	var IDcounter:int = 0   #Internal counter for enemy/monster IDs.
 
 	func init(data) -> void:
 		time = int(data.time)
 		day = int(data.day)
+		IDcounter = int(data.IDcounter)
 
-	func save()	-> Dictionary:
+	func save()	-> Dictionary: #Get data structured for savefile.
 		var result : Dictionary = {
 			time = time,
-			day = day
+			day = day,
+			IDcounter = IDcounter,
 		}
 		return result
 
-	func passTime(amount : int = 1):
+	func passTime(amount:int = 1): #Pass one or more "time units".
 		var oldtime = time
 		var oldhour = int(float(time) / 30)
 		time = time + amount
@@ -60,6 +63,20 @@ class WorldClass:
 			day += 1
 			print("[WORLD][passTime] Day passed. Current day is %d" % day)
 			time -= 720
+
+class CounterClass: #Simple incrementing counter.
+	var count:int = 0
+	var limit:int = 65535 #Default to something that fits in 16 bits.
+
+	func _init(val:int = 0):
+		count = val
+
+	func next() -> int:
+		count += 1
+		return count
+
+	func current() -> int:
+		return count
 
 
 class _charPanel:
@@ -122,8 +139,8 @@ class _charPanel:
 
 class _tid: #TID (Thing ID) helper class.
 #A TID is a way to organize data in a nested dictionary. "Libraries" use this format to store data as section/item.
-	func create(a, b) -> Array: #Create a new TID array from two strings.
-		return [str(a), str(b)]
+	func create(a, b) -> PoolStringArray: #Create a new TID array from two strings.
+		return PoolStringArray([str(a), str(b)])
 
 	func validateArray(tid) -> bool: #Validate a TID array.
 		#Validation rules.
@@ -133,35 +150,38 @@ class _tid: #TID (Thing ID) helper class.
 		#All basic fail checks pass. It's valid.
 		return true
 
-	func validateString(tid) -> bool: #Validate a TID string.
+	func validateString(tid:String) -> bool: #Validate a TID string.
 		#Validation rules.
-		if tid.split('/') != -1: return false #Must use / as a separator.
+		if tid.split('/', true, 2).size() < 2: return false #Must use / as a separator.
 		#All basic fail checks pass. It's valid.
 		return true
 
-	func fromArray(a) -> Array: #Create a TID using an array in the format ["section", "item"]
+	func fromArray(a) -> PoolStringArray: #Create a TID using an array in the format ["section", "item"]
 		if validateArray(a):
 			return create(a[0], a[1])
 		else:
 			return create("debug", "debug")
 
-	func fromString(st) -> Array: #Create a TID using a string in the format "section/item"
+	func fromString(st) -> PoolStringArray: #Create a TID using a string in the format "section/item"
 		if validateString(st):
 			var parts = st.split('/', false, 2)
 			return create(parts[0], parts[1])
 		else:
 			return create("debug", "debug")
 
-	func from(a) -> Array: #Create a TID from an unknown definition.
+	func from(a) -> PoolStringArray: #Create a TID from an unknown definition.
+		#print("[TID][from] ", a, " ", typeof(a))
 		match(typeof(a)):
 			TYPE_STRING:
 				return fromString(a)
 			TYPE_ARRAY:
 				return fromArray(a)
+			TYPE_STRING_ARRAY:
+				return fromArray(a)
 			_:
 				return create("debug", "debug")
 
-	func copy(tid) -> Array: #Makes a copy of a TID.
+	func copy(tid) -> PoolStringArray: #Makes a copy of a TID.
 		return create(tid[0], tid[1])
 
 	func string(tid) -> String: #Prints a TID as a string in the format "section/item"
@@ -175,6 +195,7 @@ class StatClass:
 	const STAT_CAP = 255
 	const MAX_DMG = 32000
 	const STATS = [ "MHP", "ATK", "DEF", "ETK", "EDF", "AGI", "LUC" ]
+	const GEAR_STATS = [ 'MEP', 'SKL' ]
 	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC	}
 	enum ELEMENTS {
 		DMG_UNTYPED = 0,	#Cannot be resisted
@@ -200,6 +221,10 @@ class StatClass:
 		#"DMG_UNKNOWN",
 		"DMG_ULTIMATE",
 	]
+	const ELEMENT_MOD_TABLE = [
+		'OFF_CUT', 'OFF_PIE', 'OFF_BLU', 'OFF_FIR', 'OFF_ICE', 'OFF_ELE', 'OFF_LUM', 'OFF_ULT', 'OFF_KIN', 'OFF_ENE',
+		'RES_CUT', 'RES_PIE', 'RES_BLU', 'RES_FIR', 'RES_ICE', 'RES_ELE', 'RES_LUM', 'RES_ULT', 'RES_KIN', 'RES_ENE',
+	]
 	const ELEMENT_DATA = [
 		{name = "untyped", color = "CCCCCC", icon = "res://resources/icons/untyped.svg"},
 		{name = "cut", color = "72E36E", icon = "res://resources/icons/cut.svg"},
@@ -213,11 +238,52 @@ class StatClass:
 	]
 
 
+
 	func getElementKey(element):
 		var e
 		e = int(0) if element < 0 else element
 		e = e if e < ELEMENT_CONV.size() else int(0)
 		return ELEMENT_CONV[e]
+
+	func elementalModStringConvert(st:String) -> PoolStringArray:
+		st = st.to_upper() #We want this ALLCAPS.
+		if st in ELEMENT_MOD_TABLE: #String is valid.
+			var result:PoolStringArray = st.split('_', true, 2)
+			if result.size() == 2:
+				var CONV = {
+					'CUT' : 'DMG_CUT',
+					'PIE' : 'DMG_PIERCE',
+					'BLU' : 'DMG_BLUNT',
+					'FIR' : 'DMG_FIRE',
+					'ICE' : 'DMG_ICE',
+					'ELE' : 'DMG_ELEC',
+					#'LUM' : 'DMG_LUMINOUS',
+					'ULT' : 'DMG_ULTIMATE',
+					'KIN' : 'DMG_KINETIC',
+					'ENE' : 'DMG_ENERGY',
+				}
+				if result[0] in ['OFF', 'RES', 'ALL']:
+					if result[1] in CONV:
+						result[1] = CONV[result[1]]
+						return result
+		return PoolStringArray(['ERR'])
+
+	func elementalModStringValidate(st:String) -> bool:
+		var result = elementalModStringConvert(st)
+		return false if result[0] == 'ERR' else true
+
+	func elementalModApply(stats, mod:String, val:int) -> void:
+		var what:PoolStringArray = elementalModStringConvert(mod)
+		if what[0] != 'ERR':
+			if what[0] == 'ALL':
+				stats.OFF[what[1]] += val
+				stats.RES[what[1]] -= val
+			else:
+				stats[what[0]][what[1]] += val
+		else:
+			print("[STATS][elementalModApply] Unknown target %s (%s)" % [what[0], what])
+
+
 
 	func create():
 		var result = {}
@@ -235,11 +301,18 @@ class StatClass:
 		result += printElementData(S.RES)
 		return result
 
-	func reset(S) -> void:
+	func reset(S, elementVal:int = 100) -> void:
 		for i in STATS:
 			S[i] = 0
-		resetElementData(S.OFF)
-		resetElementData(S.RES)
+		resetElementData(S.OFF, elementVal)
+		resetElementData(S.RES, elementVal)
+
+		#Handle special stats from items or such.
+		for i in [ 'MEP', 'WRD', 'DUR' ]:
+			if i in S:
+				S[i] = 0
+		if 'SKL' in S:
+			S.SKL.clear()
 
 	func setFromArray(S, aStat, aOFF, aRES, aRESscan):
 		if aStat != null:
@@ -299,9 +372,9 @@ class StatClass:
 			result += "%s: %s " % [i, E[i]]
 		return result
 
-	func resetElementData(E):
+	func resetElementData(E, val:int = 100):
 		for i in ELEMENTS:
-			E[i] = int(100)
+			E[i] = val
 
 	func setElementDataFromArray(E, a):
 		if a != null:

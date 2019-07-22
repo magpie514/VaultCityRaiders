@@ -1,15 +1,23 @@
 extends "res://classes/library/lib_base.gd"
-
-var skill = core.skill
-const LIBEXT_SKILL_CODE = "loaderSkillCode"
+###############################################################################
+#[>] TODO: Modifier to healraw to use bonus healing power
+#[ ] TODO: Modifier to allow attacks to bypass guard/barrier
+#[v] TODO: Chase attack setup.
+#[>] TODO: Elodie's Pleine-de-vie skills.
+#[ ] TODO: Replace skill constants with strings, replace them on load.
+#[ ] TODO: Implement lib_base logic to allow passing "translation dictionaries" so strings can be converted to ints easily.
+###############################################################################
+var skill = core.skill #Here as a shortcut so I just have to type "skill" for constants.
+const LIBEXT_SKILL_CODE         = "loaderSkillCode"
 const LIBEXT_SKILL_FILTEREX_ARG = "loaderSkillFilterEXArg"
-const LIBEXT_SKILL_MESSAGES = "loaderMessages"
-const LIBEXT_EFFECT_STATBONUS = "loaderEffectStatBonus"
-const LIBEXT_SKILL_LINK = "loaderSkillLink"
-const LIBEXT_ANIM = "loaderAnim"
+const LIBEXT_SKILL_MESSAGES     = "loaderMessages"
+const LIBEXT_EFFECT_STATBONUS   = "loaderEffectStatBonus"
+const LIBEXT_SKILL_LINK         = "loaderSkillLink"
+const LIBEXT_ANIM               = "loaderAnim"
 
 var example = {
-	"core" : {
+# Core skills #####################################################################################
+	"core": {
 		"defend" : {
 			name = "Defend",
 			description = "",
@@ -50,8 +58,32 @@ var example = {
 			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			spdMod = 	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 		},
+		"accel": {
+			name = "Accelerate",
+			description = "",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			effect = skill.EFFECT_STATS,
+			effectIfActive = skill.EFFCOLL_ADD,
+			effectType = skill.EFFTYPE_BUFF,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_EVASION,
+			effectStatBonus = {
+				EFFSTAT_BASEMULT = {
+					AGI = [125, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+				EFFSTAT_EVASION = [015,025,025,025,025, 025,025,025,025,025],
+			},
+			effectDuration = [002, 002, 002, 002, 003,   003, 003, 003, 003, 004],
+			effectPriority = 3,
+			accMod =	[080, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+		},
 	},
-	"story" : {
+# Story mode skills ###############################################################################
+	"story": {
 # Jay's skills ####################################################################################
 		"plasfeld": {
 			name = "Plasma Field",
@@ -350,6 +382,7 @@ var example = {
 				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 			]
 		},
+# Anna's skills ###################################################################################
 		"savaripp": {
 			name = "Savage Ripper",
 			description = "Slashes at a single target. If current weapon is out of durability, the slash is much stronger. A last resort.",
@@ -450,7 +483,7 @@ var example = {
 				{ tid=["story", "lunablaz"], amount = 1, msg="{name} burst forth!", failmsg="" },
 			],
 		},
-		#Yukiko's skills
+# Yukiko's skills #################################################################################
 		"borealsf": {
 			name = "Boreal Shift",
 			description = "",
@@ -503,7 +536,8 @@ var example = {
 			synergy = [["debug", "dncsword"]],
 		},
 	},
-	"enemy" : {
+# Enemy exclusive skills ##########################################################################
+	"enemy": {
 		"repair": {
 			name = "Repair",
 			description = "",
@@ -521,7 +555,8 @@ var example = {
 			],
 		},
 	},
-	"sto_wp" : {
+# Story weapon skills #############################################################################
+	"sto_wp": {
 		"sever": {
 			name = "Sever",
 			description = "Fires a laser beam with high accuracy. If it hits, the target receives additional piercing damage.",
@@ -722,9 +757,57 @@ var example = {
 				["attack"       ,100,125,132,132,140,   140,147,147,147,160],
 			],
 		},
+		"solbull":{
+			name = "Solar Bullet",
+			description = "Fires a barrage of Neo-Heliolite-tipped bullets which explode on impact.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_PIERCE,
+			damageStat = core.stats.STAT.ATK,
+			modStat = core.stats.STAT.LUC,
+			accMod = [100,099,099,099,099,   099,099,099,099,099],
+			spdMod = [100,100,100,100,100,   100,100,100,100,100],
+			AD =     [105,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,100,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+		"solbeam":{
+			name = "Solar Beam",
+			description = "Fires a barrage of Neo-Heliolite-tipped bullets which explode on impact.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_PIERCE,
+			damageStat = core.stats.STAT.ETK,
+			modStat = core.stats.STAT.LUC,
+			accMod = [110,099,099,099,099,   099,099,099,099,099],
+			spdMod = [075,100,100,100,100,   100,100,100,100,100],
+			AD =     [105,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,550,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+		"heliosph":{
+			name = "Heliosphere",
+			description = "Fires a barrage of Neo-Heliolite bullets around the enemy and releases all of the contained energy as heat.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_FIRE,
+			damageStat = core.stats.STAT.ETK,
+			modStat = core.stats.STAT.LUC,
+			accMod = [110,099,099,099,099,   099,099,099,099,099],
+			spdMod = [075,100,100,100,100,   100,100,100,100,100],
+			AD =     [105,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,450,125,132,132,140,   140,147,147,147,160],
+			],
+		},
 	},
 # Dragon gem skills ###############################################################################
-	"gem" : {
+	"gem": {
 		"firewave": {
 			name = "Fire Wave",
 			description = "",
@@ -915,7 +998,8 @@ var example = {
 			],
 		},
 	},
-	"debug" : {
+# Testing skills ##################################################################################
+	"debug": {
 		"debug": {
 			name = "Debug Strike",
 			description = "",
@@ -1535,10 +1619,6 @@ var example = {
 	},
 }
 
-#TODO: Modifier to healraw to use bonus healing power
-#TODO: Modifier to allow attacks to bypass guard/barrier
-#TODO: Chase attack setup.
-
 func initTemplate():
 	return {
 		"name" : { loader = LIBSTD_STRING, default = "Unnamed Skill" },
@@ -1608,13 +1688,10 @@ func initTemplate():
 		"codeED" : { loader = LIBEXT_SKILL_CODE },
 	}
 
-
-
 func loadDebug():
 	print("[SKILL][loadDebug] Loading core skills.")
 	loadDict(example)
 	print("[SKILL][loadDebug] Core skills loaded.")
-	#printData()
 
 func name(id):
 	var entry = getIndex(id)
@@ -1685,7 +1762,7 @@ func loaderMessages(val): #Loads skill messages.
 			print("\t[!!][SKILL][loaderMessages] Unknown input type, returning null.")
 			return null
 
-func loaderEffectStatBonus(dict):
+func loaderEffectStatBonus(dict): #Loads effect stat modifiers.
 	if dict == null:
 		return null
 	var stats = core.stats
@@ -1725,10 +1802,10 @@ func loaderEffectStatBonus(dict):
 					result.EFFSTAT_EVASION = loaderSkillArray(dict.EFFSTAT_EVASION)
 	return result
 
-func loaderSkillLink(val):
+func loaderSkillLink(val): #Loads linked skills.
 	return null
 
-func loaderAnim(val):
+func loaderAnim(val): #Loads animations.
 	var result = {}
 	if val != null:
 		for i in val:
