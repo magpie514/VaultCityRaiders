@@ -194,14 +194,14 @@ class _tid: #TID (Thing ID) helper class.
 class StatClass:
 	const STAT_CAP = 255
 	const MAX_DMG = 32000
-	const STATS = [ "MHP", "ATK", "DEF", "ETK", "EDF", "AGI", "LUC" ]
+	const STATS = [ 'MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC' ]
 	const GEAR_STATS = [ 'MEP', 'SKL' ]
 	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC	}
 	enum ELEMENTS {
 		DMG_UNTYPED = 0,	#Cannot be resisted
 		DMG_CUT,					#Slash or wind attacks
 		DMG_PIERCE,				#Perforating or earth attacks.
-		DMG_BLUNT,				#Blunt/explosive or water attacks.
+		DMG_STRIKE,				#Strike/explosive or water attacks.
 		DMG_FIRE,					#Fire attacks
 		DMG_ICE,					#Ice attacks
 		DMG_ELEC,					#Electric attacks
@@ -214,7 +214,7 @@ class StatClass:
 		"DMG_UNTYPED",
 		"DMG_CUT",
 		"DMG_PIERCE",
-		"DMG_BLUNT",
+		"DMG_STRIKE",
 		"DMG_FIRE",
 		"DMG_ICE",
 		"DMG_ELEC",
@@ -222,14 +222,15 @@ class StatClass:
 		"DMG_ULTIMATE",
 	]
 	const ELEMENT_MOD_TABLE = [
-		'OFF_CUT', 'OFF_PIE', 'OFF_BLU', 'OFF_FIR', 'OFF_ICE', 'OFF_ELE', 'OFF_LUM', 'OFF_ULT', 'OFF_KIN', 'OFF_ENE',
-		'RES_CUT', 'RES_PIE', 'RES_BLU', 'RES_FIR', 'RES_ICE', 'RES_ELE', 'RES_LUM', 'RES_ULT', 'RES_KIN', 'RES_ENE',
+		'OFF_CUT', 'OFF_PIE', 'OFF_STK', 'OFF_FIR', 'OFF_ICE', 'OFF_ELE', 'OFF_LUM', 'OFF_ULT', 'OFF_KIN', 'OFF_ENE',
+		'RES_CUT', 'RES_PIE', 'RES_STK', 'RES_FIR', 'RES_ICE', 'RES_ELE', 'RES_LUM', 'RES_ULT', 'RES_KIN', 'RES_ENE',
+		'ALL_CUT', 'ALL_PIE', 'ALL_STK', 'ALL_FIR', 'ALL_ICE', 'ALL_ELE', 'ALL_LUM', 'ALL_ULT', 'ALL_KIN', 'ALL_ENE',
 	]
 	const ELEMENT_DATA = [
 		{name = "untyped", color = "CCCCCC", icon = "res://resources/icons/untyped.svg"},
 		{name = "cut", color = "72E36E", icon = "res://resources/icons/cut.svg"},
 		{name = "pierce", color = "E26EE3", icon = "res://resources/icons/pierce.svg"},
-		{name = "blunt", color = "6EA4E3", icon = "res://resources/icons/bash.svg"},
+		{name = "strike", color = "6EA4E3", icon = "res://resources/icons/bash.svg"},
 		{name = "fire", color = "E36E6E", icon = "res://resources/icons/fire.svg"},
 		{name = "ice", color = "6ED8E3", icon = "res://resources/icons/ice.svg"},
 		{name = "elec", color = "E2E36E", icon = "res://resources/icons/elec.svg"},
@@ -253,7 +254,7 @@ class StatClass:
 				var CONV = {
 					'CUT' : 'DMG_CUT',
 					'PIE' : 'DMG_PIERCE',
-					'BLU' : 'DMG_BLUNT',
+					'STK' : 'DMG_STRIKE',
 					'FIR' : 'DMG_FIRE',
 					'ICE' : 'DMG_ICE',
 					'ELE' : 'DMG_ELEC',
@@ -282,8 +283,6 @@ class StatClass:
 				stats[what[0]][what[1]] += val
 		else:
 			print("[STATS][elementalModApply] Unknown target %s (%s)" % [what[0], what])
-
-
 
 	func create():
 		var result = {}

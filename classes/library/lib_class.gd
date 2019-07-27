@@ -198,4 +198,4 @@ func printData():
 					entry.statSpread[0][4], entry.statSpread[1][4],
 					entry.statSpread[0][5], entry.statSpread[1][5],
 					entry.statSpread[0][6], entry.statSpread[1][6],
-			  ])
+				])

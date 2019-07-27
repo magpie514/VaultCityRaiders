@@ -10,6 +10,7 @@ const LIBSTD_TID_OR_NULL = "loaderTIDorNull"
 const LIBSTD_TID_ARRAY = "loaderTIDArray"
 const LIBSTD_VARIABLEARRAY = "loaderVariableArray"
 const LIBSTD_STATSPREAD = "loaderStatSpread"
+const LIBSTD_STATBONUS = "loaderStatBonus"
 const LIBSTD_ELEMENTDATA = "loaderElementData"
 const LIBSTD_SKILL_ARRAY = "loaderSkillArray"
 const LIBSTD_SKILL_LIST = "loaderSkillList"
@@ -95,26 +96,26 @@ func loaderBool(val):
 	else:
 		return bool(val)
 
-func loaderInt(val):
+func loaderInt(val) -> int:
 	if val == null:
 		return int(0)
 	else:
 		return int(val)
 
-func loaderFloat(val):
+func loaderFloat(val) -> float:
 	if val == null:
 		return float(0.0)
 	else:
 		return float(val)
 
-func loaderString(val):
+func loaderString(val) -> String:
 	if val == null:
 		return "NULL"
 	else:
 		return str(val)
 
-func loaderVariableArray(val):
-	var result = []
+func loaderVariableArray(val) -> Array:
+	var result:Array = []
 	if val == null:
 		return result
 	else:
@@ -197,6 +198,15 @@ func loaderSkillArray(val):
 			for i in range(10):
 				result[i] = int(0)
 	return result
+
+func loaderStatBonus(val) -> Dictionary:
+	var result:Dictionary = {}
+	for ar in [core.stats.STATS, core.stats.ELEMENT_MOD_TABLE]:
+		for i in ar:
+			if i in val:
+				result[i] = val[i]
+	return result
+
 
 func loaderSummons(val):
 	if val == null or typeof(val) != TYPE_ARRAY:

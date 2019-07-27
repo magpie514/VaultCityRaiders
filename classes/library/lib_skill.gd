@@ -140,7 +140,7 @@ var example = {
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SPREAD,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_BLUNT,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
 			energyDMG = false,
 			damageStat = core.stats.STAT.ETK,
 			chain = skill.CHAIN_STARTER,
@@ -260,13 +260,11 @@ var example = {
 			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
 			effectType = skill.EFFTYPE_DEBUFF,
 			effectIfActive = skill.EFFCOLL_FAIL,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_RES,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT,
 			effectStatBonus = {
-				EFFSTAT_RES = {
-					DMG_ULTIMATE =	[030,000,000,000,000,   000,000,000,000,000],
-				},
 				EFFSTAT_BASEMULT = {
-					AGI = [-20,000,000,000,000,   000,000,000,000,000],
+					AGI =     [-20,000,000,000,000,   000,000,000,000,000],
+					RES_ULT = [030,000,000,000,000,   000,000,000,000,000],
 				},
 			},
 			effectDuration = [002,003,003,003,004,   004,004,004,004,005],
@@ -323,18 +321,16 @@ var example = {
 			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
 			effectType = skill.EFFTYPE_BUFF,
 			effectIfActive = skill.EFFCOLL_NULLIFY,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_OFF|skill.EffectStat.EFFSTAT_RES|skill.EffectStat.EFFSTAT_EVASION,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_BASE|skill.EffectStat.EFFSTAT_EVASION,
 			effectStatBonus = {
-				EFFSTAT_OFF = {
-					DMG_ULTIMATE =	[030, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-				EFFSTAT_RES = {
-					DMG_KINETIC =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-					DMG_ENERGY =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
 				EFFSTAT_BASEMULT = {
 					AGI = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 					ETK = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				},
+				EFFSTAT_BASE = {
+					RES_KIN = [-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					RES_ENE = [-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					OFF_ULT = [030, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 				},
 				EFFSTAT_EVASION = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 			},
@@ -419,24 +415,22 @@ var example = {
 			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
 			effectType = skill.EFFTYPE_BUFF,
 			effectIfActive = skill.EFFCOLL_NULLIFY,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_OFF,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT,
 			effectStatBonus = {
-				EFFSTAT_OFF = {
-					DMG_FIRE =	[030, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
 				EFFSTAT_BASEMULT = {
-					ATK = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-					ETK = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-					AGI = [020, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					ATK =     [020,000,000,000,000, 000,000,000,000,000],
+					ETK =     [020,000,000,000,000, 000,000,000,000,000],
+					AGI =     [020,000,000,000,000, 000,000,000,000,000],
+					OFF_FIR = [030,000,000,000,000, 000,000,000,000,000],
 				},
 			},
 			effectDuration = 2,
 			effectPriority = 3,
-			spdMod = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = [100,100,100,100,100,  100,100,100,100,100],
+			AD = [100,100,100,100,100,  100,100,100,100,100],
 			codeMN = [
-				["drainlife", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
-				["attack", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+				["drainlife", 100,125,132,132,140, 140,147,147,147,160],
+				["attack",    100,125,132,132,140, 140,147,147,147,160],
 			],
 			codeED = [
 				["dmgraw", 050, 002, 002, 002, 002,   002, 002, 002, 002, 002, skill.OPFLAGS_VALUE_PERCENT],
@@ -607,7 +601,7 @@ var example = {
 		},
 		"dualshrs": {
 			name = "Dual Shears",
-			description = "Powerful cutting attack. Gets its field bonuses from the Blunt element.",
+			description = "Powerful cutting attack. Gets its field bonuses from the Strike element.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -627,7 +621,7 @@ var example = {
 		},
 		"thoukniv": {
 			name = "Thousand Knives",
-			description = "Uses maximum speed to deliver a powerful sequence of slashes. Gets its field bonuses from the Blunt element.",
+			description = "Uses maximum speed to deliver a powerful sequence of slashes. Gets its field bonuses from the Strike element.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -884,7 +878,7 @@ var example = {
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_BLUNT,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
 			energyDMG = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
@@ -898,7 +892,7 @@ var example = {
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_BLUNT,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
 			energyDMG = false,
 			damageStat = core.stats.STAT.ATK,
 			ranged = false,
@@ -1020,7 +1014,7 @@ var example = {
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_BLUNT,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
 			energyDMG = false,
 			ranged = false,
 			codeMN = [
@@ -1269,8 +1263,8 @@ var example = {
 			ranged = true,
 			codeMN = [
 				["if_race_aspect", 002,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
-				 ["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
-				 ["stop",          001,001,001,001,001,  001,001,001,001,001],
+					["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+					["stop",          001,001,001,001,001,  001,001,001,001,001],
 				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 			],
 		},
@@ -1283,8 +1277,8 @@ var example = {
 			ranged = true,
 			codeMN = [
 				["if_race_aspect", 001,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
-				 ["heal",          085,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
-				 ["stop",          001,001,001,001,001,  001,001,001,001,001],
+					["heal",          085,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+					["stop",          001,001,001,001,001,  001,001,001,001,001],
 				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
 			],
 		},
@@ -1351,17 +1345,15 @@ var example = {
 			requiresWeapon = 1,
 			target = skill.TARGET_ROW,
 			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_BLUNT,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
 			effect = skill.EFFECT_STATS,
 			effectIfActive = skill.EFFCOLL_ADD,
 			effectType = skill.EFFTYPE_BUFF,
-			effectStats = skill.EffectStat.EFFSTAT_BASEMULT|skill.EffectStat.EFFSTAT_RES,
+			effectStats = skill.EffectStat.EFFSTAT_BASEMULT,
 			effectStatBonus = {
 				EFFSTAT_BASEMULT = {
-					DEF = [120, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-				},
-				EFFSTAT_RES = {
-					DMG_KINETIC =	[-30, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					DEF =     [120,000,000,000,000, 000,000,000,000,000],
+					RES_KIN = [120,000,000,000,000, 000,000,000,000,000],
 				},
 			},
 			effectDuration = [000, 002, 002, 002, 003,   003, 003, 003, 003, 004],
@@ -1558,11 +1550,11 @@ var example = {
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
 			effect = skill.EFFECT_STATS,
 			effectType = skill.EFFTYPE_DEBUFF,
-			effectStats = skill.EffectStat.EFFSTAT_RES,
+			effectStats = skill.EffectStat.EFFSTAT_BASE,
 			effectStatBonus = {
-				EFFSTAT_RES = {
-					DMG_KINETIC = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
-					DMG_ENERGY = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+				EFFSTAT_BASE = {
+					RES_KIN = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
+					RES_ENE = [025, 000, 000, 000, 000,   000, 000, 000, 000, 000],
 				},
 			},
 			effectDuration = [002, 002, 002, 002, 003,   003, 003, 003, 003, 004],
@@ -1772,24 +1764,16 @@ func loaderEffectStatBonus(dict): #Loads effect stat modifiers.
 			match key:
 				"EFFSTAT_BASE":
 					result.EFFSTAT_BASE = {}
-					for i in stats.STATS:
-						if dict.EFFSTAT_BASE.has(i):
-							result.EFFSTAT_BASE[i] = loaderSkillArray(dict.EFFSTAT_BASE[i])
+					for i in dict.EFFSTAT_BASE:
+						var I = i.to_upper()
+						if I in core.stats.STATS or I in core.stats.ELEMENT_MOD_TABLE:
+							result.EFFSTAT_BASE[I] = loaderSkillArray(dict.EFFSTAT_BASE[i])
 				"EFFSTAT_BASEMULT":
 					result.EFFSTAT_BASEMULT = {}
-					for i in stats.STATS:
-						if dict.EFFSTAT_BASEMULT.has(i):
-							result.EFFSTAT_BASEMULT[i] = loaderSkillArray(dict.EFFSTAT_BASEMULT[i])
-				"EFFSTAT_OFF":
-					result.EFFSTAT_OFF = {}
-					for i in stats.ELEMENTS:
-						if dict.EFFSTAT_OFF.has(i):
-							result.EFFSTAT_OFF[i] = loaderSkillArray(dict.EFFSTAT_OFF[i])
-				"EFFSTAT_RES":
-					result.EFFSTAT_RES = {}
-					for i in stats.ELEMENTS:
-						if dict.EFFSTAT_RES.has(i):
-							result.EFFSTAT_RES[i] = loaderSkillArray(dict.EFFSTAT_RES[i])
+					for i in dict.EFFSTAT_BASEMULT:
+						var I = i.to_upper()
+						if I in core.stats.STATS or I in core.stats.ELEMENT_MOD_TABLE:
+							result.EFFSTAT_BASEMULT[I] = loaderSkillArray(dict.EFFSTAT_BASEMULT[i])
 				"EFFSTAT_GUARD":
 					result.EFFSTAT_GUARD = loaderSkillArray(dict.EFFSTAT_GUARD)
 				"EFFSTAT_BARRIER":

@@ -7,13 +7,7 @@ sky_curve = 0.25
 ground_bottom_color = Color( 0.101961, 0.145098, 0.188235, 1 )
 ground_horizon_color = Color( 0.482353, 0.788235, 0.952941, 1 )
 ground_curve = 0.01
-__meta__ = {
-
-}
 
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
-__meta__ = {
-
-}

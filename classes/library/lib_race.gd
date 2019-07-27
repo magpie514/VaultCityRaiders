@@ -11,7 +11,7 @@ var example = {
 			aspect = skill.RACEF_MEC,
 			race = [ skill.RACE_MACHINE ],
 		},
-		
+
 
 		"human" : { #Humans should be able to change races to cyborg naturally during the game.
 			name = "Human",
@@ -96,7 +96,7 @@ var example = {
 		"origin" : {  #Only for Tiamat and Cromwell.
 			name = "Originator",
 			description = "Born from the primordial chaos, Originators are gifted with the power to create universes. Only two are known to exist.",
-			statSpread = [ [065, 014, 011, 014, 012, 013, 005], [600, 145, 120, 145, 130, 135, 050] ],
+			statSpread = [ [650, 014, 011, 014, 012, 013, 005], [999, 145, 120, 145, 130, 135, 050] ],
 			aspect = skill.RACEF_SPI,
 			player = false,
 			flags = [ skill.RACE_ORIGINATOR ],
@@ -145,7 +145,7 @@ func printData():
 					entry.statSpread[0][5], entry.statSpread[1][5],
 					entry.statSpread[0][6], entry.statSpread[1][6],
 					entry.description,
-			  ])
+				])
 
 
 

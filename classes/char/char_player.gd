@@ -117,7 +117,6 @@ func initSkillList(sk) -> void:
 	for i in sk:
 		skills.push_back([ int(i[0]), int(i[1]) ]) #skill TID, level
 
-
 func initDict(C):	#Load the character from save data
 	side = 0
 	self.DGem = DragonGemContainer.new(0)
@@ -304,7 +303,7 @@ func calculateTurnOverGains() -> int:
 				if links[i.slot][1] != LINK_NONE:
 					result += calculateTurnOverLink(i)
 	return result
-	
+
 static func valueByTrust(a, v:int) -> int: #Return Over gain value based on trust.
 	if v >= 100:   return a[2]
 	elif v >= 50:  return a[1]

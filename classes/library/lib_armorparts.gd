@@ -8,60 +8,60 @@ var skill = core.skill
 const LIBEXT_PARTSTAT_ARRAY = "loaderPartStatArray"
 
 var example = {
+	"core" : {
+		"stplate" : {
+			name = "Steel Plating", slot = "ARMOR",
+			description = "Heavy steel plating.",
+			stat1 = ['AGI',                -02,-03,-04,-05,-06, -07, -08,-09,-10,-11,-12],
+			stat2 = ['DEF',                002,003,004,005,006, 007, 008,009,010,011,012],
+		}
+	},
 	"story" : {
 		"plasdr" : {
-			name = "Plasma Driver",
+			name = "Plasma Driver", slot = "ENGINE",
 			description = "Jay's generator. A powerful generator capable of converting Jay's Over into superheated plasma. The properties of the plasma field can even defy conventional physics.",
-			slot = "ENGINE",
 			stat1 = ['OFF_ELE',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['AGI',                012,008,006,004,002, 001, 001,001,000,000,000],
 		},
 		"hollow" : {
-			name = "Hollow Engine",
+			name = "Hollow Engine", slot = "ENGINE",
 			description = "Magpie's engine. Uses the properties of the G-Crystal to generate energy from the flow of gravitons. A safety limiter prevents Magpie from using her full power.",
-			slot = "ENGINE",
 			stat1 = ['RES_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = [["story","codexalt"], 010,008,006,004,002, 001, 001,001,001,001,001],
 		},
 		"reacta" : {
-			name = "G-Pulse Drive Mk.III REACTA",
+			name = "G-Pulse Drive Mk.III REACTA", slot = "ENGINE",
 			description = "Magpie's true engine. With the REACTA limiter released, it's able to harness the full power of the G-Crystal, allowing Magpie to create and manipulate full dimensions through G-Dominion. Its efficiency peaks near the presence of Over.",
-			slot = "ENGINE",
 			stat1 = ['ALL_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = [["story","codexalt"], 010,008,006,004,002, 001, 001,001,001,001,001], #TODO: Change to G-Dominion and assign Code「EXALT」to KSSGfrm2 instead.
 		},
 		"dimeye" : {
-			name = "Dimension Eye",
+			name = "Dimension Eye", slot = "FCS",
 			description = "A perfect replica of Professor Millennium's advanced dimensional sensor system. It's the only successful replica ever developed, and only Magpie can use it properly. Someone not attuned to dimensional scouting will be instantly driven mad by the sights beyond space.",
-			slot = "FCS",
 			stat1 = ['OFF_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = [["story","gatebrkr"], 010,008,006,004,002, 001, 001,001,001,001,001],
 		},
 		"kokurei" : {
-			name = "Kokureiro",
+			name = "Kokureiro", slot = "ENGINE",
 			description = "Shiro's engine, 酷霊炉, the \"Cruel Spirit Furnace\". It feeds on the negative energies of those cut by the Ganreitou. The process is said to be like witnessing a legion of hungry spirits, drawing closer and closer every cut.",
-			slot = "ENGINE",
 			stat1 = ['RES_KIN',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['RES_ENE',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},
 		"tindal" : {
-			name = "Tindalos Furnace",
+			name = "Tindalos Furnace", slot = "ENGINE",
 			description = "Anna's engine, powered by the temporal anomalies accumulated by Mr.Raven's constant time travel. Receives energy from all points in time simultaneously, it will keep running after time has ended.",
-			slot = "ENGINE",
 			stat1 = ['AGI',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['STR',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},
 		"shira" : {
-			name = "Shirayuki",
+			name = "Shirayuki", slot = "ENGINE",
 			description = "Yukiko's reactor, crafted from a modified G-Crystal. It's unable to generate more energy than she normally would, but it can store excess energy, allowing for higher stamina and power in bursts. Losing synchronization with her body can temporarily halt energy production.",
-			slot = "ENGINE",
 			stat1 = ['RES_ENE',        000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['WIS',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},
 		"shira2" : {
-			name = "Shirayuki PERFECT BLUE",
+			name = "Shirayuki PERFECT BLUE", slot = "ENGINE",
 			description = "Yukiko's modified reactor. Fused with the Prime Blue, it produces a staggering amount of energy by gathering Over, specially that born from feelings of hope. It won't desynch anymore as long as Yukiko keeps altering the Akashic Records to adapt to potential damage.",
-			slot = "ENGINE",
 			stat1 = ['OFF_ENE',        000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['MEP',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},

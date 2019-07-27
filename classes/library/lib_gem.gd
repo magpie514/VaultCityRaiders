@@ -16,7 +16,7 @@ enum {
 
 var example = {
 	"debug" : {
-	 	"debug" : {
+		"debug" : {
 			name = "Debug",
 			levels = 10,
 			desc = "???",
@@ -33,9 +33,9 @@ var example = {
 				RES = {
 					DMG_ULTIMATE = [010, 011, 012, 013, 015,   002, 002, 002, 002, 002],
 				},
-	 		},
+			},
 			skill = ["debug", "debug"],
- 		},
+		},
 	},
 	"core" : {
 		"speed" : {
@@ -204,10 +204,10 @@ var example = {
 				ETK = [+001, +001, +002, +002, +005,   +005, +005, +005, +005, +005], #Energy attack
 				DUR = [002, 002, 003, 003, 005,   005, 006, 006, 007, 010], #Durability increase
 				OFF = {
-					DMG_BLUNT = [002, 002, 003, 003, 005,   005, 005, 006, 006, 008],
+					DMG_STRIKE = [002, 002, 003, 003, 005,   005, 005, 006, 006, 008],
 				},
 				RES = {
-					DMG_BLUNT = [001, 001, 001, 001, 003,   003, 003, 003, 003, 005],
+					DMG_STRIKE = [001, 001, 001, 001, 003,   003, 003, 003, 003, 005],
 				},
 			},
 			skill = ["gem", "aquabrst"],
@@ -223,10 +223,10 @@ var example = {
 				ATK = [+001, +001, +002, +002, +005,   +005, +005, +005, +005, +005], #Energy attack
 				DUR = [002, 002, 003, 003, 005,   005, 006, 006, 007, 010], #Durability increase
 				OFF = {
-					DMG_BLUNT = [002, 002, 003, 003, 005,   005, 005, 006, 006, 008],
+					DMG_STRIKE = [002, 002, 003, 003, 005,   005, 005, 006, 006, 008],
 				},
 				RES = {
-					DMG_BLUNT = [001, 001, 001, 001, 003,   003, 003, 003, 003, 005],
+					DMG_STRIKE = [001, 001, 001, 001, 003,   003, 003, 003, 003, 005],
 				},
 			},
 			skill = ["gem", "smash"],
@@ -578,7 +578,7 @@ var example = {
 			}
 		},
 	},
-	
+
 }
 
 
@@ -630,7 +630,7 @@ func loaderWeaponBonus(val):
 					result[i][j] = loaderSkillArray([0,0,0,0,0, 0,0,0,0,0])
 
 		return result
-		
+
 func loaderTID2(val):
 	if val == null:
 		return null

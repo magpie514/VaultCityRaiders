@@ -54,7 +54,7 @@ class BattleStats:
 	var debuff:Array = []            #Active debuffs (stack of 3)
 	var effect:Array = []            #Active special effects (max 8, will fail if no slots)
 	var eventEffect:Array = []       #Active event-based effects (max 8)
-  # Onhit activations #########################################################################
+	# Onhit activations #########################################################################
 	var follow:Array = []            #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
 	var chase:Array = []             #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
 	var counter:Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
@@ -458,25 +458,23 @@ func calculateEffectStats(S, lv):
 			temp = S.effectStatBonus[key]
 			match key:
 				"EFFSTAT_BASE":
-					for i in stats.STATS:
-						if temp.has(i) and S.effectStats & K.EFFSTAT_BASE:
+					for i in temp:
+						if i in core.stats.STATS:
 							battle.stat[i] += temp[i][lv]
 							stdout += str("%s+%s " % [i, temp[i][lv]])
+						elif core.stats.elementalModStringValidate(i):
+							core.stats.elementalModApply(battle.stat, i, temp[i][lv])
+							stdout += str("%s+%s " % [i, temp[i][lv]])
+						else:
+							stdout += "err:%s" % i
 				"EFFSTAT_BASEMULT":
-					for i in stats.STATS:
-						if temp.has(i) and S.effectStats & K.EFFSTAT_BASEMULT:
-							battle.statmult[i] += temp[i][level]
+					for i in temp:
+						if i in core.stats.STATS:
+							battle.statmult[i] += temp[i][lv]
 							stdout += str("%s+%s%% " % [i, temp[i][lv]])
-				"EFFSTAT_OFF":
-					for i in stats.ELEMENTS:
-						if temp.has(i) and S.effectStats & K.EFFSTAT_OFF:
-							battle.stat.OFF[i] += temp[i][level]
-							stdout += str("%s+%s " % [i, temp[i][lv]])
-				"EFFSTAT_RES":
-					for i in stats.ELEMENTS:
-						if temp.has(i) and S.effectStats & K.EFFSTAT_RES:
-							battle.stat.RES[i] += temp[i][level]
-							stdout += str("%s+%s " % [i, temp[i][lv]])
+						elif core.stats.elementalModStringValidate(i):
+							core.stats.elementalModApply(battle.statmult, i, temp[i][lv])
+							stdout += str("%s+%s%% " % [i, temp[i][lv]])
 				"EFFSTAT_GUARD":
 					if S.effectStats & K.EFFSTAT_GUARD:
 						battle.guard += temp[level]

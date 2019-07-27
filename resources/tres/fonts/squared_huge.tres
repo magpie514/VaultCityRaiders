@@ -9,6 +9,3 @@ outline_color = Color( 0.0347443, 0.988281, 0.965933, 0.5 )
 use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 1 )
-__meta__ = {
-
-}

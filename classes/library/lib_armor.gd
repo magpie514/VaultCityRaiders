@@ -5,8 +5,17 @@ const LIBEXT_ARMOR_STATS = "loaderArmorStats"
 const LIBEXT_PARTS = "loaderParts"
 const LIBEXT_DEFAULT_PARTS = "loaderDefaultParts"
 const LIBEXT_ARCLASS = "loaderArClass"
+const LIBEXT_BONUS_STATS = "loaderBonusStats"
 
 var example = {
+	"core" : {
+		"perbar" : {
+			name = "Personal Barrier", arclass = 'BARRIER',
+			description = "Basic personal energy barrier.",
+			DEF = [002, 004], EDF = [003, 005],
+			weight = [001, 001],
+		}
+	},
 	"story" : {
 		"orbitfrm" : {
 			name = "ORBITAL Frame", arclass = 'FRAME',
@@ -37,6 +46,7 @@ var example = {
 			description = "Magpie's choujin frame. Having removed the REACTA limiter on the Hollow Engine gives her full access to her full capabilities. It's shielded against powerful dimensional distortions.",
 			DEF =    [004, 020], EDF = [012, 032],
 			weight = [003, 001],
+			over = "story/codexalt",
 			parts = {
 				onboard = 1,
 				statSpread = [ [050, 012, 012, 015, 015, 010, 012], [500, 110, 125, 150, 155, 130, 145] ],
@@ -57,6 +67,7 @@ var example = {
 			description = "Anna's custom armor. A full-body suit reinforced with lightweight carbon plates, topped off with a heavy blood-red coat made of elastic energy-resistant materials and a personal field generator.",
 			DEF =    [005, 020], EDF = [015, 032],
 			weight = [002, 000],
+			bonus = [ ['RES_FIR', 012, 015] ],
 		},
 		"ravefrm" : {
 			name = "SOLRAVEN Frame", arclass = 'FRAME',
@@ -123,6 +134,8 @@ func initTemplate():
 		"description" : { loader = LIBSTD_STRING, default = "???" },
 		"DEF" : { loader = LIBEXT_ARMOR_STATS, default = [0, 1] },
 		"EDF" : { loader = LIBEXT_ARMOR_STATS, default = [0, 1] },
+		"MHP" : { loader = LIBEXT_ARMOR_STATS, default = [0, 0] },
+		"bonus" : { loader = LIBEXT_BONUS_STATS, default = null },
 		"parts" : { loader = LIBEXT_PARTS, default = null },
 		"over" : { loader = LIBSTD_TID_OR_NULL, default = null }
 	}
@@ -158,6 +171,23 @@ func loaderArClass(val):
 	if val.to_upper() in core.Inventory.ARCLASS_TRANSLATE:
 		return val.to_upper()
 	return core.Inventory.ARCLASS_NONE
+
+func loaderBonusStats(val):
+	if val == null: return null
+	if typeof(val) != TYPE_ARRAY: return null
+	if val.empty(): return null
+	var result:Array = []
+	var valsize = 3 if val.size() > 3 else val.size()
+	for i in range(valsize):
+		var current = val[i]
+		if typeof(current) == TYPE_ARRAY:
+			result.push_back([str(current[0]).to_upper(), int(current[1]), int(current[2])])
+	if result.size() > 0:
+		return result
+	else:
+		return null
+
+
 
 func loaderDefaultParts(val):
 	if val == null: return null

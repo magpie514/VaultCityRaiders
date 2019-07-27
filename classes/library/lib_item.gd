@@ -9,7 +9,7 @@ enum {
 
 	COUNTER_DMG_CUT =       0x000010, #Counter a cut/wind hit.
 	COUNTER_DMG_PIERCE =    0x000020, #Counter a pierce/earth hit.
-	COUNTER_DMG_BLUNT =     0x000040, #Counter a blunt/water hit.
+	COUNTER_DMG_STRIKE =     0x000040, #Counter a blunt/water hit.
 	COUNTER_DMG_FIRE =      0x000080, #Counter a fire hit.
 	COUNTER_DMG_COLD =      0x000100, #Counter a cold hit.
 	COUNTER_DMG_ELEC =      0x000200, #Counter an electric hit.
@@ -27,7 +27,7 @@ enum {
 var ELEMENT_CONV = {
 	core.stats.ELEMENTS.DMG_CUT :      COUNTER_DMG_CUT,
 	core.stats.ELEMENTS.DMG_PIERCE :   COUNTER_DMG_PIERCE,
-	core.stats.ELEMENTS.DMG_BLUNT :    COUNTER_DMG_BLUNT,
+	core.stats.ELEMENTS.DMG_STRIKE :    COUNTER_DMG_STRIKE,
 
 	core.stats.ELEMENTS.DMG_FIRE :     COUNTER_DMG_FIRE,
 	core.stats.ELEMENTS.DMG_ICE :      COUNTER_DMG_COLD,

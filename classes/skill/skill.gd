@@ -1149,7 +1149,7 @@ func checkHit(a, b, skillACC = 95, mod:int = 0) -> bool:
 	if rand <= val: return true
 	else: return false
 
-func calculateHitNumber(hits):
+static func calculateHitNumber(hits):
 	var val = 0
 	if hits[0] != hits[1]: val = hits[0] + randi() % (hits[1] - hits[0])
 	else:	val = hits[1]

@@ -18,6 +18,7 @@ enum { #Vehicle classes
 
 enum { #Vehicle parts. (Frames need no check, they use all)
 	PARTS_ENGINE = 1,
+	PARTS_ARMOR,
 	PARTS_FCS,
 	PARTS_COOLING,
 	# Frame only
@@ -36,6 +37,7 @@ const ARCLASS_TRANSLATE = {
 
 const ARMORPARTS_TRANSLATE = {
 	"ENGINE":   PARTS_ENGINE,
+	"ARMOR":		PARTS_ARMOR,
 	"FCS":      PARTS_FCS,
 	"COOLING":  PARTS_COOLING,
 	"BOOSTER":  PARTS_BOOSTER,
@@ -44,6 +46,7 @@ const ARMORPARTS_TRANSLATE = {
 const ARMORPARTS = {
 	PARTS_ENGINE:   { name = "Engine" },
 	PARTS_FCS:      { name = "FCS" },
+	PARTS_ARMOR:		{ name = "Armor" },
 	PARTS_COOLING:  { name = "Cooling" },
 	PARTS_BOOSTER:  { name = "Booster" },
 	PARTS_EXTRA:    { name = "Extra" },
@@ -51,10 +54,10 @@ const ARMORPARTS = {
 
 const VEPARTS = {
 	VECLASS_SMALL:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
-	VECLASS_LARGE:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
-	VECLASS_HEAVY:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING ],
+	VECLASS_LARGE:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_ARMOR ],
+	VECLASS_HEAVY:    [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_ARMOR ],
 	VECLASS_AERIAL:   [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_BOOSTER ],
-	VECLASS_VANGUARD: [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_BOOSTER ],
+	VECLASS_VANGUARD: [ PARTS_ENGINE,PARTS_FCS,PARTS_COOLING,PARTS_ARMOR,PARTS_BOOSTER ],
 }
 
 const armortypes = {
@@ -584,12 +587,23 @@ class Armor:
 
 	func recalculateStats(lv:int) -> void:
 		core.stats.reset(stats, 0) #Reset stats with an element value of 0, so they can be added later.
+		var up = 1 if upgraded else 0
 		if lib.parts != null:
 			print("[ARMOR][recalculateStats] Part stats for %s (level %d)" % [lib.name, lv])
 			core.stats.setFromSpread(stats, lib.parts.statSpread, lv)
 			setPartStats(parts)
-		stats.DEF += lib.DEF[1 if upgraded else 0]
-		stats.EDF += lib.EDF[1 if upgraded else 0]
+		if lib.bonus != null:
+			print("[ARMOR][recalculateStats] Bonus stats for %s: %s" % [lib.name, str(lib.bonus)])
+			for i in lib.bonus:
+				if i[0] in [ 'MHP','MEP','ATK','DEF','ETK','EDF','AGI','LUC' ]:
+					stats[i[0]] += i[up + 1]
+				elif core.stats.elementalModStringValidate(i[0]):
+					core.stats.elementalModApply(stats, i[0], i[up + 1])
+		if lib.over != null:
+			stats.SKL.push_back([lib.over, 1 + int(lv / 10)])
+		stats.DEF += lib.DEF[up]
+		stats.EDF += lib.EDF[up]
+		stats.MHP += lib.MHP[up]
 		clampStats()
 
 

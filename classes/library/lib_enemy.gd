@@ -13,16 +13,16 @@ enum {
 }
 
 enum {
- AIPATTERN_LOOP,
- AIPATTERN_LOOP_SKIP_FIRST,
+	AIPATTERN_LOOP,
+	AIPATTERN_LOOP_SKIP_FIRST,
 }
 
 enum {
- AITARGET_SELF,
- AITARGET_RANDOM,
- AITARGET_WEAKEST,
- AITARGET_ALLY_WEAKEST,
- AITARGET_SUMMONER
+	AITARGET_SELF,
+	AITARGET_RANDOM,
+	AITARGET_WEAKEST,
+	AITARGET_ALLY_WEAKEST,
+	AITARGET_SUMMONER
 }
 
 
@@ -128,7 +128,7 @@ var example = {
 			},
 			skill = [ ["core", "defend"], ["debug", "heal"], ["enemy", "repair"] ]
 		},
-		 "compiler": {
+		"compiler": {
 			name = "Compiler",
 			spriteFile = "res://resources/images/compiler.png",
 			description = "Combat testing drone. A glorified moving turret. Vanilla scented.",
