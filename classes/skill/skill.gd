@@ -282,7 +282,8 @@ enum { #Targeting.
 	#Pick single target
 	TARGET_SINGLE,						#Targets any member.																	prompt: yes
 	TARGET_SINGLE_NOT_SELF,		#Targets any member, except self.											prompt: yes
-	TARGET_SPREAD,						#Targets one member, and affects nearby members.			prompt: yes
+	TARGET_SPREAD,						#Targets one member and nearby members, half damage.  prompt: yes
+	TARGET_WIDE,              #Targets one member and nearby members, full effect.  prompt: yes
 
 	#Pick row of targets
 	TARGET_ROW,								#Targets a full row.																	prompt: yes
@@ -540,6 +541,8 @@ enum { #Skill function codes.
 	OPCODE_IF_SYNERGY_TARGET,						#[!]Execute next line if target has a given skill active.
 	OPCODE_IF_RACE_ASPECT,							#[!]Execute next line if target has the given race aspects.
 	OPCODE_IF_RACE_TYPE,								#[!]Execute next line if target has the given race type amount its list.
+	OPCODE_IF_DAY,											#[!]Execute next line if current time is day.
+	OPCODE_IF_NIGHT,                    #[!]Execute next line if current time is night. Convenient shortcut for "not if_day"
 }
 
 
@@ -2777,6 +2780,11 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 								cond_block = (flags & OPFLAGS_BLOCK_START)
 								print("Race aspect %d not found on %s. Skipping next %s" % [value, variableTarget.name, 'block' if cond_block else 'line'])
 								skipLine = true
+					OPCODE_IF_DAY:
+						print(">IF DAY %s" % value)
+						#TODO: decide what time frame is considered daytime.
+					OPCODE_IF_NIGHT:
+						print(">IF NIGHT %s" % value)
 					_:
 						print(">[!!]UNKNOWN OPCODE: %d VALUE: %s" % [line[0], value])
 			else:

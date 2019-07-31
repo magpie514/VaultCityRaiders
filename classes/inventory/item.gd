@@ -476,7 +476,11 @@ class Item: #Item container class.
 			ITEM_WEAPON:
 				print("[ITEM][_init] %d Weapon.\ntype: %d\ttid:%s\tdata:%s" % [_slot, _type, str(_tid), _data])
 				lib = core.lib.weapon
-				tmp_data = core.Player.Weapon
+				tmp_data = Weapon
+			ITEM_ARMOR:
+				print("[ITEM][_init] %d Armor.\ntype: %d\ttid:%s\tdata:%s" % [_slot, _type, str(_tid), _data])
+				lib = core.lib.armor
+				tmp_data = Armor
 			ITEM_GEAR:
 				print("[ITEM][_init] %d Gear.\ntype: %d\ttid:%s\tdata:%s" % [_slot, _type, str(_tid), _data])
 				#tmp_lib = core.lib.item.getIndex(tid)
@@ -606,6 +610,13 @@ class Armor:
 		stats.MHP += lib.MHP[up]
 		clampStats()
 
+	func getBonuses(tmpSkill:Array, tmpStats:Dictionary) -> void:
+		core.stats.sum(tmpStats, stats)
+		if 'SKL' in stats:
+			print("[ARMOR][getBonuses] SKL: %s" % [stats.SKL])
+			for i in stats.SKL:
+				tmpSkill.push_back([ i[0], i[1] ])
+
 
 class Weapon:
 	const MAX_DUR = 99
@@ -617,6 +628,7 @@ class Weapon:
 		extraData = null,
 	}
 	var STATS_DEFAULT : Dictionary = {
+		MHP = int(0), #Only present since it's a standard stat but weapons cannot give health.
 		ATK = int(0), ETK = int(0), WRD = int(0), DUR = int(0),
 		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
 		OFF = core.stats.createElementData(),
@@ -652,7 +664,8 @@ class Weapon:
 		}
 
 	func clampStats() -> void:
-		stats.DUR = int(clamp(stats.DUR, 0, MAX_DUR))
+		stats.MHP = int(0) #Disallow health gains from weapons.
+		stats.DUR = core.clampi(stats.DUR, 0, MAX_DUR)
 
 	func recalculateStats() -> void:
 		var gemstats = DGem.stats
@@ -668,6 +681,13 @@ class Weapon:
 					stats[i][j] = gemstats[i][j] if j in gemstats[i] else 0
 		clampStats()
 
+	func getBonuses(tmpSkill:Array, tmpStats:Dictionary) -> void:
+		core.stats.sum(tmpStats, stats)
+		if 'SKL' in stats:
+			print("[WEAPON][getBonuses] SKL: %s" % [stats.SKL])
+			for i in stats.SKL:
+				tmpSkill.push_back([ i[0], i[1] ])
+
 	func attachGem(gem: DragonGem, sl : int) -> void:
 		DGem.attach(gem, sl)
 		recalculateStats()
@@ -677,7 +697,7 @@ class Weapon:
 		recalculateStats()
 		return G
 
-	func setBonus(val) -> void: #Clamp value for upgrade level
+	func setBonus(val:int) -> void: #Clamp value for upgrade level
 		level = int(clamp(val, 0, 9))
 
 	func fullRepair() -> void:
@@ -739,42 +759,6 @@ class Equip:
 	func initWeaponSlot() -> Weapon: #Is this used?
 		print("[EQUIP][initWeaponSlot] New weapon slot")
 		return Weapon.new()
-
-	func calculateWeaponBonuses(tmpSkill:Array, weapon): #->core.stats ?
-		var wstats = weapon.stats
-		var stats = core.stats.create()
-		for i in ['ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
-			stats[i] += wstats[i] if i in wstats else 0
-		for i in ['OFF', 'RES']:
-			if i in wstats:
-				for j in core.stats.ELEMENTS:
-					stats[i][j] = wstats[i][j] if j in wstats[i] else 0
-		if 'SKL' in wstats:
-			print("[EQUIP][calculateWeaponBonuses] SKL: ", wstats.SKL)
-			for i in wstats.SKL:
-				tmpSkill.push_back([ i[0], i[1] ])
-		return stats
-
-	func calculateArmorBonuses(tmpSkill:Array, lv): #->core.stats: ?
-		var stats = core.stats.create()
-		for a in ARMOR_SLOT:
-			slot[a].recalculateStats(lv)
-			var astats = slot[a].stats
-			for i in ['MHP', 'MEP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC']:
-				if not i in stats:
-					stats[i] = 0
-				stats[i] += (astats[i] if i in astats else 0)
-			for i in ['OFF', 'RES']:
-				if i in astats:
-					for j in core.stats.ELEMENTS:
-						stats[i][j] = astats[i][j] if j in astats[i] else 0
-			if 'SKL' in astats:
-				print("[EQUIP][calculateArmorBonuses] SKL: ", astats.SKL)
-				for i in astats.SKL:
-					print(i)
-					tmpSkill.push_back([ i[0], i[1] ])
-		return stats
-
 
 	func getWeaponSpeedMod(weapon) -> int:
 		var W = weapon.lib

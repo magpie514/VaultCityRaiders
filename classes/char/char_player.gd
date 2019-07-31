@@ -97,8 +97,12 @@ func recalculateStats() -> void:
 	#Get stats from equipment.
 	extraSkills.clear()
 	var gearStats = stats.create()
-	stats.sum(gearStats, equip.calculateWeaponBonuses(extraSkills, currentWeapon))
-	stats.sum(gearStats, equip.calculateArmorBonuses(extraSkills, level))
+	currentWeapon.getBonuses(extraSkills, gearStats)
+	for i in core.Inventory.Equip.ARMOR_SLOT:
+		equip.slot[i].recalculateStats(level)
+		equip.slot[i].getBonuses(extraSkills, gearStats)
+	#stats.sum(gearStats, equip.calculateWeaponBonuses(extraSkills, currentWeapon))
+	#stats.sum(gearStats, equip.calculateArmorBonuses(extraSkills, level))
 	#stats.sum(gearStats, equip.calculateGearBonuses())
 	print("[CHAR_PLAYER][recalculateStats] ", extraSkills)
 
