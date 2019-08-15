@@ -1,0 +1,119 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+render_mode blend_premul_alpha;
+
+uniform float radius = 2.0;
+uniform float amount = 1.6;
+
+void fragment() {
+	float r = radius;
+	vec2 ps = TEXTURE_PIXEL_SIZE;
+	vec4 col = texture(TEXTURE, UV);
+	vec4 glow = col;
+
+	glow += texture(TEXTURE, UV + vec2(-r, -r) * ps);
+	glow += texture(TEXTURE, UV + vec2(-r, 0.0) * ps);
+	glow += texture(TEXTURE, UV + vec2(-r, r) * ps);
+	glow += texture(TEXTURE, UV + vec2(0.0, -r) * ps);
+	glow += texture(TEXTURE, UV + vec2(0.0, r) * ps);
+	glow += texture(TEXTURE, UV + vec2(r, -r) * ps);
+	glow += texture(TEXTURE, UV + vec2(r, 0.0) * ps);
+	glow += texture(TEXTURE, UV + vec2(r, r) * ps);
+
+	r *= 2.0;
+	glow += texture(TEXTURE, UV + vec2(-r, -r) * ps);
+	glow += texture(TEXTURE, UV + vec2(-r, 0.0) * ps);
+	glow += texture(TEXTURE, UV + vec2(-r, r) * ps);
+	glow += texture(TEXTURE, UV + vec2(0.0, -r) * ps);
+	glow += texture(TEXTURE, UV + vec2(0.0, r) * ps);
+	glow += texture(TEXTURE, UV + vec2(r, -r) * ps);
+	glow += texture(TEXTURE, UV + vec2(r, 0.0) * ps);
+	glow += texture(TEXTURE, UV + vec2(r, r) * ps);
+
+	glow /= 17.0;
+	glow *= amount;
+	col.rgb *= col.a;
+
+	COLOR = glow + col;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/radius = 0.3
+shader_param/amount = 2.5
+
+[node name="WireworldEX" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -340.0
+margin_bottom = -130.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WireController" type="TextureRect" parent="."]
+margin_left = 70.0
+margin_top = 40.0
+margin_right = 134.0
+margin_bottom = 104.0
+rect_scale = Vector2( 7, 7 )
+mouse_default_cursor_shape = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="WireController"]
+visible = false
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 0.219608 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="WireController"]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="."]
+margin_top = 50.0
+margin_right = 60.0
+margin_bottom = 70.0
+text = "STEP"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button2" type="Button" parent="."]
+margin_top = 80.0
+margin_right = 60.0
+margin_bottom = 100.0
+text = "PLAY"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_left = 70.0
+margin_top = 500.0
+margin_right = 580.0
+margin_bottom = 540.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="gui_input" from="WireController" to="WireController" method="_on_Control_gui_input"]
+[connection signal="pressed" from="Button" to="WireController" method="_on_Button_pressed"]
+[connection signal="pressed" from="Button2" to="WireController" method="_on_Button2_pressed"]
