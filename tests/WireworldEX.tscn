@@ -1,10 +1,27 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
+[ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=2]
 
-[sub_resource type="Shader" id=1]
+[sub_resource type="GDScript" id=1]
+script/source = "extends ColorRect
+export var grid_fg:Color = \"#000000\"
+export var grid_bg:Color = \"#FFFFFF\"
+
+func _ready() -> void:
+	update()
+
+func _draw() -> void:
+	draw_rect(Rect2(Vector2(0,0), rect_size), grid_bg, true)
+	for x in range(0, rect_size.x, 10):
+		draw_line(Vector2(x, 0), Vector2(x, rect_size.y), grid_fg, 1.0, false)
+	for y in range(0, rect_size.y, 10):
+		draw_line(Vector2(0, y), Vector2(rect_size.x, y), grid_fg, 1.0, false)
+"
+
+[sub_resource type="Shader" id=2]
 code = "shader_type canvas_item;
-render_mode blend_premul_alpha;
+render_mode blend_add;
 
 uniform float radius = 2.0;
 uniform float amount = 1.6;
@@ -41,26 +58,37 @@ void fragment() {
 	COLOR = glow + col;
 }"
 
-[sub_resource type="ShaderMaterial" id=2]
-shader = SubResource( 1 )
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
 shader_param/radius = 0.3
 shader_param/amount = 2.5
 
 [node name="WireworldEX" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -340.0
-margin_bottom = -130.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="WireController" type="TextureRect" parent="."]
-margin_left = 80.0
+[node name="GridBG" type="ColorRect" parent="."]
+margin_left = 170.0
 margin_top = 50.0
-margin_right = 144.0
+margin_right = 810.0
+margin_bottom = 690.0
+color = Color( 0, 0, 0, 1 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+grid_fg = Color( 0.0313726, 0.568627, 0.639216, 1 )
+grid_bg = Color( 0.027451, 0.027451, 0.160784, 1 )
+
+[node name="WireController" type="TextureRect" parent="."]
+margin_left = 170.0
+margin_top = 50.0
+margin_right = 234.0
 margin_bottom = 114.0
-rect_scale = Vector2( 8, 8 )
+rect_scale = Vector2( 10, 10 )
 mouse_default_cursor_shape = 3
 script = ExtResource( 1 )
 __meta__ = {
@@ -78,7 +106,7 @@ __meta__ = {
 }
 
 [node name="TextureRect" type="TextureRect" parent="WireController"]
-material = SubResource( 2 )
+material = SubResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -86,6 +114,22 @@ expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Audio0" type="AudioStreamPlayer" parent="WireController"]
+stream = ExtResource( 2 )
+bus = "FX1"
+
+[node name="Audio1" type="AudioStreamPlayer" parent="WireController"]
+stream = ExtResource( 2 )
+bus = "FX1"
+
+[node name="Audio2" type="AudioStreamPlayer" parent="WireController"]
+stream = ExtResource( 2 )
+bus = "FX1"
+
+[node name="Audio3" type="AudioStreamPlayer" parent="WireController"]
+stream = ExtResource( 2 )
+bus = "FX1"
 
 [node name="BStep" type="Button" parent="."]
 margin_left = 10.0
@@ -117,23 +161,52 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="STDOUT" type="RichTextLabel" parent="."]
-margin_left = 10.0
-margin_top = 10.0
-margin_right = 610.0
-margin_bottom = 40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="BClear" type="Button" parent="."]
 anchor_top = 0.237288
 anchor_right = 0.0774194
 anchor_bottom = 0.238983
 margin_left = 10.0
-margin_right = 22.0
-margin_bottom = 19.0
+margin_top = -30.8474
+margin_right = -4.32262
+margin_bottom = -12.0678
 text = "CLEAR"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BQuit" type="Button" parent="."]
+margin_left = 10.0
+margin_top = 170.0
+margin_right = 70.0
+margin_bottom = 189.0
+text = "QUIT"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="STDOUT" type="RichTextLabel" parent="."]
+margin_left = 170.0
+margin_top = 10.0
+margin_right = 810.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="INPUTS" type="Control" parent="."]
+margin_left = 80.0
+margin_top = 50.0
+margin_right = 170.0
+margin_bottom = 690.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OUTPUTS" type="Control" parent="."]
+margin_left = 810.0
+margin_top = 50.0
+margin_right = 900.0
+margin_bottom = 690.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -142,3 +215,4 @@ __meta__ = {
 [connection signal="pressed" from="BPlayStop" to="WireController" method="_on_Button2_pressed"]
 [connection signal="pressed" from="BReset" to="WireController" method="_on_Button3_pressed"]
 [connection signal="pressed" from="BClear" to="WireController" method="_on_BClear_pressed"]
+[connection signal="pressed" from="BQuit" to="WireController" method="_on_BQuit_pressed"]

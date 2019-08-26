@@ -92,6 +92,9 @@ margin_top = 90.0
 margin_right = 450.0
 margin_bottom = 110.0
 text = "Battle Test 01"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button5" type="Button" parent="Panel"]
 margin_left = 20.0
@@ -114,6 +117,13 @@ margin_right = 450.0
 margin_bottom = 200.0
 disabled = true
 text = "Battle Test Boss"
+
+[node name="Button7" type="Button" parent="Panel"]
+margin_left = 20.0
+margin_top = 270.0
+margin_right = 450.0
+margin_bottom = 290.0
+text = "Generator upgrade test"
 
 [node name="Button3" type="Button" parent="Panel"]
 margin_left = 20.0
@@ -394,6 +404,7 @@ text = "Remove"
 [connection signal="pressed" from="Panel/Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="Panel/Button5" to="." method="_on_Button5_pressed"]
 [connection signal="pressed" from="Panel/Button6" to="." method="_on_Button6_pressed"]
+[connection signal="pressed" from="Panel/Button7" to="." method="_on_Button7_pressed"]
 [connection signal="pressed" from="Panel/LoadDebugParty" to="." method="_on_LoadDebugParty_pressed"]
 [connection signal="pressed" from="Panel2/Heal" to="." method="_on_Heal_pressed"]
 [connection signal="value_changed" from="Panel2/ELVSlider" to="." method="_on_ELVSlider_value_changed"]

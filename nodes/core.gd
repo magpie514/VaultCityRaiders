@@ -418,6 +418,37 @@ static func valArray(val, size) -> Array: #Creates an array of given size where 
 		i = val
 	return a
 
+static func itoba8(val:int) -> PoolByteArray:
+	var result:PoolByteArray = PoolByteArray([0,0,0,0, 0,0,0,0])
+	val = val % 256
+	for i in range(8):
+		result[i] = (val % 2)
+		val = floor(val / 2.0) as int
+	return result
+
+static func itoba4(val:int) -> PoolByteArray:
+	var result:PoolByteArray = PoolByteArray([0,0,0,0])
+	val = val % 256
+	for i in range(4):
+		result[i] = (val % 2)
+		val = floor(val / 2.0) as int
+	return result
+
+static func batos(val:PoolByteArray) -> String:
+	val.invert()
+	var result:String = ""
+	for i in val:
+		result += str(i)
+	return result
+
+static func itobs(val:int) -> String:
+	var result:String = ""
+	val = val % 256
+	while val > 0:
+		result = str(val % 2, result)
+		val = floor(val / 2.0) as int
+	return result
+
 static func copyArray(array) -> Array: #TODO: Maybe it should be a duplicate() instead?
 	var result = []
 	var size = array.size()
