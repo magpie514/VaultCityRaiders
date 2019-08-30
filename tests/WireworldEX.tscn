@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
 [ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=2]
+[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=3]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends ColorRect
@@ -63,9 +64,14 @@ shader = SubResource( 2 )
 shader_param/radius = 0.3
 shader_param/amount = 2.5
 
+[sub_resource type="ImageTexture" id=4]
+flags = 0
+flags = 0
+
 [node name="WireworldEX" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -134,7 +140,7 @@ bus = "FX1"
 [node name="BStep" type="Button" parent="."]
 margin_left = 10.0
 margin_top = 50.0
-margin_right = 70.0
+margin_right = 74.0
 margin_bottom = 70.0
 text = "STEP"
 __meta__ = {
@@ -144,7 +150,7 @@ __meta__ = {
 [node name="BPlayStop" type="Button" parent="."]
 margin_left = 10.0
 margin_top = 80.0
-margin_right = 70.0
+margin_right = 74.0
 margin_bottom = 100.0
 text = "PLAY"
 __meta__ = {
@@ -154,7 +160,7 @@ __meta__ = {
 [node name="BReset" type="Button" parent="."]
 margin_left = 10.0
 margin_top = 110.0
-margin_right = 70.0
+margin_right = 74.0
 margin_bottom = 129.0
 text = "RESET"
 __meta__ = {
@@ -167,18 +173,28 @@ anchor_right = 0.0774194
 anchor_bottom = 0.238983
 margin_left = 10.0
 margin_top = -30.8474
-margin_right = -4.32262
+margin_right = -0.322624
 margin_bottom = -12.0678
 text = "CLEAR"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BQuit" type="Button" parent="."]
+[node name="BSave" type="Button" parent="."]
 margin_left = 10.0
 margin_top = 170.0
-margin_right = 70.0
+margin_right = 74.0
 margin_bottom = 189.0
+text = "SAVE"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BQuit" type="Button" parent="."]
+margin_left = 10.0
+margin_top = 200.0
+margin_right = 74.0
+margin_bottom = 219.0
 text = "QUIT"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -193,26 +209,66 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="INPUTS" type="Control" parent="."]
-margin_left = 80.0
+[node name="INPUTS" type="Panel" parent="."]
+margin_left = 90.0
 margin_top = 50.0
-margin_right = 170.0
-margin_bottom = 690.0
+margin_right = 180.0
+margin_bottom = 700.0
+
+[node name="OUTPUTS" type="Panel" parent="."]
+margin_left = 810.0
+margin_top = 50.0
+margin_right = 900.0
+margin_bottom = 700.0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_left = 10.0
+margin_top = 260.0
+margin_right = 74.0
+margin_bottom = 324.0
+texture = SubResource( 4 )
+expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="OUTPUTS" type="Control" parent="."]
-margin_left = 810.0
-margin_top = 50.0
-margin_right = 900.0
-margin_bottom = 690.0
+[node name="ColorRect" type="ColorRect" parent="TextureRect"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0.0588235, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Label" type="Label" parent="TextureRect"]
+margin_top = -13.0
+margin_right = 64.0
+text = "CLIPBOARD"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = 180.0
+margin_top = 690.0
+margin_right = 810.0
+margin_bottom = 720.0
+color = Color( 0.156863, 0, 0.196078, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "STATUS: STOPPED"
+align = 1
+valign = 1
 [connection signal="gui_input" from="WireController" to="WireController" method="_on_Control_gui_input"]
 [connection signal="pressed" from="BStep" to="WireController" method="_on_Button_pressed"]
 [connection signal="pressed" from="BPlayStop" to="WireController" method="_on_Button2_pressed"]
 [connection signal="pressed" from="BReset" to="WireController" method="_on_Button3_pressed"]
 [connection signal="pressed" from="BClear" to="WireController" method="_on_BClear_pressed"]
+[connection signal="pressed" from="BSave" to="WireController" method="_on_BSave_pressed"]
 [connection signal="pressed" from="BQuit" to="WireController" method="_on_BQuit_pressed"]

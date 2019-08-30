@@ -604,7 +604,7 @@ class Armor:
 				elif core.stats.elementalModStringValidate(i[0]):
 					core.stats.elementalModApply(stats, i[0], i[up + 1])
 		if lib.over != null:
-			stats.SKL.push_back([lib.over, 1 + int(lv / 10)])
+			stats.SKL.push_back([lib.over, 1 + int(lv as float / 10.0)])
 		stats.DEF += lib.DEF[up]
 		stats.EDF += lib.EDF[up]
 		stats.MHP += lib.MHP[up]

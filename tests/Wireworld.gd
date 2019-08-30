@@ -52,6 +52,10 @@ var brush:int = WIRE              #Value to add when drawing.
 var cursor:Vector2 = Vector2(0,0) #Cursor position.
 var count:float = 0.0             #Internal time count.
 
+# Clipboard ###################################################################
+var clipboard:PoolByteArray
+var clipboard_image:Image
+
 # Precomputed nodes ###########################################################
 onready var nodes = {
 	parent = get_parent(),
@@ -59,6 +63,7 @@ onready var nodes = {
 	label = get_parent().get_node("STDOUT"),
 	inputs = get_parent().get_node("INPUTS"),
 	outputs = get_parent().get_node("OUTPUTS"),
+	clipboard_img = get_parent().get_node("TextureRect"),
 }
 
 # Component data ##############################################################
@@ -86,24 +91,28 @@ class IO_ComponentList: #Basic holder.
 	func add(comp, pos:int, P:int, val = 0) -> void:
 		var temp = COMPONENT_DISPLAY.instance()
 		temp.component = comp.new(parent, pos, P, val)
-		temp.text = str(temp.component)
 		cnode.add_child(temp)
 		temp.rect_position = Vector2(0, 40*pos)
 		temp.rect_size = Vector2(90, 40)
+		temp.text_set()
 		list[pos] = temp
 	func step() -> void:
 		for i in list:
 			if i != null:
-				i.step(parent.cycle, parent)
+				i.step(parent.cycle)
 
 class IO_Component: #Base IO component.
+	const MAX_HEAT       = 16
+	const OVERHEAT_DELAY = 64
+	const ROW_OUT    = 63
+	const ROW_IN     = 1
 	var heat:int     = 0
 	var overheat:int = 0
 	var period:int   = 6 setget set_period
 	var IO_row:int   = 0
-	const MAX_HEAT       = 16
-	const OVERHEAT_DELAY = 64
-	func init(pos:int, P:int) -> void:
+	var parent       = null
+	func init(_parent, pos:int, P:int) -> void:
+		self.parent = _parent
 		heat = 0                #The "heat" of the component.
 		#If HEADs backflow into inputs, or enter outputs at the wrong times, heat will go up.
 		#If heat exceeds 16, the component will be disabled for 64 cycles.
@@ -120,21 +129,19 @@ class IO_Component: #Base IO component.
 			if overheat == 0: heat = 0
 		elif heat > MAX_HEAT:
 			overheat = OVERHEAT_DELAY
-		#elif heat > 0 and parent.cycle % 2 == 0:
-		#	heat -= 1
 	func trigger_check(cycle) -> bool:
 		return (cycle % period == 0) if overheat == 0 else false
 	func reset() -> void:
 		heat     = 0
 		overheat = 0
 	func _to_string() -> String:
-		return "ERROR: Base Component"
+		return "ERROR\n Base Component"
 
 class I_Clock extends IO_Component: #A clock. Emits a HEAD when triggered.
 	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(pos, P)
+		init(parent, pos, P)
 		parent.cells[IO_row][1] = WIRE
-	func step(parent) -> void:
+	func step() -> void:
 		if trigger_check(parent.cycle):
 			parent.cells[IO_row][1] = HEAD
 			parent.image_glow.set_pixel(1, IO_row, wiredata['SPRK'].color)
@@ -144,17 +151,45 @@ class I_Clock extends IO_Component: #A clock. Emits a HEAD when triggered.
 				parent.image_glow.set_pixel(1, IO_row, wiredata['HEAT'].color)
 		heat_check(parent.cycle)
 	func _to_string() -> String:
-		return str("INPUT\nP=",period," H=", heat)
+		return str("PULSE\n")
+
+class I_BitStream extends IO_Component: #Emits arbitrary amount of bits, one bit per trigger, on a loop.
+	var value:PoolByteArray
+	var count:int = 0
+	var size:int = 4
+	func _init(parent, pos:int, P:int, val:PoolByteArray) -> void:
+		init(parent, pos, P)
+		parent.cells[IO_row][1] = WIRE
+		size = val.size()
+		value.resize(size)
+		for i in range(size):
+			value[i] = val[i]
+		reset()
+	func step() -> void:
+		if trigger_check(parent.cycle):
+			if value[count] == 1:
+				parent.cells[IO_row][1] = HEAD
+				parent.image_glow.set_pixel(1, IO_row, wiredata[HEAD].color)
+			count = (count + 1) % size
+		else:
+			if parent.cells[IO_row][1] == HEAD: heat += 1
+		heat_check(parent.cycle)
+	func reset() -> void:
+		count = 0
+		.reset()
+	func _to_string() -> String:
+		return str("ROM\nS=", count)
+
 
 class I_Octet extends IO_Component: #Emits 8-bit binary data, one bit per trigger, on a loop.
 	var value:PoolByteArray
 	var count:int = 0
 	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(pos, P)
+		init(parent, pos, P)
 		parent.cells[IO_row][1] = WIRE
 		value = core.itoba8(val)
 		reset()
-	func step(parent) -> void:
+	func step() -> void:
 		if trigger_check(parent.cycle):
 			if value[count] == 1:
 				parent.cells[IO_row][1] = HEAD
@@ -167,17 +202,17 @@ class I_Octet extends IO_Component: #Emits 8-bit binary data, one bit per trigge
 		count = 0
 		.reset()
 	func _to_string() -> String:
-		return str("OCTET ", core.batos(value), "\nP=", period, " S=", count)
+		return str(core.batos(value), "\nS=", count)
 
 class I_Nibble extends IO_Component: #Emits 4-bit binary data, one bit per trigger, on a loop.
 	var value:PoolByteArray
 	var count:int = 0
 	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(pos, P)
+		init(parent, pos, P)
 		parent.cells[IO_row][1] = WIRE
 		value = core.itoba4(val)
 		reset()
-	func step(parent) -> void:
+	func step() -> void:
 		if trigger_check(parent.cycle):
 			if value[count] == 1:
 				parent.cells[IO_row][1] = HEAD
@@ -190,15 +225,15 @@ class I_Nibble extends IO_Component: #Emits 4-bit binary data, one bit per trigg
 		count = 0
 		.reset()
 	func _to_string() -> String:
-		return str("NIBB ", core.batos(value), "\nP=", period, " S=", count)
+		return str(core.batos(value), "\nS=", count)
 
 class I_Random extends IO_Component: #Emits a HEAD with a given chance, once per trigger.
 	var value:int = 0
 	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(pos, P)
+		init(parent, pos, P)
 		value = val
 		parent.cells[IO_row][1] = WIRE
-	func step(parent) -> void:
+	func step() -> void:
 		if trigger_check(parent.cycle):
 			if core.chance(value):
 				parent.cells[IO_row][1] = HEAD
@@ -207,15 +242,15 @@ class I_Random extends IO_Component: #Emits a HEAD with a given chance, once per
 			if parent.cells[IO_row][1] == HEAD: heat += 1
 		heat_check(parent.cycle)
 	func _to_string() -> String:
-		return str("RANDOM\nP=",period," V=", value)
+		return str("RANDOM\nV=", value)
 
 class O_Output extends IO_Component: #An output. Watches for a HEAD when triggered, and raises output if found.
 	var energy:int = 0
 	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(pos, P)
+		init(parent, pos, P)
 		parent.cells[IO_row][63] = WIRE
 		reset()
-	func step(parent) -> void:
+	func step() -> void:
 		if trigger_check(parent.cycle):
 			if parent.cells[IO_row][63] == HEAD:
 				energy += 1
@@ -229,40 +264,41 @@ class O_Output extends IO_Component: #An output. Watches for a HEAD when trigger
 		energy = 0
 		.reset()
 	func _to_string() -> String:
-		return str("OUTPUT\nP=",period," H=", heat, " E=", energy)
+		return str("OUTPUT\nE=", energy)
 
 class O_Value extends IO_Component: #An output. Watches for a HEAD when triggered, and raises output if found.
 	var energy:int = 0
-	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(pos, P)
-		parent.cells[IO_row][63] = WIRE
+	var value:PoolByteArray
+	func _init(parent, pos:int, P:int, val:Array) -> void:
+		init(parent, pos, P)
 		reset()
-	func step(parent) -> void:
+	func step() -> void:
 		if trigger_check(parent.cycle):
-			if parent.cells[IO_row][63] == HEAD:
+			if parent.cells[IO_row][ROW_OUT] == HEAD:
 				energy += 1
 				parent.image_glow.set_pixel(63, IO_row, wiredata['SPRK'].color)
 		else:
-			if parent.cells[IO_row][63] == HEAD:
+			if parent.cells[IO_row][ROW_OUT] == HEAD:
 				heat += 1
 				parent.image_glow.set_pixel(63, IO_row, wiredata['HEAT'].color)
 		heat_check(parent.cycle)
 	func reset() -> void:
 		energy = 0
+		parent.cells[IO_row][ROW_OUT] = WIRE
 		.reset()
 	func _to_string() -> String:
-		return str("O.STREAM\nP=",period," H=", heat, " E=", energy)
+		return str("O.STREAM\nE=", energy)
 
 class O_Sound extends IO_Component: #An output. Watches for a HEAD when triggered, and raises output if found.
 	var pitch:float = 0
 	var fx_channel:int = 0
 	func _init(parent, pos:int, P:int, val:Array) -> void:
-		init(pos, 1)
+		init(parent, pos, 1)
 		parent.cells[IO_row][63] = WIRE
 		pitch = val[0] as float / 32.0
 		fx_channel = val[1] % 4
 		reset()
-	func step(parent) -> void:
+	func step() -> void:
 		if parent.cells[IO_row][63] == HEAD:
 			parent.get_node(str("Audio",fx_channel)).pitch_scale = pitch
 			parent.get_node(str("Audio",fx_channel)).play()
@@ -272,7 +308,7 @@ class O_Sound extends IO_Component: #An output. Watches for a HEAD when triggere
 			parent.image_glow.set_pixel(60, IO_row, Color(0,1,0,0.40))
 			parent.image_glow.set_pixel(59, IO_row, Color(0,1,0,0.20))
 	func _to_string() -> String:
-		return str("AUDIO\nP=",period, " PITCH=", pitch)
+		return str("AUDIO\nPITCH=", pitch)
 
 #TODO: Unify the code for binary data emitters.
 
@@ -293,6 +329,7 @@ func init(_width:int, _height:int) -> void:
 	texture = ImageTexture.new()
 	nodes.glows.texture = ImageTexture.new()
 	texture.create_from_image(image, 0)
+	#nodes.clipboard_img.texture = ImageTexture.new()
 
 	#Our "board" is nested arrays for cells. Stored in row, column order, so access with [y][x].
 	cmap[0] = core.newArray(_height + 1)
@@ -314,6 +351,7 @@ func init(_width:int, _height:int) -> void:
 	inputs.add(I_Octet, 6, 6, 64)
 	inputs.add(I_Nibble, 7, 6, 13)
 	inputs.add(I_Random, 8, 6, 50)
+	inputs.add(I_Octet, 9, 3, 89)
 	outputs.add(O_Output, 0, 6)
 	outputs.add(O_Sound, 1, 6, [32,0])
 	outputs.add(O_Sound, 2, 6, [16,1])
@@ -346,6 +384,38 @@ func clear() -> void: #Completely erase the board.
 			cells[y][x] = NULL
 	image_update()
 
+func encode() -> String: #Encode the board for storage.
+	#This is a pretty apathetic RLE compression.
+	#It's not quite ideal but will do for now.
+	var result:String = ''
+	var _count:int = 0;
+	var temp:int = 0
+	for y in range(64):
+		for x in range(65):
+			var temp2:int = 0 if cells[y][x] == NULL else 1
+			if temp2 == temp: _count += 1
+			else:
+				temp = temp2
+				result += "%d " % _count
+				_count = 0
+	return result + str("%d" % _count) #Add remaining count at the end.
+
+func decode(s:String) -> void: #Decode a saved string.
+	clear()
+	var stream = s.split(' ', false, 4096)
+	var pointer = 0 #0,0
+	var x:int = 0; var y:int = 0
+	var temp:int = 0
+	for i in stream:
+		for count in range(int(i) + 1):
+			x = (pointer % 65) - 1
+			y = (pointer / 65)
+			cells[y][x] = WIRE if temp else NULL
+			pointer += 1
+		temp = 0 if temp == 1 else 1
+	reset()
+	image_update()
+
 func reset() -> void: #Reset the board.
 	#We don't really store original state.
 	#Instead we just set every cell that isn't NULL to WIRE. We only care about the wires
@@ -357,6 +427,8 @@ func reset() -> void: #Reset the board.
 				cells[y][x] = WIRE
 	inputs.reset()
 	outputs.reset()
+	cycle  = 0
+	output = 0
 	image_update()
 
 func rules(map, x, y) -> int: #Wireworld automaton rules.
@@ -393,7 +465,7 @@ func step() -> void:
 	texture.create_from_image(image, 0)
 	nodes.glows.texture.create_from_image(image_glow)
 	nodes.glows.update()
-	nodes.label.bbcode_text = "Cycle: %.05d, Generator Period: %0.2d, Heads: %0.4d, Output: %0.5d" % [cycle, 6, HEADs, output]
+	#nodes.label.bbcode_text = "Cycle: %.05d, Generator Period: %0.2d, Heads: %0.4d, Output: %0.5d" % [cycle, 6, HEADs, output]
 
 func _ready() -> void:
 	init(64, 64)
@@ -408,26 +480,85 @@ func _process(delta: float) -> void:
 
 func _draw() -> void: #Draw a cursor. It's more precise this way.
 	draw_rect(Rect2(Vector2(round(cursor.x), round(cursor.y)), Vector2(1,1)), wiredata['SPRK'].color, false)
+	if mouse_held and draw_mode == DRAW_LINE:
+		draw_line(line_start, Vector2(cursor.x, cursor.y), Color(1,1,1,.5), 1.1, true)
+
+var line_start:Vector2 = Vector2(0,0)
+
+func line(from:Vector2, to:Vector2, _brush:int):
+	#Boilerplate Bresenham integer line plotting algorithm.
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
+	var delta_x:int = abs(x1 - x0) as int
+	var delta_y:int = abs(y1 - y0) as int
+	var sx:int = -1 if x0 > x1 else 1
+	var sy:int = -1 if y0 > y1 else 1
+	var err:int = ((delta_x if delta_x > delta_y else -delta_y) as float / 2.0) as int
+	while true:
+		cells[y0][x0] = _brush
+		if (x0 == x1 and y0 == y1): break
+		var e2 = err
+		if e2 > -delta_x:
+			err -= delta_y; x0 += sx
+		if e2 < delta_y:
+			err += delta_x; y0 += sy
+
+func copy(from:Vector2, to:Vector2) -> void:
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
+	var left = x0 if x0 < x1 else x1
+	var top  = y0 if y0 < y1 else y1
+	var delta_x:int = abs(x1 - x0) as int + 1
+	var delta_y:int = abs(y1 - y0) as int + 1
+	var result:Array
+	result.resize(delta_y)
+	clipboard_image = Image.new()
+	clipboard_image.create(delta_x, delta_y, false, Image.FORMAT_RGBA8)
+	clipboard_image.lock()
+	for y in range(delta_y):
+		result[y] = PoolByteArray()
+		result[y].resize(delta_x)
+		for x in range(delta_x):
+			var tmp:int = cells[top+y][left+x]
+			result[y].append(tmp)
+			clipboard_image.set_pixel(x, y, wiredata[tmp].color)
+	clipboard_image.unlock()
+	nodes.clipboard_img.texture.create_from_image(clipboard_image, 0)
+	nodes.clipboard_img.update()
+
+
+enum { DRAW_PAINT, DRAW_LINE, DRAW_COPY }
+var draw_mode:int = DRAW_PAINT
 
 func _on_Control_gui_input(event:InputEvent) -> void: #Interpret mouse input over the canvas.
 	if event is InputEventMouseButton and event.pressed:
 		var x:int = round(event.position.x) as int
 		var y:int = round(event.position.y) as int
-		if event.button_index == BUTTON_LEFT:
-			brush = WIRE
-		elif event.button_index == BUTTON_RIGHT:
-			brush = NULL
+		if event.button_index == BUTTON_LEFT:         brush = WIRE
+		elif event.button_index == BUTTON_RIGHT:      brush = NULL
+		elif event.button_index == BUTTON_WHEEL_UP:   brush = HEAD
+		elif event.button_index == BUTTON_WHEEL_DOWN: brush = TAIL
 		cells[y][x] = brush
 		mouse_held = true
+		if event.shift: draw_mode = DRAW_LINE
+		elif event.control: draw_mode = DRAW_COPY
+		line_start = event.position
 		image_update()
 	elif event is InputEventMouseButton and not event.pressed:
 		mouse_held = false
+		if draw_mode == DRAW_LINE:
+			line(line_start, event.position, WIRE)
+		if draw_mode == DRAW_COPY:
+			copy(line_start, event.position)
+		draw_mode = DRAW_PAINT
+		image_update()
 	elif event is InputEventMouseMotion:
 		cursor = event.position
-		if mouse_held:
+		if mouse_held and draw_mode == DRAW_PAINT:
 			var x:int = round(event.position.x) as int
 			var y:int = round(event.position.y) as int
-			cells[y][x] = brush
+			if ((0 < x) and (x < 64)) and ((0 < y) and (y < 64)):
+				cells[y][x] = brush
 			image_update()
 		update()
 
@@ -454,3 +585,7 @@ func _on_BClear_pressed() -> void: #Remove all HEADs, TAILs and WIREs, deleting 
 func _on_BQuit_pressed() -> void: #Exit.
 	#TODO: Actually go to the previous screen. This is just for debugging.
 	core.changeScene("res://tests/debug_menu.tscn")
+
+func _on_BSave_pressed() -> void: #Save board.
+	nodes.label.text = encode()
+	decode(encode())

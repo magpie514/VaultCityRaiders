@@ -23,17 +23,25 @@ script/source = "extends Label
 
 var component = null
 
-func step(cycle, parent) -> void:
-	component.step(parent)
+func step(cycle) -> void:
+	component.step()
 	refresh(cycle)
 
+func text_set() -> void:
+	var data = str(component).split('\\n', true, 2)
+	$Title.text  = data[0]
+	$Info.text   = data[1]
+	$Period.text = str(component.period)
+
 func refresh(cycle) -> void:
-	text = str(component)
+	text_set()
 	if component.overheat > 0:
-		$HEAT.value = component.overheat as float / (16.0 * component.period)
+		$HEAT.value = component.overheat as float / 64.0
 	else:
 		$HEAT.value = component.heat as float / 16.0
 		$DUTY_CYCLE.value = (cycle % component.period) as float / component.period as float
+		if is_equal_approx($DUTY_CYCLE.value, 0.0):
+			$DUTY_CYCLE.value = 1.0
 "
 
 [node name="Control" type="Label"]
@@ -47,24 +55,59 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 custom_styles/normal = SubResource( 1 )
 custom_fonts/font = ExtResource( 1 )
-text = "1234567890
-1234567890
-1234567890"
 script = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="HEAT" parent="." instance=ExtResource( 2 )]
-margin_left = 10.0
+margin_left = 16.0
 margin_top = 33.0
 margin_right = 85.0
 margin_bottom = 38.0
 color = Color( 0.901961, 0.439216, 0.0980392, 1 )
 
 [node name="DUTY_CYCLE" parent="." instance=ExtResource( 2 )]
-margin_left = 10.0
+margin_left = 16.0
 margin_top = 30.0
 margin_right = 85.0
 margin_bottom = 32.0
 color = Color( 0.243137, 0.929412, 0.270588, 1 )
+
+[node name="Title" type="Label" parent="."]
+margin_left = 10.0
+margin_right = 85.0
+margin_bottom = 13.0
+text = "NAME"
+align = 1
+clip_text = true
+
+[node name="Info" type="Label" parent="."]
+margin_left = 11.0
+margin_top = 14.0
+margin_right = 85.0
+margin_bottom = 27.0
+rect_clip_content = true
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+text = "012345678901234
+012345678901234"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Period" type="Label" parent="."]
+margin_left = 1.0
+margin_top = 26.0
+margin_right = 11.0
+margin_bottom = 39.0
+rect_clip_content = true
+text = "0"
+align = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
