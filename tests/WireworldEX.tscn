@@ -249,7 +249,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="StatusBar" type="ColorRect" parent="."]
 margin_left = 180.0
 margin_top = 690.0
 margin_right = 810.0
@@ -259,12 +259,34 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="ColorRect"]
+[node name="Label" type="Label" parent="StatusBar"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "STATUS: STOPPED"
 align = 1
 valign = 1
+
+[node name="BrushColor" type="ColorRect" parent="."]
+margin_left = 10.0
+margin_top = 350.0
+margin_right = 74.0
+margin_bottom = 380.0
+
+[node name="Label" type="Label" parent="BrushColor"]
+margin_top = -13.0
+margin_right = 64.0
+text = "BRUSH"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="BrushColor"]
+margin_top = 30.0
+margin_right = 64.0
+margin_bottom = 43.0
+text = "GUY.BRUSH"
+align = 1
 [connection signal="gui_input" from="WireController" to="WireController" method="_on_Control_gui_input"]
 [connection signal="pressed" from="BStep" to="WireController" method="_on_Button_pressed"]
 [connection signal="pressed" from="BPlayStop" to="WireController" method="_on_Button2_pressed"]
