@@ -161,7 +161,7 @@ class WireworldRGB extends CellularAutomaton:
 			HEAD_B: { color = Color("#9090FF"), name = "Blue electron head" },
 			TAIL_B: { color = Color("#6060DF"), name = "Blue electron tail" },
 		}
-		palette = [ NULL, WIRE_R, WIRE_G, WIRE_B ]
+		palette = [ NULL, WIRE_R, HEAD_R, TAIL_R, WIRE_G, HEAD_G, TAIL_G, WIRE_B, HEAD_B, TAIL_B ]
 	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.
 		var cell = map[y][x]
 		match cell:
@@ -172,23 +172,31 @@ class WireworldRGB extends CellularAutomaton:
 			TAIL_G: return WIRE_G
 			TAIL_B: return WIRE_B
 			WIRE_R:
-				var neighbors = 0
+				var neighbors_r:int = 0
+				var neighbors_b:int = 0
 				for off in iter_neighbor_moore:
-					neighbors += 1 if (map[y+off[0]][x+off[1]] == HEAD_R or map[y+off[0]][x+off[1]] == HEAD_B) else 0
-				return HEAD_R if neighbors == 1 or neighbors == 2 else WIRE_R
+					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
+					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
+				if   neighbors_r == 1 or neighbors_r == 2: return HEAD_R
+				elif neighbors_b == 1 or neighbors_b == 2: return HEAD_R
+				else: return WIRE_R
 			WIRE_G:
-				var neighbors = 0
+				var neighbors_r:int = 0
+				var neighbors_g:int = 0
 				for off in iter_neighbor_moore:
-					neighbors += 1 if (map[y+off[0]][x+off[1]] == HEAD_G or map[y+off[0]][x+off[1]] == HEAD_R) else 0
-				return HEAD_G if neighbors == 1 else WIRE_G
+					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
+					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
+				if   neighbors_g == 1: return HEAD_G
+				elif neighbors_r == 1: return HEAD_G
+				else: return WIRE_G
 			WIRE_B:
 				var neighbors_b:int = 0
 				var neighbors_g:int = 0
 				for off in iter_neighbor_moore:
-					neighbors_b += 1 if (map[y+off[0]][x+off[1]] == HEAD_B) else 0
-					neighbors_g += 1 if (map[y+off[0]][x+off[1]] == HEAD_G) else 0
-				if neighbors_b == 2: return HEAD_B
-				elif neighbors_g == 1: return HEAD_B
+					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
+					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
+				if   neighbors_b == 2: return HEAD_B
+				elif neighbors_g == 1 and neighbors_b == 0: return HEAD_B
 				else: return WIRE_B
 		return cell
 	func _to_string() -> String:
