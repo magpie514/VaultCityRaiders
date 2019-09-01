@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
 [ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=2]
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=3]
+[ext_resource path="res://nodes/UI/automata_display.tscn" type="PackedScene" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends ColorRect
@@ -18,6 +19,15 @@ func _draw() -> void:
 		draw_line(Vector2(x, 0), Vector2(x, rect_size.y), grid_fg, 1.0, false)
 	for y in range(0, rect_size.y, 10):
 		draw_line(Vector2(0, y), Vector2(rect_size.x, y), grid_fg, 1.0, false)
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends TextureRect
+
+onready var parent = get_parent()
+
+func _draw() -> void:
+	draw_rect(Rect2(Vector2(round(parent.cursor.x), round(parent.cursor.y)), Vector2(1,1)), parent.visual_data['SPRK'].color, false)
 "
 
 [sub_resource type="Shader" id=2]
@@ -64,14 +74,38 @@ shader = SubResource( 2 )
 shader_param/radius = 0.3
 shader_param/amount = 2.5
 
-[sub_resource type="ImageTexture" id=4]
-flags = 0
-flags = 0
+[sub_resource type="GDScript" id=6]
+script/source = "extends Control
+
+var automata = null
+
+func init(CA) -> void:
+	automata = CA
+	update()
+
+func _draw() -> void:
+	if automata == null: return
+	var size:int = automata.palette.size() - 1
+	var fields = (rect_size.x / size as float)
+	for i in range(0, size + 1, 1):
+		var pal = automata.visual_data[automata.palette[i]].color
+		draw_rect(Rect2((i-1) * fields, 0, fields, rect_size.y), pal)
+"
 
 [node name="WireworldEX" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 3 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_top = 310.0
+margin_right = 85.0
+margin_bottom = 510.0
+color = Color( 0, 0, 0, 0.501961 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -87,21 +121,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 grid_fg = Color( 0.0313726, 0.568627, 0.639216, 1 )
-grid_bg = Color( 0.027451, 0.027451, 0.160784, 1 )
+grid_bg = Color( 0, 0, 0.109804, 1 )
 
-[node name="WireController" type="TextureRect" parent="."]
+[node name="Display" type="TextureRect" parent="."]
 margin_left = 170.0
 margin_top = 50.0
 margin_right = 234.0
 margin_bottom = 114.0
 rect_scale = Vector2( 10, 10 )
 mouse_default_cursor_shape = 3
-script = ExtResource( 1 )
+script = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="WireController"]
+[node name="ColorRect" type="ColorRect" parent="Display"]
 show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -111,7 +145,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="WireController"]
+[node name="Overlay" parent="Display" instance=ExtResource( 4 )]
+modulate = Color( 1, 1, 1, 0.772549 )
+bgcolor = Color( 0, 0, 0, 0 )
+
+[node name="Glow" type="TextureRect" parent="Display"]
 material = SubResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -121,26 +159,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Audio0" type="AudioStreamPlayer" parent="WireController"]
-stream = ExtResource( 2 )
-bus = "FX1"
-
-[node name="Audio1" type="AudioStreamPlayer" parent="WireController"]
-stream = ExtResource( 2 )
-bus = "FX1"
-
-[node name="Audio2" type="AudioStreamPlayer" parent="WireController"]
-stream = ExtResource( 2 )
-bus = "FX1"
-
-[node name="Audio3" type="AudioStreamPlayer" parent="WireController"]
-stream = ExtResource( 2 )
-bus = "FX1"
-
 [node name="BStep" type="Button" parent="."]
-margin_left = 10.0
+margin_left = 8.0
 margin_top = 50.0
-margin_right = 74.0
+margin_right = 75.0
 margin_bottom = 70.0
 text = "STEP"
 __meta__ = {
@@ -148,9 +170,9 @@ __meta__ = {
 }
 
 [node name="BPlayStop" type="Button" parent="."]
-margin_left = 10.0
+margin_left = 8.0
 margin_top = 80.0
-margin_right = 74.0
+margin_right = 75.0
 margin_bottom = 100.0
 text = "PLAY"
 __meta__ = {
@@ -158,11 +180,31 @@ __meta__ = {
 }
 
 [node name="BReset" type="Button" parent="."]
-margin_left = 10.0
+margin_left = 8.0
 margin_top = 110.0
-margin_right = 74.0
+margin_right = 76.0
 margin_bottom = 129.0
 text = "RESET"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BCopy" type="Button" parent="."]
+margin_left = 8.0
+margin_top = 140.0
+margin_right = 76.0
+margin_bottom = 160.0
+text = "COPY"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BPaste" type="Button" parent="."]
+margin_left = 8.0
+margin_top = 170.0
+margin_right = 76.0
+margin_bottom = 190.0
+text = "PASTE"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -171,30 +213,30 @@ __meta__ = {
 anchor_top = 0.237288
 anchor_right = 0.0774194
 anchor_bottom = 0.238983
-margin_left = 10.0
-margin_top = -30.8474
-margin_right = -0.322624
-margin_bottom = -12.0678
+margin_left = 8.0
+margin_top = 29.1526
+margin_right = 0.677376
+margin_bottom = 47.9322
 text = "CLEAR"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BSave" type="Button" parent="."]
-margin_left = 10.0
-margin_top = 170.0
-margin_right = 74.0
-margin_bottom = 189.0
+margin_left = 8.0
+margin_top = 230.0
+margin_right = 75.0
+margin_bottom = 249.0
 text = "SAVE"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BQuit" type="Button" parent="."]
-margin_left = 10.0
-margin_top = 200.0
-margin_right = 74.0
-margin_bottom = 219.0
+margin_left = 8.0
+margin_top = 260.0
+margin_right = 76.0
+margin_bottom = 279.0
 text = "QUIT"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -221,34 +263,6 @@ margin_top = 50.0
 margin_right = 900.0
 margin_bottom = 700.0
 
-[node name="TextureRect" type="TextureRect" parent="."]
-margin_left = 10.0
-margin_top = 260.0
-margin_right = 74.0
-margin_bottom = 324.0
-texture = SubResource( 4 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ColorRect" type="ColorRect" parent="TextureRect"]
-show_behind_parent = true
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color( 0, 0, 0.0588235, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="TextureRect"]
-margin_top = -13.0
-margin_right = 64.0
-text = "CLIPBOARD"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="StatusBar" type="ColorRect" parent="."]
 margin_left = 180.0
 margin_top = 690.0
@@ -266,31 +280,113 @@ text = "STATUS: STOPPED"
 align = 1
 valign = 1
 
-[node name="BrushColor" type="ColorRect" parent="."]
+[node name="Brush" type="ColorRect" parent="."]
 margin_left = 10.0
-margin_top = 350.0
+margin_top = 426.0
 margin_right = 74.0
-margin_bottom = 380.0
+margin_bottom = 456.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Label" type="Label" parent="BrushColor"]
-margin_top = -13.0
-margin_right = 64.0
+[node name="Label" type="Label" parent="Brush"]
+margin_left = -3.0
+margin_top = -14.0
+margin_right = 65.0
+margin_bottom = -1.0
 text = "BRUSH"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label2" type="Label" parent="BrushColor"]
-margin_top = 30.0
-margin_right = 64.0
-margin_bottom = 43.0
+[node name="Label2" type="Label" parent="Brush"]
+margin_left = -3.0
+margin_top = 31.0
+margin_right = 65.0
+margin_bottom = 61.0
 text = "GUY.BRUSH"
 align = 1
-[connection signal="gui_input" from="WireController" to="WireController" method="_on_Control_gui_input"]
-[connection signal="pressed" from="BStep" to="WireController" method="_on_Button_pressed"]
-[connection signal="pressed" from="BPlayStop" to="WireController" method="_on_Button2_pressed"]
-[connection signal="pressed" from="BReset" to="WireController" method="_on_Button3_pressed"]
-[connection signal="pressed" from="BClear" to="WireController" method="_on_BClear_pressed"]
-[connection signal="pressed" from="BSave" to="WireController" method="_on_BSave_pressed"]
-[connection signal="pressed" from="BQuit" to="WireController" method="_on_BQuit_pressed"]
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="Brush"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -3.0
+margin_top = -1.0
+margin_right = 1.0
+margin_bottom = 1.0
+color = Color( 0.560784, 0.85098, 0.862745, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Palette" type="Control" parent="Brush"]
+margin_right = 64.0
+margin_bottom = 9.0
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Clipboard" parent="." instance=ExtResource( 4 )]
+margin_left = 10.0
+margin_top = 336.0
+margin_right = -886.0
+margin_bottom = -320.0
+stretch_mode = 0
+bgcolor = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect" type="ColorRect" parent="Clipboard"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -3.0
+margin_top = -1.0
+margin_right = 1.0
+margin_bottom = 1.0
+color = Color( 0.560784, 0.85098, 0.862745, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Clipboard"]
+margin_left = -2.0
+margin_top = -16.0
+margin_right = 66.0
+margin_bottom = -3.0
+text = "CLIPBOARD"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Audio0" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+bus = "FX1"
+
+[node name="Audio1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+bus = "FX1"
+
+[node name="Audio2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+bus = "FX1"
+
+[node name="Audio3" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+bus = "FX1"
+[connection signal="gui_input" from="Display" to="." method="_on_Display_gui_input"]
+[connection signal="pressed" from="BStep" to="." method="_on_BStep_pressed"]
+[connection signal="pressed" from="BPlayStop" to="." method="_on_BPlayStop_pressed"]
+[connection signal="pressed" from="BReset" to="." method="_on_BReset_pressed"]
+[connection signal="pressed" from="BCopy" to="." method="_on_BCopy_pressed"]
+[connection signal="pressed" from="BPaste" to="." method="_on_BPaste_pressed"]
+[connection signal="pressed" from="BClear" to="." method="_on_BClear_pressed"]
+[connection signal="pressed" from="BSave" to="." method="_on_BSave_pressed"]
+[connection signal="pressed" from="BQuit" to="." method="_on_BQuit_pressed"]
