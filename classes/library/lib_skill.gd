@@ -105,13 +105,54 @@ var example = {
 				["ef_push",   000, 033, 033, 033, 033,   033, 033, 033, 033, 033],
 			],
 		},
+		"overred": {
+			name = "Over Red",
+			description = "Force-feeds a powerful burst of Over into a generator, causing it to exceed its limitations. This reaction completely negates conventional physics.",
+			category = skill.CAT_OVER,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ELEC,
+			effect = skill.EFFECT_SPECIAL,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_REFRESH,
+			effectDuration = 3,
+			effectPriority = 3,
+			ranged = true,
+			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeEF = [
+				["ef_push",   000, 033, 033, 033, 033,   033, 033, 033, 033, 033],
+			],
+		},
+		"overblue": {
+			name = "Over Blue",
+			description = "Completely overloads a generator with Over. The ensuing reaction shatters all reason, and all resulting energy will bend to the user's will.",
+			category = skill.CAT_OVER,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ELEC,
+			effect = skill.EFFECT_SPECIAL,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_REFRESH,
+			effectDuration = 3,
+			effectPriority = 3,
+			ranged = true,
+			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			codeEF = [
+				["ef_push",   000, 033, 033, 033, 033,   033, 033, 033, 033, 033],
+			],
+		},
+
 		"thunswrd": {
 			name = "Thunder Sword",
 			description = "Release a powerful energy beam using all the surrounding energy for heightened damage.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
 			chargeAnim = true,
 			costOV = 100,
-			category = skill.CAT_ATTACK,
+			category = skill.CAT_OVER,
 			type = skill.TYPE_WEAPON,
 			requiresWeapon = core.skill.WPCLASS_ARTILLERY,
 			target = skill.TARGET_SPREAD,
@@ -246,6 +287,26 @@ var example = {
 			],
 			synergy = [["debug", "dncsword"]]
 		},
+		"gateslsh": { #Obtained during Fantôme fight in story mode. TODO: Set dummy aclass for character progress in story mode.
+			name = "Gate Slasher",
+			description = "Powerful slashing technique utilizing the power of the G-Crystal. It's impossible to defend against this attack. ",
+			category = skill.CAT_OVER,
+			type = skill.TYPE_WEAPON,
+			requiresWeapon = skill.WPCLASS_POLEARM,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			energyDMG = true,
+			ranged = true,
+			spdMod = 	[075,100,100,100,100, 100,100,100,100,100],
+			initAD =  [095,095,095,095,095, 090,090,090,090,090],
+			AD = 			[125,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["nomiss",      001],
+				["attack",			200,000,000,000,000,  000,000,000,000,000],
+			],
+			synergy = [["debug", "dncsword"]]
+		},
 		"gmissile": {
 			name = "G-Crystal Missile",
 			description = "",
@@ -377,6 +438,28 @@ var example = {
 			codeFL = [
 				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 			]
+		},
+		"gdomini": { #Obtained during King Solarica fight in story mode.
+			#TODO: Battle conditions should be able to override a skill based on event settings to allow
+			#this attack to have different effects when used in certain battles, or by enemies
+			#like King Solarica or Milennium.
+			#The regular effect is: Enemy will be unable to act for a turn, and all your characters get
+			#a free shot with a boost to Over. At the end of the turn, all enemies are hit by a strong
+			#gravity damage blast that ignores defense.
+			name = "G-Dominion",
+			description = "Unleashes the full power of the G-Crystal. All targets will be sent to an isolated dimension, shaped by the user's will. It can bring unimaginable ruin without destroying the host universe. No enemy can withstand this attack.",
+			category = skill.CAT_OVER,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			energyDMG = true,
+			ranged = true,
+			spdMod = 	[075,100,100,100,100, 100,100,100,100,100],
+			initAD =  [095,095,095,095,095, 090,090,090,090,090],
+			AD = 			[125,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["attack",			200,000,000,000,000,  000,000,000,000,000],
+			],
 		},
 # Anna's skills ###################################################################################
 		"savaripp": {

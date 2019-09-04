@@ -422,10 +422,22 @@ class StatClass:
 
 # Helper functions ############################################################
 
-static func newArray(size) -> Array: #Creates and returns an array with the given size.
-	var a = []
+static func newArray(size:int) -> Array: #Creates and returns an array with the given size.
+	var a:Array = []
 	a.resize(size)
 	return a
+
+static func newMatrix2D(w:int, h:int) -> Array:
+	var a:Array = []
+	a.resize(h)
+	for i in range(h):
+		a[i] = []
+		a[i].resize(w)
+		for j in range(w):
+			a[i][j] = 0
+	return a
+
+
 
 static func valArray(val, size) -> Array: #Creates an array of given size where all values are val.
 	var a = []

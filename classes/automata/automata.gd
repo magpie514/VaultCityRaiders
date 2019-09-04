@@ -13,21 +13,24 @@ class CellularAutomaton:
 						[ 1, 0],
 	]
 	var glow:Array
+	var name:String = "NULL"
 	var visual_data:Dictionary
 	var palette:Array
+	var no_op:Array
 	func rules(map, x:int, y:int) -> int:
 		var cell = map[y][x]
 		return cell
 	func soft_reset(map, x:int, y:int) -> int: #Do nothing.
 		return map[y][x]
 	func _to_string() -> String:
-		return "Automaton: NULL"
+		return "Automaton: %s" % name
 
 class ConwayLife extends CellularAutomaton:
 	# The famous (much to Conway's half-indignation) cellular automata,
 	# "Game of Life". It's a simple machine simulating rough population rules.
 	enum { NULL = 0, LIVE = 1 }
 	func _init() -> void:
+		name = "Conway's Game of Life"
 		glow = [ LIVE ]
 		visual_data = {
 			NULL: { color = Color("#00000000"), name = "Empty" },
@@ -41,8 +44,6 @@ class ConwayLife extends CellularAutomaton:
 		return LIVE if ((neighbors == 3) or (cell == LIVE and neighbors == 2)) else NULL
 	func soft_reset(map, x:int, y:int) -> int: #Turn all to NULL.
 		return NULL
-	func _to_string() -> String:
-		return "Automaton: Conway's Life"
 
 class Wireworld extends CellularAutomaton:
 	# Wireworld is an automaton invented by Brian Silverman in 1987.
@@ -54,6 +55,7 @@ class Wireworld extends CellularAutomaton:
 	# https://web.archive.org/web/20100526042019if_/http://karl.kiwi.gen.nz/CA-Wireworld.html
 	enum { NULL = 0, HEAD, TAIL, WIRE }
 	func _init() -> void:
+		name = "Wireworld"
 		glow = [HEAD, TAIL]
 		visual_data = {
 			NULL: { color = Color("#00000000"), name = "NULL" },
@@ -62,6 +64,7 @@ class Wireworld extends CellularAutomaton:
 			TAIL: { color = Color("#1E4E99"),   name = "Electron tail" },
 		}
 		palette = [ NULL, WIRE ]
+		no_op = [ NULL ]
 	func rules(map, x:int, y:int) -> int: #Wireworld automaton rules.
 		var cell = map[y][x]
 		match cell:
@@ -74,8 +77,6 @@ class Wireworld extends CellularAutomaton:
 		return cell
 	func soft_reset(map, x:int, y:int) -> int: #Turn all to wire.
 		return WIRE if map[y][x] != NULL else NULL
-	func _to_string() -> String:
-		return "Automaton: Wireworld"
 
 class WireworldRGB extends CellularAutomaton:
 	# Wireworld_RGB is a variant of Wireworld invented by Lode Vandevenne in 2017.
@@ -86,6 +87,7 @@ class WireworldRGB extends CellularAutomaton:
 	# Example board for Golly: https://lodev.org/ca/Patterns/wireworld_rgb.mc
 	enum { NULL = 0, HEAD_R, TAIL_R, WIRE_R, HEAD_G, TAIL_G, WIRE_G, HEAD_B, TAIL_B, WIRE_B }
 	func _init() -> void:
+		name = "WireworldRGB"
 		glow = [HEAD_R, TAIL_R, HEAD_G, TAIL_G, HEAD_B, TAIL_B]
 		visual_data = {
 			NULL: { color = Color("#00000000"), name = "NULL" },
@@ -100,8 +102,10 @@ class WireworldRGB extends CellularAutomaton:
 			TAIL_B: { color = Color("#7060DF"), name = "Blue electron tail" },
 		}
 		palette = [ NULL, WIRE_R, HEAD_R, TAIL_R, WIRE_G, HEAD_G, TAIL_G, WIRE_B, HEAD_B, TAIL_B ]
+		no_op = [ NULL ]
 	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.
 		var cell = map[y][x]
+		if cell == NULL: return NULL
 		match cell:
 			HEAD_R: return TAIL_R
 			HEAD_G: return TAIL_G
@@ -143,5 +147,3 @@ class WireworldRGB extends CellularAutomaton:
 		if cell == HEAD_G or cell == TAIL_G: return WIRE_G
 		if cell == HEAD_B or cell == TAIL_B: return WIRE_B
 		return cell
-	func _to_string() -> String:
-		return "Automaton: Wireworld_RGB"

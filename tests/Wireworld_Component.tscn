@@ -42,6 +42,12 @@ func refresh(cycle) -> void:
 		$DUTY_CYCLE.value = (cycle % component.period) as float / component.period as float
 		if is_equal_approx($DUTY_CYCLE.value, 0.0):
 			$DUTY_CYCLE.value = 1.0
+
+
+func _on_Control_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed: #On button press.
+		component.parent.nodes.display.connect(\"gui_input\", component, \"take_click\")
+		print(event)
 "
 
 [node name="Control" type="Label"]
@@ -51,6 +57,7 @@ margin_right = -870.0
 margin_bottom = -680.0
 rect_min_size = Vector2( 90, 20 )
 rect_clip_content = true
+mouse_filter = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 custom_styles/normal = SubResource( 1 )
@@ -81,6 +88,9 @@ margin_bottom = 13.0
 text = "NAME"
 align = 1
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Info" type="Label" parent="."]
 margin_left = 11.0
@@ -111,3 +121,4 @@ clip_text = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="gui_input" from="." to="." method="_on_Control_gui_input"]

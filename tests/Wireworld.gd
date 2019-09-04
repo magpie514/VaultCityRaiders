@@ -18,7 +18,9 @@ const bg_color = Color(.0,.0,.0,.0)
 var automata    = null    #Stores the automaton class to use.
 var cmap:Array  = core.newArray(2)
 var cells:Array = cmap[0] #Cells is a pointer to current world. The worlds are swapped so memory use is under control.
-var overlay:Array
+var overlay:Array         #Graphical overlay for pasting, showing preview of lines, copy boundaries, etc.
+var width:int   = 0
+var height:int  = 0
 var rangex:Array          #X iterator. They are precomputed so we minimize creation of new arrays.
 var rangey:Array          #Y iterator. Same.
 # Extra components
@@ -40,19 +42,20 @@ var count:float     = 0.0          #Internal time count.
 var draw_mode:int   = DRAW_PAINT
 var line_start:Vector2 = Vector2(0,0)
 # Clipboard ###################################################################
-var clipboard:PoolByteArray
+var clipboard:Array
 # Precomputed nodes ###########################################################
 onready var nodes = {
 	parent = get_parent(),
 	glows = $Display/Glow,
-	label = $STDOUT,
+	stdout = $STDOUT,
 	inputs = $INPUTS,
 	outputs = $OUTPUTS,
 	clipboard_img = $Clipboard,
 	brush = $Brush,
 	statusbar = $StatusBar,
 	status_text = $StatusBar/Label,
-	display = $Display
+	display = $Display,
+	component_map = $INPUTS/Control,
 }
 
 # Component data ##############################################################
@@ -97,8 +100,11 @@ class IO_Component: #Base IO component.
 	var period:int   = 6 setget set_period
 	var IO_row:int   = 0
 	var parent       = null
+	var automata     = null
+	var id:int       = 0
 	func init(_parent, pos:int, P:int) -> void:
 		self.parent = _parent
+		automata = parent.automata
 		heat = 0                #The "heat" of the component.
 		#If HEADs backflow into inputs, or enter outputs at the wrong times, heat will go up.
 		#If heat exceeds 16, the component will be disabled for 64 cycles.
@@ -115,6 +121,8 @@ class IO_Component: #Base IO component.
 			if overheat == 0: heat = 0
 		elif heat > MAX_HEAT:
 			overheat = OVERHEAT_DELAY
+	func take_click(event) -> void:
+		pass
 	func trigger_check(cycle) -> bool:
 		return (cycle % period == 0) if overheat == 0 else false
 	func reset() -> void:
@@ -125,6 +133,7 @@ class IO_Component: #Base IO component.
 
 class I_Clock extends IO_Component:     #A clock. Emits a HEAD when triggered.
 	func _init(parent, pos:int, P:int, val:int) -> void:
+		id = 1
 		init(parent, pos, P)
 		parent.cells[IO_row][1] = 3
 	func step() -> void:
@@ -139,11 +148,99 @@ class I_Clock extends IO_Component:     #A clock. Emits a HEAD when triggered.
 	func _to_string() -> String:
 		return str("PULSE\n")
 
+class IO_FastLane extends IO_Component:
+	var units:Array
+	func _init(parent, pos:int, P:int, val:int) -> void:
+		id = 2
+		init(parent, pos, 1)
+		units = []
+	func step() -> void:
+		for i in units:
+			var x:int = i[0]
+			var y:int = i[1]
+			var cell:int = parent.cells[y][x]
+			if cell != automata.HEAD_R: continue
+			var neighbors:int = 0
+			var last:Array = core.newArray(2)
+			for off in parent.automata.iter_neighbor_von_neumann:
+				if parent.cells[y+off[0]][x+off[1]] == parent.automata.TAIL_R:
+					neighbors += 1
+					last = [x+off[1],y+off[0]]
+			if neighbors == 1:
+				print(last)
+				print(x-last[0]," ", y-last[1])
+				var init_xy = Vector2(x + ((x - last[0]) * 2), y + ((y - last[1]) * 2))
+				var dest_x = core.clampi( x + ((x - last[0]) * 64), 0, parent.width)
+				var dest_y = core.clampi( y + ((y - last[1]) * 64), 0, parent.height)
+				var beam = parent.line_until(init_xy, Vector2(dest_x, dest_y), parent.automata.WIRE_R, parent.cells)
+				if beam != null:
+					parent.plot_line(init_xy, Vector2(beam[0], beam[1]), Color(.1,0,1, .5), parent.image_glow)
+					parent.image_glow.set_pixel(beam[0], beam[1], parent.automata.visual_data[parent.automata.HEAD_R].color)
+					parent.image_glow.set_pixel(x, y, parent.automata.visual_data[parent.automata.HEAD_R].color)
+	func take_click(event) -> void:
+		if event is InputEventMouseButton and event.pressed: #On button press.
+			var x:int = round(event.position.x) as int
+			var y:int = round(event.position.y) as int
+			if event.button_index == BUTTON_LEFT:
+				print(x, y)
+				units.append([x, y])
+				parent.nodes.display.disconnect("gui_input", self, "take_click")
+				parent.nodes.component_map.map[y][x - 1] = 1
+				parent.nodes.component_map.update()
+			if event.button_index == BUTTON_RIGHT:
+				print(x, y)
+				units.erase([x, y])
+				parent.nodes.display.disconnect("gui_input", self, "take_click")
+				parent.nodes.component_map.map[y][x - 1] = 0
+				parent.nodes.component_map.update()
+	func _to_string() -> String:
+		return str("FAST LANE\n")
+
+class IO_GLinker extends IO_Component:
+	var units:Array
+	func _init(parent, pos:int, P:int, val:int) -> void:
+		id = 2
+		init(parent, pos, 1)
+		units = []
+	func step() -> void:
+		var ok:bool = false
+		for i in units:
+			var x:int = i[0]
+			var y:int = i[1]
+			var cell:int = parent.cells[y][x]
+			if cell == automata.HEAD_R:
+				ok = true
+				break
+		if ok:
+			for i in units:
+				parent.cells[i[1]][i[0]] = automata.HEAD_R
+				parent.image_glow.set_pixel(i[0], i[1], Color(0.05, 0.01, 0.55))
+	func take_click(event) -> void:
+		if event is InputEventMouseButton and event.pressed: #On button press.
+			var x:int = round(event.position.x) as int
+			var y:int = round(event.position.y) as int
+			if event.button_index == BUTTON_LEFT:
+				print(x, y)
+				units.append([x, y])
+				parent.nodes.display.disconnect("gui_input", self, "take_click")
+				parent.nodes.component_map.map[y][x - 1] = 1
+				parent.nodes.component_map.update()
+			if event.button_index == BUTTON_RIGHT:
+				print(x, y)
+				units.erase([x, y])
+				parent.nodes.display.disconnect("gui_input", self, "take_click")
+				parent.nodes.component_map.map[y][x - 1] = 0
+				parent.nodes.component_map.update()
+	func _to_string() -> String:
+		return str("G-Linker\n")
+
+
 class I_BitStream extends IO_Component: #Emits arbitrary amount of bits, one bit per trigger, on a loop.
-	var value:PoolByteArray
+	var value:Array
 	var count:int = 0
 	var size:int = 4
-	func _init(parent, pos:int, P:int, val:PoolByteArray) -> void:
+	func _init(parent, pos:int, P:int, val:Array) -> void:
+		id = 3
 		init(parent, pos, P)
 		parent.cells[IO_row][1] = 3
 		size = val.size()
@@ -167,7 +264,7 @@ class I_BitStream extends IO_Component: #Emits arbitrary amount of bits, one bit
 		return str("ROM\nS=", count)
 
 class I_Octet extends IO_Component:     #Emits 8-bit binary data, one bit per trigger, on a loop.
-	var value:PoolByteArray
+	var value:Array
 	var count:int = 0
 	func _init(parent, pos:int, P:int, val:int) -> void:
 		init(parent, pos, P)
@@ -190,7 +287,7 @@ class I_Octet extends IO_Component:     #Emits 8-bit binary data, one bit per tr
 		return str(core.batos(value), "\nS=", count)
 
 class I_Nibble extends IO_Component:    #Emits 4-bit binary data, one bit per trigger, on a loop.
-	var value:PoolByteArray
+	var value:Array
 	var count:int = 0
 	func _init(parent, pos:int, P:int, val:int) -> void:
 		init(parent, pos, P)
@@ -253,7 +350,7 @@ class O_Output extends IO_Component:    #An output. Watches for a HEAD when trig
 
 class O_Value extends IO_Component:     #An output. Watches for a HEAD when triggered, and raises output if found.
 	var energy:int = 0
-	var value:PoolByteArray
+	var value:Array
 	func _init(parent, pos:int, P:int, val:Array) -> void:
 		init(parent, pos, P)
 		reset()
@@ -311,6 +408,8 @@ func set_color(index:int) -> void:
 func init(_width:int, _height:int) -> void:
 	#The ranges are precomputed, so no new arrays are generated by the simulation during run.
 	#Components are another story but we don't really care as much there.
+	width = _width
+	height = _height
 	rangex = range(1, _width)
 	rangey = range(1, _height)
 
@@ -341,22 +440,25 @@ func init(_width:int, _height:int) -> void:
 	nodes.status_text.text = "Welcome to ERAS Dashboard, <PLAYER>. Control of <ITEM>: Granted" #Show a "hell no" message for the Hollow Engine.
 	#Set some components.
 	#TODO: Load them from generator data.
-	inputs  = IO_ComponentList.new(nodes.inputs, self)
-	outputs = IO_ComponentList.new(nodes.outputs, self)
-	inputs.add(I_Clock, 0, 3)
-	inputs.add(I_Clock, 1, 4)
-	inputs.add(I_Clock, 2, 5)
-	inputs.add(I_Clock, 3, 6)
-	inputs.add(I_Clock, 4, 7)
-	inputs.add(I_Clock, 5, 8)
-	inputs.add(I_Octet, 6, 6, 64)
-	inputs.add(I_Nibble, 7, 6, 13)
-	inputs.add(I_Random, 8, 6, 50)
-	inputs.add(I_Octet, 9, 3, 89)
-	outputs.add(O_Output, 0, 6)
-	outputs.add(O_Sound, 1, 6, [32,0])
-	outputs.add(O_Sound, 2, 6, [16,1])
-	outputs.add(O_Sound, 3, 6, [8,2])
+	if automata.name == "WireworldRGB":
+		nodes.component_map.init(width, height)
+		inputs  = IO_ComponentList.new(nodes.inputs , self)
+		outputs = IO_ComponentList.new(nodes.outputs, self)
+		inputs.add(I_Clock, 0, 3)
+		inputs.add(I_Clock, 1, 4)
+		inputs.add(I_Clock, 2, 5)
+		inputs.add(I_Clock, 3, 6)
+		inputs.add(I_Clock, 4, 7)
+		inputs.add(IO_FastLane, 5, 3)
+		inputs.add(I_Octet, 6, 6, 64)
+		inputs.add(I_Nibble, 7, 6, 13)
+		inputs.add(I_Random, 8, 6, 50)
+		inputs.add(I_Octet, 9, 3, 89)
+		inputs.add(IO_GLinker, 10, 0)
+		outputs.add(O_Output, 0, 6)
+		outputs.add(O_Sound, 1, 6, [32,0])
+		outputs.add(O_Sound, 2, 6, [16,1])
+		outputs.add(O_Sound, 3, 6, [8,2])
 	update()
 
 func cmap_swap() -> void: #Swap our predefined arrays.
@@ -419,8 +521,9 @@ func decode(s:String) -> void: #Decode a saved string.
 				cells[y][x] = cell
 				pointer += 1
 		#reset()
+		nodes.stdout.text = str("Successfully loaded:\n", s)
 	else:
-		nodes.statusbar.get_node("Label").text = str("Invalid data:\n", s)
+		nodes.stdout.text = str("Invalid data:\n", s)
 	image_update()
 
 func reset() -> void: #Reset the board.
@@ -439,20 +542,30 @@ func reset() -> void: #Reset the board.
 	image_update()
 
 func step() -> void:  #Advance the simulation.
-	var map = self.cells
+	var map = cells
+	var ticks = OS.get_ticks_usec()
 	cmap_swap() #Swap maps.
 	image.lock();
-	image_glow.fill(bg_color); image_glow.lock()
+	image_glow.fill(bg_color); #Reset glows before locking.
+	image_glow.lock()
 	for y in rangey:
 		for x in rangex:
-			cells[y][x] = automata.rules(map, x, y)
-			image.set_pixel(x, y, automata.visual_data[cells[y][x]].color)
-			if cells[y][x] in automata.glow: image_glow.set_pixel(x, y, automata.visual_data[cells[y][x]].color)
+			if map[y][x] in automata.no_op:
+				cells[y][x] = map[y][x]
+			else:
+				var res:int = automata.rules(map, x, y)
+				cells[y][x] = res
+				if res in automata.glow: image_glow.set_pixel(x, y, automata.visual_data[res].color)
+				else: image.set_pixel(x, y, automata.visual_data[res].color)
+	var ticks_cycle = OS.get_ticks_usec() - ticks
+	$CycleTimer.text = str(ticks_cycle)
 	cycle += 1
 	#Component processing.
 	inputs.step()
 	outputs.step()
 	#Display updating.
+	var ticks_component = (OS.get_ticks_usec() - ticks) - ticks_cycle
+	$CompTimer.text = str(ticks_component)
 	image.unlock(); image_glow.unlock()
 	nodes.display.texture.create_from_image(image, 0)
 	nodes.glows.texture.create_from_image(image_glow)
@@ -487,6 +600,66 @@ static func line(from:Vector2, to:Vector2, _brush:int, map:Array): #TODO: Move t
 		if e2 < delta_y:
 			err += delta_x; y0 += sy
 
+static func merge(from:Vector2, _brush:Array, map:Array, skip_zero:bool = true) -> void:
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(min(x0 + _brush[0].size(), 64)) as int
+	var y1:int = round(min(y0 + _brush.size(), 64)) as int
+	for y in range(y0, y1):
+		for x in range(x0, x1):
+			if skip_zero:
+				map[y][x] = _brush[y-y0][x-x0] if _brush[y-y0][x-x0] != 0 else map[y][x]
+			else:
+				map[y][x] = _brush[y-y0][x-x0]
+
+static func plot_line(from:Vector2, to:Vector2, col:Color, map:Image): #TODO: Move to core, might need it there.
+	#Boilerplate Bresenham integer line plotting algorithm.
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
+	var delta_x:int = abs(x1 - x0) as int
+	var delta_y:int = abs(y1 - y0) as int
+	var sx:int = -1 if x0 > x1 else 1
+	var sy:int = -1 if y0 > y1 else 1
+	var err:int = ((delta_x if delta_x > delta_y else -delta_y) as float / 2.0) as int
+	while true:
+		map.set_pixel(x0, y0, col)
+		if (x0 == x1 and y0 == y1): break
+		var e2 = err
+		if e2 > -delta_x:
+			err -= delta_y; x0 += sx
+		if e2 < delta_y:
+			err += delta_x; y0 += sy
+
+static func line_until(from:Vector2, to:Vector2, stop:int, map:Array): #TODO: Move to core, might need it there.
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
+	var delta_x:int = abs(x1 - x0) as int
+	var delta_y:int = abs(y1 - y0) as int
+	var sx:int = -1 if x0 > x1 else 1
+	var sy:int = -1 if y0 > y1 else 1
+	var err:int = ((delta_x if delta_x > delta_y else -delta_y) as float / 2.0) as int
+	while true or map[y0][x0] == stop:
+		if map[y0][x0] == stop:
+			map[y0][x0] = 1;
+			return [x0, y0]
+		if (x0 == x1 and y0 == y1): break
+		var e2 = err
+		if e2 > -delta_x:
+			err -= delta_y; x0 += sx
+		if e2 < delta_y:
+			err += delta_x; y0 += sy
+	return null
+
+func rotate(map:Array):
+	var h:int = map.size()
+	var w:int = map[0].size()
+	var result:Array = core.newMatrix2D(h,w)
+	for y in range(h):
+		for x in range(w):
+			result[x][w-1-y] = map[y][x]
+	nodes.clipboard_img.init(automata, h, w, result)
+	print("H:", h, " W:", w, " NH:", result.size(), " NW:", result[0].size())
+	clipboard = result
+
 func rectangle(from:Vector2, to:Vector2, _brush:int, map:Array):
 	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
 	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
@@ -506,6 +679,7 @@ func copy(from:Vector2, to:Vector2) -> void:
 	var top  = y0 if y0 < y1 else y1
 	var delta_x:int = abs(x1 - x0) as int + 1
 	var delta_y:int = abs(y1 - y0) as int + 1
+	print("Copy:", delta_x, ",", delta_y)
 	var result:Array
 	result.resize(delta_y)
 	for y in range(delta_y):
@@ -514,8 +688,7 @@ func copy(from:Vector2, to:Vector2) -> void:
 		for x in range(delta_x):
 			result[y][x] = cells[top+y][left+x]
 	nodes.clipboard_img.init(automata, delta_x, delta_y, result)
-
-
+	clipboard = result
 
 # UI Signals ##################################################################
 
@@ -531,13 +704,13 @@ func _on_BQuit_pressed() -> void: #Exit.
 	core.changeScene("res://tests/debug_menu.tscn")
 
 func _on_BSave_pressed() -> void: #Save board.
-	nodes.label.text = encode()
+	nodes.stdout.text = encode()
 	decode(encode())
 
-func _on_BCopy_pressed() -> void:
+func _on_BCopy_pressed() -> void: #Copy board to system clipboard.
 	OS.clipboard = encode()
 
-func _on_BPaste_pressed() -> void:
+func _on_BPaste_pressed() -> void: #Paste board from system clipboard.
 	decode(OS.clipboard)
 
 func _on_BStep_pressed() -> void: #Advance simulation one step.
@@ -565,10 +738,16 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 		var x:int = round(event.position.x) as int
 		var y:int = round(event.position.y) as int
 		if event.button_index == BUTTON_LEFT and not event.control:
-			mouse_held = true
-			cells[y][x] = brush
-			line_start = event.position
-			image_update()
+			if draw_mode == DRAW_PASTE:
+				merge(event.position, clipboard, cells)
+				draw_mode = DRAW_PAINT
+				mouse_held = false
+				image_update()
+			else:
+				mouse_held = true
+				cells[y][x] = brush
+				line_start = event.position
+				image_update()
 		elif event.button_index == BUTTON_RIGHT and not event.control:
 			mouse_held = true
 			draw_mode = DRAW_ERASE
@@ -576,9 +755,13 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 			line_start = event.position
 			image_update()
 		elif event.button_index == BUTTON_WHEEL_UP:
-			palette = (palette + 1) % automata.palette.size()
-			if palette < 1: palette = 1
-			set_palette(palette)
+			if draw_mode == DRAW_PASTE:
+				rotate(clipboard)
+			else:
+				palette = (palette + 1) % automata.palette.size()
+				if palette < 1: palette = 1
+				set_palette(palette)
+				return
 		elif event.button_index == BUTTON_WHEEL_DOWN:
 			palette = palette - 1
 			if palette < 1: palette = automata.palette.size() - 1
@@ -623,4 +806,24 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 				clear(overlay)
 				rectangle(line_start, event.position, 1, overlay)
 				$Display/Overlay.image_update(overlay)
+		else:
+			if draw_mode == DRAW_PASTE:
+				clear(overlay)
+				merge(event.position, clipboard, overlay)
+				$Display/Overlay.image_update(overlay)
+
 		nodes.display.update()
+
+func _on_Clipboard_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed: #On button press.
+		var x:int = round(event.position.x) as int
+		var y:int = round(event.position.y) as int
+		if event.button_index == BUTTON_LEFT and not event.control:
+			draw_mode = DRAW_PASTE
+		elif event.button_index == BUTTON_WHEEL_UP:
+			rotate(clipboard)
+		elif event.button_index == BUTTON_WHEEL_DOWN:
+			pass
+		elif event.button_index == BUTTON_MIDDLE:
+			pass
+

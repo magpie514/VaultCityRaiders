@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
 [ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=2]
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=3]
-[ext_resource path="res://nodes/UI/automata_display.tscn" type="PackedScene" id=4]
+[ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=4]
+[ext_resource path="res://nodes/UI/automata_display.tscn" type="PackedScene" id=5]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends ColorRect
@@ -21,7 +22,7 @@ func _draw() -> void:
 		draw_line(Vector2(0, y), Vector2(rect_size.x, y), grid_fg, 1.0, false)
 "
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=2]
 script/source = "extends TextureRect
 
 onready var parent = get_parent()
@@ -30,7 +31,7 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2(round(parent.cursor.x), round(parent.cursor.y)), Vector2(1,1)), parent.visual_data['SPRK'].color, false)
 "
 
-[sub_resource type="Shader" id=2]
+[sub_resource type="Shader" id=3]
 code = "shader_type canvas_item;
 render_mode blend_add;
 
@@ -69,12 +70,32 @@ void fragment() {
 	COLOR = glow + col;
 }"
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = SubResource( 2 )
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
 shader_param/radius = 0.3
 shader_param/amount = 2.5
 
 [sub_resource type="GDScript" id=6]
+script/source = "extends Control
+
+var map:Array
+var rangex:Array
+var rangey:Array
+
+func init(width, height):
+	rangex = range(width)
+	rangey = range(height)
+	map = core.newArray(height)
+	for i in rangey:
+		map[i] = core.newArray(width)
+
+func _draw() -> void:
+	for y in rangey:
+		for x in rangex:
+			if map[y][x]: draw_rect(Rect2(x * 10, y * 10, 10, 10), \"#FFFFFF\", false)
+"
+
+[sub_resource type="GDScript" id=5]
 script/source = "extends Control
 
 var automata = null
@@ -90,6 +111,14 @@ func _draw() -> void:
 	for i in range(0, size + 1, 1):
 		var pal = automata.visual_data[automata.palette[i]].color
 		draw_rect(Rect2((i-1) * fields, 0, fields, rect_size.y), pal)
+
+
+func _on_Palette_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed: #On button press.
+		if event.button_index == BUTTON_LEFT:
+			var x:float = event.position.x / rect_size.x
+			var col:int = floor(x * (automata.palette.size() -1)) as int + 1
+			get_parent().get_parent().set_palette(col)
 "
 
 [node name="WireworldEX" type="Panel"]
@@ -130,7 +159,7 @@ margin_right = 234.0
 margin_bottom = 114.0
 rect_scale = Vector2( 10, 10 )
 mouse_default_cursor_shape = 3
-script = SubResource( 7 )
+script = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -145,12 +174,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Overlay" parent="Display" instance=ExtResource( 4 )]
+[node name="Overlay" parent="Display" instance=ExtResource( 5 )]
 modulate = Color( 1, 1, 1, 0.772549 )
 bgcolor = Color( 0, 0, 0, 0 )
 
 [node name="Glow" type="TextureRect" parent="Display"]
-material = SubResource( 3 )
+material = SubResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -160,50 +189,52 @@ __meta__ = {
 }
 
 [node name="BStep" type="Button" parent="."]
-margin_left = 8.0
 margin_top = 50.0
-margin_right = 75.0
+margin_right = 67.0
 margin_bottom = 70.0
+hint_tooltip = "Advance simulation by one unit of time."
 text = "STEP"
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": false,
+"_editor_description_": ""
 }
 
 [node name="BPlayStop" type="Button" parent="."]
-margin_left = 8.0
 margin_top = 80.0
-margin_right = 75.0
+margin_right = 67.0
 margin_bottom = 100.0
+hint_tooltip = "Start a test run of the simulation."
 text = "PLAY"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BReset" type="Button" parent="."]
-margin_left = 8.0
 margin_top = 110.0
-margin_right = 76.0
+margin_right = 68.0
 margin_bottom = 129.0
-text = "RESET"
+hint_tooltip = "Eliminates all electron heads from the circuit."
+text = "PURGE"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BCopy" type="Button" parent="."]
-margin_left = 8.0
-margin_top = 140.0
-margin_right = 76.0
-margin_bottom = 160.0
+margin_left = 890.0
+margin_right = 958.0
+margin_bottom = 20.0
+hint_tooltip = "Copy board to system clipboard."
 text = "COPY"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BPaste" type="Button" parent="."]
-margin_left = 8.0
-margin_top = 170.0
-margin_right = 76.0
-margin_bottom = 190.0
+margin_left = 890.0
+margin_top = 20.0
+margin_right = 958.0
+margin_bottom = 40.0
+hint_tooltip = "Paste data from system clipboard."
 text = "PASTE"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -213,40 +244,45 @@ __meta__ = {
 anchor_top = 0.237288
 anchor_right = 0.0774194
 anchor_bottom = 0.238983
-margin_left = 8.0
-margin_top = 29.1526
-margin_right = 0.677376
-margin_bottom = 47.9322
+margin_top = -30.8473
+margin_right = -7.32262
+margin_bottom = -12.0677
+hint_tooltip = "Resets entire board.
+Make sure to save any changes!"
 text = "CLEAR"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BSave" type="Button" parent="."]
-margin_left = 8.0
-margin_top = 230.0
-margin_right = 75.0
-margin_bottom = 249.0
+margin_top = 170.0
+margin_right = 67.0
+margin_bottom = 189.0
 text = "SAVE"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BQuit" type="Button" parent="."]
-margin_left = 8.0
-margin_top = 260.0
-margin_right = 76.0
-margin_bottom = 279.0
+margin_right = 68.0
+margin_bottom = 19.0
 text = "QUIT"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="STDOUT" type="RichTextLabel" parent="."]
-margin_left = 170.0
-margin_top = 10.0
-margin_right = 810.0
-margin_bottom = 40.0
+margin_left = 70.0
+margin_right = 890.0
+margin_bottom = 50.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="STDOUT"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.329412 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -256,6 +292,13 @@ margin_left = 90.0
 margin_top = 50.0
 margin_right = 180.0
 margin_bottom = 700.0
+
+[node name="Control" type="Control" parent="INPUTS"]
+margin_left = 90.0
+margin_right = 720.0
+margin_bottom = 640.0
+mouse_filter = 2
+script = SubResource( 6 )
 
 [node name="OUTPUTS" type="Panel" parent="."]
 margin_left = 810.0
@@ -329,12 +372,13 @@ __meta__ = {
 [node name="Palette" type="Control" parent="Brush"]
 margin_right = 64.0
 margin_bottom = 9.0
-script = SubResource( 6 )
+mouse_default_cursor_shape = 3
+script = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Clipboard" parent="." instance=ExtResource( 4 )]
+[node name="Clipboard" parent="." instance=ExtResource( 5 )]
 margin_left = 10.0
 margin_top = 336.0
 margin_right = -886.0
@@ -350,6 +394,7 @@ margin_left = -3.0
 margin_top = -1.0
 margin_right = 1.0
 margin_bottom = 1.0
+mouse_filter = 2
 color = Color( 0.560784, 0.85098, 0.862745, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -381,6 +426,21 @@ bus = "FX1"
 [node name="Audio3" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 2 )
 bus = "FX1"
+
+[node name="CycleTimer" type="Label" parent="."]
+margin_left = 860.0
+margin_right = 890.0
+margin_bottom = 5.0
+custom_fonts/font = ExtResource( 4 )
+text = "00000"
+
+[node name="CompTimer" type="Label" parent="."]
+margin_left = 860.0
+margin_top = 10.0
+margin_right = 890.0
+margin_bottom = 15.0
+custom_fonts/font = ExtResource( 4 )
+text = "00000"
 [connection signal="gui_input" from="Display" to="." method="_on_Display_gui_input"]
 [connection signal="pressed" from="BStep" to="." method="_on_BStep_pressed"]
 [connection signal="pressed" from="BPlayStop" to="." method="_on_BPlayStop_pressed"]
@@ -390,3 +450,5 @@ bus = "FX1"
 [connection signal="pressed" from="BClear" to="." method="_on_BClear_pressed"]
 [connection signal="pressed" from="BSave" to="." method="_on_BSave_pressed"]
 [connection signal="pressed" from="BQuit" to="." method="_on_BQuit_pressed"]
+[connection signal="gui_input" from="Brush/Palette" to="Brush/Palette" method="_on_Palette_gui_input"]
+[connection signal="gui_input" from="Clipboard" to="." method="_on_Clipboard_gui_input"]
