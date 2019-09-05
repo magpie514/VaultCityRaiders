@@ -1,8 +1,8 @@
 [gd_scene load_steps=3 format=2]
 
-[sub_resource type="ImageTexture" id=2]
+[sub_resource type="ImageTexture" id=1]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id=2]
 script/source = "extends TextureRect
 
 var automata = null
@@ -23,7 +23,7 @@ func init(CA, _w:int, _h:int, map:Array) -> void:
 	image_update(map)
 
 func image_update(map:Array) -> void: #Redraw the board and glow textures.
-	image.create(width + 1, height + 1, false, Image.FORMAT_RGBA8)
+	image.create(width, height, false, Image.FORMAT_RGBA8)
 	image.fill(bgcolor)
 	image.lock();
 	for y in rangey:
@@ -41,7 +41,10 @@ func _ready() -> void:
 [node name="CA_Display" type="TextureRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = SubResource( 2 )
+texture = SubResource( 1 )
 expand = true
 stretch_mode = 1
-script = SubResource( 1 )
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

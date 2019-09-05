@@ -30,10 +30,10 @@ var outputs:IO_ComponentList = null
 var cycle:int = 0         #Internal timer
 var output:int = 0        #Output
 # Output texture ##############################################################
-var image:Image
+var image:Image = Image.new()
 # UI/Editing related stuff ####################################################
 enum { DRAW_PAINT, DRAW_ERASE, DRAW_LINE, DRAW_COPY, DRAW_PASTE }
-var image_glow:Image               #A copy of all HEADs and TAILs which is then preprocessed for a nice glow.
+var image_glow:Image = Image.new() #A copy of all HEADs and TAILs which is then preprocessed for a nice glow.
 var mouse_held:bool = false        #Mouse status. Makes drawing easier.
 var brush:int       = 1            #Value to add when drawing. Can bypass palette choice using middle-click.
 var palette:int     = 1            #Palette index to draw with.
@@ -79,19 +79,20 @@ class IO_ComponentList: #Basic holder.
 				i.refresh(parent.cycle)
 	func add(comp, pos:int, P:int, val = 0) -> void:
 		var temp = COMPONENT_DISPLAY.instance()
-		temp.component = comp.new(parent, pos, P, val)
+		temp.component = comp.new(parent, temp, pos, P, val)
 		cnode.add_child(temp)
 		temp.rect_position = Vector2(0, 40*pos)
 		temp.rect_size = Vector2(90, 40)
 		temp.text_set()
 		list[pos] = temp
+		temp.component.node = temp
 	func step() -> void:
 		for i in list:
 			if i != null:
 				i.step(parent.cycle)
 
-class IO_Component: #Base IO component.
-	const MAX_HEAT       = 16
+class IO_Component:                     #Base IO component.
+	const MAX_HEAT       = 8
 	const OVERHEAT_DELAY = 64
 	const ROW_OUT    = 63
 	const ROW_IN     = 1
@@ -102,8 +103,10 @@ class IO_Component: #Base IO component.
 	var parent       = null
 	var automata     = null
 	var id:int       = 0
-	func init(_parent, pos:int, P:int) -> void:
-		self.parent = _parent
+	var node         = null
+	func init(_parent, N, pos:int, P:int) -> void:
+		node = N
+		parent = _parent
 		automata = parent.automata
 		heat = 0                #The "heat" of the component.
 		#If HEADs backflow into inputs, or enter outputs at the wrong times, heat will go up.
@@ -122,7 +125,7 @@ class IO_Component: #Base IO component.
 		elif heat > MAX_HEAT:
 			overheat = OVERHEAT_DELAY
 	func take_click(event) -> void:
-		pass
+		parent.nodes.display.disconnect("gui_input", self, "take_click")
 	func trigger_check(cycle) -> bool:
 		return (cycle % period == 0) if overheat == 0 else false
 	func reset() -> void:
@@ -131,33 +134,15 @@ class IO_Component: #Base IO component.
 	func _to_string() -> String:
 		return "ERROR\n Base Component"
 
-class I_Clock extends IO_Component:     #A clock. Emits a HEAD when triggered.
-	func _init(parent, pos:int, P:int, val:int) -> void:
-		id = 1
-		init(parent, pos, P)
-		parent.cells[IO_row][1] = 3
-	func step() -> void:
-		if trigger_check(parent.cycle):
-			parent.cells[IO_row][1] = 1
-			parent.image_glow.set_pixel(1, IO_row, visual_data['SPRK'].color)
-		else:
-			if parent.cells[IO_row][1] == 1:
-				heat += 1
-				parent.image_glow.set_pixel(1, IO_row, visual_data['HEAT'].color)
-		heat_check(parent.cycle)
-	func _to_string() -> String:
-		return str("PULSE\n")
-
-class IO_FastLane extends IO_Component:
+class IO_FastLane extends IO_Component: #Fast lane. Emits a beam that collides with a wire to transfer a HEAD.
 	var units:Array
-	func _init(parent, pos:int, P:int, val:int) -> void:
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
 		id = 2
-		init(parent, pos, 1)
+		init(parent, N, pos, 1)
 		units = []
 	func step() -> void:
 		for i in units:
-			var x:int = i[0]
-			var y:int = i[1]
+			var x:int = i[0]; var y:int = i[1]
 			var cell:int = parent.cells[y][x]
 			if cell != automata.HEAD_R: continue
 			var neighbors:int = 0
@@ -167,8 +152,6 @@ class IO_FastLane extends IO_Component:
 					neighbors += 1
 					last = [x+off[1],y+off[0]]
 			if neighbors == 1:
-				print(last)
-				print(x-last[0]," ", y-last[1])
 				var init_xy = Vector2(x + ((x - last[0]) * 2), y + ((y - last[1]) * 2))
 				var dest_x = core.clampi( x + ((x - last[0]) * 64), 0, parent.width)
 				var dest_y = core.clampi( y + ((y - last[1]) * 64), 0, parent.height)
@@ -182,13 +165,11 @@ class IO_FastLane extends IO_Component:
 			var x:int = round(event.position.x) as int
 			var y:int = round(event.position.y) as int
 			if event.button_index == BUTTON_LEFT:
-				print(x, y)
 				units.append([x, y])
 				parent.nodes.display.disconnect("gui_input", self, "take_click")
 				parent.nodes.component_map.map[y][x - 1] = 1
 				parent.nodes.component_map.update()
-			if event.button_index == BUTTON_RIGHT:
-				print(x, y)
+			elif event.button_index == BUTTON_RIGHT:
 				units.erase([x, y])
 				parent.nodes.display.disconnect("gui_input", self, "take_click")
 				parent.nodes.component_map.map[y][x - 1] = 0
@@ -196,11 +177,11 @@ class IO_FastLane extends IO_Component:
 	func _to_string() -> String:
 		return str("FAST LANE\n")
 
-class IO_GLinker extends IO_Component:
+class IO_GLinker  extends IO_Component: #G-Linker. Any of its outputs activates the others to transfer a HEAD.
 	var units:Array
-	func _init(parent, pos:int, P:int, val:int) -> void:
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
 		id = 2
-		init(parent, pos, 1)
+		init(parent, N, pos, 1)
 		units = []
 	func step() -> void:
 		var ok:bool = false
@@ -234,19 +215,34 @@ class IO_GLinker extends IO_Component:
 	func _to_string() -> String:
 		return str("G-Linker\n")
 
+class I_Clock     extends IO_Component: #A clock. Emits a HEAD when triggered.
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
+		id = 1
+		init(parent, N, pos, P)
+		parent.cells[IO_row][1] = 3
+	func step() -> void:
+		if trigger_check(parent.cycle):
+			parent.cells[IO_row][1] = 1
+			parent.image_glow.set_pixel(1, IO_row, visual_data['SPRK'].color)
+		else:
+			if parent.cells[IO_row][1] == 1:
+				heat += 1
+				parent.image_glow.set_pixel(1, IO_row, visual_data['HEAT'].color)
+		heat_check(parent.cycle)
+	func _to_string() -> String:
+		return str("PULSE\n")
 
 class I_BitStream extends IO_Component: #Emits arbitrary amount of bits, one bit per trigger, on a loop.
 	var value:Array
 	var count:int = 0
 	var size:int = 4
-	func _init(parent, pos:int, P:int, val:Array) -> void:
+	func _init(parent, N, pos:int, P:int, val:Array) -> void:
 		id = 3
-		init(parent, pos, P)
+		init(parent, N, pos, P)
 		parent.cells[IO_row][1] = 3
 		size = val.size()
 		value.resize(size)
-		for i in range(size):
-			value[i] = val[i]
+		for i in range(size): value[i] = val[i]
 		reset()
 	func step() -> void:
 		if trigger_check(parent.cycle):
@@ -263,11 +259,11 @@ class I_BitStream extends IO_Component: #Emits arbitrary amount of bits, one bit
 	func _to_string() -> String:
 		return str("ROM\nS=", count)
 
-class I_Octet extends IO_Component:     #Emits 8-bit binary data, one bit per trigger, on a loop.
+class I_Octet     extends IO_Component: #Emits 8-bit binary data, one bit per trigger, on a loop.
 	var value:Array
 	var count:int = 0
-	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(parent, pos, P)
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
+		init(parent, N, pos, P)
 		parent.cells[IO_row][1] = 3
 		value = core.itoba8(val)
 		reset()
@@ -286,11 +282,11 @@ class I_Octet extends IO_Component:     #Emits 8-bit binary data, one bit per tr
 	func _to_string() -> String:
 		return str(core.batos(value), "\nS=", count)
 
-class I_Nibble extends IO_Component:    #Emits 4-bit binary data, one bit per trigger, on a loop.
+class I_Nibble    extends IO_Component: #Emits 4-bit binary data, one bit per trigger, on a loop.
 	var value:Array
 	var count:int = 0
-	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(parent, pos, P)
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
+		init(parent, N, pos, P)
 		parent.cells[IO_row][1] = 3
 		value = core.itoba4(val)
 		reset()
@@ -309,10 +305,10 @@ class I_Nibble extends IO_Component:    #Emits 4-bit binary data, one bit per tr
 	func _to_string() -> String:
 		return str(core.batos(value), "\nS=", count)
 
-class I_Random extends IO_Component:    #Emits a HEAD with a given chance, once per trigger.
+class I_Random    extends IO_Component: #Emits a HEAD with a given chance, once per trigger.
 	var value:int = 0
-	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(parent, pos, P)
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
+		init(parent, N, pos, P)
 		value = val
 		parent.cells[IO_row][1] = 3
 	func step() -> void:
@@ -326,10 +322,10 @@ class I_Random extends IO_Component:    #Emits a HEAD with a given chance, once 
 	func _to_string() -> String:
 		return str("RANDOM\nV=", value)
 
-class O_Output extends IO_Component:    #An output. Watches for a HEAD when triggered, and raises output if found.
+class O_Output    extends IO_Component: #An output. Watches for a HEAD when triggered, and raises output if found.
 	var energy:int = 0
-	func _init(parent, pos:int, P:int, val:int) -> void:
-		init(parent, pos, P)
+	func _init(parent, N, pos:int, P:int, val:int) -> void:
+		init(parent, N, pos, P)
 		parent.cells[IO_row][63] = 3
 		reset()
 	func step() -> void:
@@ -348,11 +344,11 @@ class O_Output extends IO_Component:    #An output. Watches for a HEAD when trig
 	func _to_string() -> String:
 		return str("OUTPUT\nE=", energy)
 
-class O_Value extends IO_Component:     #An output. Watches for a HEAD when triggered, and raises output if found.
+class O_Value     extends IO_Component: #Raises output if the proper binary sequence is provided.
 	var energy:int = 0
 	var value:Array
-	func _init(parent, pos:int, P:int, val:Array) -> void:
-		init(parent, pos, P)
+	func _init(parent, N, pos:int, P:int, val:Array) -> void:
+		init(parent, N, pos, P)
 		reset()
 	func step() -> void:
 		if trigger_check(parent.cycle):
@@ -371,11 +367,11 @@ class O_Value extends IO_Component:     #An output. Watches for a HEAD when trig
 	func _to_string() -> String:
 		return str("O.STREAM\nE=", energy)
 
-class O_Sound extends IO_Component:     #An output. Watches for a HEAD when triggered, and raises output if found.
+class O_Sound     extends IO_Component: #Beep boop.
 	var pitch:float = 0
 	var fx_channel:int = 0
-	func _init(parent, pos:int, P:int, val:Array) -> void:
-		init(parent, pos, 1)
+	func _init(parent, N, pos:int, P:int, val:Array) -> void:
+		init(parent, N, pos, 1)
 		parent.cells[IO_row][63] = 3
 		pitch = val[0] as float / 32.0
 		fx_channel = val[1] % 4
@@ -391,6 +387,50 @@ class O_Sound extends IO_Component:     #An output. Watches for a HEAD when trig
 			parent.image_glow.set_pixel(59, IO_row, Color(0,1,0,0.20))
 	func _to_string() -> String:
 		return str("AUDIO\nPITCH=", pitch)
+
+class O_Bitmap    extends IO_Component: #Produces a 2D image from the output.
+	const binmap = preload("res://nodes/UI/BinMap.tscn")
+	var width:int  = 0
+	var height:int = 0
+	var display = null
+	var point:int  = 0
+	var ok:bool    = 0
+	func _init(parent, N, pos:int, P:int, val:Array) -> void:
+		init(parent, N, pos, P)
+		parent.cells[IO_row][63] = 3
+		display = binmap.instance()
+		width  = val[0]
+		height = val[1]
+		display.init(width, height)
+		node.get_node("Info").add_child(display)
+		node.set_anchors_preset(Control.PRESET_WIDE)
+		reset()
+	func step() -> void:
+		if trigger_check(parent.cycle) and not ok:
+			if parent.cells[IO_row][63] == automata.HEAD_R:
+				ok = true
+				point = 0
+				display.update()
+		if trigger_check(parent.cycle) and ok:
+			var x:int = point % width
+			var y:int = point / width
+			if parent.cells[IO_row][63] == automata.HEAD_R:
+				display.map[y][x] = 1
+			else:
+				display.map[y][x] = 0
+			if point == (width * height) -1:
+				ok = false
+			point = (point + 1) % (width * height)
+			display.cursor = Vector2(point % width, point / width)
+			display.update()
+	func reset() -> void:
+		ok = false
+		point = 0
+		display.cursor = Vector2(0, 0)
+		display.update()
+		.reset()
+	func _to_string() -> String:
+		return str("BITMAP\n")
 
 #TODO: Unify the code for binary data emitters.
 # Main functions ##############################################################
@@ -410,27 +450,23 @@ func init(_width:int, _height:int) -> void:
 	#Components are another story but we don't really care as much there.
 	width = _width
 	height = _height
-	rangex = range(1, _width)
-	rangey = range(1, _height)
+	rangex = range(0, _width)
+	rangey = range(0, _height)
 
 	automata = AUTOMATA.new() #AUTOMATA holds the class for the automaton.
 
 	brush = automata.palette[1]
 	set_palette(1)
 	#Prepare the textures for drawing.
-	image = Image.new();
-	image_glow = Image.new()
-	image.create(_width + 1, _height + 1, false, Image.FORMAT_RGBA8)
+	image.create(_width, _height, false, Image.FORMAT_RGBA8)
 	image.fill(bg_color)
-	image_glow.create(_width + 1, _height + 1, true, Image.FORMAT_RGBA8)
-	nodes.display.texture = ImageTexture.new()
-	nodes.glows.texture = ImageTexture.new()
+	image_glow.create(_width, _height, true, Image.FORMAT_RGBA8)
 	nodes.display.texture.create_from_image(image, 0)
 	nodes.brush.get_node("Palette").init(automata)
 	#Our "board" is nested arrays for cells. Stored in row, column order, so access with [y][x].
 	cmap[0] = core.newArray(_height + 1)
 	for i in range(cmap[0].size()):
-		cmap[0][i] = PoolByteArray(core.newArray(_width + 1))
+		cmap[0][i] = Array(core.valArray(int(0), _width + 1))
 	cells = cmap[0] #Point cells to our new array. From now on cells is a pointer to the map.
 	clear() # Clear the board here, so it's all fresh and initialized.
 	cmap[1] = cmap[0].duplicate(true)
@@ -455,10 +491,16 @@ func init(_width:int, _height:int) -> void:
 		inputs.add(I_Random, 8, 6, 50)
 		inputs.add(I_Octet, 9, 3, 89)
 		inputs.add(IO_GLinker, 10, 0)
+		inputs.add(I_BitStream, 11, 3, [
+			1,0,1,0, 0,1,0,0, 0,1,0,1, 0,1,0,0,
+			1,0,1,0, 0,1,0,1, 0,1,0,1, 0,1,0,0,
+			1,1,1,0, 0,1,1,0, 1,1,0,1, 1,1,0,1])
 		outputs.add(O_Output, 0, 6)
 		outputs.add(O_Sound, 1, 6, [32,0])
 		outputs.add(O_Sound, 2, 6, [16,1])
 		outputs.add(O_Sound, 3, 6, [8,2])
+		outputs.add(O_Value, 3, 6, [8,2])
+		outputs.add(O_Bitmap, 4, 3, [16, 3])
 	update()
 
 func cmap_swap() -> void: #Swap our predefined arrays.
@@ -473,9 +515,7 @@ func image_update() -> void: #Redraw the board and glow textures.
 			image.set_pixel(x, y, automata.visual_data[cells[y][x]].color)
 	image.unlock(); image_glow.unlock()
 	nodes.display.texture.create_from_image(image, 0)
-	nodes.glows.texture.create_from_image(image_glow)
-	nodes.glows.update()
-	update()
+	nodes.glows.texture.create_from_image(image_glow, ImageTexture.FLAG_FILTER)
 
 func clear(what:Array = cells) -> void: #Completely erase a board.
 	for y in rangey:
@@ -543,11 +583,11 @@ func reset() -> void: #Reset the board.
 
 func step() -> void:  #Advance the simulation.
 	var map = cells
-	var ticks = OS.get_ticks_usec()
 	cmap_swap() #Swap maps.
 	image.lock();
 	image_glow.fill(bg_color); #Reset glows before locking.
 	image_glow.lock()
+	var ticks = OS.get_ticks_usec()
 	for y in rangey:
 		for x in rangex:
 			if map[y][x] in automata.no_op:
@@ -564,21 +604,22 @@ func step() -> void:  #Advance the simulation.
 	inputs.step()
 	outputs.step()
 	#Display updating.
-	var ticks_component = (OS.get_ticks_usec() - ticks) - ticks_cycle
+	var ticks_component = OS.get_ticks_usec() - ticks - ticks_cycle
 	$CompTimer.text = str(ticks_component)
 	image.unlock(); image_glow.unlock()
 	nodes.display.texture.create_from_image(image, 0)
-	nodes.glows.texture.create_from_image(image_glow)
-	nodes.glows.update()
+	nodes.glows.texture.create_from_image(image_glow, ImageTexture.FLAG_FILTER)
 
 func _ready() -> void:
+	nodes.display.texture = ImageTexture.new()
+	nodes.glows.texture =   ImageTexture.new()
 	init(64, 64)
 	set_process(false)
 	image_update()
 
 func _process(delta: float) -> void:
 	count += delta
-	if count > 0.10:
+	if count > 0.08:
 		count = 0
 		step()
 
@@ -649,15 +690,26 @@ static func line_until(from:Vector2, to:Vector2, stop:int, map:Array): #TODO: Mo
 			err += delta_x; y0 += sy
 	return null
 
-func rotate(map:Array):
+func rotateCW(map:Array): #Rotate clipboard contents clockwise.
 	var h:int = map.size()
 	var w:int = map[0].size()
 	var result:Array = core.newMatrix2D(h,w)
 	for y in range(h):
 		for x in range(w):
-			result[x][w-1-y] = map[y][x]
+			var temp = map[y][x]
+			result[x][h-1-y] = map[y][x]
 	nodes.clipboard_img.init(automata, h, w, result)
-	print("H:", h, " W:", w, " NH:", result.size(), " NW:", result[0].size())
+	clipboard = result
+
+func rotateCCW(map:Array): #Rotate clipboard contents counter-clockwise.
+	var h:int = map.size()
+	var w:int = map[0].size()
+	var result:Array = core.newMatrix2D(h,w)
+	for y in range(h):
+		for x in range(w):
+			var temp = map[y][x]
+			result[w-1-x][y] = map[y][x]
+	nodes.clipboard_img.init(automata, h, w, result)
 	clipboard = result
 
 func rectangle(from:Vector2, to:Vector2, _brush:int, map:Array):
@@ -677,8 +729,8 @@ func copy(from:Vector2, to:Vector2) -> void:
 	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
 	var left = x0 if x0 < x1 else x1
 	var top  = y0 if y0 < y1 else y1
-	var delta_x:int = abs(x1 - x0) as int + 1
-	var delta_y:int = abs(y1 - y0) as int + 1
+	var delta_x:int = abs(x1 - x0) as int + 0
+	var delta_y:int = abs(y1 - y0) as int + 0
 	print("Copy:", delta_x, ",", delta_y)
 	var result:Array
 	result.resize(delta_y)
@@ -756,16 +808,29 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 			image_update()
 		elif event.button_index == BUTTON_WHEEL_UP:
 			if draw_mode == DRAW_PASTE:
-				rotate(clipboard)
+				rotateCW(clipboard)
+				clear(overlay)
+				merge(event.position, clipboard, overlay)
+				$Display/Overlay.image_update(overlay)
+				return
 			else:
 				palette = (palette + 1) % automata.palette.size()
 				if palette < 1: palette = 1
 				set_palette(palette)
 				return
 		elif event.button_index == BUTTON_WHEEL_DOWN:
-			palette = palette - 1
-			if palette < 1: palette = automata.palette.size() - 1
-			set_palette(palette)
+			if draw_mode == DRAW_PASTE:
+				rotateCCW(clipboard)
+				clear(overlay)
+				merge(event.position, clipboard, overlay)
+				$Display/Overlay.image_update(overlay)
+				nodes.display.update()
+				return
+			else:
+				palette = palette - 1
+				if palette < 1: palette = automata.palette.size() - 1
+				set_palette(palette)
+				return
 		elif event.button_index == BUTTON_MIDDLE:
 			set_color(cells[y][x])
 		if event.shift:
@@ -778,24 +843,26 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 			draw_mode = DRAW_COPY
 	elif event is InputEventMouseButton and not event.pressed: #On button release.
 		mouse_held = false
-		clear(overlay)
-		$Display/Overlay.image_update(overlay)
 		match(draw_mode):
 			DRAW_LINE:
+				clear(overlay)
+				$Display/Overlay.image_update(overlay)
 				line(line_start, event.position, brush, cells)
 				image_update()
+				draw_mode = DRAW_PAINT
 			DRAW_COPY:
-				copy(line_start, event.position)
+				clear(overlay)
+				$Display/Overlay.image_update(overlay)
+				copy(line_start, event.position + Vector2(1, 1))
 				image_update()
-		draw_mode = DRAW_PAINT
-		nodes.display.update()
+				draw_mode = DRAW_PAINT
 	elif event is InputEventMouseMotion: #On mouse movement.
 		cursor = event.position
 		if mouse_held:
 			if draw_mode == DRAW_PAINT or draw_mode == DRAW_ERASE:
-				var x:int = round(event.position.x) as int
-				var y:int = round(event.position.y) as int
-				if ((0 < x) and (x < 64)) and ((0 < y) and (y < 64)):
+				if ((0 < event.position.x) and (event.position.x < width)) and ((0 < event.position.y) and (event.position.y < height)):
+					var x:int = round(event.position.x) as int
+					var y:int = round(event.position.y) as int
 					cells[y][x] = brush if draw_mode == DRAW_PAINT else automata.palette[0]
 				image_update()
 			elif draw_mode == DRAW_LINE:
@@ -811,7 +878,6 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 				clear(overlay)
 				merge(event.position, clipboard, overlay)
 				$Display/Overlay.image_update(overlay)
-
 		nodes.display.update()
 
 func _on_Clipboard_gui_input(event: InputEvent) -> void:
@@ -821,9 +887,9 @@ func _on_Clipboard_gui_input(event: InputEvent) -> void:
 		if event.button_index == BUTTON_LEFT and not event.control:
 			draw_mode = DRAW_PASTE
 		elif event.button_index == BUTTON_WHEEL_UP:
-			rotate(clipboard)
+			rotateCW(clipboard)
 		elif event.button_index == BUTTON_WHEEL_DOWN:
-			pass
+			rotateCCW(clipboard)
 		elif event.button_index == BUTTON_MIDDLE:
 			pass
 

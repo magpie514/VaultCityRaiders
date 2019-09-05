@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var map:Array
+var height:int = 0
+var width:int  = 0
+var pixel_size:Vector2
+export var fg:Color = \"#FFFFFF\"
+export var bg:Color = \"#000000\"
+export var hg:Color = \"#00FF00\"
+var cursor:Vector2 = Vector2(0,0)
+
+func init(w:int, h:int):
+	width = w
+	height = h
+	map = core.newMatrix2D(w, h)
+	update()
+
+func _draw() -> void:
+	pixel_size = Vector2(rect_size.x / width as float, rect_size.y / height as float)
+	draw_rect(Rect2(Vector2(0, 0), rect_size), bg)
+	for y in range(height):
+		for x in range(width):
+			if map[y][x]: draw_rect(Rect2(Vector2(x * pixel_size.x, y * pixel_size.y), pixel_size), fg)
+	draw_rect(Rect2(cursor * pixel_size,  pixel_size), hg, false)
+"
+
+[node name="BinMap" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

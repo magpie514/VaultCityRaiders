@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
 [ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=2]
@@ -75,7 +75,9 @@ shader = SubResource( 3 )
 shader_param/radius = 0.3
 shader_param/amount = 2.5
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="ImageTexture" id=7]
+
+[sub_resource type="GDScript" id=5]
 script/source = "extends Control
 
 var map:Array
@@ -95,7 +97,7 @@ func _draw() -> void:
 			if map[y][x]: draw_rect(Rect2(x * 10, y * 10, 10, 10), \"#FFFFFF\", false)
 "
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=6]
 script/source = "extends Control
 
 var automata = null
@@ -121,7 +123,7 @@ func _on_Palette_gui_input(event: InputEvent) -> void:
 			get_parent().get_parent().set_palette(col)
 "
 
-[node name="WireworldEX" type="Panel"]
+[node name="ERAS" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 3 )
@@ -131,9 +133,9 @@ __meta__ = {
 }
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_top = 310.0
+margin_top = 200.0
 margin_right = 85.0
-margin_bottom = 510.0
+margin_bottom = 400.0
 color = Color( 0, 0, 0, 0.501961 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -149,7 +151,7 @@ script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-grid_fg = Color( 0.0313726, 0.568627, 0.639216, 1 )
+grid_fg = Color( 0.0627451, 0.231373, 0.254902, 1 )
 grid_bg = Color( 0, 0, 0.109804, 1 )
 
 [node name="Display" type="TextureRect" parent="."]
@@ -164,16 +166,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="Display"]
-show_behind_parent = true
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color( 0, 0, 0.152941, 0.4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Overlay" parent="Display" instance=ExtResource( 5 )]
 modulate = Color( 1, 1, 1, 0.772549 )
 bgcolor = Color( 0, 0, 0, 0 )
@@ -183,6 +175,7 @@ material = SubResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+texture = SubResource( 7 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -298,7 +291,7 @@ margin_left = 90.0
 margin_right = 720.0
 margin_bottom = 640.0
 mouse_filter = 2
-script = SubResource( 6 )
+script = SubResource( 5 )
 
 [node name="OUTPUTS" type="Panel" parent="."]
 margin_left = 810.0
@@ -325,9 +318,9 @@ valign = 1
 
 [node name="Brush" type="ColorRect" parent="."]
 margin_left = 10.0
-margin_top = 426.0
+margin_top = 316.0
 margin_right = 74.0
-margin_bottom = 456.0
+margin_bottom = 346.0
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -373,16 +366,16 @@ __meta__ = {
 margin_right = 64.0
 margin_bottom = 9.0
 mouse_default_cursor_shape = 3
-script = SubResource( 5 )
+script = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Clipboard" parent="." instance=ExtResource( 5 )]
 margin_left = 10.0
-margin_top = 336.0
+margin_top = 226.0
 margin_right = -886.0
-margin_bottom = -320.0
+margin_bottom = -430.0
 stretch_mode = 0
 bgcolor = Color( 0, 0, 0, 1 )
 
