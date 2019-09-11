@@ -437,8 +437,6 @@ static func newMatrix2D(w:int, h:int) -> Array:
 			a[i][j] = 0
 	return a
 
-
-
 static func valArray(val, size) -> Array: #Creates an array of given size where all values are val.
 	var a = []
 	a.resize(size)
@@ -503,6 +501,43 @@ static func randomPick(val): #TODO: Don't gdscript arrays have this feature alre
 		TYPE_ARRAY:
 			var r = randi() % val.size()
 			return val[r]
+
+static func line(from:Vector2, to:Vector2, brush:int, map:Array): #Draw a line in a given 2D nested array matrix.
+	#Boilerplate Bresenham integer line plotting algorithm.
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
+	var delta_x:int = abs(x1 - x0) as int
+	var delta_y:int = abs(y1 - y0) as int
+	var sx:int = -1 if x0 > x1 else 1
+	var sy:int = -1 if y0 > y1 else 1
+	var err:int = ((delta_x if delta_x > delta_y else -delta_y) as float / 2.0) as int
+	while true:
+		map[y0][x0] = brush
+		if (x0 == x1 and y0 == y1): break
+		var e2 = err
+		if e2 > -delta_x:
+			err -= delta_y; x0 += sx
+		if e2 < delta_y:
+			err += delta_x; y0 += sy
+
+
+static func plot_line(from:Vector2, to:Vector2, col:Color, map:Image): #TODO: Move to core, might need it there.
+	#Boilerplate Bresenham integer line plotting algorithm.
+	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
+	var x1:int = round(to.x) as int;   var y1:int = round(to.y) as int
+	var delta_x:int = abs(x1 - x0) as int
+	var delta_y:int = abs(y1 - y0) as int
+	var sx:int = -1 if x0 > x1 else 1
+	var sy:int = -1 if y0 > y1 else 1
+	var err:int = ((delta_x if delta_x > delta_y else -delta_y) as float / 2.0) as int
+	while true:
+		map.set_pixel(x0, y0, col)
+		if (x0 == x1 and y0 == y1): break
+		var e2 = err
+		if e2 > -delta_x:
+			err -= delta_y; x0 += sx
+		if e2 < delta_y:
+			err += delta_x; y0 += sy
 
 
 ###############################################################################

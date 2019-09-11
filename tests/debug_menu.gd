@@ -99,4 +99,4 @@ func _on_DGemRemove_pressed(WP, slot) -> void:
 
 
 func _on_Button7_pressed() -> void:
-	core.changeScene("res://tests/WireworldEX.tscn")
+	core.changeScene("res://tests/ERAS.tscn")

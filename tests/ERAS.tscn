@@ -1,21 +1,22 @@
 [gd_scene load_steps=13 format=2]
 
-[ext_resource path="res://tests/Wireworld.gd" type="Script" id=1]
-[ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=2]
-[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=3]
-[ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=4]
+[ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=1]
+[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=2]
+[ext_resource path="res://tests/Wireworld.gd" type="Script" id=3]
+[ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=4]
 [ext_resource path="res://nodes/UI/automata_display.tscn" type="PackedScene" id=5]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends ColorRect
+script/source = "extends Control
 export var grid_fg:Color = \"#000000\"
 export var grid_bg:Color = \"#FFFFFF\"
-
+export var grid_hi:Color = \"#000000\"
+var dirty:bool = false
 func _ready() -> void:
 	update()
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2(0,0), rect_size), grid_bg, true)
+	draw_rect(Rect2(Vector2(0,0), rect_size), grid_hi if dirty else grid_bg, true)
 	for x in range(0, rect_size.x, 10):
 		draw_line(Vector2(x, 0), Vector2(x, rect_size.y), grid_fg, 1.0, false)
 	for y in range(0, rect_size.y, 10):
@@ -75,9 +76,9 @@ shader = SubResource( 3 )
 shader_param/radius = 0.3
 shader_param/amount = 2.5
 
-[sub_resource type="ImageTexture" id=7]
+[sub_resource type="ImageTexture" id=5]
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=6]
 script/source = "extends Control
 
 var map:Array
@@ -94,10 +95,10 @@ func init(width, height):
 func _draw() -> void:
 	for y in rangey:
 		for x in rangex:
-			if map[y][x]: draw_rect(Rect2(x * 10, y * 10, 10, 10), \"#FFFFFF\", false)
+			if map[y][x] != null: draw_rect(Rect2(x * 10, y * 10, 10, 10), \"#FFFFFF\", false)
 "
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=7]
 script/source = "extends Control
 
 var automata = null
@@ -126,8 +127,8 @@ func _on_Palette_gui_input(event: InputEvent) -> void:
 [node name="ERAS" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource( 3 )
-script = ExtResource( 1 )
+theme = ExtResource( 2 )
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -141,23 +142,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridBG" type="ColorRect" parent="."]
-margin_left = 170.0
+[node name="GridBG" type="Control" parent="."]
+margin_left = 190.0
 margin_top = 50.0
-margin_right = 810.0
+margin_right = 830.0
 margin_bottom = 690.0
-color = Color( 0, 0, 0, 1 )
 script = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 grid_fg = Color( 0.0627451, 0.231373, 0.254902, 1 )
 grid_bg = Color( 0, 0, 0.109804, 1 )
+grid_hi = Color( 0.109804, 0.054902, 0, 1 )
 
 [node name="Display" type="TextureRect" parent="."]
-margin_left = 170.0
+margin_left = 190.0
 margin_top = 50.0
-margin_right = 234.0
+margin_right = 254.0
 margin_bottom = 114.0
 rect_scale = Vector2( 10, 10 )
 mouse_default_cursor_shape = 3
@@ -175,7 +173,7 @@ material = SubResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-texture = SubResource( 7 )
+texture = SubResource( 5 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -183,7 +181,7 @@ __meta__ = {
 
 [node name="BStep" type="Button" parent="."]
 margin_top = 50.0
-margin_right = 67.0
+margin_right = 80.0
 margin_bottom = 70.0
 hint_tooltip = "Advance simulation by one unit of time."
 text = "STEP"
@@ -194,7 +192,7 @@ __meta__ = {
 
 [node name="BPlayStop" type="Button" parent="."]
 margin_top = 80.0
-margin_right = 67.0
+margin_right = 80.0
 margin_bottom = 100.0
 hint_tooltip = "Start a test run of the simulation."
 text = "PLAY"
@@ -204,10 +202,10 @@ __meta__ = {
 
 [node name="BReset" type="Button" parent="."]
 margin_top = 110.0
-margin_right = 68.0
+margin_right = 80.0
 margin_bottom = 129.0
 hint_tooltip = "Eliminates all electron heads from the circuit."
-text = "PURGE"
+text = "RESET"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -237,9 +235,9 @@ __meta__ = {
 anchor_top = 0.237288
 anchor_right = 0.0774194
 anchor_bottom = 0.238983
-margin_top = -30.8473
-margin_right = -7.32262
-margin_bottom = -12.0677
+margin_top = -30.8474
+margin_right = 5.67738
+margin_bottom = -12.0678
 hint_tooltip = "Resets entire board.
 Make sure to save any changes!"
 text = "CLEAR"
@@ -249,7 +247,7 @@ __meta__ = {
 
 [node name="BSave" type="Button" parent="."]
 margin_top = 170.0
-margin_right = 67.0
+margin_right = 80.0
 margin_bottom = 189.0
 text = "SAVE"
 __meta__ = {
@@ -281,28 +279,43 @@ __meta__ = {
 }
 
 [node name="INPUTS" type="Panel" parent="."]
-margin_left = 90.0
+margin_left = 110.0
 margin_top = 50.0
-margin_right = 180.0
+margin_right = 200.0
 margin_bottom = 700.0
-
-[node name="Control" type="Control" parent="INPUTS"]
-margin_left = 90.0
-margin_right = 720.0
-margin_bottom = 640.0
-mouse_filter = 2
-script = SubResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="OUTPUTS" type="Panel" parent="."]
-margin_left = 810.0
+margin_left = 830.0
 margin_top = 50.0
-margin_right = 900.0
+margin_right = 920.0
 margin_bottom = 700.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CONTROLS" type="Panel" parent="."]
+margin_top = 410.0
+margin_right = 85.0
+margin_bottom = 720.0
+
+[node name="Control" type="Control" parent="CONTROLS"]
+margin_left = 200.0
+margin_top = -360.0
+margin_right = 830.0
+margin_bottom = 280.0
+mouse_filter = 2
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="StatusBar" type="ColorRect" parent="."]
-margin_left = 180.0
+margin_left = 200.0
 margin_top = 690.0
-margin_right = 810.0
+margin_right = 830.0
 margin_bottom = 720.0
 color = Color( 0.156863, 0, 0.196078, 1 )
 __meta__ = {
@@ -315,6 +328,9 @@ anchor_bottom = 1.0
 text = "STATUS: STOPPED"
 align = 1
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Brush" type="ColorRect" parent="."]
 margin_left = 10.0
@@ -366,7 +382,7 @@ __meta__ = {
 margin_right = 64.0
 margin_bottom = 9.0
 mouse_default_cursor_shape = 3
-script = SubResource( 6 )
+script = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -405,34 +421,35 @@ __meta__ = {
 }
 
 [node name="Audio0" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 2 )
+stream = ExtResource( 4 )
 bus = "FX1"
 
 [node name="Audio1" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 2 )
+stream = ExtResource( 4 )
 bus = "FX1"
 
 [node name="Audio2" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 2 )
+stream = ExtResource( 4 )
 bus = "FX1"
 
 [node name="Audio3" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 2 )
+stream = ExtResource( 4 )
 bus = "FX1"
 
 [node name="CycleTimer" type="Label" parent="."]
-margin_left = 860.0
-margin_right = 890.0
-margin_bottom = 5.0
-custom_fonts/font = ExtResource( 4 )
+margin_left = 85.0
+margin_top = 50.0
+margin_right = 115.0
+margin_bottom = 55.0
+custom_fonts/font = ExtResource( 1 )
 text = "00000"
 
 [node name="CompTimer" type="Label" parent="."]
-margin_left = 860.0
-margin_top = 10.0
-margin_right = 890.0
-margin_bottom = 15.0
-custom_fonts/font = ExtResource( 4 )
+margin_left = 85.0
+margin_top = 60.0
+margin_right = 115.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 1 )
 text = "00000"
 [connection signal="gui_input" from="Display" to="." method="_on_Display_gui_input"]
 [connection signal="pressed" from="BStep" to="." method="_on_BStep_pressed"]

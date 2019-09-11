@@ -3,9 +3,9 @@ class CellularAutomaton:
 	#Base cellular automaton. It does nothing at all.
 	#It's meant to be inherited from.
 	const iter_neighbor_moore = [ #Moore neighborhood. Checks 8 surrounding cells.
-		[-1,-1], [-1, 0], [-1, 1],
-		[ 0,-1],          [ 0, 1],
-		[ 1,-1], [ 1, 0], [ 1, 1]
+		#Same order as Golly rule files.
+		#N        NE       E        SE         S        SW       W        NW
+		[ 0, 1], [ 1, 1], [ 1, 0], [ 1,-1],   [ 0,-1], [-1,-1], [-1, 0], [-1, 1],
 	]
 	const iter_neighbor_von_neumann = [  #Von Neumann neighborhood. Checks 4 surrounding cells.
 						[-1, 0],
@@ -16,12 +16,10 @@ class CellularAutomaton:
 	var name:String = "NULL"
 	var visual_data:Dictionary
 	var palette:Array
-	var no_op:Array
+	var core = null
 	func rules(map, x:int, y:int) -> int:
 		var cell = map[y][x]
 		return cell
-	func soft_reset(map, x:int, y:int) -> int: #Do nothing.
-		return map[y][x]
 	func _to_string() -> String:
 		return "Automaton: %s" % name
 
@@ -29,7 +27,7 @@ class ConwayLife extends CellularAutomaton:
 	# The famous (much to Conway's half-indignation) cellular automata,
 	# "Game of Life". It's a simple machine simulating rough population rules.
 	enum { NULL = 0, LIVE = 1 }
-	func _init() -> void:
+	func _init(w:int, h:int) -> void:
 		name = "Conway's Game of Life"
 		glow = [ LIVE ]
 		visual_data = {
@@ -37,11 +35,11 @@ class ConwayLife extends CellularAutomaton:
 			LIVE: { color = Color("#88FF88"),   name = "Alive" },
 		}
 		palette = [ NULL, LIVE ]
-	func rules(map, x:int, y:int) -> int:
-		var cell = map[y][x]
-		var neighbors = 0
-		for off in iter_neighbor_moore: neighbors += 1 if map[y+off[0]][x+off[1]] == LIVE else 0
-		return LIVE if ((neighbors == 3) or (cell == LIVE and neighbors == 2)) else NULL
+#""" 	func rules(map, x:int, y:int) -> int:
+#		var cell = map[y][x]
+#		var neighbors = 0
+#		for off in iter_neighbor_moore: neighbors += 1 if map[y+off[0]][x+off[1]] == LIVE else 0
+#		return LIVE if ((neighbors == 3) or (cell == LIVE and neighbors == 2)) else NULL """
 	func soft_reset(map, x:int, y:int) -> int: #Turn all to NULL.
 		return NULL
 
@@ -54,7 +52,7 @@ class Wireworld extends CellularAutomaton:
 	# https://en.wikipedia.org/wiki/Wireworld
 	# https://web.archive.org/web/20100526042019if_/http://karl.kiwi.gen.nz/CA-Wireworld.html
 	enum { NULL = 0, HEAD, TAIL, WIRE }
-	func _init() -> void:
+	func _init(w:int, h:int) -> void:
 		name = "Wireworld"
 		glow = [HEAD, TAIL]
 		visual_data = {
@@ -64,19 +62,16 @@ class Wireworld extends CellularAutomaton:
 			TAIL: { color = Color("#1E4E99"),   name = "Electron tail" },
 		}
 		palette = [ NULL, WIRE ]
-		no_op = [ NULL ]
-	func rules(map, x:int, y:int) -> int: #Wireworld automaton rules.
-		var cell = map[y][x]
-		match cell:
-			HEAD: return TAIL
-			TAIL: return WIRE
-			WIRE:
-				var neighbors = 0
-				for off in iter_neighbor_moore: neighbors += 1 if map[y+off[0]][x+off[1]] == HEAD else 0
-				return HEAD if neighbors == 1 or neighbors == 2 else WIRE
-		return cell
-	func soft_reset(map, x:int, y:int) -> int: #Turn all to wire.
-		return WIRE if map[y][x] != NULL else NULL
+#""" 	func rules(map, x:int, y:int) -> int: #Wireworld automaton rules.
+#		var cell = map[y][x]
+#		match cell:
+#			HEAD: return TAIL
+#			TAIL: return WIRE
+#			WIRE:
+#				var neighbors = 0
+#				for off in iter_neighbor_moore: neighbors += 1 if map[y+off[0]][x+off[1]] == HEAD else 0
+#				return HEAD if neighbors == 1 or neighbors == 2 else WIRE
+#		return cell """
 
 class WireworldRGB extends CellularAutomaton:
 	# Wireworld_RGB is a variant of Wireworld invented by Lode Vandevenne in 2017.
@@ -85,8 +80,9 @@ class WireworldRGB extends CellularAutomaton:
 	# Wireworld if you use only red wire, making it the most interesting variant in my opinion.
 	# https://lodev.org/ca/wireworldrgb.html
 	# Example board for Golly: https://lodev.org/ca/Patterns/wireworld_rgb.mc
+	const CORE = preload("res://classes/automata/WireworldRGB.cs")
 	enum { NULL = 0, HEAD_R, TAIL_R, WIRE_R, HEAD_G, TAIL_G, WIRE_G, HEAD_B, TAIL_B, WIRE_B }
-	func _init() -> void:
+	func _init(w:int, h:int) -> void:
 		name = "WireworldRGB"
 		glow = [HEAD_R, TAIL_R, HEAD_G, TAIL_G, HEAD_B, TAIL_B]
 		visual_data = {
@@ -101,49 +97,115 @@ class WireworldRGB extends CellularAutomaton:
 			HEAD_B: { color = Color("#C0C0FF"), name = "Blue electron head" },
 			TAIL_B: { color = Color("#7060DF"), name = "Blue electron tail" },
 		}
-		palette = [ NULL, WIRE_R, HEAD_R, TAIL_R, WIRE_G, HEAD_G, TAIL_G, WIRE_B, HEAD_B, TAIL_B ]
-		no_op = [ NULL ]
-	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.
-		var cell = map[y][x]
-		if cell == NULL: return NULL
-		match cell:
-			HEAD_R: return TAIL_R
-			HEAD_G: return TAIL_G
-			HEAD_B: return TAIL_B
-			TAIL_R: return WIRE_R
-			TAIL_G: return WIRE_G
-			TAIL_B: return WIRE_B
-			WIRE_R:
-				var neighbors_r:int = 0
-				var neighbors_b:int = 0
-				for off in iter_neighbor_moore:
-					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
-					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
-				if   neighbors_r == 1 or neighbors_r == 2: return HEAD_R
-				elif neighbors_b == 1 or neighbors_b == 2: return HEAD_R
-				else: return WIRE_R
-			WIRE_G:
-				var neighbors_r:int = 0
-				var neighbors_g:int = 0
-				for off in iter_neighbor_moore:
-					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
-					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
-				if   neighbors_g == 1: return HEAD_G
-				elif neighbors_r == 1: return HEAD_G
-				else: return WIRE_G
-			WIRE_B:
-				var neighbors_b:int = 0
-				var neighbors_g:int = 0
-				for off in iter_neighbor_moore:
-					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
-					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
-				if   neighbors_b == 2: return HEAD_B
-				elif neighbors_g == 1 and neighbors_b == 0: return HEAD_B #n_b==0 is important or it won't work.
-				else: return WIRE_B
-		return cell
-	func soft_reset(map, x:int, y:int) -> int: #Turn all to wire.
-		var cell = map[y][x]
-		if cell == HEAD_R or cell == TAIL_R: return WIRE_R
-		if cell == HEAD_G or cell == TAIL_G: return WIRE_G
-		if cell == HEAD_B or cell == TAIL_B: return WIRE_B
-		return cell
+		palette = [ NULL, WIRE_R, WIRE_G, WIRE_B, HEAD_R, HEAD_G, HEAD_B, TAIL_R, TAIL_G, TAIL_B ]
+		core = CORE.new()
+		core.init(w, h, visual_data)
+#""" 	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.
+#		var cell = map[y][x]
+#		if cell == NULL: return NULL
+#		match cell:
+#			HEAD_R: return TAIL_R
+#			HEAD_G: return TAIL_G
+#			HEAD_B: return TAIL_B
+#			TAIL_R: return WIRE_R
+#			TAIL_G: return WIRE_G
+#			TAIL_B: return WIRE_B
+#			WIRE_R:
+#				var neighbors_r:int = 0
+#				var neighbors_b:int = 0
+#				for off in iter_neighbor_moore:
+#					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
+#					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
+#				if   neighbors_r == 1 or neighbors_r == 2: return HEAD_R
+#				elif neighbors_b == 1 or neighbors_b == 2: return HEAD_R
+#				else: return WIRE_R
+#			WIRE_G:
+#				var neighbors_r:int = 0
+#				var neighbors_g:int = 0
+#				for off in iter_neighbor_moore:
+#					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
+#					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
+#				if   neighbors_g == 1: return HEAD_G
+#				elif neighbors_r == 1: return HEAD_G
+#				else: return WIRE_G
+#			WIRE_B:
+#				var neighbors_b:int = 0
+#				var neighbors_g:int = 0
+#				for off in iter_neighbor_moore:
+#					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
+#					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
+#				if   neighbors_b == 2: return HEAD_B
+#				elif neighbors_g == 1 and neighbors_b == 0: return HEAD_B #n_b==0 is important or it won't work.
+#				else: return WIRE_B
+#		return cell """
+
+class Bullets extends CellularAutomaton:
+	# A rough simulation of light. Has some available timers and logic gates possible.
+	# Fun to play with.
+	# By ConwayLife forums user Redstoneboi.
+	enum { NULL = 0, HEAD, TAIL, WALL }
+	const custom_iter:Array = [0, 2, 4, 6] #Even though this automaton uses moore neighborhoods, it's faster to just check up/down/left/right.
+	func _init() -> void:
+		name = "Bullets"
+		glow = [ HEAD, TAIL ]
+		visual_data = {
+			NULL: { color = Color("#00000000"), name = "NULL" },
+			HEAD: { color = Color("#C488FF"),   name = "Photon Head"},
+			TAIL: { color = Color("#302090"),   name = "Photon Tail"},
+			WALL: { color = Color("#104E51"),   name = "Wall"}
+		}
+		palette = [ NULL, WALL, HEAD, TAIL ]
+#""" 	func rules(map, x:int, y:int) -> int: #Bullets automaton rules.
+#		var cell = map[y][x]
+#		if   cell == HEAD: return TAIL
+#		elif cell == TAIL: return NULL
+#		elif cell == NULL:
+#			var temp2 = 0
+#			var l = 0
+#			var r = 0
+#			for i in custom_iter:
+#				if map[y+iter_neighbor_moore[i][0]][x+iter_neighbor_moore[i][1]] == HEAD:
+#					l = map[y+iter_neighbor_moore[i-1][0]][x+iter_neighbor_moore[i-1][1]]
+#					r = map[y+iter_neighbor_moore[i+1][0]][x+iter_neighbor_moore[i+1][1]]
+#					if   (l == NULL and r == TAIL) or (r == NULL and l == TAIL): return NULL
+#					temp2 += 1
+#			if temp2 > 0: return HEAD
+#
+#		return cell """
+
+class Diamonds extends CellularAutomaton:
+	# This is just silly.
+	enum { NULL = 0, HEAD, TAIL, WALL }
+	func _init() -> void:
+		name = "Bullets"
+		glow = [ HEAD, TAIL ]
+		visual_data = {
+			NULL: { color = Color("#00000000"), name = "NULL" },
+			HEAD: { color = Color("#0088FF"), name = "Photon Head"},
+			TAIL: { color = Color("#000088"), name = "Photon Tail"},
+		}
+		palette = [ NULL, WALL, HEAD, TAIL ]
+#""" 	func rules(map, x:int, y:int) -> int: #Wireworld automaton rules.
+#		var cell = map[y][x]
+#		match cell:
+#			NULL:
+#				var transition_table:Array = []
+#				var temp = 0
+#				var temp2 = 0
+#				var temp3 = 0
+#				for off in iter_neighbor_moore:
+#					temp = map[y+off[0]][x+off[1]]
+#					transition_table.append(temp)
+#				temp = 0
+#				for i in [1,3,4,6]:
+#					if transition_table[i] == HEAD:
+#						temp += 1
+#					if (transition_table[i-1] == TAIL) or (transition_table[i+1 % 8] == TAIL):
+#						temp2 += 1
+#					if (transition_table[i-1] == NULL) or (transition_table[i+1 % 8] == NULL):
+#						temp3 += 1
+#				return HEAD if temp > 0 else NULL
+#			HEAD: return TAIL
+#			TAIL: return NULL
+#		return cell
+# """

@@ -1,0 +1,134 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=1]
+[ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 10.0
+content_margin_right = 3.0
+content_margin_top = 2.0
+content_margin_bottom = 0.0
+bg_color = Color( 0.0901961, 0.101961, 0.352941, 1 )
+border_width_left = 2
+border_width_top = 1
+border_width_right = 3
+border_width_bottom = 1
+border_color = Color( 0.964706, 0.92549, 0.92549, 1 )
+corner_radius_top_left = 3
+corner_radius_bottom_left = 3
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Label
+
+var component = null
+var parent    = null
+
+func step(cycle) -> void:
+	component.step()
+	refresh(cycle)
+
+func text_set() -> void:
+	$Title.text  = component.id
+	$Info.text   = component.output()
+	if component.period > 1:
+		$Period.text = str(component.period)
+		$Period.show()
+		$DUTY_CYCLE.show()
+	else:
+		$Period.hide()
+		$DUTY_CYCLE.hide()
+
+func refresh(cycle) -> void:
+	text_set()
+	if component.overheat > 0:
+		$HEAT.value = component.overheat as float / 64.0
+		self_modulate = Color(\"#FF0000\")
+	else:
+		self_modulate = Color(\"#FFFFFF\")
+		$HEAT.value = component.heat as float / 16.0
+		if component.period > 1:
+			$DUTY_CYCLE.value = (cycle % component.period) as float / component.period as float
+			if is_equal_approx($DUTY_CYCLE.value, 0.0):
+				$DUTY_CYCLE.value = 1.0
+
+
+func _on_Control_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and parent.cycle == 0: #On button press.
+		component.parent.nodes.display.connect(\"gui_input\", component, \"take_click\")
+		print(event)
+"
+
+[node name="Control" type="Label"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -870.0
+margin_bottom = -680.0
+rect_min_size = Vector2( 90, 20 )
+rect_clip_content = true
+mouse_filter = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_styles/normal = SubResource( 1 )
+custom_fonts/font = ExtResource( 1 )
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HEAT" parent="." instance=ExtResource( 2 )]
+margin_left = 5.0
+margin_top = 33.0
+margin_right = 74.0
+margin_bottom = 38.0
+color = Color( 0.901961, 0.439216, 0.0980392, 1 )
+
+[node name="DUTY_CYCLE" parent="." instance=ExtResource( 2 )]
+margin_left = 5.0
+margin_top = 30.0
+margin_right = 74.0
+margin_bottom = 32.0
+color = Color( 0.243137, 0.929412, 0.270588, 1 )
+
+[node name="Title" type="Label" parent="."]
+margin_left = 10.0
+margin_right = 85.0
+margin_bottom = 13.0
+text = "NAME"
+align = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Info" type="Label" parent="."]
+margin_left = 4.0
+margin_top = 14.0
+margin_right = 85.0
+margin_bottom = 27.0
+rect_clip_content = true
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+text = "012345678901234
+012345678901234"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Period" type="Label" parent="."]
+margin_left = 78.0
+margin_top = 26.0
+margin_right = 88.0
+margin_bottom = 39.0
+rect_clip_content = true
+text = "0"
+align = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="gui_input" from="." to="." method="_on_Control_gui_input"]
