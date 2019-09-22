@@ -89,7 +89,7 @@ public class CellularAutomaton: Object {
 			}
 		}
 	}
-	public void draw(Image img, Image glow_img) {
+	public void draw(Image img, Image glow_img) { //Default drawing with glows.
 		byte cell = 0;
 		for(byte y = 0; y < height; y++){
 			for(byte x = 0; x < width; x++){
@@ -98,6 +98,17 @@ public class CellularAutomaton: Object {
 					if(glows[cell]) glow_img.SetPixel(x, y, colors[cell]);
 					else img.SetPixel(x, y, colors[cell]);
 				}
+			}
+		}
+	}
+	public void draw_array(Image img, Godot.Collections.Array tmap, byte w, byte h) { //Draw plainly.
+		int cell = 0;
+		Godot.Collections.Array temp;
+		for(byte y = 0; y < h; y++){
+			temp = tmap[y] as Godot.Collections.Array;
+			for(byte x = 0; x < w; x++){
+				cell = (int)temp[x];
+				if(cell != 0) img.SetPixel(x, y, colors[cell]);
 			}
 		}
 	}

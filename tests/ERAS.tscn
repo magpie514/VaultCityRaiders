@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=1]
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=2]
 [ext_resource path="res://tests/Wireworld.gd" type="Script" id=3]
 [ext_resource path="res://resources/sounds/Over1.wav" type="AudioStream" id=4]
 [ext_resource path="res://nodes/UI/automata_display.tscn" type="PackedScene" id=5]
+[ext_resource path="res://nodes/UI/ERAS/gate_list.tscn" type="PackedScene" id=6]
+[ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=7]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -81,26 +83,6 @@ shader_param/amount = 2.5
 [sub_resource type="GDScript" id=6]
 script/source = "extends Control
 
-var map:Array
-var rangex:Array
-var rangey:Array
-
-func init(width, height):
-	rangex = range(width)
-	rangey = range(height)
-	map = core.newArray(height)
-	for i in rangey:
-		map[i] = core.newArray(width)
-
-func _draw() -> void:
-	for y in rangey:
-		for x in rangex:
-			if map[y][x] != null: draw_rect(Rect2(x * 10, y * 10, 10, 10), \"#FFFFFF\", false)
-"
-
-[sub_resource type="GDScript" id=7]
-script/source = "extends Control
-
 var automata = null
 
 func init(CA) -> void:
@@ -124,6 +106,26 @@ func _on_Palette_gui_input(event: InputEvent) -> void:
 			get_parent().get_parent().set_palette(col)
 "
 
+[sub_resource type="GDScript" id=7]
+script/source = "extends Control
+
+var map:Array
+var rangex:Array
+var rangey:Array
+
+func init(width, height):
+	rangex = range(width)
+	rangey = range(height)
+	map = core.newArray(height)
+	for i in rangey:
+		map[i] = core.newArray(width)
+
+func _draw() -> void:
+	for y in rangey:
+		for x in rangex:
+			if map[y][x] != null: draw_rect(Rect2(x * 10, y * 10, 10, 10), \"#FFFFFF\", false)
+"
+
 [node name="ERAS" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -133,30 +135,54 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="."]
-margin_top = 200.0
-margin_right = 85.0
-margin_bottom = 400.0
+[node name="ToolsBG" type="ColorRect" parent="."]
+margin_right = 90.0
+margin_bottom = 720.0
 color = Color( 0, 0, 0, 0.501961 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CycleTimer" type="Label" parent="."]
+margin_left = 40.0
+margin_top = 30.0
+margin_right = 70.0
+margin_bottom = 35.0
+custom_fonts/font = ExtResource( 1 )
+text = "00000"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CompTimer" type="Label" parent="."]
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 70.0
+margin_bottom = 45.0
+custom_fonts/font = ExtResource( 1 )
+text = "00000"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="GridBG" type="Control" parent="."]
 margin_left = 190.0
-margin_top = 50.0
+margin_top = 70.0
 margin_right = 830.0
-margin_bottom = 690.0
+margin_bottom = 710.0
 script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 grid_fg = Color( 0.0627451, 0.231373, 0.254902, 1 )
 grid_bg = Color( 0, 0, 0.109804, 1 )
 grid_hi = Color( 0.109804, 0.054902, 0, 1 )
 
 [node name="Display" type="TextureRect" parent="."]
 margin_left = 190.0
-margin_top = 50.0
+margin_top = 70.0
 margin_right = 254.0
-margin_bottom = 114.0
+margin_bottom = 134.0
 rect_scale = Vector2( 10, 10 )
 mouse_default_cursor_shape = 3
 script = SubResource( 2 )
@@ -181,7 +207,7 @@ __meta__ = {
 
 [node name="BStep" type="Button" parent="."]
 margin_top = 50.0
-margin_right = 80.0
+margin_right = 90.0
 margin_bottom = 70.0
 hint_tooltip = "Advance simulation by one unit of time."
 text = "STEP"
@@ -191,9 +217,9 @@ __meta__ = {
 }
 
 [node name="BPlayStop" type="Button" parent="."]
-margin_top = 80.0
-margin_right = 80.0
-margin_bottom = 100.0
+margin_top = 70.0
+margin_right = 90.0
+margin_bottom = 90.0
 hint_tooltip = "Start a test run of the simulation."
 text = "PLAY"
 __meta__ = {
@@ -201,10 +227,11 @@ __meta__ = {
 }
 
 [node name="BReset" type="Button" parent="."]
-margin_top = 110.0
-margin_right = 80.0
-margin_bottom = 129.0
+margin_top = 90.0
+margin_right = 90.0
+margin_bottom = 109.0
 hint_tooltip = "Eliminates all electron heads from the circuit."
+disabled = true
 text = "RESET"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -235,9 +262,9 @@ __meta__ = {
 anchor_top = 0.237288
 anchor_right = 0.0774194
 anchor_bottom = 0.238983
-margin_top = -30.8474
-margin_right = 5.67738
-margin_bottom = -12.0678
+margin_top = -61.8474
+margin_right = 15.6774
+margin_bottom = -43.0678
 hint_tooltip = "Resets entire board.
 Make sure to save any changes!"
 text = "CLEAR"
@@ -246,106 +273,69 @@ __meta__ = {
 }
 
 [node name="BSave" type="Button" parent="."]
-margin_top = 170.0
-margin_right = 80.0
-margin_bottom = 189.0
+margin_top = 129.0
+margin_right = 90.0
+margin_bottom = 148.0
 text = "SAVE"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BQuit" type="Button" parent="."]
-margin_right = 68.0
+margin_right = 90.0
 margin_bottom = 19.0
 text = "QUIT"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="STDOUT" type="RichTextLabel" parent="."]
-margin_left = 70.0
-margin_right = 890.0
-margin_bottom = 50.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Clipboard" parent="." instance=ExtResource( 5 )]
+margin_left = 13.0
+margin_top = 170.0
+margin_right = -883.0
+margin_bottom = -486.0
+stretch_mode = 0
+bgcolor = Color( 0, 0, 0, 1 )
 
-[node name="ColorRect" type="ColorRect" parent="STDOUT"]
+[node name="ColorRect" type="ColorRect" parent="Clipboard"]
+show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.329412 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="INPUTS" type="Panel" parent="."]
-margin_left = 110.0
-margin_top = 50.0
-margin_right = 200.0
-margin_bottom = 700.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="OUTPUTS" type="Panel" parent="."]
-margin_left = 830.0
-margin_top = 50.0
-margin_right = 920.0
-margin_bottom = 700.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="CONTROLS" type="Panel" parent="."]
-margin_top = 410.0
-margin_right = 85.0
-margin_bottom = 720.0
-
-[node name="Control" type="Control" parent="CONTROLS"]
-margin_left = 200.0
-margin_top = -360.0
-margin_right = 830.0
-margin_bottom = 280.0
+margin_left = -6.0
+margin_top = -1.0
+margin_right = 4.0
+margin_bottom = 1.0
 mouse_filter = 2
-script = SubResource( 6 )
+color = Color( 0.560784, 0.85098, 0.862745, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="StatusBar" type="ColorRect" parent="."]
-margin_left = 200.0
-margin_top = 690.0
-margin_right = 830.0
-margin_bottom = 720.0
-color = Color( 0.156863, 0, 0.196078, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="StatusBar"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "STATUS: STOPPED"
+[node name="Label" type="Label" parent="Clipboard"]
+margin_left = -13.0
+margin_top = -16.0
+margin_right = 77.0
+margin_bottom = -3.0
+text = "CLIPBOARD"
 align = 1
-valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Brush" type="ColorRect" parent="."]
 margin_left = 10.0
-margin_top = 316.0
-margin_right = 74.0
-margin_bottom = 346.0
+margin_top = 260.0
+margin_right = 80.0
+margin_bottom = 290.0
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="Brush"]
-margin_left = -3.0
+margin_left = -10.0
 margin_top = -14.0
-margin_right = 65.0
+margin_right = 80.0
 margin_bottom = -1.0
 text = "BRUSH"
 align = 1
@@ -354,9 +344,9 @@ __meta__ = {
 }
 
 [node name="Label2" type="Label" parent="Brush"]
-margin_left = -3.0
+margin_left = -10.0
 margin_top = 31.0
-margin_right = 65.0
+margin_right = 80.0
 margin_bottom = 61.0
 text = "GUY.BRUSH"
 align = 1
@@ -379,43 +369,77 @@ __meta__ = {
 }
 
 [node name="Palette" type="Control" parent="Brush"]
-margin_right = 64.0
+margin_right = 70.0
 margin_bottom = 9.0
 mouse_default_cursor_shape = 3
-script = SubResource( 7 )
+script = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Clipboard" parent="." instance=ExtResource( 5 )]
-margin_left = 10.0
-margin_top = 226.0
-margin_right = -886.0
-margin_bottom = -430.0
-stretch_mode = 0
-bgcolor = Color( 0, 0, 0, 1 )
+[node name="STDOUT" type="RichTextLabel" parent="."]
+margin_left = 90.0
+margin_right = 890.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="ColorRect" type="ColorRect" parent="Clipboard"]
-show_behind_parent = true
+[node name="ColorRect" type="ColorRect" parent="STDOUT"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -3.0
-margin_top = -1.0
-margin_right = 1.0
-margin_bottom = 1.0
-mouse_filter = 2
-color = Color( 0.560784, 0.85098, 0.862745, 1 )
+color = Color( 0, 0, 0, 0.329412 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Clipboard"]
-margin_left = -2.0
-margin_top = -16.0
-margin_right = 66.0
-margin_bottom = -3.0
-text = "CLIPBOARD"
+[node name="StatusBar" type="ColorRect" parent="."]
+margin_left = 90.0
+margin_top = 40.0
+margin_right = 920.0
+margin_bottom = 70.0
+color = Color( 0.156863, 0, 0.196078, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="StatusBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "STATUS: STOPPED"
 align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="INPUTS" type="ColorRect" parent="."]
+margin_left = 110.0
+margin_top = 70.0
+margin_right = 200.0
+margin_bottom = 720.0
+color = Color( 0.0784314, 0.0862745, 0.403922, 1 )
+
+[node name="OUTPUTS" type="ColorRect" parent="."]
+margin_left = 830.0
+margin_top = 70.0
+margin_right = 920.0
+margin_bottom = 720.0
+color = Color( 0.0784314, 0.0862745, 0.403922, 1 )
+
+[node name="CONTROLS" type="ColorRect" parent="."]
+margin_top = 430.0
+margin_right = 90.0
+margin_bottom = 720.0
+color = Color( 0, 0, 0, 0 )
+
+[node name="Control" type="Control" parent="CONTROLS"]
+margin_left = 200.0
+margin_top = -360.0
+margin_right = 830.0
+margin_bottom = 280.0
+mouse_filter = 2
+script = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -436,21 +460,33 @@ bus = "FX1"
 stream = ExtResource( 4 )
 bus = "FX1"
 
-[node name="CycleTimer" type="Label" parent="."]
-margin_left = 85.0
-margin_top = 50.0
-margin_right = 115.0
-margin_bottom = 55.0
-custom_fonts/font = ExtResource( 1 )
-text = "00000"
+[node name="ButtonList" parent="." instance=ExtResource( 6 )]
+margin_top = 340.0
+margin_right = 83.0
+margin_bottom = 425.0
 
-[node name="CompTimer" type="Label" parent="."]
-margin_left = 85.0
-margin_top = 60.0
-margin_right = 115.0
-margin_bottom = 65.0
-custom_fonts/font = ExtResource( 1 )
-text = "00000"
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = 200.0
+margin_top = 701.0
+margin_right = 830.0
+margin_bottom = 720.0
+color = Color( 0.0784314, 0.0862745, 0.403922, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Bar" parent="ColorRect" instance=ExtResource( 7 )]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 628.0
+margin_bottom = 17.0
+
+[node name="Label" type="Label" parent="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "CYCLE XXXX/XXXX"
+align = 1
+valign = 1
 [connection signal="gui_input" from="Display" to="." method="_on_Display_gui_input"]
 [connection signal="pressed" from="BStep" to="." method="_on_BStep_pressed"]
 [connection signal="pressed" from="BPlayStop" to="." method="_on_BPlayStop_pressed"]
@@ -460,5 +496,5 @@ text = "00000"
 [connection signal="pressed" from="BClear" to="." method="_on_BClear_pressed"]
 [connection signal="pressed" from="BSave" to="." method="_on_BSave_pressed"]
 [connection signal="pressed" from="BQuit" to="." method="_on_BQuit_pressed"]
-[connection signal="gui_input" from="Brush/Palette" to="Brush/Palette" method="_on_Palette_gui_input"]
 [connection signal="gui_input" from="Clipboard" to="." method="_on_Clipboard_gui_input"]
+[connection signal="gui_input" from="Brush/Palette" to="Brush/Palette" method="_on_Palette_gui_input"]

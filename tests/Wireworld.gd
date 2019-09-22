@@ -40,7 +40,8 @@ var count:float     = 0.0          #Internal time count.
 var draw_mode:int   = DRAW_PAINT
 var line_start:Vector2 = Vector2(0,0)
 # Clipboard ###################################################################
-var clipboard:Array
+var clipboard:Array                #Stores copied data.
+var paste_buf:Array                #Data to paste.
 # Precomputed nodes ###########################################################
 onready var nodes = {
 	parent = get_parent(),
@@ -71,26 +72,25 @@ class IO_ComponentList: #Basic holder.
 	var cnode:Control = null
 	var parent = null
 	var type = COMPONENT_DISPLAY_C
-	func _init(n, _parent, _type) -> void:
+	func _init(n, _parent, _type) -> void: #Init container.
 		list = core.valArray(null, SIZE)
 		match _type:
 			TYPE_IO: type = COMPONENT_DISPLAY_C
 			TYPE_I:  type = COMPONENT_DISPLAY_I
 			TYPE_O:  type = COMPONENT_DISPLAY_O
-
 		cnode = n
 		parent = _parent
-	func reset() -> void:
+	func reset() -> void: #Reset all components.
 		for i in list:
 			if i != null:
 				i.component.reset()
 				i.refresh(parent.cycle)
-	func clear() -> void:
+	func clear() -> void: #Clear all components.
 		for i in list:
 			if i != null:
 				i.component.clear()
 				i.refresh(parent.cycle)
-	func add(comp, pos:int, P:int, val = 0) -> void:
+	func add(comp, pos:int, P:int, val = 0) -> void: #Add new component.
 		var temp = type.instance()
 		temp.component = comp.new(parent, temp, pos, P, val)
 		temp.parent    = parent
@@ -100,7 +100,7 @@ class IO_ComponentList: #Basic holder.
 		temp.text_set()
 		list[pos] = temp
 		temp.component.node = temp
-	func step() -> void:
+	func step() -> void: #Advance simulation for all components.
 		for i in list:
 			if i != null:
 				i.step(parent.cycle)
@@ -173,16 +173,7 @@ class IO_Delayer  extends IO_Component: #Fast lane. Emits a beam that collides w
 				if parent.automata.core.cell_get(x+off[1], y+off[0]) == parent.automata.TAIL_R:
 					neighbors += 1
 					last = [x+off[1],y+off[0]]
-			if neighbors == 1:
-				var init_x = x + ((x - last[0]) * 2)
-				var init_y = y + ((y - last[1]) * 2)
-				var dest_x = core.clampi( x + ((x - last[0]) * 64), 0, parent.width)
-				var dest_y = core.clampi( y + ((y - last[1]) * 64), 0, parent.height)
-				var beam = parent.automata.core.line_until(init_x, init_y, dest_x, dest_y, parent.automata.HEAD_R, parent.automata.WIRE_R)
-				if beam.x > 0 and beam.y > 0:
-					core.plot_line(Vector2(init_x, init_y), Vector2(beam[0], beam[1]), Color(.1,0,1, .5), parent.image_glow)
-					parent.image_glow.set_pixel(beam[0], beam[1], parent.automata.visual_data[parent.automata.HEAD_R].color)
-					parent.image_glow.set_pixel(x, y, parent.automata.visual_data[parent.automata.HEAD_R].color)
+
 	func take_click(event) -> void:
 		if event is InputEventMouseButton and event.pressed and parent.cycle == 0: #On button press.
 			var x:int = round(event.position.x) as int
@@ -203,7 +194,7 @@ class IO_Delayer  extends IO_Component: #Fast lane. Emits a beam that collides w
 		.reset()
 	func clear() -> void:
 		for i in units:
-			parent.nodes.component_map.map[i[1]][i[0] - 1] = 0
+			parent.nodes.component_map.map[i[1]][i[0] - 1] = null
 		parent.nodes.component_map.update()
 		units.clear()
 		.clear()
@@ -604,23 +595,27 @@ class O_Bitmap    extends IO_Component: #Produces a 2D image from the output.
 		.reset()
 
 #TODO: Unify the code for binary data emitters.
+# Node functions ##############################################################
+func _ready() -> void:
+	set_process(false)
+	nodes.display.texture = ImageTexture.new()
+	nodes.glows.texture =   ImageTexture.new()
+	init(64, 64)
+	image_update()
+
+func _process(delta: float) -> void:
+	count += delta
+	if count > 0.08:
+		count = 0
+		step()
 # Main functions ##############################################################
-func set_palette(index:int) -> void:
-	palette = index
-	brush = automata.palette[palette]
-	nodes.brush.color = automata.visual_data[automata.palette[palette]].color
-	nodes.brush.get_node("Label2").text = automata.visual_data[automata.palette[palette]].name
-
-func set_color(index:int) -> void:
-	brush = index
-	nodes.brush.color = automata.visual_data[index].color
-	nodes.brush.get_node("Label2").text = automata.visual_data[index].name
-
 func init(_width:int, _height:int) -> void:
 	width = _width; height = _height
 
 	automata  = AUTOMATA.new(width, height) #AUTOMATA holds the class for the automaton.
 	automata.core.init(width, height, automata.visual_data)
+
+	$ButtonList.init(self, automata)
 
 	brush = automata.palette[1]
 	set_palette(1)
@@ -669,7 +664,19 @@ func init(_width:int, _height:int) -> void:
 		controls.add(IO_Soup,     3, 0)
 	update()
 
+func set_palette(index:int) -> void:
+	palette = index
+	brush = automata.palette[palette]
+	nodes.brush.color = automata.visual_data[automata.palette[palette]].color
+	nodes.brush.get_node("Label2").text = automata.visual_data[automata.palette[palette]].name
+
+func set_color(index:int) -> void:
+	brush = index
+	nodes.brush.color = automata.visual_data[index].color
+	nodes.brush.get_node("Label2").text = automata.visual_data[index].name
+
 func image_update() -> void: #Redraw the board and glow textures.
+	print("[IMAGE_UPDATE]")
 	image.fill(bg_color);      image.lock();
 	image_glow.fill(bg_color); image_glow.lock()
 	automata.core.draw(image, image_glow)
@@ -730,6 +737,7 @@ func reset() -> void: #Reset the board.
 	cycle  = 0
 	output = 0
 	automata.core.reset()
+	$BReset.disabled = true
 	if automata.name == "WireworldRGB":
 		inputs.reset()
 		outputs.reset()
@@ -737,6 +745,7 @@ func reset() -> void: #Reset the board.
 	image_update()
 
 func step() -> void:  #Advance the simulation.
+	$BReset.disabled = false
 	cycle += 1
 	image.fill(bg_color)
 	image.lock();
@@ -759,19 +768,6 @@ func step() -> void:  #Advance the simulation.
 	nodes.display.texture.create_from_image(image, 0)
 	nodes.glows.texture.create_from_image(image_glow, ImageTexture.FLAG_FILTER)
 
-func _ready() -> void:
-	set_process(false)
-	nodes.display.texture = ImageTexture.new()
-	nodes.glows.texture =   ImageTexture.new()
-	init(64, 64)
-	image_update()
-
-func _process(delta: float) -> void:
-	count += delta
-	if count > 0.08:
-		count = 0
-		step()
-
 static func merge(from:Vector2, _brush:Array, map:Array, skip_zero:bool = true) -> void:
 	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
 	var x1:int = round(min(x0 + _brush[0].size(), 64)) as int
@@ -786,7 +782,7 @@ static func merge(from:Vector2, _brush:Array, map:Array, skip_zero:bool = true) 
 func merge2(from:Vector2, _brush:Array, skip_zero:bool = true) -> void:
 	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
 	var x1:int = round(min(x0 + _brush[0].size(), 64)) as int
-	var y1:int = round(min(y0 + _brush.size(), 64)) as int
+	var y1:int = round(min(y0 + _brush.size()   , 64)) as int
 	for y in range(y0, y1):
 		for x in range(x0, x1):
 			if skip_zero:
@@ -794,7 +790,7 @@ func merge2(from:Vector2, _brush:Array, skip_zero:bool = true) -> void:
 			else:
 				automata.core.set_cell(x, y, _brush[y-y0][x-x0])
 
-func rotateCW(map:Array): #Rotate clipboard contents clockwise.
+func rotateCW(map:Array) -> Array: #Rotate clipboard contents clockwise.
 	var h:int = map.size()
 	var w:int = map[0].size()
 	var result:Array = core.newMatrix2D(h,w)
@@ -802,10 +798,10 @@ func rotateCW(map:Array): #Rotate clipboard contents clockwise.
 		for x in range(w):
 			var temp = map[y][x]
 			result[x][h-1-y] = map[y][x]
-	nodes.clipboard_img.init(automata, h, w, result)
-	clipboard = result
+	#nodes.clipboard_img.init(automata, h, w, result)
+	return result
 
-func rotateCCW(map:Array): #Rotate clipboard contents counter-clockwise.
+func rotateCCW(map:Array) -> Array: #Rotate clipboard contents counter-clockwise.
 	var h:int = map.size()
 	var w:int = map[0].size()
 	var result:Array = core.newMatrix2D(h,w)
@@ -813,8 +809,8 @@ func rotateCCW(map:Array): #Rotate clipboard contents counter-clockwise.
 		for x in range(w):
 			var temp = map[y][x]
 			result[w-1-x][y] = map[y][x]
-	nodes.clipboard_img.init(automata, h, w, result)
-	clipboard = result
+	#nodes.clipboard_img.init(automata, h, w, result)
+	return result
 
 func rectangle(from:Vector2, to:Vector2, _brush:int, map:Array):
 	var x0:int = round(from.x) as int; var y0:int = round(from.y) as int
@@ -871,6 +867,7 @@ func _on_BCopy_pressed() -> void: #Copy board to system clipboard.
 	OS.clipboard = encode()
 
 func _on_BPaste_pressed() -> void: #Paste board from system clipboard.
+	_on_BClear_pressed()
 	decode(OS.clipboard)
 
 func _on_BStep_pressed() -> void: #Advance simulation one step.
@@ -899,68 +896,20 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 	if event is InputEventMouseButton and event.pressed: #On button press.
 		var x:int = round(event.position.x) as int
 		var y:int = round(event.position.y) as int
-		if event.button_index == BUTTON_LEFT and not event.control:
-			if draw_mode == DRAW_PASTE:
-				merge2(event.position, clipboard)
-				draw_mode = DRAW_PAINT
-				mouse_held = false
-				image_update()
-				if cycle != 0 and $GridBG.dirty == false:
-					$GridBG.dirty = true
-					$GridBG.update()
-			else:
-				mouse_held = true
-				draw_mode = DRAW_PAINT
-				automata.core.cell_set(x, y, brush)
-				line_start = event.position
-				image_update()
-				if cycle != 0 and $GridBG.dirty == false:
-					$GridBG.dirty = true
-					$GridBG.update()
-		elif event.button_index == BUTTON_RIGHT and not event.control:
-			mouse_held = true
-			draw_mode = DRAW_ERASE
-			automata.core.cell_set(x, y, 0)
-			line_start = event.position
-			image_update()
-			if cycle != 0 and $GridBG.dirty == false:
-				$GridBG.dirty = true
-				$GridBG.update()
-		elif event.button_index == BUTTON_WHEEL_UP:
-			if draw_mode == DRAW_PASTE:
-				rotateCW(clipboard)
-				clear(overlay)
-				merge(event.position, clipboard, overlay)
-				$Display/Overlay.image_update(overlay)
-				return
-			else:
-				palette = (palette + 1) % automata.palette.size()
-				if palette < 1: palette = 1
-				set_palette(palette)
-				return
-		elif event.button_index == BUTTON_WHEEL_DOWN:
-			if draw_mode == DRAW_PASTE:
-				rotateCCW(clipboard)
-				clear(overlay)
-				merge(event.position, clipboard, overlay)
-				$Display/Overlay.image_update(overlay)
-				nodes.display.update()
-				return
-			else:
-				palette = palette - 1
-				if palette < 1: palette = automata.palette.size() - 1
-				set_palette(palette)
-				return
-		elif event.button_index == BUTTON_MIDDLE:
-			set_color(automata.core.cell_get(x, y))
+		if   event.button_index == BUTTON_LEFT        and not event.control: input_button_left_on(event)
+		elif event.button_index == BUTTON_RIGHT       and not event.control: input_button_right_on(event)
+		elif event.button_index == BUTTON_WHEEL_UP                         : input_button_wheel_on(event, true)
+		elif event.button_index == BUTTON_WHEEL_DOWN                       : input_button_wheel_on(event, false)
+		elif event.button_index == BUTTON_MIDDLE                           : set_color(automata.core.cell_get(x, y))
+	#Modifier keys
 		if event.shift:
-			mouse_held = true
-			line_start = event.position
 			draw_mode = DRAW_LINE
-		elif event.control:
-			mouse_held = true
 			line_start = event.position
+			mouse_held = true
+		elif event.control:
 			draw_mode = DRAW_COPY
+			line_start = event.position
+			mouse_held = true
 	elif event is InputEventMouseButton and not event.pressed: #On button release.
 		mouse_held = false
 		match(draw_mode):
@@ -980,42 +929,99 @@ func _on_Display_gui_input(event:InputEvent) -> void:  #Interpret mouse input ov
 				image_update()
 				draw_mode = DRAW_PAINT
 	elif event is InputEventMouseMotion: #On mouse movement.
-		cursor = event.position
-		if mouse_held:
-			if draw_mode == DRAW_PAINT or draw_mode == DRAW_ERASE:
-				if ((0 < event.position.x) and (event.position.x < width)) and ((0 < event.position.y) and (event.position.y < height)):
-					var x:int = round(event.position.x) as int
-					var y:int = round(event.position.y) as int
-					automata.core.cell_set(x, y, brush if draw_mode == DRAW_PAINT else 0)
-				image_update()
-				if cycle != 0:
-					$GridBG.dirty = true
-					$GridBG.update()
-			elif draw_mode == DRAW_LINE:
-				clear(overlay)
-				core.line(line_start, event.position, brush, overlay)
-				$Display/Overlay.image_update(overlay)
-			elif draw_mode == DRAW_COPY:
-				clear(overlay)
-				rectangle(line_start, event.position, 1, overlay)
-				$Display/Overlay.image_update(overlay)
-		else:
-			if draw_mode == DRAW_PASTE:
-				clear(overlay)
-				merge(event.position, clipboard, overlay)
-				$Display/Overlay.image_update(overlay)
-		nodes.display.update()
+		input_motion(event)
 
 func _on_Clipboard_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed: #On button press.
+		if   event.button_index == BUTTON_LEFT and not event.control:
+			draw_mode = DRAW_PASTE
+			paste_buf = clipboard.duplicate(true)
+		elif event.button_index == BUTTON_WHEEL_UP                  :
+			clipboard = rotateCW(clipboard)
+			nodes.clipboard_img.init(automata, clipboard[0].size(), clipboard.size(), clipboard)
+		elif event.button_index == BUTTON_WHEEL_DOWN                :
+			clipboard = rotateCCW(clipboard)
+			nodes.clipboard_img.init(automata, clipboard[0].size(), clipboard.size(), clipboard)
+		elif event.button_index == BUTTON_MIDDLE                    : pass
+
+
+# Input handlers ##############################################################
+func input_button_left_on(event:InputEvent) -> void:
+	if draw_mode == DRAW_PASTE:
+		merge2(event.position, paste_buf)
+		draw_mode = DRAW_PAINT
+		mouse_held = false
+		clear(overlay)
+		image_update()
+		$Display/Overlay.image_update(overlay)
+		if cycle != 0 and $GridBG.dirty == false:
+			$GridBG.dirty = true
+			$GridBG.update()
+	else:
 		var x:int = round(event.position.x) as int
 		var y:int = round(event.position.y) as int
-		if event.button_index == BUTTON_LEFT and not event.control:
-			draw_mode = DRAW_PASTE
-		elif event.button_index == BUTTON_WHEEL_UP:
-			rotateCW(clipboard)
-		elif event.button_index == BUTTON_WHEEL_DOWN:
-			rotateCCW(clipboard)
-		elif event.button_index == BUTTON_MIDDLE:
-			pass
+		mouse_held = true
+		draw_mode = DRAW_PAINT
+		automata.core.cell_set(x, y, brush)
+		line_start = event.position
+		image_update()
+		if cycle != 0 and $GridBG.dirty == false:
+			$GridBG.dirty = true
+			$GridBG.update()
 
+func input_button_right_on(event:InputEvent) -> void:
+	var x:int = round(event.position.x) as int
+	var y:int = round(event.position.y) as int
+	mouse_held = true
+	draw_mode = DRAW_ERASE
+	automata.core.cell_set(x, y, 0)
+	line_start = event.position
+	image_update()
+	if cycle != 0 and $GridBG.dirty == false:
+		$GridBG.dirty = true
+		$GridBG.update()
+
+func input_button_wheel_on(event:InputEvent, up:bool = true) -> void:
+	if draw_mode == DRAW_PASTE:
+		if up: paste_buf = rotateCW(paste_buf)
+		else:  paste_buf = rotateCCW(paste_buf)
+		clear(overlay)
+		merge(event.position, paste_buf, overlay)
+		$Display/Overlay.image_update(overlay)
+		return
+	else:
+		if up:
+			palette = (palette + 1) % automata.palette.size()
+			if palette < 1: palette = 1
+		else:
+			palette = (palette - 1)
+			if palette < 1: palette = automata.palette.size() - 1
+		set_palette(palette)
+		return
+
+func input_motion(event:InputEvent) -> void:
+	cursor = event.position
+	if mouse_held:
+		if draw_mode == DRAW_PAINT or draw_mode == DRAW_ERASE:
+			if ((0 < event.position.x) and (event.position.x < width)) and ((0 < event.position.y) and (event.position.y < height)):
+				var x:int = round(event.position.x) as int
+				var y:int = round(event.position.y) as int
+				automata.core.cell_set(x, y, brush if draw_mode == DRAW_PAINT else 0)
+			image_update()
+			if cycle != 0:
+				$GridBG.dirty = true
+				$GridBG.update()
+		elif draw_mode == DRAW_LINE:
+			clear(overlay)
+			core.line(line_start, event.position, brush, overlay)
+			$Display/Overlay.image_update(overlay)
+		elif draw_mode == DRAW_COPY:
+			clear(overlay)
+			rectangle(line_start, event.position, 1, overlay)
+			$Display/Overlay.image_update(overlay)
+	else:
+		if draw_mode == DRAW_PASTE:
+			clear(overlay)
+			merge(event.position, paste_buf, overlay)
+			$Display/Overlay.image_update(overlay)
+	nodes.display.update()

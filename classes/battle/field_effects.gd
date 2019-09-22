@@ -54,16 +54,16 @@ func calculate(x:float, elem:int = 0, mult:float = 1.0) -> float:
 	])
 	return round((rawBonus + x) * FEbonus)
 
-func update() -> void: #TODO: Count number of chains and individual elements
-	var last : int = 0
-	var temp : int = 0
-	var highestChain : int = 0
-	var chainCount : int = 0
-	var chainElem : int = 0
-	var _chains : Array = core.newArray(bonus.size())
-	var totalChains : int = 0
-	var elemCount : int = 0
-	var highest : int = 0
+func update() -> void:
+	var last:int         = 0                           #Storage for last element.
+	var temp:int         = 0                           #Temp buffer.
+	var highestChain:int = 0                           #Highest detected chain.
+	var chainCount:int   = 0                           #Amount of chains.
+	var chainElem:int    = 0                           #Temp var to determine element of a chain.
+	var _chains:Array    = core.newArray(bonus.size()) #Stores the values of all chains per element.
+	var totalChains:int  = 0                           #Total chain values?
+	var elemCount:int    = 0                           #Count of unique elements.
+	var highest:int      = 0                           #Dominant element.
 	for i in range(bonus.size()):
 		bonus[i] = 0
 		_chains[i] = 0

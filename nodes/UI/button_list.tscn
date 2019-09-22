@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var buttons:Array
+
+func add(node) -> void:
+	$ScrollContainer/VBoxContainer.add_child(node)
+	buttons.append(node)
+
+func clear(node) -> void:
+	while buttons.size() > 0:
+		var b = buttons.pop_back()
+		b.queue_free()
+"
+
+[node name="ButtonList" type="Control"]
+margin_right = 160.0
+margin_bottom = 170.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+margin_right = 32.0
+margin_bottom = 88.0
+
+[node name="AND" type="Button" parent="ScrollContainer/VBoxContainer"]
+margin_right = 32.0
+margin_bottom = 19.0
+text = "AND"
+
+[node name="OR" type="Button" parent="ScrollContainer/VBoxContainer"]
+margin_top = 23.0
+margin_right = 32.0
+margin_bottom = 42.0
+text = "OR"
+
+[node name="XOR" type="Button" parent="ScrollContainer/VBoxContainer"]
+margin_top = 46.0
+margin_right = 32.0
+margin_bottom = 65.0
+text = "XOR"
+
+[node name="NOT" type="Button" parent="ScrollContainer/VBoxContainer"]
+margin_top = 69.0
+margin_right = 32.0
+margin_bottom = 88.0
+text = "NOT"

@@ -5,7 +5,7 @@
 [ext_resource path="res://resources/icons/dgem_diamond.svg" type="Texture" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
-border_width_left = 1
+border_width_left = 3
 border_width_top = 1
 border_width_bottom = 1
 border_color = Color( 0.556863, 0.721569, 0.960784, 1 )
@@ -15,10 +15,10 @@ corner_radius_bottom_left = 1
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.109804, 0.109804, 0.109804, 0.290196 )
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=3]
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
@@ -39,14 +39,14 @@ show_behind_parent = true
 margin_left = 20.0
 margin_right = 100.0
 margin_bottom = 18.0
-custom_styles/panel = SubResource( 3 )
+custom_styles/panel = SubResource( 2 )
 
 [node name="Decor" type="Panel" parent="."]
 margin_left = 40.0
 margin_top = 5.0
 margin_right = 101.0
 margin_bottom = 18.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 3 )
 
 [node name="Label" type="Label" parent="."]
 margin_left = 40.0
@@ -56,14 +56,12 @@ custom_fonts/font = ExtResource( 2 )
 text = "DRAGON GEM"
 
 [node name="Gem0" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 12.0
 margin_top = 6.0
 margin_right = 23.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem0"]
-editor/display_folded = true
 position = Vector2( 5.5, 5.5 )
 scale = Vector2( 0.0859375, 0.0859375 )
 texture = ExtResource( 3 )
@@ -79,14 +77,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem1" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 23.0
 margin_top = 6.0
 margin_right = 34.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem1"]
-editor/display_folded = true
 position = Vector2( 5.5, 5.5 )
 scale = Vector2( 0.0859375, 0.0859375 )
 texture = ExtResource( 3 )
@@ -102,14 +98,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem2" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 34.0
 margin_top = 6.0
 margin_right = 45.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem2"]
-editor/display_folded = true
 position = Vector2( 5.50001, 5.5 )
 scale = Vector2( 0.0859374, 0.0859375 )
 texture = ExtResource( 3 )
@@ -125,14 +119,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem3" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 45.0
 margin_top = 6.0
 margin_right = 56.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem3"]
-editor/display_folded = true
 position = Vector2( 5.50001, 5.5 )
 scale = Vector2( 0.0859375, 0.0859375 )
 texture = ExtResource( 3 )
@@ -148,14 +140,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem4" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 56.0
 margin_top = 6.0
 margin_right = 67.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem4"]
-editor/display_folded = true
 position = Vector2( 5.49999, 5.5 )
 scale = Vector2( 0.0859374, 0.0859375 )
 texture = ExtResource( 3 )
@@ -171,14 +161,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem5" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 67.0
 margin_top = 6.0
 margin_right = 78.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem5"]
-editor/display_folded = true
 position = Vector2( 5.49999, 5.5 )
 scale = Vector2( 0.0859374, 0.0859375 )
 texture = ExtResource( 3 )
@@ -194,14 +182,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem6" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 78.0
 margin_top = 6.0
 margin_right = 89.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem6"]
-editor/display_folded = true
 position = Vector2( 5.49999, 5.5 )
 scale = Vector2( 0.0859374, 0.0859375 )
 texture = ExtResource( 3 )
@@ -217,14 +203,12 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem7" type="Control" parent="."]
-editor/display_folded = true
 margin_left = 89.0
 margin_top = 6.0
 margin_right = 100.0
 margin_bottom = 17.0
 
 [node name="Sprite" type="Sprite" parent="Gem7"]
-editor/display_folded = true
 position = Vector2( 5.5, 5.5 )
 scale = Vector2( 0.0859377, 0.0859375 )
 texture = ExtResource( 3 )

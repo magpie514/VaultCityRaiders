@@ -81,6 +81,33 @@ class WireworldRGB extends CellularAutomaton:
 	# https://lodev.org/ca/wireworldrgb.html
 	# Example board for Golly: https://lodev.org/ca/Patterns/wireworld_rgb.mc
 	const CORE = preload("res://classes/automata/WireworldRGB.cs")
+	const data = {
+		"DIODE"     : { name = "Diode"         , period = "0", desc = "Diode. Ensures flow cannot go back. Blue wire is forward.",
+			data = [ [0,0,0,0], [3,3,6,9], [0,0,0,0] ], },
+		"AND"       : { name = "AND Gate"      , period = "" , desc = "AND gate.",
+			data = [ [3,6,9,0,0], [0,0,0,9,3], [3,6,9,0,0] ], },
+		"OR"        : { name = "OR Gate"       , period = "" , desc = "OR gate",
+			data = [ [3,6,9,0,0], [0,0,0,3,3], [3,6,9,0,0] ], },
+		"XOR"       : { name = "XOR Gate"      , period = "" , desc = "XOR gate",
+			data = [ [3,3,6,0,0], [0,0,0,9,3], [3,3,6,0,0] ], },
+		"ANDNOT"    : { name = "ANDNOT Gate"   , period = "" , desc = "ANDNOT gate",
+			data = [ [3,6,9,0,0], [0,0,0,9,3], [3,3,6,0,0] ], },
+		"NOT"       : { name = "NOT Gate"      , period = "" , desc = "NOT gate" },
+		"NOR"       : { name = "NOR Gate"      , period = "" , desc = "NOR gate" },
+		"NAND"      : { name = "NAND Gate"     , period = "" , desc = "NAND gate" },
+		"XNOR"      : { name = "XNOR Gate"     , period = "" , desc = "XNOR gate" },
+		"CROSS"     : { name = "Wire Crossing" , period = "3", desc = "Wire crossing.",
+			data = [ [0,6,0,0,0], [3,0,9,3,3], [0,6,0,0,0], [3,0,9,3,3], [0,6,0,0,0] ], },
+		"SRL3"      : { name = "SR Latch"      , period = "3", desc = "SR Latch for period 3 streams." },
+		"SRL4"      : { name = "SR Latch"      , period = "4", desc = "SR Latch for period 4 streams." },
+		"SRL6"      : { name = "SR Latch"      , period = "6", desc = "" },
+		"TFF3"      : { name = "T Flip-Flop"   , period = "3", desc = "" },
+		"TFF4"      : { name = "T Flip-Flop"   , period = "4", desc = "" },
+		"TFF6"      : { name = "T Flip-Flop"   , period = "6", desc = "" },
+		"DFF6"      : { name = "D Flip-Flop"   , period = "6", desc = "" },
+		"BINCOUNT4" : { name = "Binary Counter", period = "3", desc = "" },
+		"BINCOUNT8" : { name = "Binary Counter", period = "3", desc = "" },
+	}
 	enum { NULL = 0, HEAD_R, TAIL_R, WIRE_R, HEAD_G, TAIL_G, WIRE_G, HEAD_B, TAIL_B, WIRE_B }
 	func _init(w:int, h:int) -> void:
 		name = "WireworldRGB"

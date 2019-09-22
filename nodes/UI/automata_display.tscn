@@ -8,8 +8,6 @@ script/source = "extends TextureRect
 var automata = null
 var width:int = 0
 var height:int = 0
-var rangex:Array
-var rangey:Array
 var image:Image = Image.new()
 export var bgcolor:Color = Color(0, 0, 0, 0.75)
 
@@ -17,8 +15,6 @@ func init(CA, _w:int, _h:int, map:Array) -> void:
 	automata = CA
 	width = _w
 	height = _h
-	rangex = range(width)
-	rangey = range(height)
 	texture = ImageTexture.new()
 	image_update(map)
 
@@ -26,10 +22,7 @@ func image_update(map:Array) -> void: #Redraw the board and glow textures.
 	image.create(width, height, false, Image.FORMAT_RGBA8)
 	image.fill(bgcolor)
 	image.lock();
-	for y in rangey:
-		for x in rangex:
-			if map[y][x] == 0: image.set_pixel(x, y, bgcolor)
-			else:              image.set_pixel(x, y, automata.visual_data[map[y][x]].color)
+	automata.core.draw_array(image, map, width, height)
 	image.unlock();
 	texture.create_from_image(image, 0)
 	update()
