@@ -1,32 +1,35 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://nodes/UI/battle/FieldEffect.gd" type="Script" id=1]
 [ext_resource path="res://resources/icons/cut.svg" type="Texture" id=2]
 [ext_resource path="res://resources/icons/fire.svg" type="Texture" id=3]
+[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.164706, 0.180392, 0.811765, 1 )
+bg_color = Color( 0, 0.00784314, 0.45098, 1 )
 border_width_left = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color( 0.560784, 0.85098, 0.862745, 1 )
-corner_radius_bottom_right = 35
-corner_radius_bottom_left = 35
+border_color = Color( 1, 0.701961, 0, 1 )
+corner_radius_bottom_right = 49
+corner_radius_bottom_left = 49
 corner_detail = 1
 anti_aliasing = false
 
 [node name="FieldEffect" type="Panel"]
 margin_left = -34.0
 margin_right = 226.0
-margin_bottom = 35.0
-custom_styles/panelf = SubResource( 1 )
+margin_bottom = 50.0
+theme = ExtResource( 4 )
 custom_styles/panel = SubResource( 1 )
-custom_styles/panelnc = SubResource( 1 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label2" type="Label" parent="."]
 margin_right = 260.0
-margin_bottom = 14.0
+margin_bottom = 13.0
 text = "Field Effect"
 align = 1
 

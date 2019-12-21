@@ -64,7 +64,7 @@ var example = {
 		},
 		"deviclaw": {
 			name = "Devil's Claw'", wclass = core.skill.WPCLASS_ARTILLERY,
-			description = "Custom made for Anna's strength. A monstrous antitank cannon equipped with foldable blades, allowing it to slash like a scythe at close quarters.'",
+			description = "Custom made for Anna's strength, designed to be used against enemies of large size. A monstrous antitank cannon with a reinforced barrel equipped with foldable blades, allowing it to slash like a scythe at close quarters.'",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],

@@ -1,9 +1,11 @@
 [gd_resource type="ProceduralSky" format=2]
 
 [resource]
-sky_top_color = Color( 0.262745, 0, 0.552941, 1 )
-sky_horizon_color = Color( 1, 0, 0, 1 )
-ground_horizon_color = Color( 0.701961, 0.270588, 0, 1 )
-sun_color = Color( 1, 0, 0, 1 )
+sky_top_color = Color( 0.105882, 0.027451, 0.227451, 1 )
+sky_horizon_color = Color( 0.866667, 0.847059, 0.635294, 1 )
+ground_curve = 0.0606287
+sun_color = Color( 0, 0, 0.0588235, 1 )
 sun_latitude = 4.14
-sun_curve = 0.0435276
+sun_angle_max = 50.68
+sun_curve = 0.136604
+sun_energy = 2.75

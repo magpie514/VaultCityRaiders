@@ -37,12 +37,14 @@ enum { #Filter
 enum { #General race types
 	#TODO: Make use of these for weapon "Brand" stuff, where hitting a target of the
 	#specified race gives a damage bonus.
+	#TODO: Should be a good time to start implementing "brands".
 	RACE_NONE,       #Shouldn't happen.
 	RACE_HUMAN,      #A regular human. Or the breed that produces adventurers.
 	RACE_CONSTRUCT,  #An artificial, non-strictly-mechanical lifeform.
 	RACE_MACHINE,    #An artificial, strictly mechanical lifeform.
 	RACE_SPIRIT,     #A spiritual being such as a ghost, youkai or similar.
 	RACE_ELEMENTAL,  #A specialized form of spirit born from the forces of the universe.
+	RACE_GIANT,      #A creature of extremely large size. Used as a modifier.
 	RACE_ANGEL,      #A divine being or beast, usually servants to the ghosts.
 	RACE_DEMON,      #A usually malevolent lifeform created by evil desires.
 	RACE_DRAGON,     #A powerful being attuned to the primal chaos, usually winged reptiles.
@@ -62,6 +64,7 @@ const racetypes = {
 	RACE_MACHINE : { name = "Machine", desc = "" },
 	RACE_SPIRIT: { name = "Spirit", desc = "" },
 	RACE_ELEMENTAL: { name = "Elemental", desc = "" },
+	RACE_GIANT: { name = "Giant", desc = "" },
 	RACE_ANGEL: { name = "Angel", desc = "" },
 	RACE_DEMON: { name = "Demon", desc = "" },
 	RACE_DRAGON: { name = "Dragon", desc = "" },

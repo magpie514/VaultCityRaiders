@@ -7,7 +7,7 @@ func init(WP, key):
 		$Label.text = str("%s +%1d" % [W.name, WP.level])
 	else:
 		$Label.text = str("%s" % [W.name])
-	$Label2.text = str("%1s" % key)
+	$ShortcutKey.text = str("%1s" % key)
 	$DUR.text = str("%02d" % WP.uses)
 	if WP.uses > W.durability[WP.level] / 2:
 		$DUR.self_modulate = Color(1.0, 1.0, 1.0)

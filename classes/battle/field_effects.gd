@@ -1,14 +1,14 @@
 const FIELD_EFFECT_SIZE = 12
 
-var data : Array = core.valArray(0, FIELD_EFFECT_SIZE)                        #Element field layout
-var bonus : Array = core.newArray(8)                                          #Bonus per element
-var chain : Array = core.newArray(8)                                          #Amount of chains per element
-var chains : int = 0                                                          #Calculated amount of chains
-var unique : int = 0                                                          #Count of individual elements
-var maxChain : int = 0                                                        #Highest chain
-var hyper : int = 0                                                           #G-Dominion "always optimal field". 0 = disabled, 1 = party, 2 = enemy
-var dominant : int = 0                                                        #Dominant element
-var locked : int = 0
+var data:Array   = core.valArray(0, FIELD_EFFECT_SIZE)              #Element field layout
+var bonus:Array  = core.newArray(8)                                 #Bonus per element
+var chain:Array  = core.newArray(8)                                 #Amount of chains per element
+var chains:int   = 0                                                #Calculated amount of chains
+var unique:int   = 0                                                #Count of individual elements
+var maxChain:int = 0                                                #Highest chain
+var hyper:int    = 0                                                #G-Dominion "always optimal field". 0 = disabled, 1 = party, 2 = enemy
+var dominant:int = 0                                                #Dominant element
+var locked:int   = 0
 
 var frange = range(FIELD_EFFECT_SIZE)	#Some optimization.
 
