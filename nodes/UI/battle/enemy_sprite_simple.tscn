@@ -1,8 +1,51 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://nodes/UI/battle/enemy_sprite_simple.gd" type="Script" id=1]
 [ext_resource path="res://resources/images/test.png" type="Texture" id=2]
 [ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/images/test_BM.png" type="Texture" id=4]
+
+[sub_resource type="Shader" id=8]
+code = "shader_type canvas_item;
+render_mode blend_add;
+
+uniform float radius = 16.0;
+
+void fragment() {
+	vec2 ps = TEXTURE_PIXEL_SIZE;
+	vec4 col = vec4(0);
+	float f = 1.0;
+	for(f = 0.0; f < 16.0; f+=1.0){
+		col += texture(TEXTURE, UV + vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
+		col += texture(TEXTURE, UV - vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
+	}
+	COLOR = col / 7.0;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = SubResource( 8 )
+shader_param/radius = 5.0
+
+[sub_resource type="GDScript" id=7]
+script/source = "tool
+extends Sprite
+
+var nextVal:float = randf()
+var count:float = randf()
+var currentVal:float = randf()
+
+func _ready() -> void:
+	set_process(true)
+
+func _process(delta: float) -> void:
+	count += 0.1
+	if count > 1.0:
+		count = 0
+		currentVal = nextVal
+		nextVal = randf()
+	modulate.a = lerp(currentVal, nextVal, count)
+"
 
 [sub_resource type="Animation" id=1]
 resource_name = "ACTION"
@@ -97,6 +140,12 @@ script = ExtResource( 1 )
 position = Vector2( 0, -120 )
 texture = ExtResource( 2 )
 region_rect = Rect2( 4, 58, 121, 154 )
+
+[node name="Glows" type="Sprite" parent="."]
+material = SubResource( 9 )
+position = Vector2( 0, -120 )
+texture = ExtResource( 4 )
+script = SubResource( 7 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/ACTION = SubResource( 1 )

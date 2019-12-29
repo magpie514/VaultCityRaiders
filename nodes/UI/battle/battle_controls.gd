@@ -53,7 +53,7 @@ func setup(C, place:int, node) -> void:
 	$Main/WeaponPanel.init(C)
 
 	if C.battle.chain > 0: #Show chain counter if pertinent.
-		$Main/Chain/Label.text = str(C.battle.chain)
+		$Main/Chain/Count.text = str(C.battle.chain)
 		$Main/Chain.show()
 	else:
 		$Main/Chain.hide()

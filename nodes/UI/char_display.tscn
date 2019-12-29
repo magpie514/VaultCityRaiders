@@ -21,7 +21,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-bg_color = Color( 0.0784314, 0.0784314, 0.0784314, 0.701961 )
+bg_color = Color( 0.0156863, 0, 0.0156863, 0.921569 )
 border_width_left = 24
 border_width_right = 24
 border_color = Color( 0.0784314, 0.0784314, 0.0784314, 0 )
@@ -77,7 +77,7 @@ func _process(delta: float) -> void:
 			pulse()
 		modulate.a = 1.0 - fade
 		rect_scale = Vector2(1.0+(fade*0.2), 1.0+(fade*0.8))
-		rect_position = -(rect_size * (rect_scale - Vector2(1, 1))*0.5)
+		rect_position = -(rect_size * (rect_scale - Vector2(0, 0))*0.5)
 	else:
 		tween.stop(self)
 		set_process(false)
@@ -86,15 +86,18 @@ func _process(delta: float) -> void:
 
 [node name="CharDisplay" type="Panel"]
 margin_right = 220.0
-margin_bottom = 30.0
+margin_bottom = 40.0
 custom_styles/panel = ExtResource( 1 )
 script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ComplexBar" parent="." instance=ExtResource( 3 )]
 margin_left = 60.0
-margin_top = 18.0
+margin_top = 26.0
 margin_right = 180.0
-margin_bottom = 28.0
+margin_bottom = 36.0
 
 [node name="GuardBlock" type="ColorRect" parent="ComplexBar"]
 visible = false
@@ -111,6 +114,9 @@ margin_top = -1.0
 margin_right = 1.0
 margin_bottom = 1.0
 color = Color( 0, 0, 0, 0.27451 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Name" type="Label" parent="."]
 margin_left = 28.0
@@ -122,26 +128,39 @@ custom_fonts/font = ExtResource( 9 )
 text = "12345678901"
 valign = 1
 max_lines_visible = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="Name"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.352941 )
 
 [node name="StatusIcon" type="Sprite" parent="."]
+visible = false
 scale = Vector2( 20, 20 )
 
 [node name="HP" type="Label" parent="."]
 margin_left = 30.0
-margin_top = 16.0
+margin_top = 24.0
 margin_right = 60.0
-margin_bottom = 31.0
+margin_bottom = 39.0
 rect_min_size = Vector2( 1, 1 )
 custom_fonts/font = SubResource( 1 )
 text = "999"
 valign = 3
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Guard" type="Label" parent="."]
 margin_left = 60.0
-margin_top = 16.0
+margin_top = 24.0
 margin_right = 180.0
-margin_bottom = 31.0
+margin_bottom = 39.0
 rect_min_size = Vector2( 1, 1 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0, 0.435294, 1, 1 )
@@ -149,16 +168,23 @@ text = "999"
 align = 1
 valign = 3
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="DMG" type="Label" parent="."]
+visible = false
 margin_left = 183.0
-margin_top = 16.0
+margin_top = 24.0
 margin_right = 217.0
-margin_bottom = 31.0
+margin_bottom = 39.0
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0, 0.956863, 1, 1 )
 text = "999"
 align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button" type="Button" parent="."]
 visible = false
@@ -168,22 +194,24 @@ flat = true
 clip_text = true
 
 [node name="Action" type="Label" parent="."]
-visible = false
-margin_left = 20.0
-margin_top = 1.0
+margin_left = 10.0
+margin_top = 10.0
 margin_right = 210.0
-margin_bottom = 30.0
+margin_bottom = 39.0
 custom_styles/normal = SubResource( 2 )
 custom_fonts/font = SubResource( 3 )
 text = "ATTACK NAME DISPLAY THINGY
 TARGET NAME THINGY"
 align = 1
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Status" type="Label" parent="."]
-margin_left = 190.0
+margin_left = 192.0
 margin_top = 1.0
-margin_right = 208.0
+margin_right = 210.0
 margin_bottom = 10.0
 custom_fonts/font = SubResource( 4 )
 text = "CND"
@@ -195,18 +223,24 @@ margin_right = 10.0
 margin_bottom = 1.0
 
 [node name="MessageDisplay" parent="." instance=ExtResource( 7 )]
-margin_left = 30.0
+margin_left = 20.0
+margin_top = 17.0
 margin_right = 220.0
-margin_bottom = 31.0
 
-[node name="Charge" parent="." instance=ExtResource( 10 )]
-position = Vector2( 110, 16 )
+[node name="EffectHook" type="Position2D" parent="."]
+position = Vector2( 110, 20 )
+z_index = 2
 
-[node name="LookAtMePanel" type="Panel" parent="."]
-visible = false
+[node name="LookAtMePanel" type="Panel" parent="EffectHook"]
 material = SubResource( 5 )
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -110.0
+margin_top = -19.5
+margin_right = 110.0
+margin_bottom = 19.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -214,12 +248,13 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 custom_styles/panel = ExtResource( 1 )
 script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Tween" type="Tween" parent="LookAtMePanel"]
+[node name="Tween" type="Tween" parent="EffectHook/LookAtMePanel"]
 
-[node name="EffectHook" type="Position2D" parent="."]
-position = Vector2( 110, 16 )
-z_index = 2
+[node name="Charge" parent="EffectHook" instance=ExtResource( 10 )]
 [connection signal="mouse_entered" from="." to="." method="_on_CharDisplay_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_CharDisplay_mouse_exited"]
 [connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]

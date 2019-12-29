@@ -1,13 +1,12 @@
 extends Node2D
 
 onready var effectHook = get_node("EffectHook")
+onready var player = get_node("AnimationPlayer")
 
 var lock : bool = false
 var chr = null
 var origPosition : Vector2
 var shakeTimer : int = 0
-
-
 
 func init(spr, C, slot):
 	if lock: return
@@ -24,23 +23,23 @@ func init(spr, C, slot):
 func begin():
 	if lock: return
 	print("[ENEMY_SPRITE_SIMPLE] Begin animation starting for %s(%d)." % [chr.name, chr.slot])
-	$AnimationPlayer.play("BEGIN")
+	player.play("BEGIN")
 
 func act():
 	if lock: return
-	$AnimationPlayer.play("ACTION")
+	player.play("ACTION")
 	print("[ENEMY_SPRITE_SIMPLE] Action animation starting for %s(%d)." % [chr.name, chr.slot])
 
 func defeat():
 	if lock: return
 	lock = true
-	$AnimationPlayer.play("DEFEAT")
+	player.play("DEFEAT")
 	$Charge.emitting = false
 	print("[ENEMY_SPRITE_SIMPLE] Defeat animation starting for %s(%d)." % [chr.name, chr.slot])
 
 func damage():
 	if lock: return
-	$AnimationPlayer.play("DAMAGE")
+	player.play("DAMAGE")
 	print("[ENEMY_SPRITE_SIMPLE] Damage animation starting for %s(%d)." % [chr.name, chr.slot])
 
 func damageShake():
@@ -56,7 +55,7 @@ func charge(ok : bool = false):
 	if not ok:
 		$Charge.emitting = false
 	else:
-		if not lock: $AnimationPlayer.play("CHARGE")
+		if not lock: player.play("CHARGE")
 		$Charge.emitting = true
 		$Charge.self_modulate = Color(chr.energyColor)
 

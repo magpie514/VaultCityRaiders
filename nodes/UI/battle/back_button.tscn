@@ -1,0 +1,76 @@
+[gd_scene load_steps=5 format=2]
+
+[sub_resource type="StyleBoxFlat" id=6]
+resource_name = "Back_Hover"
+bg_color = Color( 0.321569, 0.329412, 0.870588, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.863281, 0.74947, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 1
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 10
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=7]
+resource_name = "Back_Pressed"
+bg_color = Color( 0, 0.55, 0.265833, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.9, 0.9, 0.36, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 1
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 10
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=8]
+resource_name = "Back_Focus"
+bg_color = Color( 0.188235, 0.890196, 0, 0.12549 )
+draw_center = false
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.811765, 0.858824, 0.105882, 0.658824 )
+corner_radius_top_left = 10
+corner_radius_top_right = 1
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 10
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=5]
+resource_name = "Back_Normal"
+bg_color = Color( 0, 0.00784314, 0.45098, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 1, 0.701961, 0, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 1
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 10
+corner_detail = 1
+anti_aliasing = false
+
+[node name="Back" type="Button"]
+margin_top = 30.0
+margin_right = 70.0
+margin_bottom = 46.0
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 7 )
+custom_styles/focus = SubResource( 8 )
+custom_styles/normal = SubResource( 5 )
+text = "BACK"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}

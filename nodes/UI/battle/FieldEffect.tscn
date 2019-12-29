@@ -6,7 +6,7 @@
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0, 0.00784314, 0.45098, 1 )
+bg_color = Color( 0, 0.00784314, 0.45098, 0.811765 )
 border_width_left = 1
 border_width_right = 1
 border_width_bottom = 1
@@ -17,8 +17,10 @@ corner_detail = 1
 anti_aliasing = false
 
 [node name="FieldEffect" type="Panel"]
-margin_left = -34.0
-margin_right = 226.0
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -155.0
+margin_right = 155.0
 margin_bottom = 50.0
 theme = ExtResource( 4 )
 custom_styles/panel = SubResource( 1 )
@@ -28,222 +30,308 @@ __meta__ = {
 }
 
 [node name="Label2" type="Label" parent="."]
-margin_right = 260.0
+margin_right = 310.0
 margin_bottom = 13.0
 text = "Field Effect"
 align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo0" type="ColorRect" parent="."]
+margin_left = 35.0
+margin_top = 22.0
+margin_right = 55.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo1" type="ColorRect" parent="."]
+margin_left = 55.0
+margin_top = 22.0
+margin_right = 75.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo2" type="ColorRect" parent="."]
+margin_left = 75.0
+margin_top = 22.0
+margin_right = 95.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo3" type="ColorRect" parent="."]
+margin_left = 95.0
+margin_top = 22.0
+margin_right = 115.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo4" type="ColorRect" parent="."]
+margin_left = 115.0
+margin_top = 22.0
+margin_right = 135.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo5" type="ColorRect" parent="."]
+margin_left = 135.0
+margin_top = 22.0
+margin_right = 155.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo6" type="ColorRect" parent="."]
+margin_left = 155.0
+margin_top = 22.0
+margin_right = 175.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo7" type="ColorRect" parent="."]
+margin_left = 175.0
+margin_top = 22.0
+margin_right = 195.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo8" type="ColorRect" parent="."]
+margin_left = 195.0
+margin_top = 22.0
+margin_right = 215.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo9" type="ColorRect" parent="."]
+margin_left = 215.0
+margin_top = 22.0
+margin_right = 235.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo10" type="ColorRect" parent="."]
+margin_left = 235.0
+margin_top = 22.0
+margin_right = 255.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Combo11" type="ColorRect" parent="."]
+margin_left = 255.0
+margin_top = 22.0
+margin_right = 275.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+margin_left = 35.0
+margin_top = 16.0
+margin_right = 275.0
+margin_bottom = 36.0
+color = Color( 0, 0, 0, 0.360784 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite0" type="Sprite" parent="."]
-position = Vector2( 42, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 45, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite1" type="Sprite" parent="."]
-position = Vector2( 58, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 65, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite2" type="Sprite" parent="."]
-position = Vector2( 74, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 85, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite3" type="Sprite" parent="."]
-position = Vector2( 90, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 105, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite4" type="Sprite" parent="."]
-position = Vector2( 106, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 125, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite5" type="Sprite" parent="."]
-position = Vector2( 122, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 145, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite6" type="Sprite" parent="."]
-position = Vector2( 138, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 165, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite7" type="Sprite" parent="."]
-position = Vector2( 154, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 185, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite8" type="Sprite" parent="."]
-position = Vector2( 170, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 205, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite9" type="Sprite" parent="."]
-position = Vector2( 186, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 225, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite10" type="Sprite" parent="."]
-position = Vector2( 202, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 245, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Sprite11" type="Sprite" parent="."]
-position = Vector2( 218, 24 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 265, 23 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
-[node name="Combo0" type="ColorRect" parent="."]
-margin_left = 34.0
-margin_top = 32.0
-margin_right = 50.0
-margin_bottom = 34.0
-
-[node name="Combo1" type="ColorRect" parent="."]
-margin_left = 50.0
-margin_top = 32.0
-margin_right = 66.0
-margin_bottom = 34.0
-
-[node name="Combo2" type="ColorRect" parent="."]
-margin_left = 66.0
-margin_top = 32.0
-margin_right = 82.0
-margin_bottom = 34.0
-
-[node name="Combo3" type="ColorRect" parent="."]
-margin_left = 82.0
-margin_top = 32.0
-margin_right = 98.0
-margin_bottom = 34.0
-
-[node name="Combo4" type="ColorRect" parent="."]
-margin_left = 98.0
-margin_top = 32.0
-margin_right = 114.0
-margin_bottom = 34.0
-
-[node name="Combo5" type="ColorRect" parent="."]
-margin_left = 114.0
-margin_top = 32.0
-margin_right = 130.0
-margin_bottom = 34.0
-
-[node name="Combo6" type="ColorRect" parent="."]
-margin_left = 130.0
-margin_top = 32.0
-margin_right = 146.0
-margin_bottom = 34.0
-
-[node name="Combo7" type="ColorRect" parent="."]
-margin_left = 146.0
-margin_top = 32.0
-margin_right = 162.0
-margin_bottom = 34.0
-
-[node name="Combo8" type="ColorRect" parent="."]
-margin_left = 162.0
-margin_top = 32.0
-margin_right = 178.0
-margin_bottom = 34.0
-
-[node name="Combo9" type="ColorRect" parent="."]
-margin_left = 178.0
-margin_top = 32.0
-margin_right = 194.0
-margin_bottom = 34.0
-
-[node name="Combo10" type="ColorRect" parent="."]
-margin_left = 194.0
-margin_top = 32.0
-margin_right = 210.0
-margin_bottom = 34.0
-
-[node name="Combo11" type="ColorRect" parent="."]
-margin_left = 210.0
-margin_top = 32.0
-margin_right = 226.0
-margin_bottom = 34.0
-
 [node name="Dominant" type="ColorRect" parent="."]
-margin_left = 18.0
-margin_top = 14.0
-margin_right = 242.0
-margin_bottom = 16.0
+margin_left = 49.0
+margin_top = 47.0
+margin_right = 261.0
+margin_bottom = 49.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DominantSprite" type="Sprite" parent="."]
+position = Vector2( 155, 40 )
+scale = Vector2( 0.12, 0.12 )
+texture = ExtResource( 2 )
 
 [node name="FEDebug" type="Button" parent="."]
-margin_left = 178.0
-margin_top = -10.0
-margin_right = 242.0
+margin_left = 212.0
+margin_top = -3.0
+margin_right = 276.0
 margin_bottom = 12.0
 text = "DEBUG"
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="FEPanel" type="Panel" parent="."]
-visible = false
-margin_left = 34.0
-margin_top = 35.0
-margin_right = 226.0
-margin_bottom = 272.0
+margin_left = 45.0
+margin_top = 51.0
+margin_right = 265.0
+margin_bottom = 288.0
 
 [node name="TEST00" type="Button" parent="FEPanel"]
-margin_top = 15.0
-margin_right = 192.0
-margin_bottom = 35.0
+margin_top = 19.0
+margin_right = 220.0
+margin_bottom = 39.0
 text = "Add FE element"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TEST01" type="Button" parent="FEPanel"]
-margin_top = 35.0
+margin_top = 39.0
 margin_right = 38.0
-margin_bottom = 55.0
+margin_bottom = 59.0
 text = "R1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TEST02" type="Button" parent="FEPanel"]
 margin_left = 38.0
-margin_top = 35.0
+margin_top = 39.0
 margin_right = 80.0
-margin_bottom = 56.0
+margin_bottom = 60.0
 text = "R2"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TEST03" type="Button" parent="FEPanel"]
 margin_left = 80.0
-margin_top = 35.0
+margin_top = 39.0
 margin_right = 122.0
-margin_bottom = 56.0
+margin_bottom = 60.0
 text = "R3"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TEST05" type="Button" parent="FEPanel"]
 margin_left = 122.0
-margin_top = 35.0
+margin_top = 39.0
 margin_right = 160.0
-margin_bottom = 56.0
+margin_bottom = 60.0
 text = "R4"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TEST04" type="Button" parent="FEPanel"]
-margin_top = 55.0
-margin_right = 192.0
-margin_bottom = 75.0
+margin_top = 59.0
+margin_right = 220.0
+margin_bottom = 79.0
 text = "Optimize FEs"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label" type="Label" parent="FEPanel"]
-margin_right = 192.0
-margin_bottom = 16.0
+margin_right = 220.0
+margin_bottom = 19.0
 text = "FE debug"
 align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="RichTextLabel" type="RichTextLabel" parent="FEPanel"]
-margin_top = 75.0
-margin_right = 192.0
-margin_bottom = 231.0
+margin_left = 1.0
+margin_top = 79.0
+margin_right = 220.0
+margin_bottom = 237.0
 bbcode_enabled = true
 meta_underlined = false
 scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CloseFEPanel" type="TextureButton" parent="FEPanel"]
 self_modulate = Color( 1, 0.596078, 0, 1 )
-margin_left = 178.0
-margin_right = 188.0
-margin_bottom = 10.0
+margin_left = 200.0
+margin_right = 220.0
+margin_bottom = 19.0
 grow_horizontal = 0
 grow_vertical = 0
 rect_clip_content = true
@@ -254,6 +342,30 @@ texture_hover = ExtResource( 3 )
 texture_disabled = ExtResource( 3 )
 texture_focused = ExtResource( 3 )
 expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DominantLabel" type="Label" parent="."]
+margin_left = 55.0
+margin_top = 34.0
+margin_right = 145.0
+margin_bottom = 47.0
+text = "Dominant: "
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DominantElement" type="Label" parent="."]
+margin_left = 167.0
+margin_top = 34.0
+margin_right = 255.0
+margin_bottom = 47.0
+text = "Element"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="FEDebug" to="." method="_on_FEDebug_pressed"]
 [connection signal="pressed" from="FEPanel/TEST00" to="." method="_on_TEST00_pressed"]
 [connection signal="pressed" from="FEPanel/TEST01" to="." method="_on_TEST01_pressed"]

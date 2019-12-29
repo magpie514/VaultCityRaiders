@@ -1,10 +1,9 @@
 extends "res://classes/group/group_base.gd"
 var enemy = preload("res://classes/char/char_enemy.gd")
-
-const ROW_SIZE = 5
+const ROW_SIZE = 3
 const MAX_SIZE = ROW_SIZE * 2
 
-const ROW_ITER = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
+const ROW_ITER = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 
 var display = null
 var defeated = []

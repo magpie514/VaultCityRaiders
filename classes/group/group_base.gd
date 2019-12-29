@@ -3,7 +3,8 @@ const BACK_ROW = 1
 
 var name : String = ""
 var formation = null
-var lastElement : int = 0
+var lastElement:int = 0 #Last element used by the group.
+var FEguard:int     = 0 #Chance (0-100%) to prevent standard additions to the element field.
 var versus = null
 
 func getRow(row, size) -> Array:
@@ -176,12 +177,15 @@ func getOtherRowTargets(row, S): #Get targets in the other row.
 	return getRowTargets2(otherRow, getRowSize(), S)
 
 func initBattle() -> void:
+	lastElement = 0
+	FEguard = 0
 	for i in formation:
 		if i != null:
 			i.initBattle()
 
-
 func initBattleTurn() -> void:
+	lastElement = 0
+	FEguard = 0
 	for i in formation:
 		if i != null:
 			i.initBattleTurn()

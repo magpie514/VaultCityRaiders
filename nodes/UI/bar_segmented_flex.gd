@@ -19,11 +19,7 @@ func init(val:int, val2:float, segs:int) -> void:
 func _draw():
 	var sum : float = 0.0
 	draw_rect(Rect2(Vector2(sum, 0), Vector2(rect_size.x - sum, rect_size.y)), bgcolor)
-	var t = rect_size.x / (segments+1)
-	var poly1 : PoolVector2Array = PoolVector2Array( [Vector2(0, 0), Vector2((t)*0.9, 0), Vector2(0, rect_size.y*.9)] )
-	var poly2 : PoolVector2Array = PoolVector2Array( [ Vector2(rect_size.x, rect_size.y*0.1),Vector2(rect_size.x, rect_size.y),Vector2(t*segments+(t*0.1), rect_size.y) ] )
-	draw_colored_polygon(poly1, border)
-	draw_colored_polygon(poly2, border)
+	var t = rect_size.x / (segments)
 	for i in range(segments):
 		sum = (float(t) * float(i))
 		var co = color if i < value else Color("66000000")
@@ -34,19 +30,23 @@ func _draw():
 		draw_polyline(pv2, outline, 1.0, true)
 	if value < segments and value2 > 0:
 		sum = float(t) * float(value)
-		var tmp : float = (1.0 - value2)
-		var tmp2 : float= t * tmp
-		var pv : PoolVector2Array = PoolVector2Array([	Vector2(int(sum), int(rect_size.y)), 	Vector2(int(sum + t) - 2, 									int(rect_size.y)),			Vector2(int(sum + t * 2 - tmp2) - 2,	int(rect_size.y * tmp)),			Vector2(int(sum + t  - tmp2),						int(rect_size.y * tmp)),		])
+		var tmp: float =  value2
+		var pv: PoolVector2Array = PoolVector2Array([
+				Vector2(int(sum)                , 0),
+				Vector2(int(sum + t)            , 0),
+				Vector2(int(sum + t) + (tmp * 2), rect_size.y * tmp),
+				Vector2(int(sum)     + (tmp * 2), rect_size.y * tmp),
+				])
 		var pv2 = poly(sum, t); pv2.push_back(pv2[0])
 		var c : Color = charge_color
 		c.v = value2 + 0.1; c.h = charge_color.h - ((1.0 - value2) * 0.12)
-		draw_colored_polygon(pv, c, pv, null, null, true)
+		draw_colored_polygon(pv, c, pv, null, null, false)
 		draw_polyline(pv2, outline, 1.0, true)
 
 func poly(sum:float, t:float) -> PoolVector2Array:
 	var result = PoolVector2Array()
-	var pointsx = [int(sum + t), int(sum+t*2)-2, int(sum+t)-2, int(sum)]
-	var pointsy = [int(0), int(0), rect_size.y, rect_size.y]
+	var pointsx = [int(sum), int(sum+t), int(sum+t+2), int(sum+2) ]
+	var pointsy = [0       , 0         , rect_size.y , rect_size.y]
 	for i in range(pointsx.size()):
 		result.push_back(Vector2(pointsx[i], pointsy[i]))
 	return result

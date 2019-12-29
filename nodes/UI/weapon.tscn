@@ -74,8 +74,9 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=10]
+[sub_resource type="StyleBoxFlat" id=8]
 draw_center = false
 border_width_left = 6
 border_width_top = 2
@@ -87,7 +88,7 @@ corner_radius_bottom_left = 4
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="StyleBoxFlat" id=9]
 border_width_top = 1
 border_width_right = 1
 corner_radius_top_left = 1
@@ -97,7 +98,7 @@ corner_radius_bottom_left = 1
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="DynamicFont" id=9]
+[sub_resource type="DynamicFont" id=10]
 size = 8
 outline_size = 1
 use_mipmaps = true
@@ -166,7 +167,7 @@ texture = ExtResource( 4 )
 margin_right = 230.0
 margin_bottom = 23.0
 mouse_filter = 2
-custom_styles/panel = SubResource( 10 )
+custom_styles/panel = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -175,8 +176,8 @@ __meta__ = {
 modulate = Color( 1, 1, 1, 0.760784 )
 margin_right = 12.0
 margin_bottom = 12.0
-custom_styles/normal = SubResource( 8 )
-custom_fonts/font = SubResource( 9 )
+custom_styles/normal = SubResource( 9 )
+custom_fonts/font = SubResource( 10 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "1"
 align = 1

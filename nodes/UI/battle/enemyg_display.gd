@@ -1,21 +1,21 @@
 extends Control
 
-var bars = core.newArray(10)
+var bars = core.newArray(6)
 var _bar = preload("res://nodes/UI/battle/enemy_display.tscn")
 var group = null
-onready var width = int(rect_size.x / 5)
+onready var width = int(rect_size.x / 3)
 
 func init(_group):
 	group = _group
 	var node
 	group.display = self
-	for i in range(10):
+	for i in range(6):
 		if group.formation[i] != null:
 			bars[i] = createDisplay(i)
 			bars[i].fadeTo(0.1, 5.0)
 
 func update():
-	for i in range(10):
+	for i in range(6):
 		if group.formation[i] == null:
 			if bars[i] != null:
 				bars[i].stop()
@@ -31,7 +31,7 @@ func revive(C, slot) -> void:
 
 func createDisplay(slot):
 	var node = _bar.instance()
-	node.rect_position = Vector2(slot * width, 60) if slot < 5 else Vector2((slot - 5) * width, 30)
+	node.rect_position = Vector2(slot * width, 60) if slot < 2 else Vector2((slot - 5) * width, 30)
 	node.resize(Vector2(width - 2, 8))
 	node.get_node("ComplexBar").value = group.formation[slot].getHealthN()
 	node.init(group.formation[slot])
@@ -57,12 +57,12 @@ func connectSignals(node, obj):
 	node.connect("hide_info", obj, "hideInfo")
 
 func connectUISignals(obj):
-	for i in range(10):
+	for i in range(6):
 		if group.formation[i] != null:
 			connectSignals(bars[i], obj)
 
 func disconnectUISignals(obj):
-	for i in range(10):
+	for i in range(6):
 		if group.formation[i] != null:
 			bars[i].disconnect("display_info", obj, "showInfo")
 			bars[i].disconnect("hide_info", obj, "hideInfo")

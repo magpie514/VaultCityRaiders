@@ -248,6 +248,7 @@ func checkFollow(F, last) -> void:
 	var T = F[0] #Target
 	var S = F[1] #Follow settings
 	print("[BATTLE_STATE][CHECKFOLLOW] %s is marked by %s with skill %s LV%d" % [T.name, S[0].name, S[3].name, S[4]])
+	#Play ACTION animation.
 	if S[0].side == SIDE_PLAYER: S[0].display.highlight(true)
 	else: S[0].sprDisplay.act()
 	yield(core.battle.control.wait(0.1), "timeout")
@@ -279,6 +280,7 @@ func checkPriorityActions() -> void:
 		for i in temp:
 			#Execute PR code blocks of involved skills.
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
+			#Play ACTION animation.
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(true)
 			else: i[2].sprDisplay.act()
 			core.skill.runExtraCode(i[0], i[1], i[2], core.skill.CODE_PR)

@@ -53,12 +53,12 @@ corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id=6]
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
+bg_color = Color( 0, 0.00784314, 0.45098, 1 )
 border_width_left = 8
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+border_color = Color( 1, 0.698039, 0, 1 )
 corner_radius_bottom_left = 5
 corner_detail = 1
 anti_aliasing = false

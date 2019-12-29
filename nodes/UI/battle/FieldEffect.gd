@@ -22,8 +22,10 @@ func updateDisplay(FE:Object) -> void:
 		if A[i] == last and last != 0:
 			if combo == 0 and i != 0:
 				get_node(str("Combo", i-1)).color = core.stats.ELEMENT_DATA[A[i-1]].color
+				get_node(str("Combo", i-1)).color.v -= 0.3
 			combo += 1
 			get_node(str("Combo", i)).color = core.stats.ELEMENT_DATA[A[i]].color
+			get_node(str("Combo", i)).color.v -= 0.3
 		else:
 			combo = 0
 			get_node(str("Combo", i)).color = Color(0, 0, 0, 0)
@@ -33,7 +35,10 @@ func updateDisplay(FE:Object) -> void:
 	stri += str("Chains: %s Individual:%s/7\nHighest chain: %s" % [FE.chains, FE.unique, FE.maxChain])
 	$FEPanel/RichTextLabel.bbcode_text = stri
 	$Dominant.color = core.stats.ELEMENT_DATA[FE.dominant].color
-
+	$DominantElement.set("custom_colors/font_color", core.stats.ELEMENT_DATA[FE.dominant].color)
+	$DominantElement.text = core.stats.ELEMENT_DATA[FE.dominant].name
+	$DominantSprite.texture = textures[FE.dominant]
+	$DominantSprite.modulate = core.stats.ELEMENT_DATA[FE.dominant].color
 
 
 

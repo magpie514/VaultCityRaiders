@@ -150,9 +150,9 @@ valign = 1
 
 [node name="BarSegmentedF" parent="." instance=ExtResource( 3 )]
 margin_left = 292.0
-margin_top = 3.0
-margin_right = 340.0
-margin_bottom = 17.0
+margin_top = 1.0
+margin_right = 334.0
+margin_bottom = 19.0
 color = Color( 0, 1, 1, 1 )
 border = Color( 0, 0.266667, 0.266667, 0.282353 )
 charge_color = Color( 0.952941, 0.960784, 0.0823529, 1 )

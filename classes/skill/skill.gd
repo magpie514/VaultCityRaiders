@@ -154,7 +154,7 @@ enum { #What to do in case of effect collision (same effect active on target)
 	EFFCOLL_NULLIFY,	#Cancels or toggles the effect
 }
 
-enum EffectStat { #Effect stat mods
+enum EffectStat { #Effect stat mods.
 	EFFSTAT_NONE =			0x0000, #No change
 	EFFSTAT_BASE =			0x0001,	#Change (raw) to base stats (STR, INT...)
 	EFFSTAT_BASEMULT =	0x0002,	#Change (multiplier) to base stats. Multipliers are additive.
@@ -346,10 +346,10 @@ enum { #Skill function codes.
 	OPCODE_DEFEND,						#Standard defense function. TODO: Define defense role's further.
 	OPCODE_FORCE_INFLICT,			#[@]Attempt to inflict an ailment independent from attack.
 	OPCODE_DAMAGERAW,					#[@%]Reduce target's HP by given value (no accuracy check)
-	OPCODE_SELF_DAMAGE,       #[%]Shortcut for delivering recoil/self damage to the user.
+	OPCODE_SELF_DAMAGE,       		#[%]Shortcut for delivering recoil/self damage to the user.
 	OPCODE_DEFEAT,						#[@]Instantly defeats target with a given chance. This bypasses regular instant death protection and is mostly used for self-destructs with potential chances of survival.
 	OPCODE_TRYRUN,						#[@]Tries to run from battle with a X% chance check.
-	OPCODE_RUN,								#[@]If not zero, runs from battle bypassing checks. Will still fail on battles where running is disabled.
+	OPCODE_RUN,							#[@]If not zero, runs from battle bypassing checks. Will still fail on battles where running is disabled.
 
 	# Followup functions #########################################################
 	# Use before OPCODE_FOLLOW
@@ -396,7 +396,8 @@ enum { #Skill function codes.
 	OPCODE_FORCE_DODGE,				#[@=]Set target's forced dodges for the rest of the turn. Automatically dodges without checks.
 	OPCODE_PROTECT,						#[@]User protects target with an X% chance until the end of the turn.
 	OPCODE_RAISE_OVER,				#[@]Increases Over gauge by X.
-	OPCODE_BREAK_GUARD,				#[@%]Decreases Guard/Absolute Guard and Barrier by X.
+	OPCODE_BREAK_GUARD,				#[@%]Decreases Guard/Absolute Guard and Barrier by X. Order is Guard > Absolute Guard > Barrier.
+	OPCODE_FE_GUARD,					#[@=]Set a chance%, for the target's GROUP, to prevent the opposing group from adding elements to the field.
 
 	# Standard support functions #################################################
 	OPCODE_SCAN,							#Scans target with 1 or 2 power. Anything beyond 2 is reduced to 2, has no effect if 0.
@@ -424,30 +425,30 @@ enum { #Skill function codes.
 	OPCODE_NOMISS,						#If 1, following combat effects won't miss.
 	OPCODE_NOCAP,							#If 1, damage can go over cap (32000). #TODO: Make it an event flag.
 	OPCODE_IGNORE_DEFS,				#Attack ignores target's guard, barrier and defender.
-	OPCODE_RANGE,							#Switch ranged property to true (if not 0) or false (if 0).
-	OPCODE_ENERGY,						#Switch energy property to true (if not 0) or false (if 0).
+	OPCODE_RANGE,							#Switch ranged property to true (not 0) or false (0).
+	OPCODE_ENERGY,						#Switch energy property to true (not 0) or false (0).
 	OPCODE_DRAINLIFE,					#User is healed for given % of total damage dealt for each hit.
 
-	OPCODE_CHAIN_START,				#If a chain is not started (chain == 0), make it 1.
-	OPCODE_CHAIN_FOLLOW,			#Modify current chain value (if >1 only) by X.
+	OPCODE_CHAIN_START,			#If a chain is not started (chain is 0), make it 1.
+	OPCODE_CHAIN_FOLLOW,			#Modify current chain value (more than 1 only) by X.
 	OPCODE_CHAIN_FINISH,			#If chain is not 0, make it 0.
 
 	# Elemental Field ############################################################
-	OPCODE_FIELD_PUSH,				#Add specified element to the element field. 0 to use current element.
-	OPCODE_FIELD_FILL,				#Fill the element field with the specified element.
-	OPCODE_FIELD_REPLACE,			#Replace all elements of the specified type from the field to current element.
+	OPCODE_FIELD_PUSH,			#Add specified element to the element field. 0 to use current element.
+	OPCODE_FIELD_FILL,			#Fill the element field with the specified element.
+	OPCODE_FIELD_REPLACE,		#Replace all elements of the specified type from the field to current element.
 	OPCODE_FIELD_REPLACE2,		#With a chance of X, try to replace all elements for current one.
 	OPCODE_FIELD_RANDOMIZE,		#Randomize all elements in the field with X changing the randomization strategy.
-	OPCODE_FIELD_CONSUME,     #Remove all instances of current element from the field to empty spaces, push the rest to the right.
-	OPCODE_FIELD_TAKE,				#Take X of current element from the field, starting from the left.
+	OPCODE_FIELD_CONSUME,     	#Remove all instances of current element from the field to empty spaces, push the rest to the right.
+	OPCODE_FIELD_TAKE,			#Take X of current element from the field, starting from the left.
 	OPCODE_FIELD_OPTIMIZE,		#Sort elements so they form chains if more than one exists.
-	OPCODE_FIELD_LOCK,        #Lock the element field for X turns. If the wait is already not 0, add X-1 instead.
-	OPCODE_FIELD_UNLOCK,      #Unlock the element field now.
+	OPCODE_FIELD_LOCK,        	#Lock the element field for X turns. If the wait is already not 0, add X-1 instead.
+	OPCODE_FIELD_UNLOCK,      	#Unlock the element field now.
 	OPCODE_FIELD_GDOMINION,		#Set G-Dominion's "hyper field" property for user's group. All bonuses become x1.5 base.
-	OPCODE_FIELD_SETLASTELEM, #Set current element to the last (rightmost) element on the field.
+	OPCODE_FIELD_SETLASTELEM, 	#Set current element to the last (rightmost) element on the field.
 	OPCODE_FIELD_SETDOMIELEM,	#Set current element to the dominant element on the field.
 	OPCODE_FIELD_ELEMBLAST,		#For every chain on the field, add its element to queue.
-	OPCODE_FIELD_MULT,        #[@]Set current field effect damage multiplier.
+	OPCODE_FIELD_MULT,        	#[@]Set current field effect damage multiplier.
 
 	# Stat mods ##################################################################
 	OPCODE_ATK_MOD,						#Modify target's ATK for the current turn.
@@ -477,7 +478,7 @@ enum { #Skill function codes.
 	# Enemy only specials ########################################################
 	OPCODE_ENEMY_REVIVE,			#[+]Revives a fallen enemy.
 	OPCODE_ENEMY_SUMMON,			#Summons with index X. If battle formation has a summons set, those take priority, otherwise monster-specific ones are used, if neither exist or the index is out of range, summon the same type as the user.
-	OPCODE_ENEMY_ARMED,				#Sets enemy as armed or not. 0 makes no change. 1 makes it armed, 2 makes it disarmed.
+	OPCODE_ENEMY_ARMED,			#Sets enemy as armed or not. 0 makes no change. 1 makes it armed, 2 makes it disarmed.
 
 
 	# Control flow ###############################################################
@@ -605,6 +606,8 @@ const opCode = {
 	"force_dodge" : OPCODE_FORCE_DODGE,
 	"protect" : OPCODE_PROTECT,
 	"over" : OPCODE_RAISE_OVER,
+	"guardbreak" : OPCODE_BREAK_GUARD,
+	"field_guard" : OPCODE_FE_GUARD,
 
 	"scan" : OPCODE_SCAN,
 	"transform" : OPCODE_TRANSFORM,
@@ -1479,12 +1482,12 @@ func addEffect(S, level:int, user, target, state):
 	else:
 		target.addEffect(S, level, user)
 
+
+# SKILL PROCESSING ############################################################
 func process(S, level, user, _targets, WP = null, IT = null):
 	print("\n[SKILL][PROCESS] ### %s's action: %s ############################################\n" % [user.name, S.name])
-	if IT != null:
-		msg(str("[color=#%s]%s[/color] used [color=#80E36E]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
-	else:
-		msg(str("[color=#%s]%s[/color] used [color=#EEFF80]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, S.name]))
+	if IT != null:    msg(str("[color=#%s]%s[/color] used [color=#80E36E]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
+	else:             msg(str("[color=#%s]%s[/color] used [color=#EEFF80]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, S.name]))
 
 	if _targets.size() == 0:
 		print("[SKILL][PROCESS][!] No targets specified, trying to autotarget.")
@@ -1503,7 +1506,6 @@ func initSkillState(S, level, user, target):
 
 func initSkillInfo() -> Dictionary:
 	return { anyHit = false, postTargetGroup = 0 }
-
 
 func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	var temp = null
@@ -1556,6 +1558,8 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 
 	if core.battle.control.state.lastElement != 0:
 		print("[SKILL][processCombatSkill] Adding element %d to field x%02d" % [core.battle.control.state.lastElement, S.fieldEffectAdd[level]])
+		#TODO: Add FE Guard effects here and in the standard functions.
+		#Add effect as a percentage for each group.
 		user.group.lastElement = core.battle.control.state.lastElement
 		for i in range(S.fieldEffectAdd[level]):
 			core.battle.control.state.field.push(core.battle.control.state.lastElement)

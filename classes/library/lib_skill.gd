@@ -86,8 +86,8 @@ var example = {
 	"story": {
 # Jay's skills ####################################################################################
 		"plasfeld": {
-			name = "Plasma Field",
-			description = "Emit a plasma wave that charges the field with electricity.",
+			name = "EPN Field",
+			description = "Extends an Energy Particle Negation field, charging the field with electricity and may prevent enemies from modifying the field.",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -851,7 +851,7 @@ var example = {
 			],
 		},
 		"solbeam":{
-			name = "Solar Beam",
+			name = "Solar Cannon",
 			description = "Fires a barrage of Neo-Heliolite-tipped bullets which explode on impact.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,

@@ -7,6 +7,7 @@ var _dmgNum = preload("res://nodes/UI/damage_numbers.tscn")
 var _miscMsg = preload("res://nodes/UI/battle/misc_message.tscn")
 
 onready var effectHook = get_node("EffectHook")
+onready var LookAtMePanel = get_node("EffectHook/LookAtMePanel")
 
 var chr = null
 var origPosition = Vector2()
@@ -116,19 +117,19 @@ func highlight(b): #Highlights this character to show it's acting or choosing ac
 	if b:
 		if action != null: $Action.hide() #Hide action display.
 		#Pulsing indicator for improved visual feedback.
-		$LookAtMePanel.show()
-		$LookAtMePanel.pulse()
-		$LookAtMePanel.set_process(true)
+		LookAtMePanel.show()
+		LookAtMePanel.pulse()
+		LookAtMePanel.set_process(true)
 	else:
 		if action != null: $Action.show() #Show action display.
 		#Hide the pulsing indicator so it stops processing.
-		$LookAtMePanel.hide()
-		$LookAtMePanel.set_process(false)
-		$LookAtMePanel/Tween.stop($LookAtMePanel)
+		LookAtMePanel.hide()
+		LookAtMePanel.set_process(false)
+		LookAtMePanel.get_node("Tween").stop(LookAtMePanel)
 
 func charge(b : bool = false) -> void: #Charge effect
-	$Charge.emitting = b
-	$Charge.self_modulate = Color(chr.energyColor)
+	$EffectHook/Charge.emitting = b
+	$EffectHook/Charge.self_modulate = Color(chr.energyColor)
 
 func updateAD(x:int) -> void: #Update Active Defense display.
 	if chr.battle != null:

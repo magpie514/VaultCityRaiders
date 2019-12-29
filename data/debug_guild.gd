@@ -74,6 +74,7 @@ var data = {
 			equip = [
 				# Weapons
 				{ tid = ["debug", "hellfngr"], level = 0, uses = 1, extra = null, gem = [ [["core", "speed"], 101], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 1], [["core", "decel"], 800],[["core", "cut"], 901] ] },
+				{ tid = ["debug", "deviclaw"], level = 0, uses = 1, extra = null, gem = [ [["core", "speed"], 101], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 1], [["core", "decel"], 800],[["core", "cut"], 901] ] },
 				null,
 				null,
 				null,

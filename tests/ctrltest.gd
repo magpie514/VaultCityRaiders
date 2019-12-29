@@ -141,8 +141,14 @@ func battle():
 			$Panel/ActionQueue.init(state.actions())
 			if A.user.canAct():
 				if state.status():
-					if A.side == state.SIDE_PLAYER: A.user.display.highlight(true)
-					else: A.user.sprDisplay.act()
+					#Play ACTION animation.
+					if A.side == state.SIDE_PLAYER:
+						A.user.display.highlight(true)
+						yield(wait(1.0), "timeout")
+
+					else:
+						A.user.sprDisplay.act()
+						yield(A.user.sprDisplay.player, "animation_finished")
 					state.initAction(A)
 					yield($SkillController, "action_finished")
 					state.updateActions(A)

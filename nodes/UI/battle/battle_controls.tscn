@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://nodes/UI/battle/battle_controls.gd" type="Script" id=1]
 [ext_resource path="res://nodes/UI/battle/WeaponPanel.gd" type="Script" id=2]
@@ -14,66 +14,9 @@
 [ext_resource path="res://nodes/UI/menu_over.tscn" type="PackedScene" id=12]
 [ext_resource path="res://resources/tres/fonts/std_font_big.tres" type="DynamicFont" id=13]
 [ext_resource path="res://nodes/UI/battle/over_gauge_display.tscn" type="PackedScene" id=14]
+[ext_resource path="res://nodes/UI/battle/back_button.tscn" type="PackedScene" id=15]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.417969, 0.740814, 1, 1 )
-border_width_left = 8
-border_color = Color( 0.559784, 0.863281, 0.74947, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.560784, 0.905882, 0.615686, 1 )
-border_width_left = 8
-border_color = Color( 0.846684, 0.863281, 0.559784, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-draw_center = false
-border_width_left = 8
-border_width_bottom = 1
-border_color = Color( 0.623529, 0.862745, 0.556863, 0.494157 )
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
-corner_detail = 1
-shadow_color = Color( 0.5578, 0.864588, 0.593451, 0.6 )
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=4]
-bg_color = Color( 0.146362, 0.147957, 0.171875, 1 )
-border_width_left = 8
-border_color = Color( 0.686275, 0.352941, 0.352941, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-shadow_size = 1
-
-[sub_resource type="StyleBoxFlat" id=5]
-content_margin_top = 1.0
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-border_width_left = 8
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 10
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=6]
+[sub_resource type="StyleBoxFlat" id=9]
 content_margin_left = 10.0
 bg_color = Color( 0, 0.00784314, 0.45098, 1 )
 border_width_left = 4
@@ -81,46 +24,47 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 1, 0.701961, 0, 1 )
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=7]
-content_margin_top = 1.0
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-border_width_left = 8
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_top_left = 18
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=8]
-content_margin_top = 1.0
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-border_width_left = 8
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_top_left = 18
-corner_detail = 1
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id=9]
-content_margin_top = 1.0
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-border_width_left = 8
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_top_left = 18
+corner_radius_top_right = 24
 corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id=10]
+content_margin_top = 1.0
+bg_color = Color( 0.167969, 0.219971, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+corner_radius_top_left = 18
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=11]
+content_margin_top = 1.0
+bg_color = Color( 0.167969, 0.219971, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+corner_radius_top_left = 18
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=12]
+content_margin_top = 1.0
+bg_color = Color( 0.167969, 0.219971, 1, 1 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
+corner_radius_top_left = 18
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=13]
 content_margin_top = 1.0
 bg_color = Color( 0.145098, 0.14902, 0.172549, 1 )
 border_width_left = 8
@@ -132,7 +76,7 @@ corner_radius_top_left = 18
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=11]
+[sub_resource type="StyleBoxFlat" id=14]
 content_margin_top = 1.0
 bg_color = Color( 0, 0.00784314, 0.45098, 1 )
 border_width_left = 8
@@ -144,7 +88,7 @@ corner_radius_top_left = 18
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=12]
+[sub_resource type="StyleBoxFlat" id=15]
 bg_color = Color( 0, 0.00784314, 0.45098, 1 )
 border_width_left = 1
 border_width_top = 1
@@ -170,10 +114,13 @@ margin_bottom = 40.0
 [node name="WeaponPanel" type="Panel" parent="Main"]
 self_modulate = Color( 1, 1, 1, 0.00392157 )
 margin_left = 20.0
-margin_top = 44.0
+margin_top = 47.0
 margin_right = 290.0
-margin_bottom = 148.0
+margin_bottom = 151.0
 script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Weapon1" parent="Main/WeaponPanel" instance=ExtResource( 3 )]
 margin_left = 11.0
@@ -203,7 +150,7 @@ margin_bottom = 100.0
 margin_left = 31.0
 margin_top = 150.0
 margin_right = 141.0
-margin_bottom = 190.0
+margin_bottom = 180.0
 custom_fonts/font = ExtResource( 13 )
 text = "Skill"
 align = 0
@@ -212,10 +159,10 @@ __meta__ = {
 }
 
 [node name="Defend" type="Button" parent="Main"]
-margin_left = 31.0
-margin_top = 193.0
-margin_right = 141.0
-margin_bottom = 233.0
+margin_left = 32.0
+margin_top = 184.0
+margin_right = 142.0
+margin_bottom = 214.0
 custom_fonts/font = ExtResource( 13 )
 text = "Defend"
 align = 0
@@ -225,9 +172,9 @@ __meta__ = {
 
 [node name="Item" type="Button" parent="Main"]
 margin_left = 31.0
-margin_top = 240.0
+margin_top = 218.0
 margin_right = 141.0
-margin_bottom = 280.0
+margin_bottom = 248.0
 custom_fonts/font = ExtResource( 13 )
 text = "Item"
 align = 0
@@ -236,10 +183,10 @@ __meta__ = {
 }
 
 [node name="Over" type="Button" parent="Main"]
-margin_left = 31.0
-margin_top = 290.0
-margin_right = 141.0
-margin_bottom = 330.0
+margin_left = 32.0
+margin_top = 252.0
+margin_right = 142.0
+margin_bottom = 282.0
 custom_fonts/font = ExtResource( 13 )
 text = "Over"
 align = 0
@@ -248,10 +195,10 @@ __meta__ = {
 }
 
 [node name="Run" type="Button" parent="Main"]
-margin_left = 151.0
-margin_top = 150.0
-margin_right = 261.0
-margin_bottom = 190.0
+margin_left = 32.0
+margin_top = 286.0
+margin_right = 142.0
+margin_bottom = 316.0
 custom_fonts/font = ExtResource( 13 )
 text = "Run"
 align = 0
@@ -260,12 +207,13 @@ __meta__ = {
 }
 
 [node name="Talk" type="Button" parent="Main"]
-margin_left = 151.0
-margin_top = 193.0
-margin_right = 261.0
-margin_bottom = 233.0
+margin_left = 31.0
+margin_top = 320.0
+margin_right = 141.0
+margin_bottom = 350.0
 custom_fonts/font = ExtResource( 13 )
 custom_colors/font_color = Color( 0.968627, 1, 0, 1 )
+disabled = true
 text = "Talk"
 align = 0
 __meta__ = {
@@ -273,12 +221,13 @@ __meta__ = {
 }
 
 [node name="Switch" type="Button" parent="Main"]
-margin_left = 151.0
-margin_top = 240.0
-margin_right = 261.0
-margin_bottom = 280.0
+margin_left = 32.0
+margin_top = 354.0
+margin_right = 142.0
+margin_bottom = 384.0
 custom_fonts/font = ExtResource( 13 )
 custom_colors/font_color = Color( 0.968627, 1, 0, 1 )
+disabled = true
 text = "Switch"
 align = 0
 __meta__ = {
@@ -286,35 +235,26 @@ __meta__ = {
 }
 
 [node name="Macro" type="Button" parent="Main"]
-margin_left = 151.0
-margin_top = 290.0
-margin_right = 261.0
-margin_bottom = 330.0
+margin_left = 32.0
+margin_top = 388.0
+margin_right = 142.0
+margin_bottom = 418.0
 custom_fonts/font = ExtResource( 13 )
 custom_colors/font_color = Color( 0, 0.976471, 1, 1 )
+disabled = true
 text = "Macro"
 align = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Back" type="Button" parent="Main"]
-margin_top = 27.0
-margin_right = 70.0
-margin_bottom = 43.0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 3 )
-custom_styles/disabled = SubResource( 4 )
-custom_styles/normal = SubResource( 5 )
-text = "BACK"
-clip_text = true
+[node name="Back" parent="Main" instance=ExtResource( 15 )]
 
 [node name="OverBar" parent="Main" instance=ExtResource( 4 )]
 margin_left = 2.0
-margin_top = 314.0
+margin_top = 317.0
 margin_right = 264.0
-margin_bottom = 338.0
+margin_bottom = 341.0
 rect_rotation = -89.9999
 color = Color( 1, 0.773438, 0, 1 )
 
@@ -334,9 +274,9 @@ margin_right = 0.0
 margin_bottom = 0.0
 
 [node name="OverLabel" type="Label" parent="Main"]
-margin_top = 45.0
+margin_top = 48.0
 margin_right = 28.0
-margin_bottom = 50.0
+margin_bottom = 53.0
 custom_fonts/font = ExtResource( 5 )
 text = "OVER"
 align = 1
@@ -357,10 +297,9 @@ __meta__ = {
 }
 
 [node name="Name" type="Label" parent="Main"]
-margin_top = 2.0
-margin_right = 261.0
-margin_bottom = 25.0
-custom_styles/normal = SubResource( 6 )
+margin_right = 320.0
+margin_bottom = 24.0
+custom_styles/normal = SubResource( 9 )
 custom_fonts/font = ExtResource( 13 )
 text = "NAME"
 valign = 1
@@ -370,24 +309,34 @@ __meta__ = {
 
 [node name="Repeat" type="Button" parent="Main"]
 margin_left = 62.0
-margin_top = 27.0
+margin_top = 30.0
 margin_right = 261.0
-margin_bottom = 43.0
-custom_styles/hover = SubResource( 7 )
-custom_styles/pressed = SubResource( 8 )
-custom_styles/focus = SubResource( 9 )
-custom_styles/disabled = SubResource( 10 )
-custom_styles/normal = SubResource( 11 )
+margin_bottom = 46.0
+custom_styles/hover = SubResource( 10 )
+custom_styles/pressed = SubResource( 11 )
+custom_styles/focus = SubResource( 12 )
+custom_styles/disabled = SubResource( 13 )
+custom_styles/normal = SubResource( 14 )
 text = "Repeat Last"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Chain" type="Label" parent="Main"]
+[node name="Chain" type="Panel" parent="Main"]
+show_behind_parent = true
 margin_left = 270.0
 margin_top = 30.0
-margin_right = 302.0
-margin_bottom = 41.0
+margin_right = 322.0
+margin_bottom = 63.0
+custom_styles/panel = SubResource( 15 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="Main/Chain"]
+margin_top = 3.0
+margin_right = 32.0
+margin_bottom = 14.0
 custom_fonts/font = ExtResource( 5 )
 text = "CHAIN"
 align = 1
@@ -395,22 +344,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Main/Chain"]
+[node name="Count" type="Label" parent="Main/Chain"]
 margin_left = 12.0
-margin_top = 9.0
+margin_top = 12.0
 margin_right = 48.0
-margin_bottom = 29.0
+margin_bottom = 32.0
 custom_fonts/font = ExtResource( 13 )
 text = "XX"
 align = 2
 valign = 1
-
-[node name="Panel" type="Panel" parent="Main/Chain"]
-show_behind_parent = true
-margin_top = -3.0
-margin_right = 52.0
-margin_bottom = 30.0
-custom_styles/panel = SubResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -441,7 +383,6 @@ visible = false
 [connection signal="pressed" from="Main/Talk" to="." method="_on_Switch_pressed"]
 [connection signal="pressed" from="Main/Switch" to="." method="_on_Switch_pressed"]
 [connection signal="pressed" from="Main/Macro" to="." method="_on_Macro_pressed"]
-[connection signal="pressed" from="Main/Back" to="." method="_on_Back_pressed"]
 [connection signal="pressed" from="Main/Repeat" to="." method="_on_Repeat_pressed"]
 [connection signal="selection" from="WeaponMenu" to="." method="_on_WeaponMenu_selection"]
 [connection signal="selection" from="SkillMenu" to="." method="_on_SkillMenu_selection"]

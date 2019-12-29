@@ -40,7 +40,7 @@ blend_mode = 1
 
 [sub_resource type="StyleBoxFlat" id=3]
 content_margin_bottom = 0.0
-bg_color = Color( 0, 0, 0, 0.623529 )
+bg_color = Color( 0, 0, 0, 0.819608 )
 border_width_top = 2
 border_width_bottom = 2
 border_color = Color( 1, 1, 1, 1 )

@@ -99,7 +99,7 @@ class _charPanel:
 	var UIthemes = {
 	# ID         STANDARD             HIGHLIGHT
 	#            MAIN       BORDER    MAIN      BORDER
-		"normal" : ["1A3477", "A0DAE0", "3B67A7", "B0fae0"],
+		"normal" : ["000273", "A0DAE0", "3B67A7", "B0fae0"],
 		"select" : ["5A8457", "FFFFFF", "8A6427", "FFFFFF"],
 		"damage" : ["771A1A", "FFB666", "882A2A", "FFC676"],
 		"status" : ["773477", "75EEFF", "9764A7", "95FEFF"],
@@ -251,7 +251,7 @@ class StatClass:
 		{name = "ice", color = "6ED8E3", icon = "res://resources/icons/ice.svg"},
 		{name = "elec", color = "E2E36E", icon = "res://resources/icons/elec.svg"},
 		#{name = "unknown", color = "EEEECC", icon = "res://resources/icons/void.svg"},
-		{name = "ultimate", color = "000000", icon = "res://resources/icons/void.svg"},
+		{name = "ultimate", color = "080016", icon = "res://resources/icons/void.svg"},
 	]
 
 
@@ -417,11 +417,9 @@ class StatClass:
 			if E[i] > 999: E[i] = int(999)
 
 
-
-
+#
 
 # Helper functions ############################################################
-
 static func newArray(size:int) -> Array: #Creates and returns an array with the given size.
 	var a:Array = []
 	a.resize(size)

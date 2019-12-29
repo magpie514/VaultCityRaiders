@@ -1,77 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://nodes/UI/menu_over.gd" type="Script" id=1]
 [ext_resource path="res://resources/tres/fonts/std_font_big.tres" type="DynamicFont" id=2]
 [ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/tres/UI/menu_background.tres" type="StyleBox" id=4]
-
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.417969, 0.740814, 1, 1 )
-border_width_left = 8
-border_color = Color( 0.559784, 0.863281, 0.74947, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-__meta__ = {
-
-}
-
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.560784, 0.905882, 0.615686, 1 )
-border_width_left = 8
-border_color = Color( 0.846684, 0.863281, 0.559784, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-__meta__ = {
-
-}
-
-[sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-draw_center = false
-border_width_left = 8
-border_width_bottom = 1
-border_color = Color( 0.623529, 0.862745, 0.556863, 0.494157 )
-corner_radius_top_left = 10
-corner_radius_bottom_left = 10
-corner_detail = 1
-shadow_color = Color( 0.5578, 0.864588, 0.593451, 0.6 )
-anti_aliasing = false
-__meta__ = {
-
-}
-
-[sub_resource type="StyleBoxFlat" id=4]
-bg_color = Color( 0.146362, 0.147957, 0.171875, 1 )
-border_width_left = 8
-border_color = Color( 0.686275, 0.352941, 0.352941, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-shadow_size = 1
-__meta__ = {
-
-}
-
-[sub_resource type="StyleBoxFlat" id=5]
-bg_color = Color( 0.167969, 0.219971, 1, 1 )
-border_width_left = 8
-border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 10
-corner_detail = 1
-__meta__ = {
-
-}
+[ext_resource path="res://nodes/UI/battle/back_button.tscn" type="PackedScene" id=5]
 
 [node name="OverMenu" type="Panel"]
 self_modulate = Color( 1, 1, 1, 0.501961 )
@@ -79,7 +12,7 @@ margin_right = 360.0
 margin_bottom = 360.0
 script = ExtResource( 1 )
 __meta__ = {
-
+"_edit_use_anchors_": false
 }
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -88,57 +21,27 @@ margin_top = 120.0
 margin_right = 358.0
 margin_bottom = 350.0
 scroll_horizontal_enabled = false
-__meta__ = {
-
-}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
-__meta__ = {
-
-}
-
-[node name="Back" type="Button" parent="."]
-margin_top = 2.0
-margin_right = 60.0
-margin_bottom = 20.0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 3 )
-custom_styles/disabled = SubResource( 4 )
-custom_styles/normal = SubResource( 5 )
-text = "BACK"
-clip_text = true
-__meta__ = {
-
-}
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_left = 62.0
+margin_left = 70.0
 margin_top = 2.0
 margin_right = 358.0
 margin_bottom = 22.0
 color = Color( 0, 0, 0, 0.192118 )
-__meta__ = {
-
-}
 
 [node name="Label" type="Label" parent="ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 valign = 1
 clip_text = true
-__meta__ = {
-
-}
 
 [node name="Panel" type="Panel" parent="."]
 margin_top = 30.0
 margin_right = 359.0
 margin_bottom = 102.0
 custom_styles/panel = ExtResource( 4 )
-__meta__ = {
-
-}
 
 [node name="Cancel" type="Button" parent="Panel"]
 margin_left = 220.0
@@ -149,9 +52,6 @@ disabled = true
 shortcut_in_tooltip = false
 text = "Cancel"
 align = 0
-__meta__ = {
-
-}
 
 [node name="Accept" type="Button" parent="Panel"]
 margin_left = 296.0
@@ -162,9 +62,6 @@ disabled = true
 shortcut_in_tooltip = false
 text = "DO IT!!"
 align = 0
-__meta__ = {
-
-}
 
 [node name="ColorRect2" type="ColorRect" parent="Panel"]
 anchor_right = 1.0
@@ -174,9 +71,6 @@ margin_top = 8.0
 margin_right = -1.0
 margin_bottom = -35.0
 color = Color( 0, 0, 0, 0.192157 )
-__meta__ = {
-
-}
 
 [node name="Bar" parent="Panel" instance=ExtResource( 3 )]
 anchor_right = 1.0
@@ -196,6 +90,10 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="pressed" from="Back" to="." method="_on_Back_pressed"]
+
+[node name="Back" parent="." instance=ExtResource( 5 )]
+margin_top = 2.0
+margin_bottom = 20.0
 [connection signal="pressed" from="Panel/Cancel" to="." method="_on_Cancel_pressed"]
 [connection signal="pressed" from="Panel/Accept" to="." method="_on_Accept_pressed"]
+[connection signal="pressed" from="Back" to="." method="_on_Back_pressed"]

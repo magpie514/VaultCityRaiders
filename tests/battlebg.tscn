@@ -13,54 +13,34 @@ z_index = -20
 position = Vector2( 480, 360 )
 
 [node name="B1" type="Position2D" parent="Enemy"]
-position = Vector2( -192, 140 )
+position = Vector2( -192, 120 )
 rotation = 0.00574237
 z_index = -2
 
 [node name="B2" type="Position2D" parent="Enemy"]
-position = Vector2( -96, 140 )
+position = Vector2( 0, 120 )
 rotation = 0.00574237
 z_index = -2
 
 [node name="B3" type="Position2D" parent="Enemy"]
-position = Vector2( 0, 140 )
-rotation = 0.00574237
-z_index = -2
-
-[node name="B4" type="Position2D" parent="Enemy"]
-position = Vector2( 96, 140 )
-rotation = 0.00574237
-z_index = -2
-
-[node name="B5" type="Position2D" parent="Enemy"]
-position = Vector2( 192, 140 )
+position = Vector2( 192, 120 )
 rotation = 0.00574237
 z_index = -2
 
 [node name="F1" type="Position2D" parent="Enemy"]
-position = Vector2( -384, 220 )
+position = Vector2( -288, 200 )
 rotation = 0.00574237
 
 [node name="F2" type="Position2D" parent="Enemy"]
-position = Vector2( -192, 220 )
+position = Vector2( 0, 200 )
 rotation = 0.00574237
 
 [node name="F3" type="Position2D" parent="Enemy"]
-position = Vector2( 0, 220 )
-rotation = 0.00574237
-
-[node name="F4" type="Position2D" parent="Enemy"]
-position = Vector2( 192, 220 )
-rotation = 0.00574237
-
-[node name="F5" type="Position2D" parent="Enemy"]
-position = Vector2( 384, 220 )
+position = Vector2( 288, 200 )
 rotation = 0.00574237
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 480, 360 )
-drag_margin_h_enabled = false
-drag_margin_v_enabled = false
 editor_draw_limits = true
 
 [node name="FXHook" type="Position2D" parent="."]

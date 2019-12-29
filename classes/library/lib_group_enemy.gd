@@ -1,7 +1,8 @@
 extends "res://classes/library/lib_base.gd"
 
-const ROW_SIZE = 5
+const ROW_SIZE = 3
 const MAX_SIZE = ROW_SIZE * 2
+
 const LIBEXT_FORMATION = "loaderFormation"
 
 var example = {
@@ -9,15 +10,15 @@ var example = {
 		"debug" : {
 			name = "Debugger",
 			formation = [
-				null, null, {tid = ["debug", "debug"], level = 1, flags = null}, null, null,
-				null, null, null, null,	null
+				null, {tid = ["debug", "debug"], level = 1, flags = null}, null,
+				null, null, null
 			],
 		},
 		"debug0" : {
 			name = "Debug Bots",
 			formation = [
-				{tid = ["debug", "debug4"], level = 5, flags = null}, null, {tid = ["debug", "debug1"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},
-				null, null, null, null,	null
+				{tid = ["debug", "debug4"], level = 5, flags = null}, {tid = ["debug", "debug1"], level = 5, flags = null}, {tid = ["debug", "debug"], level = 5, flags = null},
+				null, null,	null
 			],
 			summons = [
 				{tid = ["debug", "compiler"], level = 1, flags = null},
@@ -26,15 +27,15 @@ var example = {
 		"debug1" : {
 			name = "Debug Bots",
 			formation = [
-				{tid = ["debug", "debug3"], level = 5, flags = null}, null, {tid = ["debug", "debug1"], level = 5, flags = null}, null, {tid = ["debug", "debug2"], level = 5, flags = null},
-				null, {tid = ["debug", "debug"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},	null
+				{tid = ["debug", "debug3"], level = 5, flags = null}, {tid = ["debug", "debug1"], level = 5, flags = null},{tid = ["debug", "debug2"], level = 5, flags = null},
+				{tid = ["debug", "debug"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},
 			]
 		},
 		"debug2" : {
 			name = "Debug Bots",
 			formation = [
-				{tid = ["debug", "debug"], level = 5, flags = null}, null, {tid = ["debug", "debug3"], level = 5, flags = null}, null, {tid = ["debug", "debug"], level = 5, flags = null},
-				{tid = ["debug", "compiler"], level = 5, flags = null}, {tid = ["debug", "compiler"], level = 5, flags = null}, {tid = ["debug", "compiler"], level = 5, flags = null}, {tid = ["debug", "compiler"], level = 5, flags = null},	{tid = ["debug", "compiler"], level = 5, flags = null}
+				{tid = ["debug", "debug"], level = 5, flags = null}, {tid = ["debug", "debug3"], level = 5, flags = null}, {tid = ["debug", "debug"], level = 5, flags = null},
+				{tid = ["debug", "compiler"], level = 5, flags = null}, {tid = ["debug", "compiler"], level = 5, flags = null},	{tid = ["debug", "compiler"], level = 5, flags = null}
 			]
 		}
 	}
@@ -75,4 +76,3 @@ func loaderFormation(val):
 					level = int(val[i].level),
 				}
 		return result
-		
