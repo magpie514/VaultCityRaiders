@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://nodes/UI/group_position.tres.gd" type="Script" id=1]
+
+[node name="Position" type="Control"]
+margin_right = 20.0
+margin_bottom = 20.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+color = Color( 0.006, 0, 0.04, 0.803922 )
+outline = Color( 0.960784, 0.466667, 0.0823529, 1 )
+hilight = Color( 0.0823529, 0.858824, 0.960784, 1 )

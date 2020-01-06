@@ -1,0 +1,34 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=1]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0.0117647, 0.176471, 0.796078 )
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.313726, 0.647059, 1, 1 )
+corner_radius_bottom_right = 24
+corner_detail = 1
+anti_aliasing = false
+
+[node name="SkillSeparator" type="Control"]
+margin_right = 320.0
+rect_min_size = Vector2( 320, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_top = 2.0
+margin_right = 350.0
+margin_bottom = 18.0
+rect_min_size = Vector2( 320, 0 )
+custom_styles/normal = SubResource( 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "SKILL CATEGORY SEPARATOR"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": ""
+}

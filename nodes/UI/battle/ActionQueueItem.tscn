@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://resources/tres/action_queue_item-stylebox.tres" type="StyleBox" id=1]
+[ext_resource path="res://nodes/UI/group_position.tscn" type="PackedScene" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Panel
@@ -11,6 +12,7 @@ func init(A, pos) -> void: #A:Action
 	style = _style.duplicate()
 	set(\"custom_styles/panel\", style)
 	$Label.text = str(\"%s\" % [A.user.name])
+	$Position.value = A.user.slot
 	if A.user is core.Player:
 		style.bg_color = \"55000088\"
 	elif A.user is core.Enemy:
@@ -19,14 +21,28 @@ func init(A, pos) -> void: #A:Action
 "
 
 [node name="ActionQueueItem" type="Panel"]
-margin_right = 219.84
-margin_bottom = 20.16
+margin_right = 250.0
+margin_bottom = 26.0
 custom_styles/panel = ExtResource( 1 )
 script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label" type="Label" parent="."]
-margin_left = 10.0
-margin_right = 200.0
-margin_bottom = 20.0
+margin_left = 30.0
+margin_right = 250.0
+margin_bottom = 25.0
 text = "CHARACTER NAME"
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Position" parent="." instance=ExtResource( 2 )]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 21.0
+margin_bottom = 25.0
+rect_scale = Vector2( 1, 0.96 )
+hilight = Color( 0.0823529, 0.447059, 0.960784, 1 )

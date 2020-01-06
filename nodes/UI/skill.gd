@@ -2,9 +2,9 @@ extends Control
 signal display_info(x)
 signal hide_info
 
-var textures : Array = core.newArray(8)
+var textures:Array = core.newArray(8)
 var S = null
-var level = 1
+var level:int = 1
 
 func _init() -> void:
 	for i in range(8):
@@ -17,7 +17,7 @@ enum {
 	COST_OV
 }
 
-func init(_S, _level, costs = COST_NONE, gem : bool = false):
+func init(_S, _level, costs = COST_NONE, gem:bool = false):
 	S = _S
 	level = _level
 	var DE = S.displayElement

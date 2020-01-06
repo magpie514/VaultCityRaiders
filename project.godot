@@ -25,7 +25,6 @@ core="*res://nodes/core.tscn"
 
 [debug]
 
-settings/fps/force_fps=60
 gdscript/completion/autocomplete_setters_and_getters=true
 gdscript/warnings/unassigned_variable=false
 gdscript/warnings/unassigned_variable_op_assign=false
@@ -40,10 +39,37 @@ window/size/height=720
 window/size/resizable=false
 window/size/test_width=960
 window/size/test_height=720
+window/ios/hide_home_indicator=false
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [gui]
 
+theme/use_hidpi=true
 theme/custom_font="res://resources/tres/fonts/std_font.tres"
+
+[importer_defaults]
+
+texture={
+"compress/bptc_ldr": 0,
+"compress/hdr_mode": 0,
+"compress/lossy_quality": 0.7,
+"compress/mode": 0,
+"compress/normal_map": 0,
+"detect_3d": true,
+"flags/anisotropic": false,
+"flags/filter": false,
+"flags/mipmaps": false,
+"flags/repeat": 0,
+"flags/srgb": 1,
+"process/HDR_as_SRGB": false,
+"process/fix_alpha_border": true,
+"process/invert_color": false,
+"process/premult_alpha": false,
+"size_limit": 0,
+"stream": false,
+"svg/scale": 1.0
+}
 
 [input]
 
@@ -137,14 +163,15 @@ limits/debugger_stdout/max_chars_per_second=60000
 
 [rendering]
 
-quality/2d/gles2_use_nvidia_rect_flicker_workaround=true
-quality/intended_usage/framebuffer_allocation.mobile=2
+quality/intended_usage/framebuffer_allocation=1
+quality/intended_usage/framebuffer_allocation.mobile=1
 quality/2d/use_pixel_snap=true
-quality/filters/anisotropic_filter_level=1
+quality/filters/anisotropic_filter_level=2
 quality/directional_shadow/size=1024
 quality/shadow_atlas/size=1024
 quality/shadow_atlas/quadrant_2_subdiv=0
 quality/shadow_atlas/quadrant_3_subdiv=0
+quality/reflections/texture_array_reflections=false
 quality/reflections/high_quality_ggx=false
 quality/filters/use_nearest_mipmap_filter=true
 quality/subsurface_scattering/quality=0

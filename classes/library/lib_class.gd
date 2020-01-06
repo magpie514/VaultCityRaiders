@@ -7,7 +7,7 @@ var example = {
 			name = "DEBUG",
 			description = "Debug class with high stat growth.",
 			statSpread = [ [004, 001, 001, 001, 001, 001, 001], [052, 032, 032, 032, 032, 032, 032] ],
-			weapons = [skill.WPCLASS_HANDGUN],
+			weapons = [core.WPCLASS_HANDGUN],
 			skills = [
 				["debug", "debug"],
 				["debug", "debugi"],
@@ -18,7 +18,7 @@ var example = {
 			name = "Orbital Fighter",
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [005, 000, 000, 003, 002, 004, 001], [032, 000, 006, 032, 024, 052, 018] ],
-			weapons = [skill.WPCLASS_ARTILLERY, skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_LONGSWORD],
+			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_LONGSWORD],
 			skills = [
 				["story", "plasfeld"],
 				["story", "thunswrd"], #Move to ORBITAL Cannon.
@@ -36,7 +36,7 @@ var example = {
 			name = "G-Driver",
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
-			weapons = [skill.WPCLASS_ARTILLERY, skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_POLEARM],
+			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_POLEARM],
 			skills = [
 				# Gun skills ##########
 				["debug", "trikshot"],
@@ -54,22 +54,23 @@ var example = {
 			name = "Akashic Knight",
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
-			weapons = [skill.WPCLASS_HANDGUN, skill.WPCLASS_SHORTSWORD, skill.WPCLASS_SHIELD],
+			weapons = [core.WPCLASS_HANDGUN, core.WPCLASS_SHORTSWORD, core.WPCLASS_SHIELD],
 			skills = [
-				["debug", "defdown"],
-				["debug", "speedup"],
-				["debug", "srnauror"],
-				["debug", "elemshot"],
-				["story", "borealsf"],
-				["story", "dncsword"],
-				["story", "kamaita"],
+				"debug/defdown",  #Defense down
+				"debug/speedup",  #Speed up
+				"debug/srnauror", #Serene Aurora
+				"debug/elemshot", #Elemental Shot
+				"story/borealsf", #Boreal Shift
+				"story/dncsword", #Dancing Sword
+				"story/kamaita",  #Kamaitachi
+				"story/megido",   #Megido
 			],
 		},
 		"muramasa" : { #Kurohara Shiro's story mode base class.
 			name = "Muramasa",
 			description = "A defensive class specializing in high defensive maneuvers, counters, and ghostly abilities",
 			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
-			weapons = [skill.WPCLASS_SHIELD, skill.WPCLASS_SHORTSWORD, skill.WPCLASS_LONGSWORD],
+			weapons = [core.WPCLASS_SHIELD, core.WPCLASS_SHORTSWORD, core.WPCLASS_LONGSWORD],
 			skills = [
 				#Needs huge rework. I need a Japanese dictionary pronto.
 				["debug", "defdown"],
@@ -81,7 +82,7 @@ var example = {
 		"incinera" : { #Anna Westenra's story mode base class.
 			name = "Incinerator",
 			description = "Brutal fighter using the power of flames and time.",
-			weapons = [skill.WPCLASS_ARTILLERY, skill.WPCLASS_SHORTSWORD, skill.WPCLASS_POLEARM],
+			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_SHORTSWORD, core.WPCLASS_POLEARM],
 			statSpread = [ [004, 004, 001, 002, 001, 000, 002], [040, 048, 008, 022, 008, 008, 024] ],
 			skills = [
 				#Define Anna's roles better.
@@ -94,7 +95,7 @@ var example = {
 		"esper" : {
 			name = "ESPer",
 			description = "A physically weak fighter but with powerful psychic abilities. Their physical fragility makes them better on the back row.",
-			weapons = [skill.WPCLASS_HANDGUN, skill.WPCLASS_SHIELD, skill.WPCLASS_SHORTSWORD],
+			weapons = [core.WPCLASS_HANDGUN, core.WPCLASS_SHIELD, core.WPCLASS_SHORTSWORD],
 			statSpread = [ [002, 000, 000, 003, 000, 002, 003], [018, 002, 002, 048, 024, 022, 028] ],
 			skills = [
 				["debug", "illusion"],
@@ -103,7 +104,7 @@ var example = {
 		"riot" : {
 			name = "Riot",
 			description = "A heavily defensive fighter with heavy armor and defenses, ideal for the front lines, but their skill with firearms makes them usable at the back, too.",
-			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_HAMMER],
+			weapons = [core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_HAMMER],
 			statSpread = [ [005, 002, 005, 000, 001, 000, 002], [050, 020, 048, 000, 012, 004, 016] ],
 			skills = [
 				["debug", "barricad"],
@@ -113,7 +114,7 @@ var example = {
 		"idol" : {
 			name = "Idol",
 			description = "Support class designed to assist the whole team. The agility required for their cheerful dances can allow them to be efficient fighters, too.",
-			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_HAMMER],
+			weapons = [core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_HAMMER],
 			statSpread = [ [005, 002, 005, 000, 001, 000, 002], [050, 020, 048, 000, 012, 004, 016] ],
 			skills = [
 				["debug", "speedup"],
@@ -122,7 +123,7 @@ var example = {
 		"fengshui" : {
 			name = "Feng-Shui",
 			description = "Adept fighters that can utilize environmental energies for a variety of skills. They are usually better suited for the back row.",
-			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_HAMMER],
+			weapons = [core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_HAMMER],
 			statSpread = [ [005, 002, 005, 000, 001, 000, 002], [050, 020, 048, 000, 012, 004, 016] ],
 			skills = [
 				["debug", "elemshot"],
@@ -131,7 +132,7 @@ var example = {
 		"rider" : {
 			name = "Rider",
 			description = "Adventurers that compensate their lack of combat skills with various machines to ride. While their growth is fully dependent on their ride, that makes them highly versatile.",
-			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD],
+			weapons = [core.WPCLASS_FIREARM, core.WPCLASS_SHIELD],
 			statSpread = [ [003, 000, 000, 000, 000, 000, 000], [010, 000, 000, 000, 000, 000, 008] ],
 			skills = [
 				"core/accel",
@@ -140,7 +141,7 @@ var example = {
 		"salarymn" : {
 			name = "Salaryman",
 			description = "Untrained adventurers unsatisfied with their office jobs. However, the spirit of adventure burns strong within them, and are full of potential.",
-			weapons = [skill.WPCLASS_FIREARM, skill.WPCLASS_SHIELD, skill.WPCLASS_HAMMER],
+			weapons = [core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_HAMMER],
 			statSpread = [ [005, 002, 005, 000, 001, 000, 002], [050, 020, 048, 000, 012, 004, 016] ],
 			skills = [
 			],
@@ -148,7 +149,7 @@ var example = {
 		"medic" : {
 			name = "Medic",
 			description = "Specialized healers trying to keep the party alive.",
-			weapons = [skill.WPCLASS_HANDGUN, skill.WPCLASS_SHIELD],
+			weapons = [core.WPCLASS_HANDGUN, core.WPCLASS_SHIELD],
 			statSpread = [ [002, 001, 001, 002, 004, 000, 002], [020, 016, 008, 022, 048, 008, 024] ],
 			skills = [
 				["debug", "heal"],
@@ -163,7 +164,7 @@ func initTemplate():
 	return {
 		"name" : { loader = LIBSTD_STRING },
 		"description" : { loader = LIBSTD_STRING },
-		"weapons" : { loader = LIBSTD_VARIABLEARRAY, default = [ core.skill.WPCLASS_SHIELD ] },
+		"weapons" : { loader = LIBSTD_VARIABLEARRAY, default = [ core.WPCLASS_SHIELD ] },
 		"statSpread" : { loader = LIBSTD_STATSPREAD },
 		"skills" : { loader = LIBSTD_SKILL_LIST },
 	}

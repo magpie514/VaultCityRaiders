@@ -2,7 +2,7 @@
 
 [ext_resource path="res://resources/fonts/ume-tgo4.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://resources/fonts/Shure Tech Mono Nerd Font Complete.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://resources/tres/fonts/std_font_big.tres" type="DynamicFont" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
 resource_name = "Button_Disabled"

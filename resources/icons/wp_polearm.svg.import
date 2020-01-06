@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/test.png-3ab3049515481a1aa389d4be43ff9d61.stex"
+path="res://.import/wp_polearm.svg-99bb892c83f2e72af7fbc43a90f87a33.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/images/test.png"
-dest_files=[ "res://.import/test.png-3ab3049515481a1aa389d4be43ff9d61.stex" ]
+source_file="res://resources/icons/wp_polearm.svg"
+dest_files=[ "res://.import/wp_polearm.svg-99bb892c83f2e72af7fbc43a90f87a33.stex" ]
 
 [params]
 
@@ -20,10 +20,10 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
-flags/srgb=1
+flags/srgb=2
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false

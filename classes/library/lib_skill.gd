@@ -154,7 +154,7 @@ var example = {
 			costOV = 100,
 			category = skill.CAT_OVER,
 			type = skill.TYPE_WEAPON,
-			requiresWeapon = core.skill.WPCLASS_ARTILLERY,
+			requiresWeapon = core.WPCLASS_ARTILLERY,
 			target = skill.TARGET_SPREAD,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ELEC,
@@ -178,6 +178,44 @@ var example = {
 		"freerang": {
 			name = "Free Range",
 			description = "Fire a cluster of seeking missiles with high accuracy.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SPREAD,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
+			energyDMG = false,
+			damageStat = core.stats.STAT.ETK,
+			chain = skill.CHAIN_STARTER,
+			modStat = core.stats.STAT.LUC,
+			ranged = true,
+			accMod = [110,110,110,099,099,   099,099,099,099,099],
+			spdMod = [085,100,100,100,100,   100,100,100,100,100],
+			AD =     [095,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+		"jrailgun": {
+			name = "Railgun",
+			description = "Fire a cluster of seeking missiles with high accuracy.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SPREAD,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_STRIKE,
+			energyDMG = false,
+			damageStat = core.stats.STAT.ETK,
+			chain = skill.CHAIN_STARTER,
+			modStat = core.stats.STAT.LUC,
+			ranged = true,
+			accMod = [110,110,110,099,099,   099,099,099,099,099],
+			spdMod = [085,100,100,100,100,   100,100,100,100,100],
+			AD =     [095,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+		"jhunter": {
+			name = "Hunter",
+			description = "Fires multiple shots weak shots that home on targets.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SPREAD,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -260,7 +298,7 @@ var example = {
 			description = "Flies at an enemy, using teleportation to dodge incoming attacks. Successful dodges improve damage. The further away the enemy is, the more time it'll take to reach.",
 			category = skill.CAT_ATTACK,
 			type = skill.TYPE_WEAPON,
-			requiresWeapon = skill.WPCLASS_POLEARM,
+			requiresWeapon = core.WPCLASS_POLEARM,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
@@ -292,7 +330,7 @@ var example = {
 			description = "Powerful slashing technique utilizing the power of the G-Crystal. It's impossible to defend against this attack. ",
 			category = skill.CAT_OVER,
 			type = skill.TYPE_WEAPON,
-			requiresWeapon = skill.WPCLASS_POLEARM,
+			requiresWeapon = core.WPCLASS_POLEARM,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ULTIMATE,
@@ -611,6 +649,25 @@ var example = {
 				["attack"            ,080,125,132,132,140,   140,147,147,147,160],
 			],
 			synergy = [["debug", "dncsword"]],
+		},
+		"megido": {
+			name = "Megido",
+			description = "Manipulates the Akashic Records with destructive intent. The resulting force can devastate anything.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_UNTYPED,
+			fieldEffectMult = 2,
+			energyDMG = true,
+			damageStat = core.stats.STAT.ETK,
+			modStat = core.stats.STAT.LUC,
+			ranged = true,
+			accMod = [098,099,099,099,099,   099,099,099,099,099],
+			spdMod = [080,100,100,100,100,   100,100,100,100,100],
+			AD =     [110,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"            ,2000,125,132,132,140,   140,147,147,147,160],
+			],
 		},
 	},
 # Enemy exclusive skills ##########################################################################
@@ -1519,7 +1576,7 @@ var example = {
 			description = "Marks an enemy for a chase attack.",
 			category = skill.CAT_ATTACK,
 			type = skill.TYPE_WEAPON,
-			requiresWeapon = skill.WPCLASS_FIREARM,
+			requiresWeapon = core.WPCLASS_FIREARM,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
@@ -1779,9 +1836,6 @@ func loaderSkillFilterEXArg(val):
 		return val
 
 func loaderSkillCode(a): #Loads skill codes.
-	#TODO: Make template a constant in skill.gd.
-	#                SKILL OPCODE        VALUE PER LEVEL         FLAGS               TAG    DGEM TAG
-	#   _template = [skill.OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  skill.OPFLAGS_NONE, '',    '']
 	var _template = skill.LINE_TEMPLATE
 	match(typeof(a)): #Check input type
 		TYPE_NIL:
@@ -1793,7 +1847,7 @@ func loaderSkillCode(a): #Loads skill codes.
 			var line = null #Placeholder for the current line.
 			for j in a.size():
 				line = a[j]
-				result[j] = _template.duplicate() #Initialize line as a copy of the template, saves the trouble of keeping sync.
+				result[j] = _template.duplicate(true) #Initialize line as a copy of the template, saves the trouble of keeping sync.
 				match(typeof(line)): #Determine line format.
 					TYPE_STRING: #Line is just an instruction, usually a 'get' with default values.
 						result[j][0] = skill.translateOpCode(line)

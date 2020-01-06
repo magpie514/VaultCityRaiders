@@ -4,12 +4,12 @@ var MAX_DMG = stats.MAX_DMG
 # Regular constants
 const SKILL_MISSED = -1  #TODO: Review these.
 const SKILL_FAILED = -2
-
-const MAX_LEVEL = 10     #Max amount of levels for skills.
+const MAX_LEVEL    = 10  #Max amount of levels for skills.
 
 #Skill code line template
-#                   <SKILL OPCODE> <VALUE PER LEVEL>       <FLAGS>       <TAG>  <DGEM TAG>
-var LINE_TEMPLATE = [OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  OPFLAGS_NONE, '',    '']
+#                   0              1 2 3 4 5   6 7 8 9 10  11            12            13           14
+#                   <SKILL OPCODE> <VALUE PER LEVEL>       <FLAGS>       <DATA ARRAY>  <DGEM TAG>   <TAG>
+var LINE_TEMPLATE = [OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  OPFLAGS_NONE, null,         '',          '']
 
 enum { #Category
 #General category of the attacks. Determines its general context
@@ -34,91 +34,12 @@ enum { #Filter
 	FILTER_STASIS,					#Target must be in stasis (special case)
 }
 
-enum { #General race types
-	#TODO: Make use of these for weapon "Brand" stuff, where hitting a target of the
-	#specified race gives a damage bonus.
-	#TODO: Should be a good time to start implementing "brands".
-	RACE_NONE,       #Shouldn't happen.
-	RACE_HUMAN,      #A regular human. Or the breed that produces adventurers.
-	RACE_CONSTRUCT,  #An artificial, non-strictly-mechanical lifeform.
-	RACE_MACHINE,    #An artificial, strictly mechanical lifeform.
-	RACE_SPIRIT,     #A spiritual being such as a ghost, youkai or similar.
-	RACE_ELEMENTAL,  #A specialized form of spirit born from the forces of the universe.
-	RACE_GIANT,      #A creature of extremely large size. Used as a modifier.
-	RACE_ANGEL,      #A divine being or beast, usually servants to the ghosts.
-	RACE_DEMON,      #A usually malevolent lifeform created by evil desires.
-	RACE_DRAGON,     #A powerful being attuned to the primal chaos, usually winged reptiles.
-	RACE_FAIRY,      #A powerful being attuned to natural forces.
-	RACE_UNDEAD,     #A deceased lifeform kept functioning by external energies.
-	RACE_BEAST,      #A primal being of varying characteristics. Usually non-sapient.
-	RACE_GOD,        #A powerful being born from the power of faith.
-	RACE_ELDRITCH,   #An alien lifeform directly born from primal chaos. Wildcards.
-	RACE_ORIGINATOR, #Only for Tiamat and Cromwell. The most powerful beings with the power to create lifeforms.
-}
-
-#TODO: Write some sort of function to check if all lists like this have a proper match.
-const racetypes = {
-	RACE_NONE: { name = "Unknown", desc = "???" },
-	RACE_HUMAN: { name = "Human", desc = "" },
-	RACE_CONSTRUCT: { name = "Construct", desc = "" },
-	RACE_MACHINE : { name = "Machine", desc = "" },
-	RACE_SPIRIT: { name = "Spirit", desc = "" },
-	RACE_ELEMENTAL: { name = "Elemental", desc = "" },
-	RACE_GIANT: { name = "Giant", desc = "" },
-	RACE_ANGEL: { name = "Angel", desc = "" },
-	RACE_DEMON: { name = "Demon", desc = "" },
-	RACE_DRAGON: { name = "Dragon", desc = "" },
-	RACE_FAIRY: { name = "Fairy", desc = "" },
-	RACE_UNDEAD: { name = "Undead", desc = "" },
-	RACE_BEAST: { name = "Beast", desc = "" },
-	RACE_GOD: { name = "God", desc = "" },
-	RACE_ELDRITCH: { name = "Eldritch", desc = "" },
-	RACE_ORIGINATOR: { name = "Originator", desc = "" },
-}
-
-enum { #Race Aspect
-	RACEF_NON = 0x00,
-	RACEF_MEC = 0x01, #Race has mechanical parts
-	RACEF_BIO = 0x02, #Race has organic parts
-	RACEF_SPI = 0x04, #Race has a soul
-}
-
-enum { #Weapon classes
-	WPCLASS_NONE = 0,     # None: Nothing whatsoever.
-	WPCLASS_FIST,         # Fist: Fists, gloves and arms. Martial skills and all that stuff.
-	WPCLASS_SHORTSWORD,   # Short Swords: Knives, daggers, machetes, any sort of short blade.
-	WPCLASS_LONGSWORD,    # Long Swords: Bastard swords, nihon-tou, zweihanders, ideal for your spiky haired characters.
-	WPCLASS_POLEARM,      # Polearms: Spears, lances, glaives, naginatas, the works.
-	WPCLASS_HAMMER,       # Hammers: Bats, maces, stun batons, staves, general blunt things.
-	WPCLASS_AXE,          # Axes: Hammers with blades. Hatchets, war axes, not a broad category but effective.
-	WPCLASS_HANDGUN,      # Handguns: Pistols, stun guns, revolvers. Portable and lightweight firearms.
-	WPCLASS_FIREARM,      # Firearms: Shotguns, rifles, grenade launchers. Bigger caliber guns, like law enforcement tier.
-	WPCLASS_ARTILLERY,    # Artillery: Cannons, missile launchers, howitzers. Powerful weaponry, military tier and above.
-	WPCLASS_SHIELD,       # Shields: Portable defensive devices.
-	WPCLASS_ONBOARD,      # Onboard: Special weapons available only to vehicles and robot equipment.
-}
-
-const weapontypes = {
-	WPCLASS_NONE : { name = "???", icon = "" },
-	WPCLASS_FIST : { name = "Fists", icon = "" },
-	WPCLASS_SHORTSWORD : { name = "Short Sword", icon = "" },
-	WPCLASS_LONGSWORD : { name = "Long Sword", icon = "" },
-	WPCLASS_POLEARM : { name = "Polearm", icon = "" },
-	WPCLASS_HAMMER : { name = "Hammer", icon = "" },
-	WPCLASS_AXE : { name = "Axe", icon = "" },
-	WPCLASS_HANDGUN : { name = "Handgun", icon = "" },
-	WPCLASS_FIREARM : { name = "Firearm", icon = "" },
-	WPCLASS_ARTILLERY : { name = "Artillery", icon = "" },
-	WPCLASS_SHIELD : { name = "Shield", icon = "" },
-	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
-}
-
 enum { MODSTAT_NONE, MODSTAT_ATK, MODSTAT_DEF, MODSTAT_ETK, MODSTAT_EDF, MODSTAT_AGI, MODSTAT_LUC }
 enum {
-	REQUIRES_NONE =	0x00,
-	REQUIRES_HEAD =	0x01,
-	REQUIRES_ARM =	0x02,
-	REQUIRES_LEG =	0x04,
+	REQUIRES_NONE = 0x00,
+	REQUIRES_HEAD = 0x01,
+	REQUIRES_ARM =  0x02,
+	REQUIRES_LEG =  0x04,
 }
 
 enum { # Skill type ### TODO: Are these in use?
@@ -139,34 +60,34 @@ enum { EFFTYPE_BUFF, EFFTYPE_DEBUFF, EFFTYPE_SPECIAL } #If it's a buff, debuff o
 
 
 enum { #Skill effects
-	EFFECT_NONE =			0x0000, #No effect
-	EFFECT_STATS = 		0x0002, #Alters combat stats
-	EFFECT_ATTACK = 	0x0200,	#Runs effect code EA on a successful hit
-	EFFECT_ONHIT = 		0x0400, #Runs effect code EH when receiving a hit
-	EFFECT_ONEND =		0x0800, #Runs effect code EE when the effect ends
-	EFFECT_SPECIAL = 	0x1000, #Runs effect code ES at the start of a turn
+	EFFECT_NONE    = 0x0000, #No effect
+	EFFECT_STATS   = 0x0002, #Alters combat stats
+	EFFECT_ATTACK  = 0x0200, #Runs effect code EA on a successful hit
+	EFFECT_ONHIT   = 0x0400, #Runs effect code EH when receiving a hit
+	EFFECT_ONEND   = 0x0800, #Runs effect code EE when the effect ends
+	EFFECT_SPECIAL = 0x1000, #Runs effect code ES at the start of a turn
 }
 
 enum { #What to do in case of effect collision (same effect active on target)
 	EFFCOLL_REFRESH,	#Default, reset effect to maximum duration.
-	EFFCOLL_ADD,			#Add maximum duration to current duration.
-	EFFCOLL_FAIL,			#Effect fails
+	EFFCOLL_ADD,		#Add maximum duration to current duration.
+	EFFCOLL_FAIL,		#Effect fails
 	EFFCOLL_NULLIFY,	#Cancels or toggles the effect
 }
 
 enum EffectStat { #Effect stat mods.
-	EFFSTAT_NONE =			0x0000, #No change
-	EFFSTAT_BASE =			0x0001,	#Change (raw) to base stats (STR, INT...)
-	EFFSTAT_BASEMULT =	0x0002,	#Change (multiplier) to base stats. Multipliers are additive.
-	EFFSTAT_OFF =				0x0004,	#Change to elemental offense stats.
-	EFFSTAT_RES =		 		0x0008,	#Change to elemental resistance stats.
-	EFFSTAT_STRES = 		0x0010,	#Change to status effect resistances.
-	EFFSTAT_AD =		 		0x0020,	#Change to active defense%
-	EFFSTAT_GUARD = 		0x0040,	#Change guard value.
-	EFFSTAT_BARRIER = 	0x0080,	#Change barrier value.
-	EFFSTAT_DECOY = 		0x0100,	#Change attack draw rate%
-	EFFSTAT_DODGE =			0x0200,	#Change forced dodge value.
-	EFFSTAT_EVASION =		0x0400,	#Change evasion bonus.
+	EFFSTAT_NONE     = 0x0000, #No change
+	EFFSTAT_BASE     = 0x0001,	#Change (raw) to base stats (STR, INT...)
+	EFFSTAT_BASEMULT = 0x0002,	#Change (multiplier) to base stats. Multipliers are additive.
+	EFFSTAT_OFF      = 0x0004,	#Change to elemental offense stats.
+	EFFSTAT_RES      = 0x0008,	#Change to elemental resistance stats.
+	EFFSTAT_STRES    = 0x0010,	#Change to status effect resistances.
+	EFFSTAT_AD       = 0x0020,	#Change to active defense%
+	EFFSTAT_GUARD    = 0x0040,	#Change guard value.
+	EFFSTAT_BARRIER  = 0x0080,	#Change barrier value.
+	EFFSTAT_DECOY    = 0x0100,	#Change attack draw rate%
+	EFFSTAT_DODGE    = 0x0200,	#Change forced dodge value.
+	EFFSTAT_EVASION  = 0x0400,	#Change evasion bonus.
 }
 
 # Character status
@@ -208,32 +129,32 @@ enum {
 enum { TARGET_GROUP_ALLY, TARGET_GROUP_ENEMY, TARGET_GROUP_BOTH }
 
 const statusInfo = {
-	STATUS_NONE : 	{ name = "OK", desc = "restored", color = "00FF88", short = "" },
-	STATUS_DOWN : 	{ name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = "DWN" },
-	STATUS_STASIS : { name = "Stasis", desc = "put in stasis", color = "440088", short = "STA" },
-	STATUS_PARA :		{ name = "Paralysis", desc = "paralized", color = "FFFF00", short = "PAR" },
-	STATUS_BLIND:		{ name = "Blind", desc = "blinded", color = "333333", short = "BLI" },
-	STATUS_CURSE: 	{ name = "Curse", desc = "cursed", color = "FF00FF", short = "CUR" },
-	STATUS_SLEEP: 	{ name = "Sleep", desc = "put to sleep", color = "0000FF", short = "SLP" },
+	STATUS_NONE  : { name = "Green"        , desc = "restored"     , color = "00FF88", short = "" }   ,
+	STATUS_DOWN  : { name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = "DWN" },
+	STATUS_STASIS: { name = "Stasis"       , desc = "put in stasis", color = "440088", short = "STA" },
+	STATUS_PARA  : { name = "Paralysis"    , desc = "paralized"    , color = "FFFF00", short = "PAR" },
+	STATUS_BLIND : { name = "Blind"        , desc = "blinded"      , color = "333333", short = "BLI" },
+	STATUS_CURSE : { name = "Curse"        , desc = "cursed"       , color = "FF00FF", short = "CUR" },
+	STATUS_SLEEP : { name = "Sleep"        , desc = "put to sleep" , color = "0000FF", short = "SLP" },
 }
 
 
-var messageColors = {
-	buff = "62EAFF",
-	debuff = "FFA9B0",
-	statup = "FFDAE0",
-	statdown = "E3E2FF",
-	chain = "FBFFA5",
-	protect = "BEFFCE",
-	followup = "DEF0FC",
+var messageColors = {   #Colors for various message types.
+	buff     = "62EAFF", #Buffs
+	debuff   = "FFA9B0", #Debuffs
+	statup   = "FFDAE0", #Stat ups
+	statdown = "E3E2FF", #Stat downs
+	chain    = "FBFFA5", #Chain chances
+	protect  = "BEFFCE", #Protect
+	followup = "DEF0FC", #Followup actions
 }
 
 enum { #Skill message settings
 #TODO: Remove, they are not needed anymore, just pass a dictionary with these values and specify the value like {USER} or so.
-	MSG_NONE = 			0x00,
-	MSG_USER = 			0x01,
-	MSG_TARGET = 		0x02,
-	MSG_SKILL = 		0x04,
+	MSG_NONE =   0b0000,
+	MSG_USER =   0b0001,
+	MSG_TARGET = 0b0010,
+	MSG_SKILL =  0b0100,
 }
 
 enum {
@@ -242,9 +163,9 @@ enum {
 }
 
 enum {
-	ANIM_ONHIT = 0,
+	ANIM_ONHIT   = 0,
 	ANIM_STARTUP = 1,
-	ANIM_FINISH = 1
+	ANIM_FINISH  = 2,
 }
 
 enum { #Chains. Starters init a sequence, follows increase it, and finishers use the chain value as modifier.
@@ -272,30 +193,30 @@ enum { #Targeting.
 #To expedite combat, some skills don't show a target prompt.
 #Skills only allow targets within range. If only one target is in range, it'll be chosen automatically.
 	#No prompt
-	TARGET_SELF,							#Targets only self.																		prompt: no
-	TARGET_SELF_ROW,					#Pics any valid targets on self's row.								prompt: no
-	TARGET_SELF_ROW_NOT_SELF,	#Picks any valid targets on self's row but user.			prompt: no
-	TARGET_NOT_SELF_ROW,			#Picks any valid targets on the other row.						prompt: no
-	TARGET_ALL,								#Targets everyone.																		prompt: no
-	TARGET_ALL_NOT_SELF,			#Targets everyone but user.														prompt: no
-	#TODO: Do something about these, implement proper logic.
-	TARGET_RANDOM1,						#Picks any valid targets, can repeat.									prompt: no
-	TARGET_RANDOM2,						#Picks any valid targets, but can't repeat.						prompt: no
+	TARGET_SELF             , #Targets only self.																		prompt: no
+	TARGET_SELF_ROW         , #Pics any valid targets on self's row.								prompt: no
+	TARGET_SELF_ROW_NOT_SELF, #Picks any valid targets on self's row but user.			prompt: no
+	TARGET_NOT_SELF_ROW     , #Picks any valid targets on the other row.						prompt: no
+	TARGET_ALL              , #Targets everyone.																		prompt: no
+	TARGET_ALL_NOT_SELF     , #Targets everyone but user.														prompt: no
+	#TODO                   : Do something about these, implement proper logic.
+	TARGET_RANDOM1          , #Picks any valid targets, can repeat.									prompt: no
+	TARGET_RANDOM2          , #Picks any valid targets, but can't repeat.						prompt: no
 
 	#Pick single target
-	TARGET_SINGLE,						#Targets any member.																	prompt: yes
-	TARGET_SINGLE_NOT_SELF,		#Targets any member, except self.											prompt: yes
-	TARGET_SPREAD,						#Targets one member and nearby members, half damage.  prompt: yes
-	TARGET_WIDE,              #Targets one member and nearby members, full effect.  prompt: yes
+	TARGET_SINGLE           , #Targets any member.																	prompt: yes
+	TARGET_SINGLE_NOT_SELF  , #Targets any member, except self.											prompt: yes
+	TARGET_SPREAD           , #Targets one member and nearby members, half damage.  prompt: yes
+	TARGET_WIDE             , #Targets one member and nearby members, full effect.  prompt: yes
 
 	#Pick row of targets
-	TARGET_ROW,								#Targets a full row.																	prompt: yes
-	TARGET_ROW_RANDOM,				#Picks any valid targets on selected row.							prompt: yes
-	TARGET_ROW_FRONT,					#Explicitly picks the front row.
-	TARGET_ROW_BACK,					#Explicitly picks the back row.
+	TARGET_ROW              , #Targets a full row.																	prompt: yes
+	TARGET_ROW_RANDOM       , #Picks any valid targets on selected row.							prompt: yes
+	TARGET_ROW_FRONT        , #Explicitly picks the front row.
+	TARGET_ROW_BACK         , #Explicitly picks the back row.
 
 	#Pick two members
-	TARGET_LINE,							#Targets one member per row.													prompt: yes
+	TARGET_LINE,					#Targets one member per row.													prompt: yes
 }
 
 enum { #Code blocks
@@ -318,9 +239,9 @@ enum { #Code blocks
 	CODE_EF,	#[*] Effect code: if the skill provides a buff/debuff with special effect, use this code.
 	CODE_EP,	#[ ] Effect post code. If included, run this on targetPost defined targets of the user's group.
 	CODE_EE,	#[*] Effect end code: if the skill provides a buff/debuff, use this code when it ends.
-	CODE_EA,  #[ ] Effect Attack code: while the skill provides a buff/debuff, use this code when successfuly hitting a target.
-	CODE_EH,  #[ ] Effect Hurt code: while the skill provides a buff/debuff, use this code when getting successfully hit by an attacker.
-	CODE_ED,  #[ ] Effect down code: while the skill provides a buff/debuff, use this code when defeating a target.
+	CODE_EA, #[ ] Effect Attack code: while the skill provides a buff/debuff, use this code when successfuly hitting a target.
+	CODE_EH, #[ ] Effect Hurt code: while the skill provides a buff/debuff, use this code when getting successfully hit by an attacker.
+	CODE_ED, #[ ] Effect down code: while the skill provides a buff/debuff, use this code when defeating a target.
 }
 
 enum { #Skill function flags. Value between [] is used in the function codes where applicable.
@@ -519,7 +440,7 @@ enum { #Skill function codes.
 	OPCODE_MATH_PERCENT,			#Set stored value to X% of its current value.
 
 	# Conditionals ###############################################################
-	OPCODE_IF_TRUE,											#[!]Execute next line if X is not zero.
+	OPCODE_IF_TRUE,                     #[!]Execute next line if X is not zero.
 	OPCODE_IF_OVER,                     #[!]Execute next line if target's Over is >= X.
 	OPCODE_IF_CHANCE,                   #[!]Chance% to execute next line.
 	OPCODE_IF_STATUS,                   #[!]Execute next line if afflicted.
@@ -533,19 +454,19 @@ enum { #Skill function codes.
 	OPCODE_IF_ACT,                      #[!]Execute next line if target has already acted.
 	OPCODE_IF_GUARDING,                 #[!]Execute next line if target is defending.
 #TODO: Think of a better mechanism to specify TIDs or lists of TIDs for these.
-	OPCODE_IF_BUFF,											#[!]Execute next line if target has active buff with given TID. -1 for any.
-	OPCODE_IF_DEBUFF,										#[!]Execute next line if target has active debuff with given TID. -1 for any.
-	OPCODE_IF_TARGET_TID,								#[!]Execute next line if target matches given TID.
+	OPCODE_IF_BUFF,                     #[!]Execute next line if target has active buff with given TID. -1 for any.
+	OPCODE_IF_DEBUFF,                   #[!]Execute next line if target has active debuff with given TID. -1 for any.
+	OPCODE_IF_TARGET_TID,               #[!]Execute next line if target matches given TID.
 ###/###
 	OPCODE_IF_DAMAGED,                  #[!]Execute next line if target was damaged this turn.
 	OPCODE_IF_SELF_DAMAGED,             #[!]Execute next line if user received damage this turn.
 	OPCODE_IF_HITCHECK,                 #[!]Execute next line if a standard hit check succeeds.
 	OPCODE_IF_CONNECT,                  #[!]Execute next line if last attack command hit.
-	OPCODE_IF_SYNERGY_PARTY,						#[!]Execute next line if target's party has a given skill active, usually buffs, debuffs or passives.
-	OPCODE_IF_SYNERGY_TARGET,						#[!]Execute next line if target has a given skill active.
-	OPCODE_IF_RACE_ASPECT,							#[!]Execute next line if target has the given race aspects.
-	OPCODE_IF_RACE_TYPE,								#[!]Execute next line if target has the given race type amount its list.
-	OPCODE_IF_DAY,											#[!]Execute next line if current time is day.
+	OPCODE_IF_SYNERGY_PARTY,            #[!]Execute next line if target's party has a given skill active, usually buffs, debuffs or passives.
+	OPCODE_IF_SYNERGY_TARGET,           #[!]Execute next line if target has a given skill active.
+	OPCODE_IF_RACE_ASPECT,              #[!]Execute next line if target has the given race aspects (BIO/MEC/SPI).
+	OPCODE_IF_RACE_TYPE,                #[!]Execute next line if target has the given race type amount its list.
+	OPCODE_IF_DAY,                      #[!]Execute next line if current time is day.
 	OPCODE_IF_NIGHT,                    #[!]Execute next line if current time is night. Convenient shortcut for "not if_day"
 }
 

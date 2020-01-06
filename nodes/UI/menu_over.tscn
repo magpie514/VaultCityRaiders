@@ -17,12 +17,13 @@ __meta__ = {
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 margin_left = 2.0
-margin_top = 120.0
+margin_top = 102.0
 margin_right = 358.0
 margin_bottom = 350.0
 scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+custom_constants/separation = 28
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_left = 70.0
@@ -42,25 +43,28 @@ margin_top = 30.0
 margin_right = 359.0
 margin_bottom = 102.0
 custom_styles/panel = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Cancel" type="Button" parent="Panel"]
-margin_left = 220.0
-margin_top = 47.0
+margin_left = 210.0
+margin_top = 40.0
 margin_right = 280.0
-margin_bottom = 69.0
+margin_bottom = 65.0
 disabled = true
 shortcut_in_tooltip = false
 text = "Cancel"
 align = 0
 
 [node name="Accept" type="Button" parent="Panel"]
-margin_left = 296.0
-margin_top = 47.0
-margin_right = 356.0
-margin_bottom = 69.0
+margin_left = 290.0
+margin_top = 40.0
+margin_right = 360.0
+margin_bottom = 65.0
 disabled = true
 shortcut_in_tooltip = false
-text = "DO IT!!"
+text = "DO IT!"
 align = 0
 
 [node name="ColorRect2" type="ColorRect" parent="Panel"]

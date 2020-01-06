@@ -7,10 +7,10 @@ var lib = null
 var XPMultiplier:float = 1.0
 var summoner = null
 var armed:bool = true #If the enemy is supposed to be wielding weapons or not.
+var ID:int = 0        #Unique ID. Used only for mons.
 
 func recalculateStats():
 	var S = stats.create()
-
 	stats.setFromSpread(S, lib.statSpread, level)
 	stats.setElementDataFromArray(S.RES, lib.RES)
 	stats.setElementDataFromArray(S.OFF, lib.OFF)
@@ -22,9 +22,10 @@ func recalculateStats():
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
 
-func initDict(C):
+func initDict(C): #Initialize an enemy from a data dict.
 	side = 1
 	lib = C
+	ID = randi() #TODO: Assign an unique integer ID to this enemy.
 	self.name = str(lib.name)
 	energyColor = C.energyColor
 	for i in lib.skill:

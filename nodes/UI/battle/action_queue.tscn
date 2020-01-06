@@ -3,8 +3,9 @@
 [ext_resource path="res://nodes/UI/battle/action_queue.gd" type="Script" id=1]
 
 [node name="ActionQueue" type="Control"]
-anchor_right = 0.167
-anchor_bottom = 0.292
-margin_right = -0.320007
-margin_bottom = -0.240021
+anchor_right = 0.260417
+anchor_bottom = 0.291667
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": true
+}

@@ -26,11 +26,11 @@ func showChar(c):
 
 	$DescPanel/Desc.bbcode_text = str(c.lib.description)
 	$DescPanel/Name.text = c.name
-	if c.lib.aspect & core.skill.RACEF_MEC: $DescPanel/MEC/Label.show(); else: $DescPanel/MEC/Label.hide()
-	if c.lib.aspect & core.skill.RACEF_BIO: $DescPanel/BIO/Label.show(); else: $DescPanel/BIO/Label.hide()
-	if c.lib.aspect & core.skill.RACEF_SPI: $DescPanel/SPI/Label.show(); else: $DescPanel/SPI/Label.hide()
+	if c.lib.aspect & core.RACEF_MEC: $DescPanel/MEC/Label.show(); else: $DescPanel/MEC/Label.hide()
+	if c.lib.aspect & core.RACEF_BIO: $DescPanel/BIO/Label.show(); else: $DescPanel/BIO/Label.hide()
+	if c.lib.aspect & core.RACEF_SPI: $DescPanel/SPI/Label.show(); else: $DescPanel/SPI/Label.hide()
 	$Elements.init(c.battle.stat)
-	$DescPanel/Label.text = 'RACE: %s' % core.skill.racetypes[c.lib.race].name
+	$DescPanel/Label.text = 'RACE: %s' % core.racetypes[c.lib.race].name
 
 	var line = null
 	if c.battle.buff != null:

@@ -8,7 +8,7 @@
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=6]
 [ext_resource path="res://nodes/UI/battle/message_display.tscn" type="PackedScene" id=7]
 [ext_resource path="res://nodes/UI/battle/AD.tscn" type="PackedScene" id=8]
-[ext_resource path="res://resources/tres/fonts/name_font.tres" type="DynamicFont" id=9]
+[ext_resource path="res://resources/tres/fonts/std_font_big.tres" type="DynamicFont" id=9]
 [ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=10]
 
 [sub_resource type="DynamicFont" id=1]
@@ -119,10 +119,10 @@ __meta__ = {
 }
 
 [node name="Name" type="Label" parent="."]
-margin_left = 28.0
+margin_left = 30.0
 margin_top = 1.0
 margin_right = 190.0
-margin_bottom = 18.0
+margin_bottom = 20.0
 size_flags_vertical = 1
 custom_fonts/font = ExtResource( 9 )
 text = "12345678901"
@@ -133,6 +133,7 @@ __meta__ = {
 }
 
 [node name="ColorRect" type="ColorRect" parent="Name"]
+visible = false
 show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -194,6 +195,7 @@ flat = true
 clip_text = true
 
 [node name="Action" type="Label" parent="."]
+visible = false
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 210.0
@@ -232,6 +234,7 @@ position = Vector2( 110, 20 )
 z_index = 2
 
 [node name="LookAtMePanel" type="Panel" parent="EffectHook"]
+visible = false
 material = SubResource( 5 )
 anchor_left = 0.5
 anchor_top = 0.5

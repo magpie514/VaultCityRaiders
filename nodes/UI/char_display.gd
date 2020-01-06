@@ -96,6 +96,7 @@ func setActionText(act):
 	else: S = act.skill
 	var target = ""
 	if act.target != null:
+		#FIXME: When repeating actions, act.target might be empty. Check for array size for retargetting, can cause errors.
 		match(S.target[act.level]):
 			core.skill.TARGET_SELF:
 				target = "Self"

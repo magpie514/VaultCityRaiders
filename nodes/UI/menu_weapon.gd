@@ -2,8 +2,9 @@ extends Panel
 signal selection(x)
 
 var skillNode = load("res://nodes/UI/skill.tscn")
+var separator = load("res://nodes/UI/skill_category_separator.tscn")
 
-var buttons = []
+var buttons = [] #Logical list of added buttons so they can be removed on refresh.
 var target = null
 var currentChar = null
 var controls = null #Set externally from battle_controls. It should never change. ...right?
@@ -11,6 +12,7 @@ var targetPanel = null #Node for the target selector. Set externally as well.
 var infoPanel = null #Node for the info display panel.
 
 onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
+onready var container = $ScrollContainer/VBoxContainer
 
 func init(C, slot):
 	var button = null
@@ -18,13 +20,12 @@ func init(C, slot):
 	var W = WP.lib
 	var WS = WP.stats
 	var S = null
-	var count : int = 0
+	var count:int = 0
 	var TID = null
 	clear()
 	currentChar = C
-	print(WS)
+	# Set up panel info #########################################################
 	$Panel/Name.text = str(W.name)
-	#$Panel/DUR.text = str("%02d/%02d" % [WP.uses, WS.DUR])
 	var durcolor = "#FFFFFF"
 	if WS.DUR > W.durability[WP.level]:   durcolor = "#88FF88"
 	elif WS.DUR < W.durability[WP.level]: durcolor = "#FF8888"
@@ -53,29 +54,25 @@ func init(C, slot):
 		node = $Panel/Stats.get_node(str("%sB" % i))
 		node.value = core.normalize(WS[i], 128)
 
+	# Fill the skills list with skill buttons ###################################
 	for i in W.skill:
-		count += 1
-		S = core.lib.skill.getIndex(i)
+		# count += 1 #Keep a count of list elements to assign hotkeys.
 		button = skillNode.instance()
+		S = core.lib.skill.getIndex(i)
 		button.init(S, WP.level, button.COST_WP)
-		$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-		$ScrollContainer/VBoxContainer.add_child(button)
-		button.get_node("Button").connect("pressed", self, "chooseResult", [[i, WP.level], WP])
-		button.connect("display_info", controls.infoPanel, "showInfo")
-		button.connect("hide_info", controls.infoPanel, "hideInfo")
-		buttons.push_back(button)
+		addButton(button, [[i, WP.level], WP])
+
+	addSeparator("Dragon gem skills")
 
 	for i in WP.DGem.skills:
-		S = core.getSkillPtr(i[0])
+		#TODO: i[0]: TID??, i[1]: level, i[2]: ???
 		button = skillNode.instance()
+		S = core.getSkillPtr(i[0])
 		var tmp = i[2] if i[2] != null else S
 		button.init(tmp, i[1], button.COST_WP, true)
-		$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-		$ScrollContainer/VBoxContainer.add_child(button)
-		button.get_node("Button").connect("pressed", self, "chooseResult", [[i[0], i[1]], WP, i[2]])
-		button.connect("display_info", controls.infoPanel, "showInfo")
-		button.connect("hide_info", controls.infoPanel, "hideInfo")
-		buttons.push_back(button)
+		addButton(button, [[i[0], i[1]], WP, i[2]])
+
+	addSeparator("Weapon skills")
 
 	for i in C.skills:
 		TID = C.getSkillTID(i)
@@ -83,14 +80,21 @@ func init(C, slot):
 		if S.type == 1 and S.requiresWeapon == WP.lib.wclass and S.category in [core.skill.CAT_ATTACK, core.skill.CAT_SUPPORT]:
 			button = skillNode.instance()
 			button.init(S, i[1], button.COST_WP)
-			$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-			$ScrollContainer/VBoxContainer.add_child(button)
-			button.get_node("Button").connect("pressed", self, "chooseResult", [[TID, i[1]], WP])
-			button.connect("display_info", controls.infoPanel, "showInfo")
-			button.connect("hide_info", controls.infoPanel, "hideInfo")
-			buttons.push_back(button)
+			addButton(button, [[TID, i[1]], WP])
 	show()
 
+func addButton(button, data:Array):
+	container.add_child(button)
+	button.get_node("Button").connect("pressed", self, "chooseResult", data)
+	button.connect("display_info", controls.infoPanel, "showInfo")
+	button.connect("hide_info"   , controls.infoPanel, "hideInfo")
+	buttons.push_back(button)
+
+func addSeparator(text:String):
+	var sep = separator.instance()
+	container.add_child(sep)
+	sep.get_node("Label").text = text
+	buttons.push_back(sep)
 
 func clear():
 	$Panel/DGem.set_process(false)
@@ -106,7 +110,7 @@ func finish():
 	hide()
 
 func chooseResult(x, WP, skillOverride=null): #[TID skill, int level]
-	modulate.a = 0.2			#Fade menu out a bit.
+	modulate.a = 0.2 #Fade menu out a bit.
 	var result = controls.state.Action.new(controls.state.ACT_FIGHT)
 	result.WP = WP
 	if skillOverride != null: print("[MENU_WEAPON][chooseResult] Found override: %s" % skillOverride.name)

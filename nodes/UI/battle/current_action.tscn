@@ -1,16 +1,16 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://resources/tres/fonts/std_font_big.tres" type="DynamicFont" id=1]
 [ext_resource path="res://resources/icons/untyped.svg" type="Texture" id=2]
+[ext_resource path="res://resources/tres/fonts/std_font_xl.tres" type="DynamicFont" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0, 0.0313726, 0.701961, 0.443137 )
+bg_color = Color( 0.0156863, 0, 0.341176, 0.501961 )
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 corner_radius_top_left = 10
-corner_radius_bottom_right = 10
 corner_detail = 1
 anti_aliasing = false
 
@@ -66,34 +66,41 @@ script = SubResource( 2 )
 
 [node name="Label" type="Label" parent="."]
 margin_left = 10.0
+margin_top = 2.0
 margin_right = 200.0
-margin_bottom = 24.0
+margin_bottom = 20.0
 custom_fonts/font = ExtResource( 1 )
 text = "CHARACTER NAME"
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label2" type="Label" parent="."]
-margin_top = 16.0
-margin_right = 210.0
+margin_top = 18.0
+margin_right = 218.0
 margin_bottom = 40.0
-custom_fonts/font = ExtResource( 1 )
+custom_fonts/font = ExtResource( 3 )
 text = "SKILL NAME"
 align = 2
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Element0" type="Sprite" parent="Label2"]
-position = Vector2( 10, 14 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 10, 12 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Element1" type="Sprite" parent="Label2"]
 visible = false
-position = Vector2( 28, 14 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 30, 12 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )
 
 [node name="Element2" type="Sprite" parent="Label2"]
 visible = false
-position = Vector2( 46, 14 )
-scale = Vector2( 0.125, 0.125 )
+position = Vector2( 50, 12 )
+scale = Vector2( 0.15625, 0.15625 )
 texture = ExtResource( 2 )

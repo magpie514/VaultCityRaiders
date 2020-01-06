@@ -42,7 +42,89 @@ var tid = _tid.new()
 var skill = null
 var guild = null
 var init = false
+# Important shared constants ##################################################
 
+enum { #General race types
+	#TODO: Make use of these for weapon "Brand" stuff, where hitting a target of the
+	#specified race gives a damage bonus.
+	#TODO: Should be a good time to start implementing "brands".
+	RACE_NONE,       #Shouldn't happen.
+	RACE_HUMAN,      #A regular human. Or the breed that produces adventurers.
+	RACE_CONSTRUCT,  #An artificial, non-strictly-mechanical lifeform.
+	RACE_MACHINE,    #An artificial, strictly mechanical lifeform.
+	RACE_SPIRIT,     #A spiritual being such as a ghost, youkai or similar.
+	RACE_ELEMENTAL,  #A specialized form of spirit born from the forces of the universe.
+	RACE_GIANT,      #A creature of extremely large size. Used as a modifier.
+	RACE_ANGEL,      #A divine being or beast, usually servants to the ghosts.
+	RACE_DEMON,      #A usually malevolent lifeform created by evil desires.
+	RACE_DRAGON,     #A powerful being attuned to the primal chaos, usually winged reptiles.
+	RACE_FAIRY,      #A powerful being attuned to natural forces.
+	RACE_UNDEAD,     #A deceased lifeform kept functioning by external energies.
+	RACE_BEAST,      #A primal being of varying characteristics. Usually non-sapient.
+	RACE_GOD,        #A powerful being born from the power of faith.
+	RACE_ELDRITCH,   #An alien lifeform directly born from primal chaos. Wildcards.
+	RACE_ORIGINATOR, #Only for Tiamat and Cromwell. The most powerful beings with the power to create lifeforms.
+}
+
+#TODO: Write some sort of function to check if all lists like this have a proper match.
+const racetypes = {
+	RACE_NONE: { name = "Unknown", desc = "???" },
+	RACE_HUMAN: { name = "Human", desc = "" },
+	RACE_CONSTRUCT: { name = "Construct", desc = "" },
+	RACE_MACHINE : { name = "Machine", desc = "" },
+	RACE_SPIRIT: { name = "Spirit", desc = "" },
+	RACE_ELEMENTAL: { name = "Elemental", desc = "" },
+	RACE_GIANT: { name = "Giant", desc = "" },
+	RACE_ANGEL: { name = "Angel", desc = "" },
+	RACE_DEMON: { name = "Demon", desc = "" },
+	RACE_DRAGON: { name = "Dragon", desc = "" },
+	RACE_FAIRY: { name = "Fairy", desc = "" },
+	RACE_UNDEAD: { name = "Undead", desc = "" },
+	RACE_BEAST: { name = "Beast", desc = "" },
+	RACE_GOD: { name = "God", desc = "" },
+	RACE_ELDRITCH: { name = "Eldritch", desc = "" },
+	RACE_ORIGINATOR: { name = "Originator", desc = "" },
+}
+
+enum { #Race Aspect
+	RACEF_NON = 0x00,
+	RACEF_MEC = 0x01, #Race has mechanical parts
+	RACEF_BIO = 0x02, #Race has organic parts
+	RACEF_SPI = 0x04, #Race has a soul
+}
+
+#TODO: This might be more convenient elsewhere.
+enum { #Weapon classes
+	WPCLASS_NONE = 0,     # None: Nothing whatsoever.
+	WPCLASS_FIST,         # Fist: Fists, gloves and arms. Martial skills and all that stuff.
+	WPCLASS_SHORTSWORD,   # Short Swords: Knives, daggers, machetes, any sort of short blade.
+	WPCLASS_LONGSWORD,    # Long Swords: Bastard swords, nihon-tou, zweihanders, ideal for your spiky haired characters.
+	WPCLASS_POLEARM,      # Polearms: Spears, lances, glaives, naginatas, the works.
+	WPCLASS_HAMMER,       # Hammers: Bats, maces, stun batons, staves, general blunt things.
+	WPCLASS_AXE,          # Axes: Hammers with blades. Hatchets, war axes, not a broad category but effective.
+	WPCLASS_HANDGUN,      # Handguns: Pistols, stun guns, revolvers. Portable and lightweight firearms.
+	WPCLASS_FIREARM,      # Firearms: Shotguns, rifles, grenade launchers. Bigger caliber guns, like law enforcement tier.
+	WPCLASS_ARTILLERY,    # Artillery: Cannons, missile launchers, howitzers. Powerful weaponry, military tier and above.
+	WPCLASS_SHIELD,       # Shields: Portable defensive devices.
+	WPCLASS_ONBOARD,      # Onboard: Special weapons available only to vehicles and robot equipment.
+}
+
+const weapontypes = {
+	WPCLASS_NONE : { name = "???", icon = "" },
+	WPCLASS_FIST : { name = "Fists", icon = "" },
+	WPCLASS_SHORTSWORD : { name = "Short Sword", icon = "" },
+	WPCLASS_LONGSWORD : { name = "Long Sword", icon = "" },
+	WPCLASS_POLEARM : { name = "Polearm", icon = "" },
+	WPCLASS_HAMMER : { name = "Hammer", icon = "" },
+	WPCLASS_AXE : { name = "Axe", icon = "" },
+	WPCLASS_HANDGUN : { name = "Handgun", icon = "" },
+	WPCLASS_FIREARM : { name = "Firearm", icon = "" },
+	WPCLASS_ARTILLERY : { name = "Artillery", icon = "" },
+	WPCLASS_SHIELD : { name = "Shield", icon = "" },
+	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
+}
+
+#
 # Important shared classes ####################################################
 const Enemy = preload("res://classes/char/char_enemy.gd")
 const Player = preload("res://classes/char/char_player.gd")
@@ -154,7 +236,7 @@ class _charPanel:
 			setColors(T[0], T[1])
 
 class _tid: #TID (Thing ID) helper class.
-#A TID is a way to organize data in a nested dictionary. "Libraries" use this format to store data as section/item.
+	#A TID is a way to organize data in a nested dictionary. "Libraries" use this format to store data as section/item.
 	func create(a, b) -> PoolStringArray: #Create a new TID array from two strings.
 		return PoolStringArray([str(a), str(b)])
 

@@ -120,7 +120,7 @@ var data = {
 			inventory = [
 				[1, ["core", "fireward"], { level = 1, charge = 100}]
 			],
-			skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1] ],
+			skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1] ],
 			links = [
 				[050, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],
 				[100, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],

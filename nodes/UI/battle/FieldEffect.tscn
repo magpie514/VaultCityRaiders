@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://nodes/UI/battle/FieldEffect.gd" type="Script" id=1]
 [ext_resource path="res://resources/icons/cut.svg" type="Texture" id=2]
 [ext_resource path="res://resources/icons/fire.svg" type="Texture" id=3]
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=4]
+[ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0.00784314, 0.45098, 0.811765 )
@@ -32,6 +33,7 @@ __meta__ = {
 [node name="Label2" type="Label" parent="."]
 margin_right = 310.0
 margin_bottom = 13.0
+custom_fonts/font = ExtResource( 5 )
 text = "Field Effect"
 align = 1
 __meta__ = {
@@ -243,6 +245,7 @@ __meta__ = {
 }
 
 [node name="FEPanel" type="Panel" parent="."]
+visible = false
 margin_left = 45.0
 margin_top = 51.0
 margin_right = 265.0
@@ -351,6 +354,7 @@ margin_left = 55.0
 margin_top = 34.0
 margin_right = 145.0
 margin_bottom = 47.0
+custom_fonts/font = ExtResource( 5 )
 text = "Dominant: "
 align = 2
 __meta__ = {
@@ -362,6 +366,7 @@ margin_left = 167.0
 margin_top = 34.0
 margin_right = 255.0
 margin_bottom = 47.0
+custom_fonts/font = ExtResource( 5 )
 text = "Element"
 __meta__ = {
 "_edit_use_anchors_": false

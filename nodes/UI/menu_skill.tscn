@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://nodes/UI/menu_skill.gd" type="Script" id=1]
 [ext_resource path="res://nodes/UI/dgem_small.tscn" type="PackedScene" id=2]
@@ -6,15 +6,17 @@
 [ext_resource path="res://resources/tres/UI/menu_background.tres" type="StyleBox" id=4]
 [ext_resource path="res://nodes/UI/battle/back_button.tscn" type="PackedScene" id=5]
 
-[sub_resource type="DynamicFontData" id=1]
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="DynamicFontData" id=2]
 font_path = "res://resources/fonts/ume-tgo5.ttf"
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=3]
 size = 19
 outline_size = 1
 use_mipmaps = true
 use_filter = true
-font_data = SubResource( 1 )
+font_data = SubResource( 2 )
 
 [node name="SkillMenu" type="Panel"]
 self_modulate = Color( 1, 1, 1, 0.501961 )
@@ -33,13 +35,10 @@ margin_bottom = 350.0
 scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
-
-[node name="Back" parent="." instance=ExtResource( 5 )]
-margin_top = 2.0
-margin_bottom = 20.0
+custom_constants/separation = 28
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_left = 70.0
+margin_left = 20.0
 margin_top = 2.0
 margin_right = 358.0
 margin_bottom = 20.0
@@ -48,13 +47,16 @@ color = Color( 0, 0, 0, 0.192118 )
 [node name="Label" type="Label" parent="ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 2.0
 text = "AAAAAAA'S SKILLS"
 align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Back" parent="." instance=ExtResource( 5 )]
+margin_top = 2.0
+margin_bottom = 20.0
 
 [node name="Panel" type="Panel" parent="."]
 margin_top = 30.0
@@ -63,13 +65,15 @@ margin_bottom = 60.0
 custom_styles/panel = ExtResource( 4 )
 
 [node name="DGem" parent="." instance=ExtResource( 2 )]
+margin_left = 230.0
 margin_top = 36.0
+margin_right = 270.0
 margin_bottom = 54.0
 
 [node name="Bar" parent="." instance=ExtResource( 3 )]
 margin_left = 24.0
 margin_top = 39.0
-margin_right = 244.0
+margin_right = 220.0
 margin_bottom = 53.0
 color = Color( 0.0352941, 0.603922, 0.945098, 1 )
 
@@ -78,10 +82,11 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -24.0
+margin_left = -32.0
 margin_top = -7.0
 margin_right = 26.0
 margin_bottom = 7.0
+custom_styles/normal = SubResource( 1 )
 bbcode_enabled = true
 bbcode_text = "999/999"
 meta_underlined = false
@@ -103,7 +108,7 @@ margin_left = 2.0
 margin_top = 36.0
 margin_right = 32.0
 margin_bottom = 56.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 3 )
 custom_colors/font_outline_modulate = Color( 0, 0.184314, 0.372549, 1 )
 text = "EP"
 valign = 1

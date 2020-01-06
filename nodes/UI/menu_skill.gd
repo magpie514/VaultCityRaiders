@@ -10,6 +10,7 @@ var controls = null #Set externally from battle_controls. It should never change
 var targetPanel = null #Node for the target selector. Set externally as well.
 
 onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
+onready var container = $ScrollContainer/VBoxContainer
 
 func init(C):
 	clear()
@@ -23,25 +24,22 @@ func init(C):
 		if S.type == 0:
 			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_EP)
-			$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-			$ScrollContainer/VBoxContainer.add_child(button)
-			button.get_node("Button").connect("pressed", self, "chooseResult", [ [TID, i[1]] ])
-			button.connect("display_info", controls.infoPanel, "showInfo")
-			button.connect("hide_info", controls.infoPanel, "hideInfo")
-			buttons.push_back(button)
+			addButton(button, [TID, i[1]])
 	if not C.extraSkills.empty():
 		for i in C.extraSkills:
 			var S = core.getSkillPtr(i[0])
 			if S.type == 0:
 				var button = skillNode.instance()
 				button.init(S, i[1], button.COST_EP, true)
-				$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-				$ScrollContainer/VBoxContainer.add_child(button)
-				button.get_node("Button").connect("pressed", self, "chooseResult", [ [i[0], i[1]] ])
-				button.connect("display_info", controls.infoPanel, "showInfo")
-				button.connect("hide_info", controls.infoPanel, "hideInfo")
-				buttons.push_back(button)
+				addButton(button, [i[0], i[1]])
 	show()
+
+func addButton(button, data:Array):
+	container.add_child(button)
+	button.get_node("Button").connect("pressed", self, "chooseResult", data)
+	button.connect("display_info", controls.infoPanel, "showInfo")
+	button.connect("hide_info"   , controls.infoPanel, "hideInfo")
+	buttons.push_back(button)
 
 func clear() -> void:
 	var button = null

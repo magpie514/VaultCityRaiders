@@ -38,7 +38,7 @@ var example = {
 			],
 			OFF = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
 			RES = [ 075, 075, 125,  005, 125, 050,  100, 100, 110 ],
-			race = skill.RACE_ELDRITCH, aspect = skill.RACEF_SPI,
+			race = core.RACE_ELDRITCH, aspect = core.RACEF_SPI,
 			canResurrect = false,
 			defeatMsg = "%s returned to the void!",
 			ai = 1,
@@ -64,7 +64,7 @@ var example = {
 			],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
+			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 1,
 			aiPattern = {
@@ -84,7 +84,7 @@ var example = {
 			statSpread = [[0045, 010, 030, 010, 010, 010, 010], [0500, 100, 300, 100, 100, 100, 100]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
+			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
 			skill = [ ["core", "defend"], ["debug", "bash"] ]
@@ -94,7 +94,7 @@ var example = {
 			statSpread = [[0045, 010, 010, 010, 030, 010, 010], [0500, 100, 100, 100, 300, 100, 100]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
+			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
 			skill = [ ["debug", "shoot"] ]
@@ -104,7 +104,7 @@ var example = {
 			statSpread = [[0045, 010, 010, 010, 010, 030, 030], [0500, 100, 100, 100, 100, 300, 300]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
+			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
 			skill = [ ["debug", "slash"], ["debug", "shoot"], ["debug", "decoy"] ]
@@ -115,7 +115,7 @@ var example = {
 			statSpread = [[0045, 010, 010, 010, 030, 010, 030], [0500, 100, 100, 100, 300, 100, 300]],
 			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
 			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
-			race = skill.RACE_MACHINE, aspect = skill.RACEF_MEC,
+			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 1,
 			aiPattern = {
@@ -183,22 +183,23 @@ var example = {
 
 func initTemplate():
 	return {
-		"name" : { loader = LIBSTD_STRING },											#Enemy name
+		"name" : { loader = LIBSTD_STRING },                           #Enemy name
 		"spriteFile" : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
 		"energyColor" : { loader = LIBSTD_STRING, default = "#AAFFFF" },
-		"summons" : { loader = LIBSTD_SUMMONS },									#Summon data
+		"summons" : { loader = LIBSTD_SUMMONS },                       #Summoner (or reinforcement) data.
+		"monster" : { loader = LIBSTD_BOOL, default = false },         #If the enemy is a monster that can be captured/tamed.
 		"canResurrect" : { loader = LIBSTD_BOOL, default = true },#If the enemy can be resurrected. If not, it won't be added to the resurrect list.
-		"description" : { loader = LIBSTD_STRING },								#Enemy description
-		"statSpread" : { loader = LIBSTD_STATSPREAD },						#Stat spread
-		"armed" : { loader = LIBSTD_BOOL, default = false },			#If enemy is supposed to be wielding a weapon or not.
-		"OFF" : { loader = LIBSTD_ELEMENTDATA },									#Elemental offense
-		"RES" : { loader = LIBSTD_ELEMENTDATA },									#Elemental defense
-		"race" : { loader = LIBSTD_INT },													#Race type (for "slayer" effects)
-		"aspect" : { loader = LIBSTD_INT },										#Race aspects (BIO/MEC/SPI), affects vulnerability to certain effects.
-		"defeatMsg" : { loader = LIBSTD_STRING, default = "%s was defeated!" },			#Message to display when defeated. "%s倒した！"
-		"ai" : { loader = LIBSTD_INT },														#AI mode
-		"aiPattern" : { loader = LIBEXT_AIPATTERN },							#AI pattern
-		"skill" : { loader = LIBSTD_SKILL_LIST },									#Skill list
+		"description" : { loader = LIBSTD_STRING },                    #Enemy description.
+		"statSpread" : { loader = LIBSTD_STATSPREAD },                 #Stat spread.
+		"armed" : { loader = LIBSTD_BOOL, default = false },           #If enemy is supposed to be wielding a weapon or not.
+		"OFF" : { loader = LIBSTD_ELEMENTDATA },                       #Elemental offense.
+		"RES" : { loader = LIBSTD_ELEMENTDATA },                       #Elemental defense.
+		"race" : { loader = LIBSTD_INT },                              #Race type (for "slayer/brand" effects)
+		"aspect" : { loader = LIBSTD_INT },                            #Race aspects (BIO/MEC/SPI), affects vulnerability to certain effects.
+		"defeatMsg" : { loader = LIBSTD_STRING, default = "%s was defeated!" },	#Message to display when defeated. "%s倒した！"
+		"ai" : { loader = LIBSTD_INT },                                #AI mode
+		"aiPattern" : { loader = LIBEXT_AIPATTERN },	                  #AI pattern
+		"skill" : { loader = LIBSTD_SKILL_LIST },                      #Skill list
 	}
 
 

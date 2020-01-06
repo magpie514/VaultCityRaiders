@@ -1,14 +1,15 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://nodes/UI/dgem_small.gd" type="Script" id=1]
 [ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=2]
 [ext_resource path="res://resources/icons/dgem_diamond.svg" type="Texture" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.733333, 0.752941, 1, 1 )
 border_width_left = 3
 border_width_top = 1
 border_width_bottom = 1
-border_color = Color( 0.556863, 0.721569, 0.960784, 1 )
+border_color = Color( 0.0705882, 0.407843, 0.894118, 1 )
 corner_radius_top_left = 20
 corner_radius_top_right = 10
 corner_radius_bottom_left = 1
@@ -16,50 +17,61 @@ corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.109804, 0.109804, 0.109804, 0.290196 )
-
-[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.733333, 0.752941, 1, 1 )
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color( 0.556863, 0.721569, 0.960784, 1 )
+border_color = Color( 0.0705882, 0.407843, 0.894118, 1 )
 corner_detail = 1
 anti_aliasing = false
 
 [node name="DGem" type="Panel"]
-margin_left = 250.0
-margin_top = 43.0
-margin_right = 295.0
-margin_bottom = 61.0
+margin_right = 40.0
+margin_bottom = 18.0
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="ColorRect" parent="."]
 show_behind_parent = true
-margin_left = 20.0
-margin_right = 100.0
+margin_left = 30.0
+margin_right = 120.0
 margin_bottom = 18.0
-custom_styles/panel = SubResource( 2 )
+color = Color( 0, 0, 0, 0.34902 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Decor" type="Panel" parent="."]
-margin_left = 40.0
+margin_left = 35.0
 margin_top = 5.0
-margin_right = 101.0
+margin_right = 120.0
 margin_bottom = 18.0
-custom_styles/panel = SubResource( 3 )
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label" type="Label" parent="."]
-margin_left = 40.0
-margin_right = 90.0
+margin_left = 36.0
+margin_right = 86.0
 margin_bottom = 5.0
 custom_fonts/font = ExtResource( 2 )
 text = "DRAGON GEM"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Gem0" type="Control" parent="."]
-margin_left = 12.0
+margin_left = 30.0
 margin_top = 6.0
-margin_right = 23.0
+margin_right = 41.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem0"]
 position = Vector2( 5.5, 5.5 )
@@ -77,10 +89,13 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem1" type="Control" parent="."]
-margin_left = 23.0
+margin_left = 41.0
 margin_top = 6.0
-margin_right = 34.0
+margin_right = 52.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem1"]
 position = Vector2( 5.5, 5.5 )
@@ -98,10 +113,13 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem2" type="Control" parent="."]
-margin_left = 34.0
+margin_left = 52.0
 margin_top = 6.0
-margin_right = 45.0
+margin_right = 63.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem2"]
 position = Vector2( 5.50001, 5.5 )
@@ -119,10 +137,13 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem3" type="Control" parent="."]
-margin_left = 45.0
+margin_left = 63.0
 margin_top = 6.0
-margin_right = 56.0
+margin_right = 74.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem3"]
 position = Vector2( 5.50001, 5.5 )
@@ -140,10 +161,13 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem4" type="Control" parent="."]
-margin_left = 56.0
+margin_left = 74.0
 margin_top = 6.0
-margin_right = 67.0
+margin_right = 85.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem4"]
 position = Vector2( 5.49999, 5.5 )
@@ -161,10 +185,13 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem5" type="Control" parent="."]
-margin_left = 67.0
+margin_left = 85.0
 margin_top = 6.0
-margin_right = 78.0
+margin_right = 96.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem5"]
 position = Vector2( 5.49999, 5.5 )
@@ -182,10 +209,13 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem6" type="Control" parent="."]
-margin_left = 78.0
+margin_left = 96.0
 margin_top = 6.0
-margin_right = 89.0
+margin_right = 107.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem6"]
 position = Vector2( 5.49999, 5.5 )
@@ -203,16 +233,18 @@ region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Gem7" type="Control" parent="."]
-margin_left = 89.0
+margin_left = 107.0
 margin_top = 6.0
-margin_right = 100.0
+margin_right = 118.0
 margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sprite" type="Sprite" parent="Gem7"]
 position = Vector2( 5.5, 5.5 )
 scale = Vector2( 0.0859377, 0.0859375 )
 texture = ExtResource( 3 )
-region_rect = Rect2( 14, 12, 102, 102 )
 
 [node name="Shadow" type="Sprite" parent="Gem7/Sprite"]
 modulate = Color( 0.167883, 0, 0, 1 )
@@ -222,3 +254,25 @@ scale = Vector2( 1.2549, 1.2549 )
 texture = ExtResource( 3 )
 region_enabled = true
 region_rect = Rect2( 14, 12, 102, 102 )
+
+[node name="Gem8" type="Control" parent="."]
+margin_left = 14.0
+margin_top = 1.0
+margin_right = 30.0
+margin_bottom = 17.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="Gem8"]
+position = Vector2( 8, 8 )
+scale = Vector2( 0.125, 0.125 )
+texture = ExtResource( 3 )
+region_rect = Rect2( 14, 12, 102, 102 )
+
+[node name="Shadow" type="Sprite" parent="Gem8/Sprite"]
+modulate = Color( 0.167883, 0, 0, 1 )
+show_behind_parent = true
+position = Vector2( -0.000213623, -6.10352e-05 )
+scale = Vector2( 1.2549, 1.2549 )
+texture = ExtResource( 3 )

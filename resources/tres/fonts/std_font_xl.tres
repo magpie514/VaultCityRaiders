@@ -1,12 +1,11 @@
 [gd_resource type="DynamicFont" load_steps=2 format=2]
 
-[ext_resource path="res://resources/fonts/khdotfont-20150527/KH-Dot-Dougenzaka-12.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://resources/fonts/ume-tgo5.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 12
+size = 21
 outline_size = 1
 outline_color = Color( 0.0862745, 0.223529, 0.529412, 1 )
-extra_spacing_top = -2
-extra_spacing_bottom = -1
+extra_spacing_char = 1
 extra_spacing_space = -1
 font_data = ExtResource( 1 )

@@ -13,6 +13,7 @@ var controls =    null #Set externally from battle_controls. It should never cha
 var targetPanel = null #Node for the target selector. Set externally as well.
 
 onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
+onready var container = $ScrollContainer/VBoxContainer
 
 func init(C):
 	clear()
@@ -29,29 +30,26 @@ func init(C):
 	for t in C.equip.WEAPON_SLOT: #Get weapon-provided Over skills.
 		var i = C.equip.slot[t] #TODO: Remember this hack.
 		if i != null:
-			if i.lib.wclass != core.skill.WPCLASS_NONE:
+			if i.lib.wclass != core.WPCLASS_NONE:
 				var S = core.getSkillPtr(i.lib.over)
 				var button = skillNode.instance()
 				button.init(S, 1, button.COST_OV)
-				$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-				$ScrollContainer/VBoxContainer.add_child(button)
-				button.get_node("Button").connect("pressed", self, "addSkill", [ [i.lib.over, 1] ])
-				button.connect("display_info", controls.infoPanel, "showInfo")
-				button.connect("hide_info", controls.infoPanel, "hideInfo")
-				buttons.push_back(button)
+				addButton(button, [i.lib.over, 1])
 	for i in C.skills: #Get race/class Over skills.
 		TID = C.getSkillTID(i)
 		var S = core.getSkillPtr(TID)
 		if S.type == 0:
 			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_OV)
-			$ScrollContainer/VBoxContainer.set("custom_constants/separation", button.rect_size.y + 1)
-			$ScrollContainer/VBoxContainer.add_child(button)
-			button.get_node("Button").connect("pressed", self, "addSkill", [ [TID, i[1]] ])
-			button.connect("display_info", controls.infoPanel, "showInfo")
-			button.connect("hide_info", controls.infoPanel, "hideInfo")
-			buttons.push_back(button)
+			addButton(button, [TID, i[1]])
 	show()
+
+func addButton(button, data:Array):
+	container.add_child(button)
+	button.get_node("Button").connect("pressed", self, "addSkill", data)
+	button.connect("display_info", controls.infoPanel, "showInfo")
+	button.connect("hide_info"   , controls.infoPanel, "hideInfo")
+	buttons.push_back(button)
 
 func clear() -> void:
 	modulate.a = 1.0

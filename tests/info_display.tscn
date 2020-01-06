@@ -85,6 +85,9 @@ anti_aliasing = false
 margin_right = 960.0
 margin_bottom = 90.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Name" type="Label" parent="."]
 margin_left = 60.0
@@ -101,7 +104,6 @@ text = "LV.000"
 valign = 1
 
 [node name="StatStatic" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 10.0
 margin_top = 20.0
 margin_right = 40.0
@@ -204,7 +206,6 @@ margin_bottom = 59.0
 bgcolor = Color( 0, 0, 0, 0.333333 )
 
 [node name="VitalStatic" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 140.0
 margin_top = 21.0
 margin_right = 240.0
@@ -228,7 +229,6 @@ margin_right = 100.0
 margin_bottom = 29.0
 
 [node name="ConditionStatic" type="Label" parent="."]
-editor/display_folded = true
 margin_left = 140.0
 margin_top = 56.0
 margin_right = 240.0
@@ -246,7 +246,6 @@ align = 1
 valign = 2
 
 [node name="Buffs" type="Panel" parent="."]
-editor/display_folded = true
 margin_left = 770.0
 margin_right = 960.0
 margin_bottom = 45.0
@@ -304,7 +303,6 @@ text = "00"
 valign = 1
 
 [node name="Debuffs" type="Panel" parent="."]
-editor/display_folded = true
 margin_left = 770.0
 margin_top = 45.0
 margin_right = 960.0
@@ -363,7 +361,6 @@ text = "00"
 valign = 1
 
 [node name="Elements" type="Panel" parent="."]
-editor/display_folded = true
 margin_left = 260.0
 margin_right = 430.0
 margin_bottom = 90.0
