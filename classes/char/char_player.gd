@@ -54,17 +54,17 @@ enum {
 	LINK_MENTOR,
 }
 
-var guildIndex:int   #reference to character's position in the guild list.
-var classlib = null #pointer to class index.
-var racePtr = null   #pointer to race index.
+var guildIndex:int  #reference to character's position in the guild list.
+var classlib = null  #pointer to class index.
+var racelib  = null  #pointer to race index.
 
-var EP:int = 0       #Energy Points. To use non-weapon skills.
-var XP:int = 0       #Experience points.
-var SP:int = 0       #Skill Points. Gained at level up to raise skills.
-var race = null      #tid
-var aclass = null    #tid
-var skills = null    #array of class ID + level
-var extraSkills = [] #Skills given by equipment or other special things.
+var EP:int             = 0    #Energy Points. To use non-weapon skills.
+var XP:int             = 0    #Experience points.
+var SP:int             = 0    #Skill Points. Gained at level up to raise skills.
+var race               = null #TID
+var aclass             = null #TID
+var skills:Array       = []   #Array of class ID + level
+var extraSkills:Array  = []   #Skills given by equipment or other special things.
 
 var links = null     #Party links. Array of [trust, link1, link2, link3]
 
@@ -89,7 +89,7 @@ func recalculateStats() -> void:
 	#TODO: Reset it to race defaults instead.
 	stats.resetElementData(raceStats.OFF)
 	stats.resetElementData(raceStats.RES)
-	stats.setFromSpread(raceStats, racePtr.statSpread, level)
+	stats.setFromSpread(raceStats, racelib.statSpread, level)
 	var classStats = stats.create()
 	stats.setFromSpread(classStats, classlib.statSpread, level)
 	stats.sumInto(statBase, raceStats, classStats)
@@ -114,10 +114,10 @@ func setCharClass(t) -> void:
 
 func setCharRace(t) -> void:
 	race = core.tid.from(t)
-	racePtr = core.lib.race.getIndex(race)
+	racelib = core.lib.race.getIndex(race)
 
 func initSkillList(sk) -> void:
-	skills = []
+	skills.clear()
 	for i in sk:
 		skills.push_back([ int(i[0]), int(i[1]) ]) #skill TID, level
 
@@ -151,8 +151,8 @@ func initDict(C):	#Load the character from save data
 func initJson(json):
 	pass
 
-func damage(x, data, silent = false) -> Array:
-	var info : Array = .damage(x, data, silent)
+func damage(x, data, silent = false, nonlethal:bool = false) -> Array:
+	var info:Array = .damage(x, data, silent, nonlethal)
 	if display != null and not silent:
 		display.damageShake()
 	return info
@@ -172,12 +172,12 @@ func defeat() -> void:
 			return
 	.defeat()
 
-func charge(x : bool = false) -> void:
+func charge(x:bool = false) -> void:
 	if display != null:
 		display.charge(x)
 
 func getTooltip() -> String:
-	return "%s\nLv.%s %s %s\n%s" % [name, level, racePtr.name, classlib.name, core.stats.print(statFinal)]
+	return "%s\nLv.%s %s %s\n%s" % [name, level, racelib.name, classlib.name, core.stats.print(statFinal)]
 
 func setXP(val:int) -> void: #Silently set level from experience. Used at initialization.
 	XP = val
@@ -227,63 +227,63 @@ func calculateTurnOverLink(who) -> int:
 	for i in range(3):
 		match(links[who.slot][i]):
 			LINK_FRIEND:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([1, 2, 3], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([1, 1, 2], trust)
 			LINK_NAKAMA:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([1, 1, 2], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([1, 2, 2], trust)
 			LINK_LOVER:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([2, 2, 3], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([3, 3, 3], trust)
 			LINK_FAMILY:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([0, 0, 1], trust)
-					skill.STATUS_DOWN:
-						gain += valueByTrust([1, 1, 1], trust)
+					skill.CONDITION_DOWN:
+						gain += valueByTrust([1, 1, 3], trust)
 			LINK_BESTFRIEND:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([2, 3, 3], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([2, 2, 3], trust)
 			LINK_TRUELOVE:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([2, 3, 3], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([3, 3, 3], trust)
 			LINK_APPRENTICE:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([0, 0, 2], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([1, 1, 2], trust)
 			LINK_TEACHER:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([1, 2, 2], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([0, 0, 1], trust)
 			LINK_MENTOR:
-				match(who.status):
-					skill.STATUS_NONE:
+				match(who.condition):
+					skill.CONDITION_GREEN:
 						gain += valueByTrust([2, 2, 3], trust)
-					skill.STATUS_DOWN:
+					skill.CONDITION_DOWN:
 						gain += valueByTrust([1, 2, 2], trust)
 			LINK_PROMISE:
-				if who.status == skill.STATUS_NONE:
+				if who.condition == skill.CONDITION_GREEN:
 					gain += valueByTrust([0, 0, 1], trust)
-				elif who.status == skill.STATUS_DOWN:
+				elif who.condition == skill.CONDITION_DOWN:
 					gain += valueByTrust([2, 3, 3], trust)
 				else:
 					gain += valueByTrust([1, 1, 2], trust)

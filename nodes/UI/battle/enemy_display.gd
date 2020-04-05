@@ -55,15 +55,24 @@ func resize(v):
 	$Button.rect_size.x = v.x
 	$ComplexBar.rect_size.x = rect_size.x * 0.8
 
+func updateDEbar(x:int) -> void: #Update Damage Effect display.
+	if x > 0:
+		$ComplexBar.secondary = true
+		var mhp:int = chr.maxHealth()
+		$ComplexBar.value2 = (x as float / mhp as float)
+	else:
+		$ComplexBar.secondary = false
+
 func updateAD(x:int) -> void:
 	if chr.battle != null:
 		$AD.value = x
 
 func update():
 	$ComplexBar.value = chr.getHealthN()
-	style.fromStatus(chr.status)
-	$Status.text = core.skill.statusInfo[chr.status].short
+	style.fromStatus(chr.condition)
+	$Status.text = core.skill.conditionInfo[chr.condition].short
 	updateAD(chr.battle.AD)
+	updateDEbar(chr.calculateDamageEffects())
 
 func _process(delta):
 	modulate.a = fade

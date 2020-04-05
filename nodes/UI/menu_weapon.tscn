@@ -219,6 +219,7 @@ margin_top = 54.0
 margin_right = 348.0
 margin_bottom = 67.0
 color = Color( 0.921569, 0.552941, 0, 1 )
+value = 1.0
 
 [node name="DUR" type="RichTextLabel" parent="Panel/Bar"]
 anchor_left = 0.5
@@ -312,6 +313,7 @@ margin_right = 80.0
 margin_bottom = 86.0
 rect_pivot_offset = Vector2( 5, 14 )
 color = Color( 0.921569, 0.552941, 0, 1 )
+value = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="Panel/Stats/DEFB"]
 show_behind_parent = true
@@ -329,6 +331,7 @@ margin_right = 170.0
 margin_bottom = 86.0
 rect_pivot_offset = Vector2( 5, 14 )
 color = Color( 0.921569, 0.552941, 0, 1 )
+value = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="Panel/Stats/EDFB"]
 show_behind_parent = true
@@ -346,6 +349,7 @@ margin_right = 260.0
 margin_bottom = 86.0
 rect_pivot_offset = Vector2( 5, 14 )
 color = Color( 0.921569, 0.552941, 0, 1 )
+value = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="Panel/Stats/AGIB"]
 show_behind_parent = true
@@ -363,6 +367,7 @@ margin_right = 350.0
 margin_bottom = 86.0
 rect_pivot_offset = Vector2( 5, 14 )
 color = Color( 0.921569, 0.552941, 0, 1 )
+value = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="Panel/Stats/LUCB"]
 show_behind_parent = true

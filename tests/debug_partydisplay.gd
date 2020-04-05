@@ -13,5 +13,5 @@ func init(group, parent):
 			var col = i if i < group.ROW_SIZE else i - group.ROW_SIZE
 			var row = 0 if i < group.ROW_SIZE else 1
 			add_child(button)
-			button.rect_position = Vector2(col * button.rect_size.x * 2.3, row * button.rect_size.y)
+			button.rect_position = Vector2(rect_size.x/2 + (-button.rect_size.x if row == 0 else 0), col * button.rect_size.y)
 			button.connect("select", parent, "on_char_pressed")

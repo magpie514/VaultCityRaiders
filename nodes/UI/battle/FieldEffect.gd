@@ -39,6 +39,10 @@ func updateDisplay(FE:Object) -> void:
 	$DominantElement.text = core.stats.ELEMENT_DATA[FE.dominant].name
 	$DominantSprite.texture = textures[FE.dominant]
 	$DominantSprite.modulate = core.stats.ELEMENT_DATA[FE.dominant].color
+	if FE.hyper:
+		$Sprite.show()
+	else:
+		$Sprite.hide()
 
 
 

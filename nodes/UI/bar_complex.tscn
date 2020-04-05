@@ -10,7 +10,9 @@ margin_right = 70.0
 margin_bottom = 10.0
 mouse_filter = 2
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 gradient = SubResource( 1 )
-bgcolor = Color( 0.0627451, 0.0627451, 0.133333, 0.792157 )
 
 [node name="Tween" type="Tween" parent="."]

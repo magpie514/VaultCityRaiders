@@ -77,6 +77,7 @@ func parseTemplate(dict:Dictionary) -> Dictionary:
 	return parseSubTemplate(template, dict)
 
 func parseSubTemplate(sub:Dictionary, dict:Dictionary):
+	#TODO:Add a way to define a way to crop numeric values to a given range.
 	var result:Dictionary = {}
 	for key in sub:
 		if key in dict:

@@ -268,7 +268,7 @@ class Consumable:
 	var level: int = 0
 
 	func _init(_tid = null, data = DEFAULT):
-		self.tid = core.tid.fromArray(data.tid if _tid == null else _tid)
+		self.tid = core.tid.from(data.tid if _tid == null else _tid)
 		self.lib = core.lib.item.getIndex(self.tid)
 		level =  int(data.level  if 'level'  in data else DEFAULT.level) - 1
 		charge = int(data.charge if 'charge' in data else DEFAULT.charge)

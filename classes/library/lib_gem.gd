@@ -7,11 +7,12 @@ const LIBEXT_SKILL_MODIFIER = "loaderSkillModifier"
 const LIBEXT_TID = "loaderTID2" #Able to return null
 
 enum {
-	GEMSHAPE_NONE,
-	GEMSHAPE_DIAMOND,
-	GEMSHAPE_CIRCLE,
-	GEMSHAPE_SQUARE,
-	GEMSHAPE_TRIANGLE,
+	GEMSHAPE_NONE,    #Empty slot?
+	GEMSHAPE_DIAMOND, #Skill gems
+	GEMSHAPE_CIRCLE,  #Stat gems
+	GEMSHAPE_SQUARE,  #Modifier gems
+	GEMSHAPE_TRIANGLE,#Over gems
+	GEMSHAPE_STAR,    #Unique Over gem
 }
 
 var example = {
@@ -37,7 +38,65 @@ var example = {
 			skill = ["debug", "debug"],
 		},
 	},
+	"story" : {
+		"fmalhaut": { #Jay's personal Star. Inherited from Fomalhaut.
+			name = "Fomalhaut",
+			levels = 10,
+			desc = "One of the four Royal Stars, the brightest in the Piscis Austrinus constellation. A bluish white star, inherited from a noble hero.",
+			shape = GEMSHAPE_STAR,
+		},
+		"regulus1": { #Magpie's personal Star. Starts with it equipped. Bad.
+			name = "Regulus",
+			levels = 0,
+			desc = "One of the four Royal Stars, the brightest in the Leo constellation. Signifies the power of a King, but for some reason, it's dormant.",
+			shape = GEMSHAPE_STAR,
+		},
+		"regulus2": { #Magpie's personal Star. Powered up during the final arc.
+			name = "Regulus",
+			levels = 10,
+			desc = "One of the four Royal Stars, the brightest in the Leo constellation. Signifies the power of a King, and grants victory to those with a strong desire for justice.",
+			shape = GEMSHAPE_STAR,
+		},
+		"antares": { #Shiro's personal Star. Inherited from his family line.
+			name = "Antares",
+			levels = 10,
+			desc = "One of the four Royal Stars, the brightest in the Scorpius constellation. A vermillion star that watches over those whose destiny is marked by blood.",
+			shape = GEMSHAPE_STAR,
+		},
+		"aldbaran": { #Anna's personal Star. Given to her by Mister Raven.
+			name = "Aldebaran",
+			levels = 10,
+			desc = "One of the four Royal Stars, the brightest in the Taurus constellation. A red star guiding those seeking revenge for an injustice.",
+			shape = GEMSHAPE_STAR,
+		},
+		"polaris": { #Yukiko's personal Star. Starts with it equipped.
+			name = "Prime Blue",
+			levels = 10,
+			desc = "Alpha Ursae Minoris. The current Northern Polar Star in Earth's firmament. A yellow star that watches over the planet.",
+			shape = GEMSHAPE_STAR,
+		},
+		"primblue": { #Yukiko's second personal Star. Created by herself during the final arc.
+			name = "Prime Blue",
+			levels = 10,
+			desc = "A fragment of hope. Resonates with the power of Over energy.",
+			shape = GEMSHAPE_STAR,
+		},
+		"sol": { #Elodie's personal Star. Belonged to her uncle.
+			name = "Sol",
+			levels = 10,
+			desc = "The brightest star in our solar system. A yellow star that unites all life.",
+			shape = GEMSHAPE_STAR,
+		},
+		"beetleju": { #King Solarica's personal Star. Obtained at birth.
+			name = "Betelgeuse",
+			levels = 10,
+			desc = "One of the brightest stars in the sky. A gigantic red star of bloody conquest.",
+			shape = GEMSHAPE_STAR,
+		}
+
+	},
 	"core" : {
+# Round (stat) gems ###########################################################
 		"speed" : {
 			name = "Speed",
 			levels = 10,
@@ -98,6 +157,7 @@ var example = {
 				LUC = [002, 002, 003, 003, 004,   004, 004, 005, 005, 006],
 			}
 		},
+# Diamond (skill) gems ########################################################
 		"flame" : {
 			name = "Flame",
 			levels = 10,
@@ -213,7 +273,7 @@ var example = {
 			skill = ["gem", "aquabrst"],
 		},
 		"blunt" : {
-			name = "Blunt",
+			name = "Strike",
 			levels = 10,
 			desc = "Contains the raw essence of water. Provides the skill Smash.",
 			shape = GEMSHAPE_DIAMOND,
@@ -330,6 +390,7 @@ var example = {
 			},
 			skill = ["gem", "drshield"],
 		},
+# Square (mod) gems ###########################################################
 		"power" : {
 			name = "Power",
 			levels = 10,

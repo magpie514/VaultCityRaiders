@@ -87,10 +87,10 @@ const racetypes = {
 }
 
 enum { #Race Aspect
-	RACEF_NON = 0x00,
-	RACEF_MEC = 0x01, #Race has mechanical parts
-	RACEF_BIO = 0x02, #Race has organic parts
-	RACEF_SPI = 0x04, #Race has a soul
+	RACEF_NON = 0b000,
+	RACEF_MEC = 0b001, #Race has mechanical parts
+	RACEF_BIO = 0b010, #Race has organic parts
+	RACEF_SPI = 0b100, #Race has a soul
 }
 
 #TODO: This might be more convenient elsewhere.
@@ -131,9 +131,21 @@ const Player = preload("res://classes/char/char_player.gd")
 const Inventory = preload("res://classes/inventory/item.gd")
 
 class WorldClass:
+	#|        Night                          |      Morning |        Day                       |     Evening  | Night        |
+	#| 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 |
+	# 000  030  060  090  120  150  180  210  240  270  300  330  360  390  420  450  480  510  540  570  600  630  660  690
 	var time:int = 0        #30 steps or turns => one hour.
 	var day:int = 0         #30 days => one month.
 	var IDcounter:int = 0   #Internal counter for enemy/monster IDs.
+	func periodOfDay() -> int:
+		if   (time > 630) or (time > 0 and time < 240): return 0 #Night
+		elif time > 240 and time < 330:                 return 1 #Morning
+		elif time > 330 and time < 540:                 return 2 #Day
+		elif time > 540 and time < 630:                 return 3 #Evening
+		else:                                           return 0 #????
+
+	func isNight() -> bool:
+		return true if periodOfDay() == 0 else false
 
 	func init(data) -> void:
 		time = int(data.time)
@@ -209,12 +221,10 @@ class _charPanel:
 
 	func fromStatus(st):
 		match st:
-			core.skill.STATUS_NONE:
+			core.skill.CONDITION_GREEN:
 				setTheme("normal")
-			core.skill.STATUS_DOWN:
+			core.skill.CONDITION_DOWN:
 				setTheme("damage")
-			core.skill.STATUS_STASIS:
-				setTheme("stasis")
 			_:
 				setTheme("status")
 

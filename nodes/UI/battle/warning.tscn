@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resources/icons/danger.svg" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Sprite
+
+func _ready() -> void:
+	set_process(true)
+
+func _process(delta:float) -> void:
+	self_modulate.a = (512 + OS.get_ticks_msec() % 1024) as float / 1536
+"
+
+[node name="Warning" type="Sprite"]
+texture = ExtResource( 1 )
+script = SubResource( 1 )

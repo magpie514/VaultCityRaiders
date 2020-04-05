@@ -5,7 +5,7 @@ func _ready():
 
 func showChar(c):
 	show()
-	$Name.text = str("%s %s %-24s" % [c.racePtr.name, c.classlib.name, c.name])
+	$Name.text = str("%s %s %-24s" % [c.racelib.name, c.classlib.name, c.name])
 	$Level.text = str("LV.%03d" % c.level)
 	$StatStatic/ATK.text = str(c.battle.stat.ATK)
 	$StatStatic/BATK.init([float(c.statBase.ATK) / 255.0, float(c.statFinal.ATK - c.statBase.ATK) / 255.0, float(c.battle.stat.ATK - c.statFinal.ATK) / 255.0], ["FF0000", "FF9900", "0088FF"] )
@@ -21,8 +21,8 @@ func showChar(c):
 	$StatStatic/BLUC.init([float(c.statBase.LUC) / 255.0, float(c.statFinal.LUC - c.statBase.LUC) / 255.0, float(c.battle.stat.LUC - c.statFinal.LUC) / 255.0], ["FF0000", "FF9900", "0088FF"] )
 
 	$VitalStatic/Vital.text = str("%d/%d" % [c.HP, c.battle.stat.MHP])
-	$ConditionStatic/Condition.text = str("%s" % core.skill.statusInfo[c.status].name)
-	$ConditionStatic/Condition.add_color_override("font_color", core.skill.statusInfo[c.status].color)
+	$ConditionStatic/Condition.text = str("%s" % core.skill.conditionInfo[c.condition].name)
+	$ConditionStatic/Condition.add_color_override("font_color", core.skill.conditionInfo[c.condition].color)
 
 	$Elements.init(c.battle.stat)
 

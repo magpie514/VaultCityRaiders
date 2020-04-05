@@ -19,13 +19,13 @@ var example = {
 	"story" : {
 		"plasdr" : {
 			name = "Plasma Driver", slot = "ENGINE",
-			description = "Jay's generator. A powerful generator capable of converting Jay's Over into superheated plasma. The properties of the plasma field can even defy conventional physics.",
+			description = "Jay's generator. A powerful generator capable of converting Jay's Over into an EPN field that can directly negate conventional physics for a limited time.",
 			stat1 = ['OFF_ELE',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['AGI',                012,008,006,004,002, 001, 001,001,000,000,000],
 		},
 		"hollow" : {
 			name = "Hollow Engine", slot = "ENGINE",
-			description = "Magpie's engine. Uses the properties of the G-Crystal to generate energy from the flow of gravitons. A safety limiter prevents Magpie from using her full power.",
+			description = "Magpie's engine. Uses the properties of the G-Crystal to generate energy from the flow of gravitons. A safety limiter prevents Magpie from using her full power, as the engine could be rendered unstable and destroy the fabric of reality.",
 			stat1 = ['RES_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = [["story","codexalt"], 010,008,006,004,002, 001, 001,001,001,001,001],
 		},
@@ -49,7 +49,7 @@ var example = {
 		},
 		"tindal" : {
 			name = "Tindalos Furnace", slot = "ENGINE",
-			description = "Anna's engine, powered by the temporal anomalies accumulated by Mr.Raven's constant time travel. Receives energy from all points in time simultaneously, it will keep running after time has ended.",
+			description = "Anna's engine, powered by the temporal anomalies accumulated by Mister Raven's constant time travel. Receives energy from all points in time simultaneously, and will keep running after time has ended.",
 			stat1 = ['AGI',            000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['STR',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},
@@ -61,7 +61,7 @@ var example = {
 		},
 		"shira2" : {
 			name = "Shirayuki PERFECT BLUE", slot = "ENGINE",
-			description = "Yukiko's modified reactor. Fused with the Prime Blue, it produces a staggering amount of energy by gathering Over, specially that born from feelings of hope. It won't desynch anymore as long as Yukiko keeps altering the Akashic Records to adapt to potential damage.",
+			description = "Yukiko's modified reactor. Linked with the Prime Blue, it produces a staggering amount of energy by gathering Over, specially that born from feelings of hope. It won't desynch anymore as long as Yukiko keeps altering the Akashic Records to adapt to potential damage.",
 			stat1 = ['OFF_ENE',        000,001,002,004,005, 005, 005,007,009,012,020],
 			stat2 = ['MEP',            020,012,009,007,005, 005, 005,004,002,001,000],
 		},

@@ -144,8 +144,7 @@ func battle():
 					#Play ACTION animation.
 					if A.side == state.SIDE_PLAYER:
 						A.user.display.highlight(true)
-						yield(wait(1.0), "timeout")
-
+						yield(wait(0.1 if A.act == state.ACT_DEFEND else 1.0), "timeout")
 					else:
 						A.user.sprDisplay.act()
 						yield(A.user.sprDisplay.player, "animation_finished")
@@ -153,7 +152,7 @@ func battle():
 					yield($SkillController, "action_finished")
 					state.updateActions(A)
 					state.sort()
-					yield(wait(1.0), "timeout")
+					yield(wait(0.1 if A.act == state.ACT_DEFEND else 1.0), "timeout")
 					$Panel/GuildDisplay.update()
 					$Panel/EnemyGroupDisplay.update()
 					$Panel/FieldEffect.updateDisplay(state.field)

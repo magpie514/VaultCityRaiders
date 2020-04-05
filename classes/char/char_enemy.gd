@@ -54,14 +54,14 @@ func onSummonerDefeat():
 	print("[TODO] Add special effects here...")
 	print("[TODO] Add capture chance here when mons are a thing.")
 
-func damage(x, data, silent = false) -> Array:
-	var info : Array = .damage(x, data, silent)
+func damage(x, data, silent:bool = false, nonlethal:bool = false) -> Array:
+	var info:Array = .damage(x, data, silent, nonlethal)
 	if sprDisplay != null:
 		sprDisplay.damage()
 		sprDisplay.damageShake()
 	return info
 
-func charge(x : bool = false) -> void:
+func charge(x:bool = false) -> void:
 	if sprDisplay != null:
 		sprDisplay.charge(x)
 

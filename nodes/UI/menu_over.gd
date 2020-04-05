@@ -38,13 +38,20 @@ func init(C):
 	for i in C.skills: #Get race/class Over skills.
 		TID = C.getSkillTID(i)
 		var S = core.getSkillPtr(TID)
-		if S.type == 0:
+		if S.category == core.skill.CAT_OVER:
 			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_OV)
 			addButton(button, [TID, i[1]])
+	if not C.extraSkills.empty(): #Get additional Over skills (components, dgems, etc)
+		for i in C.extraSkills:
+			var S = core.getSkillPtr(i[0])
+			if S.category == core.skill.CAT_OVER:
+				var button = skillNode.instance()
+				button.init(S, i[1], button.COST_OV)
+				addButton(button, [i[0], i[1]])
 	show()
 
-func addButton(button, data:Array):
+func addButton(button, data:Array) -> void:
 	container.add_child(button)
 	button.get_node("Button").connect("pressed", self, "addSkill", data)
 	button.connect("display_info", controls.infoPanel, "showInfo")
@@ -87,19 +94,19 @@ func finish() -> void:
 	controls.infoPanel.hideInfo()
 	hide()
 
-func addSkill(x): #[TID skill, int level]
+func addSkill(TID, level) -> void:
 	var result = controls.state.Action.new(controls.state.ACT_OVER)
 	result.WP = currentChar.currentWeapon
-	var S = core.getSkillPtr(x[0]) #Get pointer to skill.
-	result.skill = S; result.skillTid = x[0]; result.level = x[1]
-	target = core.skill.selectTargetAuto(S, x[1], currentChar, controls.state)
+	var S = core.getSkillPtr(TID) #Get pointer to skill.
+	result.skill = S; result.skillTid = TID; result.level = level
+	target = core.skill.selectTargetAuto(S, level, currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		result.target = target
 		actions.push_back(result)
 		updateList()
 	else: #If not, show the target select dialog.
 		modulate.a = 0.2			#Fade menu out a bit.
-		targetPanel.init(S, self, x[1])
+		targetPanel.init(S, self, level)
 		yield(targetPanel, "selection") #Wait for getTarget() to get called from target menu.
 		targetPanel.disconnect("selection", self, "getTarget") #TODO: Disconnect from the menu itself.
 		modulate.a = 1.0

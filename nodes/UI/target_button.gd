@@ -21,7 +21,7 @@ func init(C, key = null):
 		$Key.show()
 	else:
 		$Key.hide()
-	style.fromStatus(C.status)
+	style.fromStatus(C.condition)
 
 func _on_Button_pressed():
 	if not disabled:

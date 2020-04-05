@@ -28,7 +28,7 @@ func init(C):
 	if not C.extraSkills.empty():
 		for i in C.extraSkills:
 			var S = core.getSkillPtr(i[0])
-			if S.type == 0:
+			if S.type == 0 and S.category != core.skill.CAT_OVER:
 				var button = skillNode.instance()
 				button.init(S, i[1], button.COST_EP, true)
 				addButton(button, [i[0], i[1]])
@@ -53,19 +53,19 @@ func finish() -> void:
 	controls.infoPanel.hideInfo()
 	hide()
 
-func chooseResult(x): #[TID skill, int level]
+func chooseResult(TID, level): #[TID skill, int level]
 	modulate.a = 0.2			#Fade menu out a bit.
 	var result = controls.state.Action.new(controls.state.ACT_SKILL)
 	result.WP = currentChar.currentWeapon
-	var S = core.getSkillPtr(x[0]) #Get pointer to skill.
-	result.skill = S; result.skillTid = x[0]; result.level = x[1]
-	target = core.skill.selectTargetAuto(S, x[1], currentChar, controls.state)
+	var S = core.getSkillPtr(TID) #Get pointer to skill.
+	result.skill = S; result.skillTid = TID; result.level = level
+	target = core.skill.selectTargetAuto(S, level, currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()
 		result.target = target
 		emit_signal("selection", result)
 	else: #If not, show the target select dialog.
-		targetPanel.init(S, self, x[1])
+		targetPanel.init(S, self, level)
 		yield(targetPanel, "selection") #Wait for getTarget() to get called from target menu.
 		targetPanel.disconnect("selection", self, "getTarget") #TODO: Disconnect from the menu itself.
 		if target == null:

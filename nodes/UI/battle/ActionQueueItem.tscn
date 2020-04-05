@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://resources/tres/action_queue_item-stylebox.tres" type="StyleBox" id=1]
 [ext_resource path="res://nodes/UI/group_position.tscn" type="PackedScene" id=2]
+[ext_resource path="res://nodes/UI/battle/warning.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/tres/fonts/sml_font.tres" type="DynamicFont" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Panel
@@ -15,14 +17,16 @@ func init(A, pos) -> void: #A:Action
 	$Position.value = A.user.slot
 	if A.user is core.Player:
 		style.bg_color = \"55000088\"
+		$Warning.visible = false
 	elif A.user is core.Enemy:
 		style.bg_color = \"55880000\"
+		$Warning.visible = A.skill.dangerous
 
 "
 
 [node name="ActionQueueItem" type="Panel"]
-margin_right = 250.0
-margin_bottom = 26.0
+margin_right = 211.0
+margin_bottom = 21.0
 custom_styles/panel = ExtResource( 1 )
 script = SubResource( 1 )
 __meta__ = {
@@ -31,18 +35,24 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="."]
 margin_left = 30.0
-margin_right = 250.0
-margin_bottom = 25.0
-text = "CHARACTER NAME"
-valign = 1
+margin_top = 1.0
+margin_right = 211.0
+margin_bottom = 16.0
+custom_fonts/font = ExtResource( 4 )
+text = "123456789012345678901234567890"
+valign = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Position" parent="." instance=ExtResource( 2 )]
-margin_left = 10.0
-margin_top = 3.0
-margin_right = 21.0
-margin_bottom = 25.0
+margin_left = 8.0
+margin_top = 2.0
 rect_scale = Vector2( 1, 0.96 )
+bgcolor = Color( 0, 0, 0, 0.333333 )
 hilight = Color( 0.0823529, 0.447059, 0.960784, 1 )
+value = 0
+
+[node name="Warning" parent="." instance=ExtResource( 3 )]
+position = Vector2( -10, 11 )
+scale = Vector2( 0.15625, 0.15625 )

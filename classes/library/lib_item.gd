@@ -65,7 +65,18 @@ var example = {
 	"core": {
 		"nostrum" : {
 			name = "Nostrum",
-			description = "Over the counter medicine for adventurers. Works in a pinch, but it's barely effective on machines.",
+			description = "Over the counter medicine for adventurers. Works in a pinch, but it's not effective on machines.",
+			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
+			category = 0,
+			maxLevel = 10,
+			skill = [001,001,001,001,001, 001,001,001,001,001],
+			skills = [
+				["debug", "healbio"],
+			]
+		},
+		"panacea" : {
+			name = "Panacea",
+			description = "A medicine capable of restoring any ailments.",
 			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
@@ -99,6 +110,20 @@ var example = {
 			chargeUse =  [020,025,025,025,025, 025,025,025,025,025],
 			skill = [001,001,001,001,001, 001,001,001,001,001],
 			skills = [ ["debug", "healmec"]	],
+		},
+		"scfcshrd" : {
+			name = "Shard of Sacrifice",
+			description = "The user's Vital is reduced to 1. Target is healed for user's max Vital.",
+			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
+			category = 0,
+			maxLevel = 10,
+			charge = true,
+			chargeRate = [025,025,025,025,025, 025,025,025,025,025],
+			chargeUse =  [025,025,025,025,025, 025,025,025,025,025],
+			skill = [001,001,001,001,001, 001,001,001,001,001],
+			skills = [
+				"debug/sacrific",
+			]
 		},
 		"lifeshrd" : {
 			name = "Life Shard",

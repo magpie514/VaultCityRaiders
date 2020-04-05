@@ -1,5 +1,4 @@
 extends Panel
-signal select(x)
 signal display_info(x)
 signal hide_info
 
@@ -113,7 +112,7 @@ func setActionText(act):
 	if S.initAD[act.level] != 100: updateAD(S.initAD[act.level])
 	action = true
 
-func highlight(b): #Highlights this character to show it's acting or choosing actions.
+func highlight(b) -> void: #Highlights this character to show it's acting or choosing actions.
 	style.highlight(b)
 	if b:
 		if action != null: $Action.hide() #Hide action display.
@@ -128,7 +127,7 @@ func highlight(b): #Highlights this character to show it's acting or choosing ac
 		LookAtMePanel.set_process(false)
 		LookAtMePanel.get_node("Tween").stop(LookAtMePanel)
 
-func charge(b : bool = false) -> void: #Charge effect
+func charge(b:bool = false) -> void: #Charge effect
 	$EffectHook/Charge.emitting = b
 	$EffectHook/Charge.self_modulate = Color(chr.energyColor)
 
@@ -136,26 +135,35 @@ func updateAD(x:int) -> void: #Update Active Defense display.
 	if chr.battle != null:
 		$AD.value = x
 
-func update():
+func updateDEbar(x:int) -> void: #Update Damage Effect display.
+	if x > 0:
+		$ComplexBar.secondary = true
+		var mhp:int = chr.maxHealth()
+		$ComplexBar.value2 = (x as float / mhp as float)
+	else:
+		$ComplexBar.secondary = false
+
+func update() -> void:
 	if chr != null:
 		var vital = int(chr.HP)
 		var vitalN = chr.getHealthN()
 		var vitalDiff = lastVital - vital
 		if chr.battle != null: #Show battle-only stuff.
 			updateAD(chr.battle.AD)
+			updateDEbar(chr.calculateDamageEffects())
 			if chr.battle.guard > 0 or chr.battle.absoluteGuard > 0: #Show Guard indicator.
 				$Guard.show()
-				$ComplexBar/GuardBlock.show()
+				$ComplexBar.guard = true
 				if chr.battle.absoluteGuard > 0:
 					$Guard.text = str(chr.battle.absoluteGuard)
 				else:
 					$Guard.text = str(chr.battle.guard)
 			else:
-				$ComplexBar/GuardBlock.hide()
-				$Guard.hide()
+				$ComplexBar.guard = false
+				$ComplexBar/Guard.hide()
 		else:
-			$ComplexBar/GuardBlock.hide()
-			$Guard.hide()
+			$ComplexBar.guard = false
+			$ComplexBar/Guard.hide()
 
 		#Make the panel blink if health is under 15%.
 		if vitalN < 0.15 and vitalN > 0.0: blink = -1
@@ -163,20 +171,20 @@ func update():
 
 
 		#Set colors from active condition.
-		style.fromStatus(chr.status)
-		$Status.text = core.skill.statusInfo[chr.status].short
+		style.fromStatus(chr.condition)
+		$Status.text = core.skill.conditionInfo[chr.condition].short
 
 		$Name.text = chr.name
-		$HP.text = str("%03d" % vital)
+		$ComplexBar/HP.text = str("%03d" % vital)
 		$ComplexBar.value = vitalN
-		$DMG.text = str("%03d" % chr.EP)
+		$ComplexBar/DMG.text = str("%03d" % chr.EP)
 
-func _ready():
+func _ready() -> void:
 	shakeTimer = 0
 	origPosition = rect_position
 	set_process(true)
 
-func selectable(f):
+func selectable(f) -> void:
 	if f:
 		style.set("select")
 		$Button.show()
@@ -188,22 +196,14 @@ func selectable(f):
 		if action != null:
 			$Action.show()
 
-func _on_Button_pressed():
-	emit_signal("select", chr)
-	$Button.hide()
-
-
-func _on_Button_mouse_entered():
+func _on_Button_mouse_entered() -> void:
 	highlight(true)
 
-
-func _on_Button_mouse_exited():
+func _on_Button_mouse_exited() -> void:
 	highlight(false)
 
-
-func _on_CharDisplay_mouse_entered():
+func _on_CharDisplay_mouse_entered() -> void:
 	emit_signal("display_info", chr, 0)
 
-
-func _on_CharDisplay_mouse_exited():
+func _on_CharDisplay_mouse_exited() -> void:
 	emit_signal("hide_info")

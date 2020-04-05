@@ -35,7 +35,7 @@ func init(t = null) -> void:
 
 func getBonus(elem:int, side:int = 0) -> float:
 	if hyper != 0 and side == hyper:
-		return .5
+		return 1.5 if elem == core.stats.ELEMENTS.DMG_ULTIMATE else 0.75
 	else:
 		return (float(bonus[elem]) * .01)
 

@@ -16,26 +16,27 @@ var example = {
 		},
 		"ofight" : { #Jay Hawking's story mode base class.
 			name = "Orbital Fighter",
-			description = "A technical class specializing in exploiting enemy actions and status.",
-			statSpread = [ [005, 000, 000, 003, 002, 004, 001], [032, 000, 006, 032, 024, 052, 018] ],
+			description = "A class specializing in fast and strong energy skills and chains.",
+			statSpread = [ [005,000,000,003,002,004,001], [032,000,006,032,024,052,018] ],
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_LONGSWORD],
 			skills = [
-				["story", "plasfeld"],
-				["story", "thunswrd"], #Move to ORBITAL Cannon.
+				"story/plasfeld",
+				["story", "jhunter"],
+				["story", "jrailgun"],
+				["story", "blueshft"],
+				["story", "brknthun"],
 				# Core skills #########
-				["debug", "restshrd"],
 				["story", "freerang"],
+				"story/jcraw",
 				#Filler
 				["debug", "gmissile"],
 				["debug", "gatebrkr"],
-				["debug", "codexalt"],
-				["debug", "blddance"],
 			],
 		},
-		"gdriver" : { #0a0a-DT-KSSG "Magpie" Miller's story mode base class.
+		"gdriver" : { #0a0a-DT-KSSG Sarah "Magpie" Miller's story mode base class.
 			name = "G-Driver",
 			description = "A technical class specializing in exploiting enemy actions and status.",
-			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
+			statSpread = [ [004,000,000,003,002,003,001], [032,000,006,032,024,040,018] ],
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_POLEARM],
 			skills = [
 				# Gun skills ##########
@@ -45,9 +46,14 @@ var example = {
 				["debug", "restshrd"],
 				["story", "gravrefl"],
 				["story", "gmissile"],
-				# Glaive/Auger skills #
-				["story", "gemshrap"], #Move to Boost Glaive.
-				["story", "spirbost"],
+				"story/portcutt",
+				"story/gravipre",
+				# Polearm skills ######
+				"story/teleslsh",
+				"story/spirbost",
+				# General skills
+				# Debug
+				"story/gdominia",
 			],
 		},
 		"akashic" : { #Aohana Yukiko's story mode base class.

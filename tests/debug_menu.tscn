@@ -8,12 +8,11 @@
 script/source = "extends Panel
 var C = null
 
-func _ready():
-	pass
-
 func init(ch):
 	C = ch
 	$Label.text = C.name
+	$Label2.text = \"Level %s %s %s\\n\" % [C.level, C.classlib.name, C.racePtr.name]
+	$Label2.text += \"EXP: %s/???\\n\" % C.XP
 
 func _on_Repair_pressed() -> void:
 	C.fullRepair()
@@ -81,6 +80,9 @@ func close():
 margin_right = 40.0
 margin_bottom = 40.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Panel" type="Panel" parent="."]
 margin_right = 480.0
@@ -117,13 +119,6 @@ margin_right = 450.0
 margin_bottom = 200.0
 disabled = true
 text = "Battle Test Boss"
-
-[node name="Button7" type="Button" parent="Panel"]
-margin_left = 20.0
-margin_top = 270.0
-margin_right = 450.0
-margin_bottom = 290.0
-text = "Generator upgrade test"
 
 [node name="Button3" type="Button" parent="Panel"]
 margin_left = 20.0
@@ -204,9 +199,9 @@ valign = 1
 
 [node name="Heal" type="Button" parent="Panel2"]
 margin_left = 10.0
-margin_top = 150.0
+margin_top = 170.0
 margin_right = 460.0
-margin_bottom = 170.0
+margin_bottom = 195.0
 text = "Rest party"
 
 [node name="ELVLabel" type="Label" parent="Panel2"]
@@ -267,7 +262,7 @@ valign = 1
 margin_left = 10.0
 margin_top = 90.0
 margin_right = 460.0
-margin_bottom = 140.0
+margin_bottom = 165.0
 
 [node name="Panel3" type="Panel" parent="."]
 margin_left = 490.0
@@ -308,26 +303,42 @@ text = "Character Name"
 align = 1
 valign = 1
 
-[node name="Heal" type="Button" parent="Panel4"]
+[node name="Label2" type="Label" parent="Panel4"]
 margin_left = 10.0
 margin_top = 30.0
 margin_right = 460.0
-margin_bottom = 50.0
+margin_bottom = 130.0
+text = "Character info"
+
+[node name="Heal" type="Button" parent="Panel4"]
+margin_left = 10.0
+margin_top = 140.0
+margin_right = 460.0
+margin_bottom = 165.0
 text = "Full Heal"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Repair" type="Button" parent="Panel4"]
 margin_left = 10.0
-margin_top = 60.0
+margin_top = 170.0
 margin_right = 460.0
-margin_bottom = 82.0
+margin_bottom = 195.0
 text = "Full Repair"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="DGem" type="Button" parent="Panel4"]
-margin_left = 12.0
-margin_top = 90.0
+margin_left = 10.0
+margin_top = 200.0
 margin_right = 460.0
-margin_bottom = 112.0
+margin_bottom = 225.0
 text = "Set Dragon Gems"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Panel5" type="Panel" parent="." groups=[
 "CharMenus",
@@ -404,7 +415,6 @@ text = "Remove"
 [connection signal="pressed" from="Panel/Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="Panel/Button5" to="." method="_on_Button5_pressed"]
 [connection signal="pressed" from="Panel/Button6" to="." method="_on_Button6_pressed"]
-[connection signal="pressed" from="Panel/Button7" to="." method="_on_Button7_pressed"]
 [connection signal="pressed" from="Panel/LoadDebugParty" to="." method="_on_LoadDebugParty_pressed"]
 [connection signal="pressed" from="Panel2/Heal" to="." method="_on_Heal_pressed"]
 [connection signal="value_changed" from="Panel2/ELVSlider" to="." method="_on_ELVSlider_value_changed"]

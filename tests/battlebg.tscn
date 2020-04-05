@@ -13,30 +13,60 @@ z_index = -20
 position = Vector2( 480, 360 )
 
 [node name="B1" type="Position2D" parent="Enemy"]
-position = Vector2( -192, 120 )
+position = Vector2( -288, 60 )
 rotation = 0.00574237
 z_index = -2
 
 [node name="B2" type="Position2D" parent="Enemy"]
-position = Vector2( 0, 120 )
+position = Vector2( -336, 160 )
 rotation = 0.00574237
 z_index = -2
 
 [node name="B3" type="Position2D" parent="Enemy"]
-position = Vector2( 192, 120 )
+position = Vector2( -384, 260 )
 rotation = 0.00574237
 z_index = -2
 
 [node name="F1" type="Position2D" parent="Enemy"]
-position = Vector2( -288, 200 )
+position = Vector2( -96, 60 )
 rotation = 0.00574237
 
 [node name="F2" type="Position2D" parent="Enemy"]
-position = Vector2( 0, 200 )
+position = Vector2( -144, 160 )
 rotation = 0.00574237
 
 [node name="F3" type="Position2D" parent="Enemy"]
-position = Vector2( 288, 200 )
+position = Vector2( -192, 260 )
+rotation = 0.00574237
+
+[node name="Player" type="Node2D" parent="."]
+position = Vector2( 480, 360 )
+
+[node name="B1" type="Position2D" parent="Player"]
+position = Vector2( 288, 60 )
+rotation = 0.00574237
+z_index = -2
+
+[node name="B2" type="Position2D" parent="Player"]
+position = Vector2( 336, 160 )
+rotation = 0.00574237
+z_index = -2
+
+[node name="B3" type="Position2D" parent="Player"]
+position = Vector2( 384, 260 )
+rotation = 0.00574237
+z_index = -2
+
+[node name="F1" type="Position2D" parent="Player"]
+position = Vector2( 96, 60 )
+rotation = 0.00574237
+
+[node name="F2" type="Position2D" parent="Player"]
+position = Vector2( 144, 160 )
+rotation = 0.00574237
+
+[node name="F3" type="Position2D" parent="Player"]
+position = Vector2( 192, 260 )
 rotation = 0.00574237
 
 [node name="Camera2D" type="Camera2D" parent="."]

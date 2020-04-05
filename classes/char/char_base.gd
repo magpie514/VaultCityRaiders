@@ -8,25 +8,24 @@ enum { #Flags for scripted fights.
 
 
 # Basic stats ##################################################################
-var name = ""												#Character's given name.
-var level = int()										#EXP level
-var status:int = 0									#Status (Primary) #TODO:Rename to condition1
-var condition2:int = 0							#Condition (Secondary)
-var condition3:Array = []						#Condition (Damage over time)
+var name:String      = ""   #Character's given name.
+var level:int        = 0	 #EXP level
+var condition:int    = 0    #Condition (Primary)
+var condition2:int   = 0	 #Condition (Secondary) #TODO: Move to battle stats.
 
-var HP:int = 0											#Character's vital (HP)
-var statBase = stats.create()				#Base stats
-var statFinal = stats.create()			#Calculated stats
-var battle = null 									#Battle stats (See createBattleStats())
+var HP:int           = 0    #Character's vital (HP)
+var statBase         = stats.create()	#Base stats
+var statFinal        = stats.create()  #Calculated stats
+var battle           = null            #Battle stats (See createBattleStats())
 
 # Battle display ###############################################################
-var display = null									#Reference to the character's UI element for quick access.
-var energyColor = "#AAFFFF"         #Color used for certain effects.
-# Various shortcut vars ########################################################
-var slot:int = 0									  #Character's position slot in its group.
-var row:int = 0										  #Character's calculated row
-var side:int = 0									  #Quick ally/enemy reference. Mostly for text coloring.
-var group = null										#Reference to the character's group.
+var display            = null      #Reference to the character's UI element for quick access.
+var energyColor:String = "#AAFFFF" #Color used for certain effects.
+# Miscelaneous shortcut vars ###################################################
+var slot:int = 0 #Character's position slot in its group.
+var row:int  = 0 #Character's calculated row
+var side:int = 0 #Quick ally/enemy reference. Mostly for text coloring.
+var group = null #Reference to the character's group.
 
 class BattleStats:
 	# Core stats ################################################################################
@@ -34,26 +33,30 @@ class BattleStats:
 	var statmult : Dictionary = {}    #Stat multipliers
 	var over:int = 33 setget set_over #Over counter
 	# Statistics ################################################################################
-	var accumulatedDMG : int = 0      #Damage accumulated during current battle
-	var accumulatedDealtDMG : int = 0 #Damage dealt accumulated during current battle
-	var defeats : int = 0             #Number of enemies defeated during current battle.
-	var resistedHits : int = 0        #Number of attacks that hit an elemental resistance this turn
-	var weaknessHits : int = 0        #Number of attacks that hit an elemental weakness this turn
-	var turnDMG : int = 0             #Damage accumulated during current turn
+	var accumulatedDMG:int = 0        #Damage accumulated during current battle
+	var accumulatedDealtDMG:int = 0   #Damage dealt accumulated during current battle
+	var defeats:int = 0               #Number of enemies defeated during current battle.
+	var resistedHits:int = 0          #Number of attacks that hit an elemental resistance this turn
+	var weaknessHits:int = 0          #Number of attacks that hit an elemental weakness this turn
+	var turnDMG:int = 0               #Damage accumulated during current turn
 	var turnDealtDMG : int = 0        #Damage dealt during current turn
-	var turnHits : int = 0            #Number of hits this turn
-	var turnDodges : int = 0          #Number of times attacks were dodged this turn
-	var turnHeal : int = 0            #Amount of health restored this turn
+	var turnHits:int = 0              #Number of hits this turn
+	var turnDodges:int = 0            #Number of times attacks were dodged this turn
+	var turnHeal:int = 0              #Amount of health restored this turn
+	# Statistics to implement
+	var turnAfflictions:int = 0       #Amount of condition afflictions this turn.
+	var turnHealedAfflictions:int = 0 #Amount of healed afflictions this turn.
 	# Switches ##################################################################################
-	var turnActed : bool = false      #True if character acted this turn
-	var paralyzed : bool = false      #If true, character is unable to act due to paralysis this turn.
-	var panic:bool = false						#If true, character is panicing and unable to act for this turn.
-	var scanned : bool = false        #If scanned, use the scanned resists set.
+	var turnActed:bool = false        #True if character acted this turn
+	var paralyzed:bool = false        #If true, character is unable to act due to paralysis this turn.
+	var panic:bool = false		       #If true, character is panicing and unable to act for this turn.
+	var scanned:bool = false          #If scanned, use the scanned resists set.
 	# Buffs/Debuffs/Effects #####################################################################
 	var buff:Array = []              #Active buffs (stack of 3)
 	var debuff:Array = []            #Active debuffs (stack of 3)
 	var effect:Array = []            #Active special effects (max 8, will fail if no slots)
 	var eventEffect:Array = []       #Active event-based effects (max 8)
+	var damageEffect:Array = []      #Damage over time effects (max 4)
 	# Onhit activations #########################################################################
 	var follow:Array = []            #Same as above, but used as a buff to add CODE_FL skills to the user's own actions.
 	var chase:Array = []             #Array of arrays [user, chance, decrement, skill, level], runs CODE_FL of that skill.
@@ -75,7 +78,7 @@ class BattleStats:
 	var adamant:bool = false          #Character will endure a fatal blow if at full health.
 	# Item use stats ############################################################################
 	var itemSPD:int = 090            #Item use speed.
-	var itemAD:int = 110             #Item use AD set.
+	var itemAD:int  = 110            #Item use AD set.
 	# Misc stats ################################################################################
 	var FEbonus:int = 0              #Added to elemental field bonus.
 	var eventFlags:int = 0           #Event special flags such as plot armor.
@@ -102,19 +105,36 @@ class BattleStats:
 		self.defending = false
 		self.endure = false
 		self.adamant = false #Might be better to not unset it per turn. We'll see.
+		self.itemSPD = 90
+		self.itemAD = 110
 		self.follow.clear()
 		self.chase.clear()
 		self.overAction.clear()
+		self.FEbonus = 0
 		self.AD = 100
 
+	func resetCounter() -> void:
+		counter[0] = 0    #Counter chance
+		counter[1] = 100  #Counter decrease
+		counter[2] = null #Counter skill TID
+		counter[3] = 0    #Counter level
+		counter[4] = 0    #Counter element filter
+		counter[5] = 0    #Counter max amount
+		counter[6] = core.skill.PARRY_NONE #Counter type filter
+
+	func resetParry() -> void:
+		parry[0] = 0                 #Parry chance
+		parry[1] = 100               #Parry chance decrease
+		parry[2] = core.skill.PARRY_NONE  #Parry attack type
 
 
+###############################################################################
 
 func createBattleStats():
 	return BattleStats.new()
 
 func checkParalysis() -> bool:
-	if status != skill.STATUS_PARA:
+	if condition != skill.CONDITION_PARALYSIS:
 		return false
 	else:
 		return true if core.chance(50) else false
@@ -152,28 +172,25 @@ func applyBattleStatMultipliers():
 
 func initBattleTurn() -> void:
 	clampHealth()
+	condition2 = condition2 & ~core.skill.CONDITION2_STUN
 	battle.dodge = 0
 	recalculateStats()
 	stats.copy(battle.stat, statFinal)
 	resetBattleStatMultipliers()
 	battle.turn_reset()                      #Reset battle specific stats.
-	battle.paralyzed = checkParalysis()      #Check for paralysis effect...well, paralysis. If true, the character can't act normally.
 	battle.AD = 100                          #Reset Active Defense. Done here in case a base modifier is eventually put in place.
-	resetCounter()
-	checkEffects(battle.buff, true)          #Calculate effects from buffs.
-	checkEffects(battle.debuff, true)        #Same with debuffs.
-	#checkEffects(battle.effect, true)       #Then special effects such as active passives and such.
-	#checkEffects(battle.eventEffect, true)  #And finally effects from scripted events.
+	battle.resetCounter()
+	battle.resetParry()
+	checkEffects(battle.buff       , true)   #Calculate effects from buffs.
+	checkEffects(battle.debuff     , true)   #Same with debuffs.
+	checkEffects(battle.effect     , true)   #Then special effects such as active passives and such.
+	checkEffects(battle.eventEffect, true)   #And finally effects from scripted events.
 	applyBattleStatMultipliers()
+	#TODO: Set paralysis value as a random bool. Only check if it's true/false if paralysis is the current main condition.
+	#Paralysis calculated at the end of the turn in case any effect adds or removes paralysis.
+	battle.paralyzed = checkParalysis()      #Check for paralysis. If true, the character can't act normally.
 
-func resetCounter() -> void:
-	battle.counter[0] = 100 #Counter chance
-	battle.counter[1] = 100 #Counter decrease
-	battle.counter[2] = null #Counter skill TID
-	battle.counter[3] = 0 #Counter level
-	battle.counter[4] = core.stats.ELEMENTS.DMG_UNTYPED #Counter element filter
-	battle.counter[5] = 1 #Counter max amount
-	battle.counter[6] = skill.PARRY_NONE #Counter type filter
+
 
 
 func updateBattleStats() -> void:
@@ -186,16 +203,21 @@ func updateBattleStats() -> void:
 
 func endBattleTurn(defer) -> void:
 	#Reset guard and barrier values now so they don't show in the player UI.
-	battle.guard = 0
+	battle.guard   = 0
 	battle.barrier = 0
 	#Placeholder for skills that cause overheat.
 	if battle.overheat > 0:
 		battle.overheat -= 1
 		if battle.overheat == 0:
 			battle.overheat = 0
-	battle.buff = updateEffects(battle.buff, defer)
+	if condition2 & skill.CONDITION2_STUN:
+		condition2 = condition2 & ~skill.CONDITION2_STUN
+
+	battle.buff   = updateEffects(battle.buff  , defer)
 	battle.debuff = updateEffects(battle.debuff, defer)
 	battle.overAction.clear()
+	#Apply damage effects
+	damageEffects()
 
 func initBattle() -> void:
 	battle = createBattleStats()
@@ -288,21 +310,24 @@ func damageResistModifier(x:float, _type:int, energyDMG:bool) -> Array:
 	var result = x * resistMod
 	return [result, weak]
 
-func finalizeDamage(x, info, ignoreDefs:bool = false) -> int:
+func finalizeDamage(x, info, ignoreDefs:bool = false, nocap:bool = false) -> int:
 	#Apply active defense, reduce damage from guard or barrier.
 	#var finalDmg : float = x * (float(battle.AD) * .01)
 	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info, ignoreDefs)
-	return core.clampi(finalDmg, 1, core.skill.MAX_DMG)
+	return core.clampi(finalDmg, 1, core.skill.MAX_DMG if not nocap else 2^63)
 
 func defeatMessage() -> String:
 	return "%s is down!" % name
 
-func damage(x:int, data, silent:bool = false) -> Array:
+func damage(x:int, data, silent:bool = false, nonlethal:bool = false) -> Array:
 	var temp = HP - x
 	var overkill:bool = false
-	var defeat:bool = false
-	var full:bool = true if HP >= maxHealth() else false
-	HP = int(clamp(temp, 0.0, maxHealth()))
+	var defeat:bool   = false
+	var full:bool     = true if HP >= maxHealth() else false
+	var HP1:int = HP
+	HP = int(clamp(temp, 1.0 if nonlethal else 0.0, maxHealth()))
+	if x > 0 and nonlethal and HP == 1: display.message("Spared!", false, "EFEFEF")
+	var HPdelta:int = HP1 - HP
 	if HP == 0: #Defeated!
 		if int(abs(temp)) >= maxHealth() / 2: #Check for overkill.
 			overkill = true
@@ -313,8 +338,8 @@ func damage(x:int, data, silent:bool = false) -> Array:
 		else:
 			defeat()
 			defeat = true
-	battle.accumulatedDMG += x
-	battle.turnDMG += x
+	battle.accumulatedDMG += HPdelta
+	battle.turnDMG += HPdelta
 	if not silent:
 		display.damage([[x, data[0], overkill, data[2], data[3]]])
 	return [overkill, defeat]
@@ -329,13 +354,14 @@ func setAD(x:int, absolute:bool = false) -> void: #Set active defense.
 	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
 func defeat() -> void: #Process defeat.
-	status = skill.STATUS_DOWN #TODO: Set condition instead.
+	condition = skill.CONDITION_DOWN
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
 	if battle != null:
 		battle.follow.clear()
 		battle.chase.clear()
-		resetCounter()
+		battle.resetCounter()
+		battle.resetParry()
 		battle.counter[0] = 0
 		battle.AD = 100
 		battle.dodge = 0
@@ -347,8 +373,8 @@ func defeat() -> void: #Process defeat.
 		charge(false)
 	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
-
-func heal(x : int) -> void:
+# Healing #########################################################################################
+func heal(x:int) -> void:
 	HP = int(clamp(HP + x, 0, maxHealth()))
 	if HP == 0:	defeat()
 	battle.turnHeal += x
@@ -356,22 +382,60 @@ func heal(x : int) -> void:
 
 func overHeal(x, y) -> void:
 	var temp = maxHealth() + y
-	HP = int(clamp(HP+x, 0, temp))
+	HP = clamp(HP+x, 0, temp) as int
 	if HP == 0:	defeat()
 	battle.turnHeal += x
 	display.damage([[-x, false, false, 0, null]])
 
-func revive(x: int) -> void:
-	if status == skill.STATUS_DOWN:
-		status = skill.STATUS_NONE
+func revive(x:int) -> void:
+	if condition == skill.CONDITION_DOWN:
+		condition = skill.CONDITION_GREEN
 		heal(x)
 		display.update()
 
 func inflict(x) -> void:
-	status = x if HP > 0 else skill.STATUS_DOWN
+	condition = x if HP > 0 else skill.CONDITION_DOWN
 	display.message(skill.statusInfo[x].name, false, skill.statusInfo[x].color)
 
-func checkProtect(S):
+func addInflict(x:int) -> void:
+	match x:
+		skill.CONDITION_DOWN:
+			defeat()
+		skill.CONDITION_CRYO:
+			condition = skill.CONDITION_CRYO
+		skill.CONDITION_NARCOSIS:
+			condition = skill.CONDITION_NARCOSIS
+		skill.CONDITION_SEAL:
+			condition = skill.CONDITION_SEAL
+		skill.CONDITION_PARALYSIS:
+			condition = skill.CONDITION_PARALYSIS
+		skill.CONDITION_BLIND:
+			condition2 = condition2 | skill.CONDITION_BLIND
+		skill.CONDITION_STUN:
+			condition2 = condition2 | skill.CONDITION_STUN
+		skill.CONDITION_CURSE:
+			condition2 = condition2 | skill.CONDITION_CURSE
+		skill.CONDITION_PANIC:
+			condition2 = condition2 | skill.CONDITION_PANIC
+		skill.CONDITION_STASIS:
+			condition2 = condition2 | skill.CONDITION_STASIS
+
+func tryInflict(user, cond:int, power:int, crit:int) -> void:
+	#TODO: See something about hit checks. Like a way to not have to do "if_connect" all the time?
+	if condition != skill.CONDITION_DOWN:
+		var critf:float = crit as float * .01
+		var comp:float = ( ((user.battle.stat.LUC * 3) as float + 76.5) / ((battle.stat.LUC * 3) as float + 76.5) ) * 10
+		var rate:float = 0
+		if   comp as int <= 2      : rate = critf
+		elif comp > 2 and comp < 50: rate = critf * comp
+		else                       : rate = critf * 50.0
+		var finalrate:int = clamp(rate * 100, 0, 1500) as int
+		if randi() % 1000 <= finalrate: #Critical affliction. Bypass check.
+			addInflict(cond)
+		else: #Regular affliction. #TODO: Apply defenses.
+			addInflict(cond)
+
+func checkProtect(S) -> Array:
 	if battle.protectedBy.empty() or S.category != skill.CAT_ATTACK:
 		if S.category == skill.CAT_ATTACK: print("%s is not protected by anyone" % [name])
 		return [false, self]
@@ -383,52 +447,69 @@ func checkProtect(S):
 				return [true, i[0]]
 		return [false, self]
 
-func addEffect(S, lv, user):
+
+# Effect processing ###############################################################################
+func newEffect(S, lv:int, user) -> Array:
+	var E:Array = [
+		S,                    #E[0]: Skill pointer.
+		lv,                   #E[1]: Skill level (0-9).
+		S.effectDuration[lv], #E[2]: Effect duration counter.
+		user,                 #E[3]: Pointer to effect caster.
+		0,                    #E[4]: Effect value.
+	]
+	return E
+
+func addEffect(S, lv:int, user) -> void:
 	#TODO: Effects with duration 0 should be added to the stack anyway and removed at the end of turn.
-	if S != null:
-		var holder = null
-		match S.effectType:
-			skill.EFFTYPE_BUFF:
-				holder = battle.buff
-			skill.EFFTYPE_DEBUFF:
-				holder = battle.debuff
-			_:
-				holder = battle.effect
-		var tempLV = int(clamp(lv - 1, 0, 9))
-		var E = [S, tempLV, S.effectDuration[tempLV], user]
-		var check = checkEffectRefresh(holder, E)
-		if check != null:
-			refreshEffect(check, E, holder)
-		else:
-			print("Adding effect %sL%s to %s, duration %s" % [S.name, tempLV, user.name, E[2]])
-			holder.push_back(E)
-			initEffect(E, true)
-			display.message(S.name, false, skill.messageColors.debuff if S.effectType == skill.EFFTYPE_DEBUFF else skill.messageColors.buff)
+	if S == null:
+		print("[!][CHAR_BASE][addEffect] Null skill, aborting")
+		return
+	var holder:Array
+	var mcolor:String
+	match S.effectType:
+		skill.EFFTYPE_BUFF:
+			holder = battle.buff
+			mcolor = skill.messageColors.buff
+		skill.EFFTYPE_DEBUFF:
+			holder = battle.debuff
+			mcolor = skill.messageColors.debuff
+		_:
+			holder = battle.effect
+			mcolor = skill.messageColors.effect
+	var tempLV:int = core.clampi(lv - 1, 0, 9)
+	var E:Array    = newEffect(S, tempLV, user)
+	var check      = checkEffectRefresh(holder, E)  #Check if effect is already active.
+	if check != null: #If it is, apply refresh as per skill settings.
+		refreshEffect(check, E, holder)
+	else: #Add the new effect to the list otherwise.
+		print("[CHAR_BASE][addEffect] Adding %sL%s to %s, duration %s" % [S.name, tempLV, user.name, E[2]])
+		holder.push_back(E)
+		initEffect(E, true)
+		display.message(S.name, false, mcolor)
 
 
-func refreshEffect(E, data, holder):
+func refreshEffect(E:Array, data:Array, holder:Array) -> void:
 	match E[0].effectIfActive:
 		skill.EFFCOLL_REFRESH:
-			print("[%s] Refreshing effect duration to %s." % [E[0].name, data[2]])
+			print("[CHAR_BASE][refreshEffect] %s: Refreshing effect duration to %s." % [E[0].name, data[2]])
 			E[2] = data[2]
 		skill.EFFCOLL_ADD:
-			print("[%s] Adding effect duration to %s." % [E[0].name, E[2] + data[2]])
+			print("[CHAR_BASE][refreshEffect] %s: Adding effect duration to %s." % [E[0].name, E[2] + data[2]])
 			E[2] += data[2]
 		skill.EFFCOLL_NULLIFY:
-			print("[%s] Cancelling effect." % [E[0].name])
+			print("[CHAR_BASE][refreshEffect] %s: Cancelling effect." % E[0].name)
 			removeEffect(E[0], holder)
 		skill.EFFCOLL_FAIL:
-			print("[%s] Effect already set, failed." % [E[0].name])
+			print("[CHAR_BASE][refreshEffect] %s: Effect already set, failed." % E[0].name)
+			return
 
-func checkEffectRefresh(list, E):
-	if list.empty():
-		return null
-	for i in list:
-		if i[0] == E[0]:
-			return i
+func checkEffectRefresh(list:Array, E):
+	if list.empty(): return null
+	for E_ in list: #Check list for instances of this effect.
+		if E_[0] == E[0]: return E_ #Return immediately.
 	return null
 
-func checkEffects(A, runEF = false):
+func checkEffects(A, runEF = false) -> void:
 	if A != null:
 		for i in range(A.size()):
 			initEffect(A[i], runEF)
@@ -441,113 +522,156 @@ func findEffects(S) -> bool:
 					return true
 	return false
 
-func initEffect(E, runEF = false) -> void:
+func initEffect(E, runEF:bool = false) -> void:
 	var S = E[0]
-	var lv = E[1]
-	if S.effect & skill.EFFECT_STATS:
-		calculateEffectStats(S, lv)
+	if S.effectStatBonus != null:
+		calculateEffectStats(S, E[1])
 	if S.effect & skill.EFFECT_SPECIAL and runEF:
-		skill.runExtraCode(S, lv + 1, E[3], skill.CODE_EF, self)
+		skill.runExtraCode(S, E[1] + 1, E[3], skill.CODE_EF, self)
 
-func calculateEffectStats(S, lv):
+
+func calculateEffectStats(S, lv:int) -> void: # Apply stat changes from an active skill effect.
 	var temp = null
 	var stdout = str("%s stat changes from %s:" % [name, S.name])
-	var K = skill.EffectStat
-	for key in K:
-		if S.effectStatBonus.has(key):
+	for key in core.stats.STATS: #Get stat keys and look for bonuses.
+		if key in S.effectStatBonus:
 			temp = S.effectStatBonus[key]
-			match key:
-				"EFFSTAT_BASE":
-					for i in temp:
-						if i in core.stats.STATS:
-							battle.stat[i] += temp[i][lv]
-							stdout += str("%s+%s " % [i, temp[i][lv]])
-						elif core.stats.elementalModStringValidate(i):
-							core.stats.elementalModApply(battle.stat, i, temp[i][lv])
-							stdout += str("%s+%s " % [i, temp[i][lv]])
-						else:
-							stdout += "err:%s" % i
-				"EFFSTAT_BASEMULT":
-					for i in temp:
-						if i in core.stats.STATS:
-							battle.statmult[i] += temp[i][lv]
-							stdout += str("%s+%s%% " % [i, temp[i][lv]])
-						elif core.stats.elementalModStringValidate(i):
-							core.stats.elementalModApply(battle.statmult, i, temp[i][lv])
-							stdout += str("%s+%s%% " % [i, temp[i][lv]])
-				"EFFSTAT_GUARD":
-					if S.effectStats & K.EFFSTAT_GUARD:
-						battle.guard += temp[level]
-						stdout += str("Guard+%s " % [temp[lv]])
-				"EFFSTAT_BARRIER":
-					if S.effectStats & K.EFFSTAT_BARRIER:
-						battle.barrier += temp[level]
-						stdout += str("Barrier+%s " % [temp[lv]])
-				"EFFSTAT_EVASION":
-					if S.effectStats & K.EFFSTAT_EVASION:
-						battle.dodge += temp[level]
-						stdout += str("Dodge+%s " % [temp[lv]])
-				"EFFSTAT_DECOY":
-					if S.effectStats & K.EFFSTAT_DECOY:
-						battle.decoy += temp[level]
-						stdout += str("Drawrate+%s " % [temp[lv]])
+			battle.stat[key] += temp[lv]
+			stdout += str("%s+%s " % [key, temp[lv]])
+		var tmpKey = str(key,'_MULT') #Now look for base stat multipliers.
+		if tmpKey in S.effectStatBonus:
+			temp = S.effectStatBonus[tmpKey]
+			battle.statmult[key] += temp[lv]
+			stdout += str("%s+%s " % [tmpKey, temp[lv]])
+	for key in core.stats.ELEMENT_MOD_TABLE: #Element bonuses.
+		if key in S.effectStatBonus:
+			temp = S.effectStatBonus[key]
+			core.stats.elementalModApply(battle.stat, key, temp[lv])
+			stdout += str("%s+%s " % [key, temp[lv]])
+	if 'GUARD' in S.effectStatBonus:
+		battle.guard += S.effectStatBonus['GUARD'][lv]
+		stdout += str("Guard+%s " % S.effectStatBonus['GUARD'][lv])
+	if 'BARRIER' in S.effectStatBonus:
+		battle.barrier += S.effectStatBonus['BARRIER'][lv]
+		stdout += str("Barrier+%s " % S.effectStatBonus['BARRIER'][lv])
+	if 'EVASION' in S.effectStatBonus:
+		battle.dodge += S.effectStatBonus['EVASION'][lv]
+		stdout += str("Dodge+%s " % S.effectStatBonus['EVASION'][lv])
+	if 'DECOY' in S.effectStatBonus:
+		battle.decoy += S.effectStatBonus['DECOY'][lv]
+		stdout += str("Decoy+%s " % S.effectStatBonus['DECOY'][lv])
+	if 'FE_BONUS' in S.effectStatBonus:
+		battle.FEbonus += S.effectStatBonus['FE_BONUS'][lv]
+		stdout += str("Field Effect bonus+%s " % S.effectStatBonus['FE_BONUS'][lv])
+	if 'ITEM_SPD' in S.effectStatBonus:
+		battle.itemSPD += S.effectStatBonus['ITEM_SPD'][lv]
+		stdout += str("Item use speed+%s " % S.effectStatBonus['ITEM_SPD'][lv])
+	if 'ITEM_AD' in S.effectStatBonus:
+		battle.itemAD += S.effectStatBonus['ITEM_AD'][lv]
+		stdout += str("Item use AD+%s " % S.effectStatBonus['ITEM_AD'][lv])
 	print(stdout)
 
-func updateEffects(holder, defer):
+func updateEffects(holder, defer) -> Array:
 	var current = null
-	var tempHolder = []
-	var S = null
+	var tempHolder:Array = []
 	for i in range(holder.size()):
 		current = holder[i]
-		S = current[0]
-		current[2] -= 1
+		var S:Dictionary = current[0]
+		current[2] -= 1 #Reduce effect time.
 		if current[2] < 0:
-			print("[updateEffects] Effect %sL%02d expired" % [current[0].name, current[1] + 1])
+			print("[CHAR_BASE][updateEffects] %sL%02d expired" % [current[0].name, current[1] + 1])
 			if S.effect & skill.EFFECT_ONEND:
 				defer.push_back( [S, current[1], current[3], self] )
 		else:
 			tempHolder.push_back(current)
 	return tempHolder
 
-func removeEffect(E, holder):
+func removeEffect(E, holder) -> void:
 	for i in range(holder.size()):
 		if holder[i][0] == E:
 			print("Removed %s" % holder[i][0].name)
 			holder.remove(i)
 			return
 
-func dodgeAttack(user):
+# Damage Effects (damage over time) ###############################################################
+
+func newDamageEffect(S, dmg:int, duration:int, element:int, user) -> Array:
+	var DE:Array = [
+		S,
+		dmg,
+		duration,
+		element,
+		user,
+	]
+	return DE
+
+func processDamageEffect(DE) -> bool:
+	var info = damage(DE[1], [false, false, 0, null])
+	#display.damage([[DE[1], false, false, 0, null]])
+	return info[1]
+
+func calculateDamageEffects() -> int: #Gets an estimate of how much damage the character is going to receive at the end of the turn.
+	var result:int = 0
+	for DE in battle.damageEffect:
+		result += DE[1]
+	return result
+
+
+func damageEffects() -> void:
+	for DE in battle.damageEffect:
+		print("[CHAR_BASE][damageEffects] ", DE)
+		var defeats:bool = processDamageEffect(DE)
+		if defeats: return
+
+
+func addDamageEffect(user, S, val:int) -> void: #Add the damage over time effect.
+	for tmp in battle.damageEffect:
+		if tmp[0] == S: #Already set, fail or renew.
+			print("[CHAR_BASE][addDamageEffect] Already set!")
+			return
+	var dmg:int = core.clampi((val & 0x0FFFF00) >> 8, 0, 32000)
+	var dur:int = core.clampi((val & 0x00000F0) >> 4, 0, 15   )
+	var ele:int = core.clampi((val & 0x000000F)     , 0, 10   )
+	var DE:Array = newDamageEffect(S, dmg, dur, ele, user)
+	print("[CHAR_BASE][addDamageEffect] %s %s %s %s %s" % [DE[0].name, DE[1], DE[2], DE[3], DE[4].name])
+	battle.damageEffect.push_back(DE)
+	if battle.damageEffect.size() > 4: battle.damageEffect.pop_front()
+
+func tryDamageEffect(user, S, val:int) -> void: #Attempt to inflict a damage over time effect.
+	addDamageEffect(user, S, val)
+
+###################################################################################################
+
+func dodgeAttack(user) -> void:
 	battle.turnDodges += 1
 	display.message("Dodged!", false, "EFEFEF")
 
 func canAct() -> bool: #Checks if char can perform a regular action.
-	match status: #Main Condition check.
-		skill.STATUS_DOWN:    return false
-		skill.STATUS_STASIS:  return false
-		skill.STATUS_PARA:    return battle.paralyzed
-		skill.STATUS_STUN:    return false
+	match condition: #Main Condition check. (TODO: Finish)
+		skill.CONDITION_DOWN:      return false
+		skill.CONDITION_PARALYSIS: return battle.paralyzed
+		skill.CONDITION_NARCOSIS:  return false
+		skill.CONDITION_CRYO:      return false
+		skill.CONDITION_SEAL: return false
 		_: pass
-#		skill.CONDITION_DOWN:      return false
-#		skill.CONDITION_PARALYSIS: return battle.paralyzed
-#		skill.CONDITION_NARCOSIS:  return false
-#		skill.CONDITION_CRYO:      return false
-#		skill.CONDITION_CONTAINED: return false
 	# Secondary Condition checks.
-	if condition2 & skill.CONDITION_STUN:   return false
-	if condition2 & skill.CONDITION_PANIC:  return battle.panic
-	if condition2 & skill.CONDITION_STASIS: return false
+	if condition2 & skill.CONDITION2_STUN:   return false
+	if condition2 & skill.CONDITION2_PANIC:  return battle.panic
+	if condition2 & skill.CONDITION2_STASIS: return false
 	return true
 
 
 func canOver() -> bool: #Checks if char can perform Over actions.
-	match status:
-		skill.CONDITION_DOWN:      return false #Is defeated and cannot use Over.
-		skill.CONDITION_CRYO:      return false #Is frozen and cannot use Over.
-		skill.CONDITION_CONTAINED: return false #Is contained and cannot use Over.
+	match condition:
+		skill.CONDITION_DOWN:  return false #Is defeated and cannot use Over.
+		skill.CONDITION_CRYO:  return false #Is frozen and cannot use Over.
+		skill.CONDITION_SEAL:  return false #Is sealed and cannot use Over.
 		_: pass
-	if condition2 & skill.CONDITION_STASIS: return false
-	if condition2 & skill.CONDITION_PANIC:  return false
+	if condition2 & skill.CONDITION2_STASIS: return false
+	if condition2 & skill.CONDITION2_PANIC:  return false
 	return true
+
+# Followups #######################################################################################
 
 func canFollow(S:Dictionary, lv:int, target) -> bool: #Checks if char can do a followup action like a combo.
 	if canAct():
@@ -556,11 +680,13 @@ func canFollow(S:Dictionary, lv:int, target) -> bool: #Checks if char can do a f
 	return false
 
 func updateFollows() -> void: #Updates followup actions..
-	var newFollows : Array = []
+	var newFollows:Array = []
 	for i in battle.follow:
 		if i[1] > 0:
 			newFollows.push_front(i)
 	battle.follow = newFollows
+
+# Counters ########################################################################################
 
 func canCounter(target, element:int, data:Array): #Checks if char is able to perform a counter skill.
 	var C = battle.counter
@@ -575,23 +701,28 @@ func canCounter(target, element:int, data:Array): #Checks if char is able to per
 				return [true, [self, C[0], C[1], C[2], C[3], C[4]]]
 	return [false, null]
 
+# Safety checks ###################################################################################
+
 func isAble() -> bool: #Checks if character is active.
-	return false if status == skill.STATUS_DOWN else true
+	if condition == skill.CONDITION_DOWN: return false
+	else                                : return true
 
 func filter(S:Dictionary) -> bool: #Checks if character meets the conditions to be targeted.
 	match S.filter:
 		skill.FILTER_ALIVE:
-			return false if (status == skill.STATUS_DOWN or status == skill.STATUS_STASIS) else true
+			return false if (condition == skill.CONDITION_DOWN or condition2 & skill.CONDITION2_STASIS) else true
 		skill.FILTER_ALIVE_OR_STASIS:
-			return false if status == skill.STATUS_DOWN else true
+			return false if condition == skill.CONDITION_DOWN else true
 		skill.FILTER_DOWN:
-			return false if status != skill.STATUS_DOWN else true
+			return false if condition != skill.CONDITION_DOWN else true
 		skill.FILTER_STASIS:
-			return true if status == skill.STATUS_STASIS else false
-			#return true if status == skill.CONDITION_STASIS else false
+			return true if condition2 & skill.CONDITION2_STASIS else false
 		skill.FILTER_STATUS:
-			return false if ( status != skill.STATUS_NONE and status != skill.STATUS_DOWN ) else true
-			#return false if (status != skill.CONDITION_GREEN and status != skill.CONDITION_DOWN ) else true
+			if condition != skill.CONDITION_GREEN and condition != skill.CONDITION_DOWN:
+				return false
+			elif condition2 == 0: return false
+			else                : return true
+			#return false if (condition != skill.CONDITION_GREEN and condition != skill.CONDITION_DOWN ) else true
 		skill.FILTER_DISABLE:
 			return true
 		_:

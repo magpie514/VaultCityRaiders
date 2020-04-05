@@ -85,14 +85,16 @@ margin_bottom = 90.0
 [node name="BattleLog" type="RichTextLabel" parent="Panel"]
 self_modulate = Color( 1, 1, 1, 0.811765 )
 anchor_right = 1.0
-margin_bottom = 81.0
+margin_top = 620.0
+margin_right = -450.0
+margin_bottom = 720.0
 custom_fonts/normal_font = ExtResource( 16 )
 custom_constants/line_separation = -1
 bbcode_enabled = true
-bbcode_text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+bbcode_text = "aaaaaa[url=\"AAAAAAAAAAAAAAAAA\"]aaaaaaaaa[/url]aaaaaaa[rainbow]aaaaa[shake]aaaaaaaaaaaaaaaaaaaaa[wave]aaaaaaaaaaaaaaaaaaaaaaaaa"
 meta_underlined = false
 tab_size = 2
-text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 scroll_following = true
 script = SubResource( 1 )
 __meta__ = {
@@ -101,7 +103,9 @@ __meta__ = {
 
 [node name="BattleLog2" type="RichTextLabel" parent="Panel"]
 anchor_right = 1.0
-margin_bottom = 81.0
+margin_top = 620.0
+margin_right = -452.0
+margin_bottom = 720.0
 custom_fonts/normal_font = ExtResource( 4 )
 custom_constants/line_separation = -4
 bbcode_enabled = true
@@ -110,15 +114,15 @@ meta_underlined = false
 tab_size = 2
 text = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 scroll_active = false
+scroll_following = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Turn" type="Label" parent="Panel"]
-margin_left = 750.0
-margin_top = 59.0
-margin_right = 810.0
-margin_bottom = 80.0
+margin_left = 900.0
+margin_right = 960.0
+margin_bottom = 21.0
 text = "Turn X"
 align = 2
 __meta__ = {
@@ -126,10 +130,11 @@ __meta__ = {
 }
 
 [node name="Time" type="Label" parent="Panel"]
-margin_left = 830.0
-margin_top = 59.0
-margin_right = 960.0
-margin_bottom = 80.0
+visible = false
+margin_left = 379.0
+margin_top = 700.0
+margin_right = 509.0
+margin_bottom = 721.0
 align = 2
 
 [node name="Button" type="Button" parent="Panel/Time"]
@@ -139,13 +144,6 @@ margin_right = 129.0
 text = "Pass hour"
 
 [node name="FieldEffect" parent="Panel" instance=ExtResource( 8 )]
-anchor_top = 0.125
-anchor_bottom = 0.125
-margin_top = -9.0
-margin_bottom = 41.0
-
-[node name="InfoDisplay" parent="Panel" instance=ExtResource( 5 )]
-visible = false
 
 [node name="BattleControls" parent="Panel" instance=ExtResource( 3 )]
 margin_top = 92.0
@@ -163,20 +161,26 @@ anchor_left = 0.125
 anchor_top = 0.889
 anchor_right = 0.875
 anchor_bottom = 0.972
-margin_top = 2.91998
-margin_bottom = 20.16
+margin_left = 390.0
+margin_top = -20.08
+margin_right = -330.0
+margin_bottom = -79.84
 
 [node name="ActionQueue" parent="Panel" instance=ExtResource( 12 )]
-anchor_left = 0.739583
+anchor_left = 0.781
 anchor_top = 0.181944
 anchor_right = 1.0
-anchor_bottom = 0.473611
+anchor_bottom = 0.472
+margin_left = 0.23999
+margin_top = -8.99968
+margin_right = 1.0
+margin_bottom = -7.83966
 
 [node name="CurrentAction" parent="Panel" instance=ExtResource( 11 )]
 margin_left = 628.0
-margin_top = 90.0
+margin_top = 81.0
 margin_right = 960.0
-margin_bottom = 130.0
+margin_bottom = 121.0
 
 [node name="WinPanel" type="Label" parent="Panel"]
 visible = false
@@ -193,10 +197,15 @@ text = "VICTORY"
 align = 1
 valign = 1
 
+[node name="InfoDisplay" parent="Panel" instance=ExtResource( 5 )]
+margin_top = 620.0
+margin_right = -452.0
+margin_bottom = 630.0
+
 [node name="QuitButton" type="Button" parent="."]
 modulate = Color( 1, 1, 1, 0.235294 )
-margin_left = 891.0
-margin_right = 960.0
+margin_left = 890.0
+margin_right = 959.0
 margin_bottom = 20.0
 text = "QUIT "
 align = 2
@@ -221,10 +230,10 @@ script = ExtResource( 13 )
 
 [node name="Panel2" type="Panel" parent="."]
 modulate = Color( 1, 1, 1, 0.235294 )
-margin_left = 680.0
-margin_top = 19.0
-margin_right = 959.0
-margin_bottom = 39.0
+margin_left = 2.0
+margin_top = 696.0
+margin_right = 281.0
+margin_bottom = 716.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

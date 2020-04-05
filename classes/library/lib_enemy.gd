@@ -183,23 +183,23 @@ var example = {
 
 func initTemplate():
 	return {
-		"name" : { loader = LIBSTD_STRING },                           #Enemy name
-		"spriteFile" : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
+		"name"        : { loader = LIBSTD_STRING },                           #Enemy name
+		"spriteFile"  : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
 		"energyColor" : { loader = LIBSTD_STRING, default = "#AAFFFF" },
-		"summons" : { loader = LIBSTD_SUMMONS },                       #Summoner (or reinforcement) data.
-		"monster" : { loader = LIBSTD_BOOL, default = false },         #If the enemy is a monster that can be captured/tamed.
-		"canResurrect" : { loader = LIBSTD_BOOL, default = true },#If the enemy can be resurrected. If not, it won't be added to the resurrect list.
+		"summons"     : { loader = LIBSTD_SUMMONS },                       #Summoner (or reinforcement) data.
+		"monster"     : { loader = LIBSTD_BOOL, default = false },         #If the enemy is a monster that can be captured/tamed.
+		"canResurrect": { loader = LIBSTD_BOOL, default = true },#If the enemy can be resurrected. If not, it won't be added to the resurrect list.
 		"description" : { loader = LIBSTD_STRING },                    #Enemy description.
-		"statSpread" : { loader = LIBSTD_STATSPREAD },                 #Stat spread.
-		"armed" : { loader = LIBSTD_BOOL, default = false },           #If enemy is supposed to be wielding a weapon or not.
-		"OFF" : { loader = LIBSTD_ELEMENTDATA },                       #Elemental offense.
-		"RES" : { loader = LIBSTD_ELEMENTDATA },                       #Elemental defense.
-		"race" : { loader = LIBSTD_INT },                              #Race type (for "slayer/brand" effects)
-		"aspect" : { loader = LIBSTD_INT },                            #Race aspects (BIO/MEC/SPI), affects vulnerability to certain effects.
-		"defeatMsg" : { loader = LIBSTD_STRING, default = "%s was defeated!" },	#Message to display when defeated. "%s倒した！"
-		"ai" : { loader = LIBSTD_INT },                                #AI mode
-		"aiPattern" : { loader = LIBEXT_AIPATTERN },	                  #AI pattern
-		"skill" : { loader = LIBSTD_SKILL_LIST },                      #Skill list
+		"statSpread"  : { loader = LIBSTD_STATSPREAD },                 #Stat spread.
+		"armed"       : { loader = LIBSTD_BOOL, default = false },           #If enemy is supposed to be wielding a weapon or not.
+		"OFF"         : { loader = LIBSTD_ELEMENTDATA },                       #Elemental offense.
+		"RES"         : { loader = LIBSTD_ELEMENTDATA },                       #Elemental defense.
+		"race"        : { loader = LIBSTD_INT },                              #Race type (for "slayer/brand" effects)
+		"aspect"      : { loader = LIBSTD_INT },                            #Race aspects (BIO/MEC/SPI), affects vulnerability to certain effects.
+		"defeatMsg"   : { loader = LIBSTD_STRING, default = "%s was defeated!" },	#Message to display when defeated. "%s倒した！"
+		"ai"          : { loader = LIBSTD_INT },                                #AI mode
+		"aiPattern"   : { loader = LIBEXT_AIPATTERN },	                  #AI pattern
+		"skill"       : { loader = LIBSTD_SKILL_LIST },                      #Skill list
 	}
 
 

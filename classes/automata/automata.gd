@@ -80,7 +80,7 @@ class WireworldRGB extends CellularAutomaton:
 	# Wireworld if you use only red wire, making it the most interesting variant in my opinion.
 	# https://lodev.org/ca/wireworldrgb.html
 	# Example board for Golly: https://lodev.org/ca/Patterns/wireworld_rgb.mc
-	const CORE = preload("res://classes/automata/WireworldRGB.cs")
+	#const CORE = preload("res://classes/automata/WireworldRGB.cs")
 	const data = {
 		"DIODE"     : { name = "Diode"         , period = "0", desc = "Diode. Ensures flow cannot go back. Blue wire is forward.",
 			data = [ [0,0,0,0], [3,3,6,9], [0,0,0,0] ], },
@@ -125,46 +125,46 @@ class WireworldRGB extends CellularAutomaton:
 			TAIL_B: { color = Color("#7060DF"), name = "Blue electron tail" },
 		}
 		palette = [ NULL, WIRE_R, WIRE_G, WIRE_B, HEAD_R, HEAD_G, HEAD_B, TAIL_R, TAIL_G, TAIL_B ]
-		core = CORE.new()
-		core.init(w, h, visual_data)
-#""" 	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.
-#		var cell = map[y][x]
-#		if cell == NULL: return NULL
-#		match cell:
-#			HEAD_R: return TAIL_R
-#			HEAD_G: return TAIL_G
-#			HEAD_B: return TAIL_B
-#			TAIL_R: return WIRE_R
-#			TAIL_G: return WIRE_G
-#			TAIL_B: return WIRE_B
-#			WIRE_R:
-#				var neighbors_r:int = 0
-#				var neighbors_b:int = 0
-#				for off in iter_neighbor_moore:
-#					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
-#					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
-#				if   neighbors_r == 1 or neighbors_r == 2: return HEAD_R
-#				elif neighbors_b == 1 or neighbors_b == 2: return HEAD_R
-#				else: return WIRE_R
-#			WIRE_G:
-#				var neighbors_r:int = 0
-#				var neighbors_g:int = 0
-#				for off in iter_neighbor_moore:
-#					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
-#					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
-#				if   neighbors_g == 1: return HEAD_G
-#				elif neighbors_r == 1: return HEAD_G
-#				else: return WIRE_G
-#			WIRE_B:
-#				var neighbors_b:int = 0
-#				var neighbors_g:int = 0
-#				for off in iter_neighbor_moore:
-#					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
-#					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
-#				if   neighbors_b == 2: return HEAD_B
-#				elif neighbors_g == 1 and neighbors_b == 0: return HEAD_B #n_b==0 is important or it won't work.
-#				else: return WIRE_B
-#		return cell """
+		#core = CORE.new()
+		#core.init(w, h, visual_data)
+	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.
+		var cell = map[y][x]
+		if cell == NULL: return NULL
+		match cell:
+			HEAD_R: return TAIL_R
+			HEAD_G: return TAIL_G
+			HEAD_B: return TAIL_B
+			TAIL_R: return WIRE_R
+			TAIL_G: return WIRE_G
+			TAIL_B: return WIRE_B
+			WIRE_R:
+				var neighbors_r:int = 0
+				var neighbors_b:int = 0
+				for off in iter_neighbor_moore:
+					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
+					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
+				if   neighbors_r == 1 or neighbors_r == 2: return HEAD_R
+				elif neighbors_b == 1 or neighbors_b == 2: return HEAD_R
+				else: return WIRE_R
+			WIRE_G:
+				var neighbors_r:int = 0
+				var neighbors_g:int = 0
+				for off in iter_neighbor_moore:
+					if map[y+off[0]][x+off[1]] == HEAD_R: neighbors_r += 1
+					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
+				if   neighbors_g == 1: return HEAD_G
+				elif neighbors_r == 1: return HEAD_G
+				else: return WIRE_G
+			WIRE_B:
+				var neighbors_b:int = 0
+				var neighbors_g:int = 0
+				for off in iter_neighbor_moore:
+					if map[y+off[0]][x+off[1]] == HEAD_B: neighbors_b += 1
+					if map[y+off[0]][x+off[1]] == HEAD_G: neighbors_g += 1
+				if   neighbors_b == 2: return HEAD_B
+				elif neighbors_g == 1 and neighbors_b == 0: return HEAD_B #n_b==0 is important or it won't work.
+				else: return WIRE_B
+		return cell
 
 class Bullets extends CellularAutomaton:
 	# A rough simulation of light. Has some available timers and logic gates possible.
