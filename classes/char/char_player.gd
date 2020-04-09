@@ -76,6 +76,14 @@ var inventory:Array = []
 var personalInventorySize:int = 2
 var personalInventory:Array = []
 
+# Overrides #######################################################################################
+
+func checkPassives(runEF:bool = false) -> void:
+	for i in skills:
+		var S = core.lib.skill.getIndex(classlib.skills[i[0]])
+		if S.category == skill.CAT_PASSIVE:
+			initPassive(S, i[1], runEF)
+
 func endBattleTurn(defer):
 	battle.over += calculateTurnOverGains()
 	.endBattleTurn(defer)
@@ -101,6 +109,9 @@ func recalculateStats() -> void:
 	for i in core.Inventory.Equip.ARMOR_SLOT:
 		equip.slot[i].recalculateStats(level)
 		equip.slot[i].getBonuses(extraSkills, gearStats)
+
+	#TODO: Process field skill bonuses.
+
 	#stats.sum(gearStats, equip.calculateWeaponBonuses(extraSkills, currentWeapon))
 	#stats.sum(gearStats, equip.calculateArmorBonuses(extraSkills, level))
 	#stats.sum(gearStats, equip.calculateGearBonuses())
@@ -151,12 +162,6 @@ func initDict(C):	#Load the character from save data
 func initJson(json):
 	pass
 
-func damage(x, data, silent = false, nonlethal:bool = false) -> Array:
-	var info:Array = .damage(x, data, silent, nonlethal)
-	if display != null and not silent:
-		display.damageShake()
-	return info
-
 func revive(x: int) -> void:
 	.revive(x)
 
@@ -171,10 +176,6 @@ func defeat() -> void:
 			HP = getHealthPercent(IT[0].data.level + 1)
 			return
 	.defeat()
-
-func charge(x:bool = false) -> void:
-	if display != null:
-		display.charge(x)
 
 func getTooltip() -> String:
 	return "%s\nLv.%s %s %s\n%s" % [name, level, racelib.name, classlib.name, core.stats.print(statFinal)]
@@ -207,7 +208,7 @@ func getSkillTID(t):
 	return classlib.skills[t[0]]
 
 func checkRaceType(type:int) -> bool:
-	var result : bool = false
+	var result:bool = false
 	if type in race.lib.race:
 		result = true
 	return result

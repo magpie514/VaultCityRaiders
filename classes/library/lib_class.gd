@@ -21,6 +21,7 @@ var example = {
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_LONGSWORD],
 			skills = [
 				"story/plasfeld",
+				"story/jshield",
 				["story", "jhunter"],
 				["story", "jrailgun"],
 				["story", "blueshft"],

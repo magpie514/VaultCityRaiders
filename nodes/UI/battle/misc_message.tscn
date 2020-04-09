@@ -17,7 +17,7 @@ border_blend = true
 corner_detail = 1
 
 [sub_resource type="DynamicFont" id=2]
-size = 10
+size = 12
 outline_color = Color( 0, 0.145098, 0.180392, 1 )
 use_mipmaps = true
 extra_spacing_top = -2
@@ -41,6 +41,9 @@ custom_fonts/font = SubResource( 2 )
 text = "EFFECT!!!"
 uppercase = true
 script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CritLabel" type="Label" parent="."]
 visible = false

@@ -1,20 +1,20 @@
 var data = {}
 var template = initTemplate()
 
-const LIBSTD_BOOL = "loaderBool"
-const LIBSTD_INT = "loaderInt"
-const LIBSTD_FLOAT = "loaderFloat"
-const LIBSTD_STRING = "loaderString"
-const LIBSTD_TID = "loaderTID"
-const LIBSTD_TID_OR_NULL = "loaderTIDorNull"
-const LIBSTD_TID_ARRAY = "loaderTIDArray"
+const LIBSTD_BOOL          = "loaderBool"
+const LIBSTD_INT           = "loaderInt"
+const LIBSTD_FLOAT         = "loaderFloat"
+const LIBSTD_STRING        = "loaderString"
+const LIBSTD_TID           = "loaderTID"
+const LIBSTD_TID_OR_NULL   = "loaderTIDorNull"
+const LIBSTD_TID_ARRAY     = "loaderTIDArray"
 const LIBSTD_VARIABLEARRAY = "loaderVariableArray"
-const LIBSTD_STATSPREAD = "loaderStatSpread"
-const LIBSTD_STATBONUS = "loaderStatBonus"
-const LIBSTD_ELEMENTDATA = "loaderElementData"
-const LIBSTD_SKILL_ARRAY = "loaderSkillArray"
-const LIBSTD_SKILL_LIST = "loaderSkillList"
-const LIBSTD_SUMMONS = "loaderSummons"
+const LIBSTD_STATSPREAD    = "loaderStatSpread"
+const LIBSTD_STATBONUS     = "loaderStatBonus"
+const LIBSTD_ELEMENTDATA   = "loaderElementData"
+const LIBSTD_SKILL_ARRAY   = "loaderSkillArray"
+const LIBSTD_SKILL_LIST    = "loaderSkillList"
+const LIBSTD_SUMMONS       = "loaderSummons"
 
 func initTemplate():
 	return null
@@ -180,7 +180,7 @@ func loaderSkillList(val):
 		return result
 
 func loaderSkillArray(val):
-	var result : Array = core.newArray(10)
+	var result:Array = core.newArray(10)
 	match(typeof(val)):
 		TYPE_INT:
 			for i in range(10):

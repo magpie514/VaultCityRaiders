@@ -30,7 +30,7 @@ var data = {
 				null,
 				null,
 			],
-			skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1] ],
+			skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1] ],
 			links = [
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
 				[100, A.LINK_BESTFRIEND, A.LINK_NONE, A.LINK_NONE],

@@ -1,13 +1,20 @@
 extends "res://classes/char/char_base.gd"
 
 var tid = null
-var sprDisplay = null
 var skills = []
+var ability:Array = core.newArray(2) #Passive skill. [TID, level]
 var lib = null
 var XPMultiplier:float = 1.0
 var summoner = null
 var armed:bool = true #If the enemy is supposed to be wielding weapons or not.
 var ID:int = 0        #Unique ID. Used only for mons.
+
+# OVERRIDES #######################################################################################
+func checkPassives(runEF:bool = false) -> void:
+	#.initPassive(ability[0], ability[1])
+	.initPassive(core.lib.skill.getIndex(['debug','regenera']), 1, runEF)
+###################################################################################################
+
 
 func recalculateStats():
 	var S = stats.create()
@@ -44,7 +51,7 @@ func defeat() -> void:
 	.defeat()
 	core.battle.control.state.EXP += int(100 * XPMultiplier)
 	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
-	sprDisplay.defeat()
+	sprite.defeat()
 	display.stop()
 	group.defeat(slot, self)
 	#skill.msg(str(lib.defeatMsg % name))
@@ -53,17 +60,6 @@ func onSummonerDefeat():
 	print("[CHAR_ENEMY][onSummonerDefeat] %s's summoner fell!" % name)
 	print("[TODO] Add special effects here...")
 	print("[TODO] Add capture chance here when mons are a thing.")
-
-func damage(x, data, silent:bool = false, nonlethal:bool = false) -> Array:
-	var info:Array = .damage(x, data, silent, nonlethal)
-	if sprDisplay != null:
-		sprDisplay.damage()
-		sprDisplay.damageShake()
-	return info
-
-func charge(x:bool = false) -> void:
-	if sprDisplay != null:
-		sprDisplay.charge(x)
 
 func pickSkill():
 	if skills == null:
@@ -105,7 +101,6 @@ func pickTarget(S, level, F, P, state):
 			else:
 				return group.getRowTargets(0, S)
 
-
 func thinkBattleAction(F, P, state):
 	match lib.ai:
 		0:
@@ -117,7 +112,6 @@ func thinkBattleAction(F, P, state):
 				return thinkPattern(F, P, state, lib.aiPattern)
 		_:
 			return thinkRandom(F, P, state)
-
 
 func thinkRandom(F, P, state) -> Array:
 	var action = pickSkill()
@@ -224,9 +218,8 @@ func thinkPattern(F, P, state, aiPattern):
 			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])
 	if S.chargeAnim[0]:
-		sprDisplay.charge(true)
+		sprite.charge(true)
 	return [ action, 1, target ]
-
 
 func filter(S:Dictionary) -> bool:
 	if S.targetBlacklist != null:
@@ -236,7 +229,7 @@ func filter(S:Dictionary) -> bool:
 	return .filter(S)
 
 func checkRaceType(type) -> bool:
-	var result : bool = false
+	var result:bool = false
 	if type in lib.race:
 		result = true
 	return result

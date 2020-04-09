@@ -16,7 +16,7 @@ anti_aliasing = false
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends Panel
-var textures : Array = core.newArray(8)
+var textures:Array = core.newArray(8)
 onready var origPos:Vector2 = self.get_position()
 var timer:int = 0
 
@@ -25,6 +25,10 @@ func _init() -> void:
 		textures[i] = load(core.stats.ELEMENT_DATA[i].icon)
 
 func init(A) -> void: #A:Action
+	if A.act == core.battle.control.state.ACT_DEFEND: 
+		hide()
+		return
+	else: show()
 	var S = A.skill
 	var DE = S.displayElement
 	$Label2/Element0.hide()
@@ -63,6 +67,9 @@ margin_right = 220.0
 margin_bottom = 40.0
 custom_styles/panel = SubResource( 1 )
 script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label" type="Label" parent="."]
 margin_left = 10.0

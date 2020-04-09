@@ -360,6 +360,7 @@ enum { #Skill function codes.
 	OPCODE_PRINTMSG                   , #Print message X of the defined skill messages. Use 0 to print nothing.
 	OPCODE_LINKSKILL                  , #Uses a provided skill TID with the same level as cast.
 	OPCODE_PLAYANIM                   , #Plays a given animation. Use 0 to play no animation, 1 to play default animation.
+	OPCODE_FX_EFFECTOR_ADD            , #If X > 0, adds an effector (an object that attaches to the character sprite) defined in the "fx" array.
 	OPCODE_WAIT                       , #Wait for X/100 miliseconds.
 	OPCODE_POST                       , #Run post code for PR, MN or EF. x = 0 disables it. x = 1 targets the user's group. x = 2 targets the opposing group.
 	OPCODE_SYNERGY_REMOVE             , #Removes a synergy if x > 0.
@@ -580,6 +581,7 @@ const opCode = {
 	"printmsg" : OPCODE_PRINTMSG,
 	"linkskill" : OPCODE_LINKSKILL,
 	"anim.play" : OPCODE_PLAYANIM,
+	"fx.add" :    OPCODE_FX_EFFECTOR_ADD,
 	"wait" : OPCODE_WAIT,
 	"post" : OPCODE_POST,
 
@@ -1355,7 +1357,7 @@ func selectPostTargets(S, level:int, user, group):
 		TARGET_ROW_FRONT        : return group.getRowTargets(0, S)
 		_: return [ user ]
 
-func calculateTarget(S, level:int, user, _targets):
+func calculateTarget(S, level:int, user, _targets) -> Array:
 	var targets = []
 	var finalTargets = []
 	var temp = null
@@ -1421,7 +1423,7 @@ func addEffect(S, level:int, user, target, state):
 
 
 # SKILL PROCESSING ############################################################
-func process(S, level, user, _targets, WP = null, IT = null):
+func process(S, level, user, _targets, WP = null, IT = null, skipAnim:bool = false):
 	print("\n[SKILL][PROCESS] ### %s's action: %s ############################################\n" % [user.name, S.name])
 	if IT != null:    msg(str("[color=#%s]%s[/color] used [color=#80E36E]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
 	else:             msg(str("[color=#%s]%s[/color] used [color=#EEFF80]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, S.name]))
@@ -1444,7 +1446,7 @@ func initSkillState(S, level, user, target):
 func initSkillInfo() -> Dictionary:
 	return { anyHit = false, postTargetGroup = 0 }
 
-func processCombatSkill(S, level, user, targets, WP = null, IT = null):
+func processCombatSkill(S, level, user, targets, WP = null, IT = null, skipAnim:bool = false):
 	var temp = null
 	var tempTarget = null
 	var controlNode = core.battle.skillControl
@@ -1459,7 +1461,7 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 		user.setWeapon(WP)
 	user.charge(false)
 	var info = initSkillInfo()
-	if 'startup' in S.animations:
+	if 'startup' in S.animations and not skipAnim:
 		controlNode.startAnim(S, level, 'startup', core.battle.bg_fx)
 		yield(controlNode, "fx_finished") #Wait for animation to finish.
 		print("[SKILL][processCombatSkill] Startup animation finished")
@@ -1472,13 +1474,14 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null):
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
 		if tempTarget.filter(S): #Target is valid.
-			controlNode.startAnim(S, level, 'main', tempTarget.display.effectHook)
-			yield(controlNode, "fx_finished") #Wait for animation to finish.
-			print("[SKILL][processCombatSkill] Standard animation finished")
+			if not skipAnim:
+				controlNode.startAnim(S, level, 'main', tempTarget.sprite.effectHook)
+				yield(controlNode, "fx_finished") #Wait for animation to finish.
+				print("[SKILL][processCombatSkill] Standard animation finished")
 			control = controlNode.start()
 			processSkillCode(S, level, user, tempTarget, CODE_MN, control, state, info)
 			yield(control, "skill_end")
-			yield(controlNode.wait(0.1), "timeout")                                   #Small pause for aesthetic reasons.
+			#yield(controlNode.wait(0.1), "timeout")                                   #Small pause for aesthetic reasons.
 
 	if S.codePO != null and info.postTargetGroup > 0: #Has a post-main part. Use a fresh state but set some variables.
 		#postTargetGroup is enabled by default but a skill can stop it from triggering if postTargetGroup is set to -1
@@ -1575,7 +1578,7 @@ func processFL(S, level, user, target, data, type):
 				])
 	yield(core.battle.skillControl.wait(0.05), "timeout")
 	var control = core.battle.skillControl.start()
-	core.battle.skillControl.startAnim(S, level, 'onfollow', target.display.effectHook)
+	core.battle.skillControl.startAnim(S, level, 'onfollow', target.sprite.effectHook)
 	yield(core.battle.skillControl, "fx_finished")
 	print("FL ANIMATION FINISHED")
 	processSkillCode(S, level, user, target, CODE_FL, control)
@@ -2249,6 +2252,11 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">PLAY ANIMATION: %s" % value)
 						controlNode.startAnim(S, level, str(value) if value in S.animations else 'main', target.display.effectHook)
 						yield(controlNode, "fx_finished")
+					OPCODE_FX_EFFECTOR_ADD:
+						print(">ADD FX EFFECTOR: ", value)
+						if value > 0 and S.fx:
+							if value - 1 < S.fx.size():
+								core.battle.displayManager.addEffector(variableTarget, S.fx[value-1])
 					OPCODE_WAIT:
 						print(">WAIT: %s" % value)
 						yield(controlNode.wait(float(value) * 0.01), "timeout")

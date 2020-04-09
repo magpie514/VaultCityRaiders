@@ -37,6 +37,7 @@ func damage(x):
 		if typeof(i) == TYPE_ARRAY:
 			n += i[0]
 	if n > 0:
+		chr.sprite.damageShake()
 		damageShake()
 
 func message(msg, data, color):
@@ -152,12 +153,12 @@ func update() -> void:
 			updateAD(chr.battle.AD)
 			updateDEbar(chr.calculateDamageEffects())
 			if chr.battle.guard > 0 or chr.battle.absoluteGuard > 0: #Show Guard indicator.
-				$Guard.show()
+				$ComplexBar/Guard.show()
 				$ComplexBar.guard = true
 				if chr.battle.absoluteGuard > 0:
-					$Guard.text = str(chr.battle.absoluteGuard)
+					$ComplexBar/Guard.text = str(chr.battle.absoluteGuard)
 				else:
-					$Guard.text = str(chr.battle.guard)
+					$ComplexBar/Guard.text = str(chr.battle.guard)
 			else:
 				$ComplexBar.guard = false
 				$ComplexBar/Guard.hide()

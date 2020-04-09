@@ -14,6 +14,7 @@ const LIBEXT_SKILL_MESSAGES     = "loaderMessages"
 const LIBEXT_EFFECT_STATBONUS   = "loaderEffectStatBonus"
 const LIBEXT_SKILL_LINK         = "loaderSkillLink"
 const LIBEXT_ANIM               = "loaderAnim"
+const LIBEXT_FX                 = "loaderFX"
 
 var example = {
 # Core skills #####################################################################################
@@ -235,7 +236,9 @@ var example = {
 			accMod =	100,
 			spdMod = 005,
 			AD     =	100,
+			fx = ["effector/jcraw"],
 			codeEF = [
+				["fx.add" , 001, 0],
 				["follow" , 0x1640FF, 0]
 			],
 			codeFL = [
@@ -262,6 +265,18 @@ var example = {
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+		"jshield": {
+			name = "Shield",
+			description = "If there are two EE on the field, add some Guard at the start of the turn.",
+			element = core.stats.ELEMENTS.DMG_ELEC,
+			category = skill.CAT_PASSIVE,
+			fx = [ "effector/jshield" ],
+			codeEF = [
+				["if_ef_bonus>=", 002, skill.OPFLAGS_BLOCK_START],
+					["guard"        , 025, 0],
+					["fx.add"       , 001, 0],
 			],
 		},
 		"jhunter": {
@@ -762,9 +777,8 @@ var example = {
 			energyDMG = true,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
-			accMod = [100,099,099,099,099,   099,099,099,099,099],
-			spdMod = [080,100,100,100,100,   100,100,100,100,100],
-			AD =     [105,100,100,100,100,   100,100,100,100,100],
+			spdMod = [080,100,100,100,100, 100,100,100,100,100],
+			AD     = 105,
 			codeMN = [
 				["enemy.revive" ,100,125,132,132,140, 140,147,147,147,160],
 			],
@@ -1438,7 +1452,7 @@ var example = {
 			category = skill.CAT_PASSIVE,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
-			codeMN = [
+			codeEF = [
 				["heal", 025, 0],
 			],
 		},
@@ -1910,9 +1924,11 @@ func initTemplate():
 		"effectDuration"  : { loader = LIBSTD_SKILL_ARRAY },
 		"effectPriority"  : { loader = LIBSTD_INT },
 
+		#Animation and FX related.
 		"chargeAnim"      : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0] },
 		"animations"      : { loader = LIBEXT_ANIM, default = { 'main': "/nodes/FX/basic.tscn" } },
 		"animFlags"       : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0]},
+		"fx"              : { loader = LIBEXT_FX, default = [] },
 
 		"ranged"    : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
 		"levels"    : { loader = LIBSTD_INT, default = 10 },
@@ -2003,6 +2019,19 @@ func loaderSkillCode(a): #Loads skill codes.
 			#Input is...something else. Likely user error. Return a line with no effect as a last resort.
 			print("\t[!!][SKILL][loaderSkillCode] Provided skill code is not an array. Please verify. ")
 			return [ _template.duplicate() ]
+
+func loaderFX(val) -> Array:
+	match typeof(val):
+		TYPE_NIL:
+			return []
+		TYPE_ARRAY:
+			var result:Array = []
+			for i in range(val.size()):
+				result.push_back(str(val[i]))
+			return result
+		_:          # Unknown input. Print error and return null.
+			print("\t[!!][SKILL][loaderFX] Unknown input type, returning empty array.")
+			return []
 
 func loaderMessages(val): #Loads skill messages.
 	match typeof(val):

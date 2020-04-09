@@ -12,25 +12,25 @@ __meta__ = {
 [node name="F0" parent="." instance=ExtResource( 2 )]
 
 [node name="F1" parent="." instance=ExtResource( 2 )]
-margin_top = 33.0
-margin_bottom = 65.0
+margin_top = 31.0
+margin_bottom = 61.0
 
 [node name="F2" parent="." instance=ExtResource( 2 )]
-margin_top = 66.0
-margin_bottom = 98.0
+margin_top = 62.0
+margin_bottom = 92.0
 
 [node name="B0" parent="." instance=ExtResource( 2 )]
-margin_left = 230.0
-margin_right = 450.0
+margin_left = 210.0
+margin_right = 410.0
 
 [node name="B1" parent="." instance=ExtResource( 2 )]
-margin_left = 230.0
-margin_top = 33.0
-margin_right = 450.0
-margin_bottom = 65.0
+margin_left = 210.0
+margin_top = 31.0
+margin_right = 410.0
+margin_bottom = 61.0
 
 [node name="B2" parent="." instance=ExtResource( 2 )]
-margin_left = 230.0
-margin_top = 66.0
-margin_right = 450.0
-margin_bottom = 98.0
+margin_left = 210.0
+margin_top = 62.0
+margin_right = 410.0
+margin_bottom = 92.0

@@ -31,14 +31,8 @@ func popDamageNums():
 		d.init(v)
 		damageDelay = 32
 
-func fadeTo(x, time):
-	if tween == null: return
-	if tween.is_active():
-		tween.stop(self)
-	x = clamp(x, 0.0, 1.0)
-	tween.interpolate_property(self, "fade", fade, x, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	fade = x
-	tween.start()
+func highlight(x):
+	pass
 
 func damage(x):
 	update()
@@ -82,7 +76,8 @@ func _process(delta):
 			popDamageNums()
 
 func _on_EnemyDisplay_mouse_entered():
-	emit_signal("display_info", chr, 1)
+	if chr != null:
+		emit_signal("display_info", chr, 1)
 
 func _on_EnemyDisplay_mouse_exited():
 	emit_signal("hide_info")

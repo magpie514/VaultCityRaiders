@@ -2,8 +2,9 @@ var stats = core.stats
 var skill = core.skill
 
 enum { #Flags for scripted fights.
-	EVENTFLAGS_NONE =       0x0000,     #Normal operation
-	EVENTFLAGS_INVINCIBLE = 0x0001,     #Character has plot armor and negates most damage.
+	EVENTFLAGS_NONE =       0b0000,     #Normal operation
+	EVENTFLAGS_INVINCIBLE = 0b0001,     #Character has plot armor and negates most damage.
+	EVENTFLAGS_GOLUF      = 0b0010,     #Character refuses to die. Like a certain old man.
 }
 
 
@@ -20,6 +21,7 @@ var battle           = null            #Battle stats (See createBattleStats())
 
 # Battle display ###############################################################
 var display            = null      #Reference to the character's UI element for quick access.
+var sprite             = null      #Reference to the character's sprite in combat.
 var energyColor:String = "#AAFFFF" #Color used for certain effects.
 # Miscelaneous shortcut vars ###################################################
 var slot:int = 0 #Character's position slot in its group.
@@ -30,7 +32,7 @@ var group = null #Reference to the character's group.
 class BattleStats:
 	# Core stats ################################################################################
 	var stat = core.stats.create()    #Calculated battle stats
-	var statmult : Dictionary = {}    #Stat multipliers
+	var statmult:Dictionary = {}      #Stat multipliers
 	var over:int = 33 setget set_over #Over counter
 	# Statistics ################################################################################
 	var accumulatedDMG:int = 0        #Damage accumulated during current battle
@@ -143,7 +145,7 @@ func clampHealth() -> void:
 	HP = core.clampi(HP, 0, maxHealth())
 
 func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:
-	var temp:float = .0
+	var temp:float
 	if flags & core.skill.OPFLAGS_VALUE_PERCENT:
 		temp = float(maxHealth()) * core.percent(x)
 	else:
@@ -181,25 +183,28 @@ func initBattleTurn() -> void:
 	battle.AD = 100                          #Reset Active Defense. Done here in case a base modifier is eventually put in place.
 	battle.resetCounter()
 	battle.resetParry()
+	checkPassives(true)
 	checkEffects(battle.buff       , true)   #Calculate effects from buffs.
 	checkEffects(battle.debuff     , true)   #Same with debuffs.
 	checkEffects(battle.effect     , true)   #Then special effects such as active passives and such.
 	checkEffects(battle.eventEffect, true)   #And finally effects from scripted events.
 	applyBattleStatMultipliers()
-	#TODO: Set paralysis value as a random bool. Only check if it's true/false if paralysis is the current main condition.
-	#Paralysis calculated at the end of the turn in case any effect adds or removes paralysis.
+	display.update()
+	#TODO: Set paralysis value as a chance(50) bool. Only check if it's true/false if paralysis is the current main condition.
+	#Paralysis calculated at the end of the sequence in case any effect adds or removes paralysis.
 	battle.paralyzed = checkParalysis()      #Check for paralysis. If true, the character can't act normally.
-
-
-
 
 func updateBattleStats() -> void:
 	recalculateStats()
 	stats.copy(battle.stat, statFinal)
 	resetBattleStatMultipliers()
+	checkPassives(false)
 	checkEffects(battle.buff)
 	checkEffects(battle.debuff)
+	checkEffects(battle.effect)
+	checkEffects(battle.eventEffect)
 	applyBattleStatMultipliers()
+	display.update()
 
 func endBattleTurn(defer) -> void:
 	#Reset guard and barrier values now so they don't show in the player UI.
@@ -216,12 +221,13 @@ func endBattleTurn(defer) -> void:
 	battle.buff   = updateEffects(battle.buff  , defer)
 	battle.debuff = updateEffects(battle.debuff, defer)
 	battle.overAction.clear()
+	sprite.clearEffectors()
 	#Apply damage effects
 	damageEffects()
 
 func initBattle() -> void:
 	battle = createBattleStats()
-	initBattleTurn()
+	#initBattleTurn()
 
 func maxHealth():
 	return statFinal.MHP
@@ -302,7 +308,7 @@ func damageResistModifier(x:float, _type:int, energyDMG:bool) -> Array:
 	if type == "DMG_UNTYPED" or battle.stat.RES[type] == 100:
 		return [x, 0] #Neutral damage, no changes to final damage, abort.
 
-	var weak : int = 0
+	var weak:int = 0
 	if battle.stat.RES[type] > 100:	weak = 1 #is weak
 	else:	weak = 2 #is resistant
 
@@ -326,7 +332,8 @@ func damage(x:int, data, silent:bool = false, nonlethal:bool = false) -> Array:
 	var full:bool     = true if HP >= maxHealth() else false
 	var HP1:int = HP
 	HP = int(clamp(temp, 1.0 if nonlethal else 0.0, maxHealth()))
-	if x > 0 and nonlethal and HP == 1: display.message("Spared!", false, "EFEFEF")
+	if x > 0 and nonlethal and HP == 1:
+		display.message("Spared!", false, "EFEFEF")
 	var HPdelta:int = HP1 - HP
 	if HP == 0: #Defeated!
 		if int(abs(temp)) >= maxHealth() / 2: #Check for overkill.
@@ -340,8 +347,10 @@ func damage(x:int, data, silent:bool = false, nonlethal:bool = false) -> Array:
 			defeat = true
 	battle.accumulatedDMG += HPdelta
 	battle.turnDMG += HPdelta
-	if not silent:
+	if not silent and sprite != null:
 		display.damage([[x, data[0], overkill, data[2], data[3]]])
+		sprite.damage()
+		sprite.damageShake()
 	return [overkill, defeat]
 
 func setAD(x:int, absolute:bool = false) -> void: #Set active defense.
@@ -358,19 +367,19 @@ func defeat() -> void: #Process defeat.
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
 	if battle != null:
+		charge(false)
+		battle.AD = 100
 		battle.follow.clear()
 		battle.chase.clear()
 		battle.resetCounter()
 		battle.resetParry()
-		battle.counter[0] = 0
-		battle.AD = 100
 		battle.dodge = 0
 		battle.forceDodge = 0
 		battle.defending = false
 		battle.buff.clear()
 		battle.debuff.clear()
 		battle.effect.clear()
-		charge(false)
+		battle.damageEffect.clear()
 	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
 # Healing #########################################################################################
@@ -593,6 +602,17 @@ func removeEffect(E, holder) -> void:
 			holder.remove(i)
 			return
 
+# Passive combat skills ###########################################################################
+func checkPassives(runEF:bool = false) -> void: pass #[VIRTUAL] Checks passive skills.
+
+func initPassive(S, lv:int = 1, runEF:bool = false) -> void:
+	if S.effectStatBonus != null:
+		calculateEffectStats(S, lv)
+	if runEF:
+		skill.runExtraCode(S, lv+1, self, skill.CODE_EF, self)
+
+###################################################################################################
+
 # Damage Effects (damage over time) ###############################################################
 
 func newDamageEffect(S, dmg:int, duration:int, element:int, user) -> Array:
@@ -616,13 +636,11 @@ func calculateDamageEffects() -> int: #Gets an estimate of how much damage the c
 		result += DE[1]
 	return result
 
-
 func damageEffects() -> void:
 	for DE in battle.damageEffect:
 		print("[CHAR_BASE][damageEffects] ", DE)
 		var defeats:bool = processDamageEffect(DE)
 		if defeats: return
-
 
 func addDamageEffect(user, S, val:int) -> void: #Add the damage over time effect.
 	for tmp in battle.damageEffect:
@@ -735,11 +753,12 @@ func setInitAD(S:Dictionary, lv:int) -> void: #Sets Active Defense before battle
 	setAD(S.initAD[lv], true)
 	print("[SKILL][setInitAD] Active Defense set to %d" % battle.AD)
 
-func useBattleSkill(state, act:int, S, lv:int, targets, WP = null, IT = null) -> void:
-	core.skill.process(S, lv, self, targets, WP, IT)
+func useBattleSkill(state, act:int, S, lv:int, targets, WP = null, IT = null, skipAnim:bool = false) -> void:
+	core.skill.process(S, lv, self, targets, WP, IT, skipAnim)
 
 func checkRaceType(type) -> bool:
 	return false
 
-func charge(x : bool = false) -> void:
-	pass
+func charge(x:bool = false) -> void:
+	if sprite != null:
+		sprite.charge(x)

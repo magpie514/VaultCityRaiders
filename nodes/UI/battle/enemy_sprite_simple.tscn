@@ -5,49 +5,7 @@
 [ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/images/test_BM.png" type="Texture" id=4]
 
-[sub_resource type="Shader" id=1]
-code = "shader_type canvas_item;
-render_mode blend_add;
-
-uniform float radius = 16.0;
-
-void fragment() {
-	vec2 ps = TEXTURE_PIXEL_SIZE;
-	vec4 col = vec4(0);
-	float f = 1.0;
-	for(f = 0.0; f < 16.0; f+=1.0){
-		col += texture(TEXTURE, UV + vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
-		col += texture(TEXTURE, UV - vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
-	}
-	COLOR = col / 7.0;
-}
-"
-
-[sub_resource type="ShaderMaterial" id=2]
-shader = SubResource( 1 )
-shader_param/radius = 5.0
-
-[sub_resource type="GDScript" id=3]
-script/source = "tool
-extends Sprite
-
-var nextVal:float = randf()
-var count:float = randf()
-var currentVal:float = randf()
-
-func _ready() -> void:
-	set_process(true)
-
-func _process(delta: float) -> void:
-	count += 0.1
-	if count > 1.0:
-		count = 0
-		currentVal = nextVal
-		nextVal = randf()
-	modulate.a = lerp(currentVal, nextVal, count)
-"
-
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=1]
 length = 0.351434
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
@@ -74,7 +32,7 @@ tracks/1/keys = {
 "values": [ false, true, false ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=2]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
 tracks/0/interp = 1
@@ -88,7 +46,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=3]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
 tracks/0/interp = 1
@@ -102,7 +60,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 0, 100, 100, 1 ), Color( 100, 100, 100, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=4]
 length = 0.351434
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
@@ -117,7 +75,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 100, 0, 0, 1 ), Color( 100, 100, 100, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=5]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:modulate")
 tracks/0/interp = 2
@@ -131,30 +89,77 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 100, 100, 100, 1 ), Color( 2, 1, 1, 1 ), Color( 0, 0, 100, 1 ), Color( 0, 0, 0, 0 ) ]
 }
 
-[node name="EnemySpriteSimple" type="Node2D"]
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+render_mode blend_add;
+
+uniform float radius = 16.0;
+
+void fragment() {
+	vec2 ps = TEXTURE_PIXEL_SIZE;
+	vec4 col = vec4(0);
+	float f = 1.0;
+	for(f = 0.0; f < 16.0; f+=1.0){
+		col += texture(TEXTURE, UV + vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
+		col += texture(TEXTURE, UV - vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
+	}
+	COLOR = col / 7.0;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
+shader_param/radius = 5.0
+
+[sub_resource type="GDScript" id=8]
+script/source = "tool
+extends Sprite
+
+var nextVal:float = randf()
+var count:float = randf()
+var currentVal:float = randf()
+
+func _ready() -> void:
+	set_process(true)
+
+func _process(delta: float) -> void:
+	count += 0.1
+	if count > 1.0:
+		count = 0
+		currentVal = nextVal
+		nextVal = randf()
+	modulate.a = lerp(currentVal, nextVal, count)
+"
+
+[node name="SpriteSimple" type="Node2D"]
 script = ExtResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/ACTION = SubResource( 1 )
+anims/BEGIN = SubResource( 2 )
+anims/CHARGE = SubResource( 3 )
+anims/DAMAGE = SubResource( 4 )
+anims/DEFEAT = SubResource( 5 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0, -120 )
 texture = ExtResource( 2 )
 
 [node name="Glows" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0.416578 )
-material = SubResource( 2 )
+modulate = Color( 1, 1, 1, 0.553459 )
+material = SubResource( 7 )
 position = Vector2( 0, -120 )
 texture = ExtResource( 4 )
-script = SubResource( 3 )
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/ACTION = SubResource( 4 )
-anims/BEGIN = SubResource( 5 )
-anims/CHARGE = SubResource( 6 )
-anims/DAMAGE = SubResource( 7 )
-anims/DEFEAT = SubResource( 8 )
+script = SubResource( 8 )
 
 [node name="Charge" parent="." instance=ExtResource( 3 )]
 position = Vector2( 0, -100 )
 
 [node name="EffectHook" type="Position2D" parent="."]
 position = Vector2( 0, -100 )
+
+[node name="EffectorHolder" type="Node2D" parent="EffectHook"]
+
+[node name="2DHook" type="Position2D" parent="."]
+position = Vector2( 0, -10 )
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

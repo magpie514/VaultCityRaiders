@@ -43,7 +43,7 @@ func setup(C, place:int, node) -> void:
 
 	#Set up Over gauge.
 	$Main/OverBar.value = C.getOverN()
-	$Main/OverLabel/Label.text = str("%03d%%" % int(C.battle.over))
+	$Main/Over/Label.text = str("%03d%%" % int(C.battle.over))
 	#Only enable Over menu if there's enough Over for a tier 1 Over skill (33%).
 	$Main/Over.disabled = (C.getOverN() > core.skill.OVER_COST_1)
 	$Main/Over.disabled = false #TODO: For testing, remove when done.

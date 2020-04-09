@@ -1,9 +1,9 @@
 extends Label
 
-var msg : String = ''
-var count : float  = 0.0
+var msg:String  = ''
+var count:float = 0.0
 
-func init(n, crit, color) -> void:
+func init(n, crit, color:Color) -> void:
 	count = 1.0
 	msg = n
 	text = str(">%s" % msg)

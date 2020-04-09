@@ -23,19 +23,7 @@ func initBattleTurn():
 	display.update()
 	.initBattleTurn()
 
-func initSprite(C, slot:int):
-	var spr : String = C.lib.spriteFile
-	var t: int  = slot + 1
-	var prefix = "F" if t < 4 else "B"
-	t = t if t < 4 else (t - 3)
-	var nodeName = str("Enemy/%s%s" % [prefix, t])
-	var node = core.battle.background.get_node(nodeName)
-	if node != null:
-		var sprite = load("res://nodes/UI/battle/enemy_sprite_simple.tscn").instance()
-		node.add_child(sprite)
-		sprite.init(spr, C, slot)
-		return sprite
-	return null
+
 
 func initMember(d, lvbonus:int = 0):
 	var m = enemy.new()
@@ -57,7 +45,6 @@ func defeat(slot:int, C): #Do stuff when the enemy is down.
 		i.onSummonerDefeat()
 	formation[slot] = null
 	if C.lib.canResurrect: defeated.push_front(C) #If it can be resurrected, add to the list.
-	display.bars[slot] = null
 
 func revive(x:int) -> void:
 	#Only get here if AI determined a revive is possible
@@ -97,9 +84,9 @@ func trySummon(user, x: int, override = null, level = -1) -> Array:
 		print("[GROUP_ENEMY][trySummon] Cannot summon!")
 		return [false, null]
 
-	var slot : int = -1
 	var SU = null
-	var success : bool = false
+	var slot:int = -1
+	var success:bool = false
 
 	if override != null and x < override.size(): #Using a skill-defined override.
 		print("[GROUP_ENEMY][trySummon] Using skill override.")
@@ -158,9 +145,9 @@ func addMember(data, slot):
 	formation[slot].group = self
 	formation[slot].initBattle()
 	formation[slot].display = display.createDisplay(slot)
-	display.bars[slot] = formation[slot].display
-	#formation[slot].sprDisplay = initSprite(formation[slot], slot)
-	display.connectSignals(display.bars[slot], core.battle.control)
+	#display.bars[slot] = formation[slot].display
+	#formation[slot].sprite = initSprite(formation[slot], slot)
+	#display.connectSignals(display.bars[slot], core.battle.control)
 
 
 func init(tid, lvbonus = 0):
@@ -170,10 +157,10 @@ func init(tid, lvbonus = 0):
 	name = lib.name
 	for i in range(MAX_SIZE):
 		if form.formation[i] != null:
-			formation[i] = initMember(lib.formation[i],  lvbonus)
+			formation[i]       = initMember(lib.formation[i],  lvbonus)
 			formation[i].group = self
-			formation[i].slot = i
-			formation[i].row = 0 if i < ROW_SIZE else 1
+			formation[i].slot  = i
+			formation[i].row   = 0 if i < ROW_SIZE else 1
 
 func loadDebug():
 	init(["debug", "debug"])

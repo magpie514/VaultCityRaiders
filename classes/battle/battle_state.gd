@@ -224,7 +224,7 @@ func checkActionExecution(user, target) -> bool: #Check if an action can be perf
 
 func initAction(act) -> void:
 	if checkActionExecution(act.user, act.target):
-		act.user.useBattleSkill(self, act.act, act.skill, act.level, act.target, act.WP, act.IT)
+		act.user.useBattleSkill(self, act.act, act.skill, act.level, act.target, act.WP, act.IT, (act.act == ACT_DEFEND))
 		yield(core.battle.skillControl, "skill_finished")
 		# Process post-skill actions.
 		if onhit.size() > 0:
@@ -250,7 +250,7 @@ func checkFollow(F, last) -> void:
 	print("[BATTLE_STATE][CHECKFOLLOW] %s is marked by %s with skill %s LV%d" % [T.name, S[0].name, S[3].name, S[4]])
 	#Play ACTION animation.
 	if S[0].side == SIDE_PLAYER: S[0].display.highlight(true)
-	else: S[0].sprDisplay.act()
+	else: S[0].sprite.act()
 	yield(core.battle.control.wait(0.1), "timeout")
 	core.skill.processFL(S[3], S[4], S[0], T, [S[1], S[2]], F[2])
 	yield(controlNode, "skill_finished")
@@ -282,7 +282,7 @@ func checkPriorityActions() -> void:
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
 			#Play ACTION animation.
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(true)
-			else: i[2].sprDisplay.act()
+			else: i[2].sprite.act()
 			core.skill.runExtraCode(i[0], i[1], i[2], core.skill.CODE_PR)
 			yield(controlNode, "skill_finished")
 			if i[3] == SIDE_PLAYER: i[2].display.highlight(false)

@@ -3,11 +3,16 @@ signal selection(x)
 
 var skillNode = load("res://nodes/UI/skill.tscn")
 
+
 var buttons = []
 var target = null
 var currentChar = null
 var controls = null #Set externally from battle_controls. It should never change. ...right?
 var targetPanel = null #Node for the target selector. Set externally as well.
+var validSkills = [
+	core.skill.CAT_ATTACK,
+	core.skill.CAT_SUPPORT,
+]
 
 onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
 onready var container = $ScrollContainer/VBoxContainer
@@ -21,14 +26,14 @@ func init(C):
 	for i in C.skills:
 		var TID = C.getSkillTID(i)
 		var S = core.getSkillPtr(TID)
-		if S.type == 0:
+		if S.type == 0 and (S.category in validSkills):
 			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_EP)
 			addButton(button, [TID, i[1]])
 	if not C.extraSkills.empty():
 		for i in C.extraSkills:
 			var S = core.getSkillPtr(i[0])
-			if S.type == 0 and S.category != core.skill.CAT_OVER:
+			if S.type == 0 and (S.category in validSkills):
 				var button = skillNode.instance()
 				button.init(S, i[1], button.COST_EP, true)
 				addButton(button, [i[0], i[1]])

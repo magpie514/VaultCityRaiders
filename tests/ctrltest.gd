@@ -5,11 +5,11 @@ enum { WAIT_S, WAIT_M, WAIT_L, WAIT_XL }
 const DELAYS = [0.15, 0.5, 1.0, 2.0]
 const BATTLE_SPEED_MULTIPLIER = [0.15, 0.5, 1.0, 2.0]
 
-var testguild = null
-var testmform = null
-var state = preload("res://classes/battle/battle_state.gd").new()
-var reply = null
-var battleSpeed : int = 0
+var testguild       = null
+var testmform       = null
+var state           = preload("res://classes/battle/battle_state.gd").new()
+var reply           = null
+var battleSpeed:int = 0
 
 func _ready():
 	testguild = core.guild
@@ -21,6 +21,7 @@ func _ready():
 	core.battle.skillControl = $SkillController
 	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
 	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
+	core.battle.displayManager = preload("res://classes/battle/display_manager.gd").new(testguild, testmform, core.battle.background)
 	state.init(testguild, testmform, self)
 	$Panel/BattleControls.init(state, self)
 	$Panel/BattleControls.hide()
@@ -127,7 +128,6 @@ func battle():
 		$Panel/BattleLog.hide()
 		$Panel/BattleLog2.show()
 		$Panel/BattleLog2.bbcode_text = ""
-		$Panel/EnemyGroupDisplay.showBars(0.1)
 	#First check if any actions have a priority setup.
 		state.checkPriorityActions()
 		yield($SkillController, "skill_special_finished")
@@ -142,17 +142,15 @@ func battle():
 			if A.user.canAct():
 				if state.status():
 					#Play ACTION animation.
-					if A.side == state.SIDE_PLAYER:
-						A.user.display.highlight(true)
-						yield(wait(0.1 if A.act == state.ACT_DEFEND else 1.0), "timeout")
-					else:
-						A.user.sprDisplay.act()
-						yield(A.user.sprDisplay.player, "animation_finished")
+					A.user.display.highlight(true)
+					if A.act != state.ACT_DEFEND:
+						A.user.sprite.act()
+						yield(A.user.sprite.player, "animation_finished")
 					state.initAction(A)
 					yield($SkillController, "action_finished")
 					state.updateActions(A)
 					state.sort()
-					yield(wait(0.1 if A.act == state.ACT_DEFEND else 1.0), "timeout")
+					if A.act != state.ACT_DEFEND: yield(wait(1.0), "timeout")
 					$Panel/GuildDisplay.update()
 					$Panel/EnemyGroupDisplay.update()
 					$Panel/FieldEffect.updateDisplay(state.field)
@@ -163,7 +161,6 @@ func battle():
 		state.endTurn()
 		yield($SkillController, "skill_special_finished")
 		yield(wait(0.5), "timeout")
-		$Panel/EnemyGroupDisplay.fadeBars(0.5)
 		print("Checking if state changed...")
 		if checkResolution(): return
 		print("Actual end of turn")

@@ -61,13 +61,14 @@ margin_bottom = 720.0
 [node name="ViewportContainer" type="ViewportContainer" parent="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_bottom = -100.0
 stretch = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Viewport" type="Viewport" parent="Panel/ViewportContainer"]
-size = Vector2( 960, 720 )
+size = Vector2( 960, 620 )
 handle_input_locally = false
 hdr = false
 disable_3d = true
@@ -145,42 +146,43 @@ text = "Pass hour"
 
 [node name="FieldEffect" parent="Panel" instance=ExtResource( 8 )]
 
-[node name="BattleControls" parent="Panel" instance=ExtResource( 3 )]
-margin_top = 92.0
-margin_right = 110.0
-margin_bottom = 312.0
-
 [node name="EnemyGroupDisplay" parent="Panel" instance=ExtResource( 10 )]
-margin_left = 10.0
-margin_top = 550.0
-margin_right = 949.0
-margin_bottom = 610.0
+margin_left = 2.0
+margin_top = 620.0
+margin_right = 2.0
+margin_bottom = 620.0
 
 [node name="GuildDisplay" parent="Panel" instance=ExtResource( 9 )]
-anchor_left = 0.125
-anchor_top = 0.889
-anchor_right = 0.875
-anchor_bottom = 0.972
-margin_left = 390.0
-margin_top = -20.08
-margin_right = -330.0
-margin_bottom = -79.84
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 68.0
+margin_top = 265.0
+margin_right = 1028.0
+margin_bottom = 265.0
 
 [node name="ActionQueue" parent="Panel" instance=ExtResource( 12 )]
 anchor_left = 0.781
 anchor_top = 0.181944
 anchor_right = 1.0
 anchor_bottom = 0.472
-margin_left = 0.23999
-margin_top = -8.99968
-margin_right = 1.0
-margin_bottom = -7.83966
+margin_left = -747.76
+margin_top = -10.9997
+margin_right = -747.0
+margin_bottom = -9.83966
+
+[node name="BattleControls" parent="Panel" instance=ExtResource( 3 )]
+margin_left = 628.0
+margin_top = 380.0
+margin_right = 738.0
+margin_bottom = 600.0
 
 [node name="CurrentAction" parent="Panel" instance=ExtResource( 11 )]
-margin_left = 628.0
-margin_top = 81.0
-margin_right = 960.0
-margin_bottom = 121.0
+margin_left = 1.0
+margin_top = 80.0
+margin_right = 333.0
+margin_bottom = 120.0
 
 [node name="WinPanel" type="Label" parent="Panel"]
 visible = false
@@ -198,6 +200,7 @@ align = 1
 valign = 1
 
 [node name="InfoDisplay" parent="Panel" instance=ExtResource( 5 )]
+visible = false
 margin_top = 620.0
 margin_right = -452.0
 margin_bottom = 630.0

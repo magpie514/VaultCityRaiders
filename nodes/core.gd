@@ -16,10 +16,11 @@ const decode_base52 = {
 }
 
 var scene = null #Current scene
-var battle = {
+var battle:Dictionary = {
 	enemy = null,
 	bgm = null,
 	control = null,
+	displayManager = null,
 	skillControl = null,
 	background = null,
 	bg_fx = null,
@@ -126,8 +127,8 @@ const weapontypes = {
 
 #
 # Important shared classes ####################################################
-const Enemy = preload("res://classes/char/char_enemy.gd")
-const Player = preload("res://classes/char/char_player.gd")
+const Enemy     = preload("res://classes/char/char_enemy.gd")
+const Player    = preload("res://classes/char/char_player.gd")
 const Inventory = preload("res://classes/inventory/item.gd")
 
 class WorldClass:

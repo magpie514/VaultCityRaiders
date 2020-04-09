@@ -1,53 +1,36 @@
 extends Control
 
-var bars = core.newArray(6)
 var _bar = preload("res://nodes/UI/battle/enemy_display.tscn")
 var group = null
-onready var width = int(rect_size.x / 3)
+onready var grid:Array = [ $F0, $F1, $F2, $B0, $B1, $B2 ]
 
-func init(_group):
+func init(_group) -> void:
 	group = _group
 	var node
 	group.display = self
 	for i in range(6):
 		if group.formation[i] != null:
-			bars[i] = createDisplay(i)
-			bars[i].fadeTo(0.1, 5.0)
+			grid[i].init(group.formation[i])
+			group.formation[i].display = grid[i]
 
 func update():
-	for i in range(6):
-		if group.formation[i] == null:
-			if bars[i] != null:
-				bars[i].stop()
-				bars[i] = null
-		else:
-			group.formation[i].display.update()
+	pass
 
-func revive(C, slot) -> void:
-	bars[slot] = createDisplay(slot)
-	if group.formation[slot].sprDisplay != null:
-		group.formation[slot].sprDisplay.queue_free()
-	group.formation[slot].sprDisplay = group.initSprite(group.formation[slot], slot)
+func revive(C, slot:int) -> void:
+	grid[slot] = createDisplay(slot)
+	if group.formation[slot].sprite != null:
+		group.formation[slot].sprite.queue_free()
+	group.formation[slot].sprite = core.battle.displayManager.initSprite(group.formation[slot], slot)
 
-func createDisplay(slot):
-	var node = _bar.instance()
-	node.rect_position = Vector2(slot * width, 60) if slot < 2 else Vector2((slot - 5) * width, 30)
-	node.resize(Vector2(width - 2, 8))
-	node.get_node("ComplexBar").value = group.formation[slot].getHealthN()
-	node.init(group.formation[slot])
-	group.formation[slot].display = node
-	group.formation[slot].sprDisplay = group.initSprite(group.formation[slot], slot)
-	add_child(node)
+func createDisplay(slot:int):
+	var node:Node = grid[slot]
+	var C         = group.formation[slot]
+	node.get_node("ComplexBar").value = C.getHealthN()
+	node.init(C)
+	C.display = node
+	C.sprite  = core.battle.displayManager.initSprite(C, slot)
+	var anchor:Node = core.battle.displayManager.getAnchorNode(C, slot)
 	return node
-
-
-func showBars(time):
-	for i in bars:
-		if i != null: i.fadeTo(0.9, time)
-
-func fadeBars(time):
-	for i in bars:
-		if i != null: i.fadeTo(0.1, time)
 
 func battleTurnUpdate():
 	pass
@@ -57,12 +40,10 @@ func connectSignals(node, obj):
 	node.connect("hide_info", obj, "hideInfo")
 
 func connectUISignals(obj):
-	for i in range(6):
-		if group.formation[i] != null:
-			connectSignals(bars[i], obj)
+	for i in grid:
+		connectSignals(i, obj)
 
 func disconnectUISignals(obj):
-	for i in range(6):
-		if group.formation[i] != null:
-			bars[i].disconnect("display_info", obj, "showInfo")
-			bars[i].disconnect("hide_info", obj, "hideInfo")
+	for i in grid:
+		i.disconnect("display_info", obj, "showInfo")
+		i.disconnect("hide_info", obj, "hideInfo")
