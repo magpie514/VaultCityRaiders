@@ -10,6 +10,7 @@ const LIBSTD_TID_OR_NULL   = "loaderTIDorNull"
 const LIBSTD_TID_ARRAY     = "loaderTIDArray"
 const LIBSTD_VARIABLEARRAY = "loaderVariableArray"
 const LIBSTD_STATSPREAD    = "loaderStatSpread"
+const LIBSTD_CONDITIONDEFS = "loaderConditionDefs"
 const LIBSTD_STATBONUS     = "loaderStatBonus"
 const LIBSTD_ELEMENTDATA   = "loaderElementData"
 const LIBSTD_SKILL_ARRAY   = "loaderSkillArray"
@@ -45,8 +46,8 @@ func loadDict(dict):
 			data[key][key2] = initEntry(dict[key][key2])
 
 func copyIntegerArray(a:Array) -> Array:
-	var size = a.size()
-	var result = core.newArray(size)
+	var size:int     = a.size()
+	var result:Array = core.newArray(size)
 	for i in range(size):
 		result[i] = int(a[i])
 	return result
@@ -226,4 +227,20 @@ func loaderSummons(val):
 		entry.failmsg = str(tmp.failmsg if "failmsg" in tmp else "But nobody came...")
 		entry.center = bool(tmp.center if "center" in tmp else true)
 		result.push_back(entry)
+	return result
+
+func loaderConditionDefs(val) -> Array:
+	var result:Array = core.newArray(16)
+	if val.size() != core.CONDITIONDEFS_DEFAULT.size():
+		print("[!!][LIB_BASE][loaderConditionDefs] Condition Defenses array of incorrect size.")
+		var s:int = val.size()
+		for i in range(core.CONDITIONDEFS_DEFAULT.size()): #Use template's size since this could be longer.
+			if i <= s: #Since this value is in range, let's use whatever the array has.
+				result[i] = val[i]
+			else:      #If not just take the default values.
+				result[i] = core.CONDITIONDEFS_DEFAULT[i]
+	else:
+		print("[LIB_BASE][loaderConditionDefs] Condition Defenses: ", val)
+		for i in range(val.size()):
+			result[i] = int(val[i])
 	return result

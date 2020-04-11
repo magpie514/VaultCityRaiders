@@ -9,7 +9,7 @@ const MAX_LEVEL    = 10  #Max amount of levels for skills.
 #Skill code line template
 #                   0              1 2 3 4 5   6 7 8 9 10  11            12            13           14
 #                   <SKILL OPCODE> <VALUE PER LEVEL>       <FLAGS>       <DATA ARRAY>  <DGEM TAG>   <TAG>
-var LINE_TEMPLATE = [OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  OPFLAGS_NONE, null,         '',          '']
+var LINE_TEMPLATE = [OPCODE_NULL,  0,0,0,0,0,  0,0,0,0,0,  OPFLAG_NONE, null,         '',          '']
 
 enum { #Category
 #General category of the attacks. Determines its general context
@@ -147,6 +147,9 @@ enum { #Chains. Starters init a sequence, follows increase it, and finishers use
 	CHAIN_FINISHER,
 }
 
+const CHAIN_INIT = [ CHAIN_STARTER_AND_FOLLOW, CHAIN_STARTER ]
+const CHAIN_CONT = [ CHAIN_STARTER_AND_FOLLOW, CHAIN_FOLLOW  ]
+
 enum { #Parry. Reduces the damage of an attack with a given chance.
 	PARRY_NONE = 0,
 	PARRY_KINETIC,
@@ -216,18 +219,18 @@ enum { #Code blocks
 }
 
 enum { #Skill function flags. Value between [] is used in the function codes where applicable.
-	OPFLAGS_NONE           = 0x0000,  #Default settings.
-	OPFLAGS_TARGET_SELF    = 0x0001,  #[@] This opcode will affect the user if applicable.
-	OPFLAGS_VALUE_ABSOLUTE = 0x0002,  #[=] This opcode will set a value as absolute, if applicable.
-	OPFLAGS_VALUE_PERCENT  = 0x0004,  #[%] This opcode will set a value as a percentage, if applicable.
-	OPFLAGS_HEAL_BONUS     = 0x0008,  #[+] Heal only. Uses bonus healing value.
-	OPFLAGS_USE_SVAL       = 0x0010,  #Use state stored value instead of passed value.
-	OPFLAGS_QUIT_ON_FALSE  = 0x0020,  #[X] In a conditional, directly quit instead of skipping next line.
-	OPFLAGS_BLOCK_START    = 0x0040,  #In a conditional, start a block. Skips everything until a OPFLAGS_BLOCK_END is found.
-	OPFLAGS_BLOCK_END      = 0x0080,  #Determines end of a code block.
-	OPFLAGS_LOGIC_NOT      = 0x0200,  #[!] In a conditional, reverse the outcome.
+	OPFLAG_NONE           = 0x0000,  #Default settings.
+	OPFLAG_TARGET_SELF    = 0x0001,  #[@] This opcode will affect the user if applicable.
+	OPFLAG_VALUE_ABSOLUTE = 0x0002,  #[=] This opcode will set a value as absolute, if applicable.
+	OPFLAG_VALUE_PERCENT  = 0x0004,  #[%] This opcode will set a value as a percentage, if applicable.
+	OPFLAG_HEAL_BONUS     = 0x0008,  #[+] Heal only. Uses bonus healing value.
+	OPFLAG_USE_SVAL       = 0x0010,  #Use state stored value instead of passed value.
+	OPFLAG_QUIT_ON_FALSE  = 0x0020,  #[X] In a conditional, directly quit instead of skipping next line.
+	OPFLAG_BLOCK_START    = 0x0040,  #In a conditional, start a block. Skips everything until a OPFLAG_BLOCK_END is found.
+	OPFLAG_BLOCK_END      = 0x0080,  #Determines end of a code block.
+	OPFLAG_LOGIC_NOT      = 0x0200,  #[!] In a conditional, reverse the outcome.
 	#TODO:Might need deletion:
-	OPFLAGS_SILENT_ATTACK  = 0x0100,  #[S] Makes an attack and certain effects not output any messages, and if an attack, passes to a stack for next non-silent attack.
+	OPFLAG_SILENT_ATTACK  = 0x0100,  #[S] Makes an attack and certain effects not output any messages, and if an attack, passes to a stack for next non-silent attack.
 }
 
 enum { #Skill function codes.
@@ -237,6 +240,17 @@ enum { #Skill function codes.
 	# Standard combat functions ##################################################
 	OPCODE_ATTACK                     , #Standard attack function with power%. Tries to inflict each hit if capable.
 	OPCODE_DEFEND                     , #Standard defense function. TODO: Define defense role's further.
+	# Condition infliction #####################################################
+	# Data is provided via a hexadecimal value with format 0xAB
+	# A: 0-C: Condition to inflict
+	# 	0: Do nothing     6: Blindness      C: Disable arms
+	#	1: Paralysis      7: Stun           D: Disable legs
+	#	2: Narcosis       8: Curse          E: ???
+	#	3: Cryostasis     9: Panic          F: ???
+	#  4: Seal           A: Stasis
+	#  5: Defeat         B: Disable head
+	# B: 0-F: Infliction power
+	OPCODE_INFLICT_EX                 , #Use inflict data.
 	OPCODE_FORCE_INFLICT              , #[@]Attempt to inflict an ailment independent from attack.
 	OPCODE_DAMAGERAW                  , #[@%]Reduce target's HP by given value (no accuracy check)
 	OPCODE_SELF_DAMAGE                , #[%]Shortcut for delivering recoil/self damage to the user.
@@ -267,10 +281,27 @@ enum { #Skill function codes.
 	OPCODE_HEAL                       , #[@=%+]Standard healing.
 	OPCODE_HEALROW                    , #[=+]Heal user's row with power X.
 	OPCODE_HEALALL                    , #[=+]Heal user's party with power X.
-	OPCODE_CURE                       , #[@]Restores target's status to normal.
+#	OPCODE_CURE                       , #[@]Restores target's status to normal.
 	OPCODE_RESTOREPART                , #[@]Restores up to X disabled body parts. 3+ restores them all.
 	OPCODE_REVIVE                     , #[+]Target is revived with X health. TODO: Modify to [@] so it can be used to prevent a death as well?
 	OPCODE_OVERHEAL                   , #[@]Sets amount of healing allowed to go past maximum health for this turn.
+	# Condition healing ########################################################
+	# Data is provided via a hexadecimal value with format 0xABC
+	# A: 0-C: Condition to remove
+	# 	0: Do nothing     6: Blindness      C: Disable arms
+	#	1: Paralysis      7: Stun           D: Disable legs
+	#	2: Narcosis       8: Curse          E: ???
+	#	3: Cryostasis     9: Panic          F: ???
+	#  4: Seal           A: Stasis
+	#  5: Defeat         B: Disable head
+	# B: 0-F: Add this much to defense
+	# C: 0-1: 0: Cap at maximum. 1: Allow going beyond maximum.
+	OPCODE_REINFORCE_EX               , #[@]Cure afflictions with given data.
+	OPCODE_REINFORCE                  , #[@]Restore condition defense to max for condition x.
+	OPCODE_REINFORCE_ALL              , #[@]Restore condition defense to max for all conditions.
+	OPCODE_CURE                       , #[@]Cure condition X if active.
+	OPCODE_CURE_ALL                   , #[@]Cure all conditions.
+	OPCODE_CURE_TYPE                  , #[@]Cure: [1] Primary conditions. [2] Secondary conditions. [3] Damage over time. [4] Disables.
 
 	# Standard effect functions ##################################################
 	# TODO                            : Move a few of these to stat mods.
@@ -452,6 +483,7 @@ enum { #Skill function codes.
 	OPCODE_IF_DEBUFF                  , #[!]Execute next line if target has active debuff with given TID. -1 for any.
 	OPCODE_IF_TARGET_TID              , #[!]Execute next line if target matches given TID.
 ###/###
+	OPCODE_IF_FULL_HEALTH             , #[!]Execute next line if target is at full health.
 	OPCODE_IF_DAMAGED                 , #[!]Execute next line if target was damaged this turn.
 	OPCODE_IF_SELF_DAMAGED            , #[!]Execute next line if user received damage this turn.
 	OPCODE_IF_HITCHECK                , #[!]Execute next line if a standard hit check succeeds.
@@ -462,6 +494,7 @@ enum { #Skill function codes.
 	OPCODE_IF_RACE_TYPE               , #[!]Execute next line if target has the given race type amount its list.
 	OPCODE_IF_DAY                     , #[!]Execute next line if current time is day.
 	OPCODE_IF_NIGHT                   , #[!]Execute next line if current time is night. Convenient shortcut for "not if_day"
+
 }
 
 
@@ -477,88 +510,92 @@ const opCodesPowerable = [
 const opCode = {
 	"null" : OPCODE_NULL,
 
-	"attack" : OPCODE_ATTACK,
-	"defend" : OPCODE_DEFEND,
-	"f_inflict" : OPCODE_FORCE_INFLICT,
-	"dmgraw" : OPCODE_DAMAGERAW,
-	"defeat" : OPCODE_DEFEAT,
-	"tryrun" : OPCODE_TRYRUN,
-	"run" : OPCODE_RUN,
+	"attack"   : OPCODE_ATTACK,
+	"defend"   : OPCODE_DEFEND,
+	"inflict"  : OPCODE_INFLICT_EX,
+	"dmgraw"   : OPCODE_DAMAGERAW,
+	"defeat"   : OPCODE_DEFEAT,
+	"tryrun"   : OPCODE_TRYRUN,
+	"run"      : OPCODE_RUN,
 
 	"follow"  : OPCODE_FOLLOW,
 	"chase"   : OPCODE_CHASE,
 	"counter" : OPCODE_COUNTER,
 
 	"chain_start" : OPCODE_CHAIN_START,
-	"chain_follow" : OPCODE_CHAIN_FOLLOW,
-	"chain_finish" : OPCODE_CHAIN_FINISH,
+	"chain_follow": OPCODE_CHAIN_FOLLOW,
+	"chain_finish": OPCODE_CHAIN_FINISH,
 
-	"heal" : OPCODE_HEAL,
-	"heal_row" : OPCODE_HEALROW,
-	"heal_all" : OPCODE_HEALALL,
-	"cure" : OPCODE_CURE,
-	"healpart" : OPCODE_RESTOREPART,
-	"revive" : OPCODE_REVIVE,
-	"overheal" : OPCODE_OVERHEAL,
+	"heal"         : OPCODE_HEAL,
+	"heal_row"     : OPCODE_HEALROW,
+	"heal_all"     : OPCODE_HEALALL,
+	"healpart"     : OPCODE_RESTOREPART,
+	"revive"       : OPCODE_REVIVE,
+	"overheal"     : OPCODE_OVERHEAL,
+	"reinforce"    : OPCODE_REINFORCE,
+	"reinforce_all": OPCODE_REINFORCE_ALL,
+	"reinforce_ex" : OPCODE_REINFORCE_EX,
+	"cure"         : OPCODE_CURE,
+	"cure_all"     : OPCODE_CURE_ALL,
+	"cure_type"    : OPCODE_CURE_TYPE,
 
-
-	"ad" : OPCODE_AD,
-	"decoy" : OPCODE_DECOY,
-	"barrier" : OPCODE_BARRIER,
-	"guard" : OPCODE_GUARD,
-	"guard_raw" : OPCODE_GUARD_RAW,
-	"dodge" : OPCODE_DODGE,
-	"force_dodge" : OPCODE_FORCE_DODGE,
-	"protect" : OPCODE_PROTECT,
-	"over" : OPCODE_RAISE_OVER,
+	"ad"         : OPCODE_AD,
+	"decoy"      : OPCODE_DECOY,
+	"barrier"    : OPCODE_BARRIER,
+	"guard"      : OPCODE_GUARD,
+	"guard_raw"  : OPCODE_GUARD_RAW,
+	"dodge"      : OPCODE_DODGE,
+	"force_dodge": OPCODE_FORCE_DODGE,
+	"protect"    : OPCODE_PROTECT,
+	"over"       : OPCODE_RAISE_OVER,
 	"guardbreak" : OPCODE_BREAK_GUARD,
-	"fe.guard" : OPCODE_FE_GUARD,
-	"vital.set" : OPCODE_SETVITAL,
+	"fe.guard"   : OPCODE_FE_GUARD,
+	"vital.set"  : OPCODE_SETVITAL,
 
-	"scan" : OPCODE_SCAN,
-	"transform" : OPCODE_TRANSFORM,
+	"scan"     : OPCODE_SCAN,
+	"transform": OPCODE_TRANSFORM,
 
-	"dmgbonus" : OPCODE_DAMAGEBONUS,
+	"dmgbonus"      : OPCODE_DAMAGEBONUS,
 	"dmg_raw_bonus" : OPCODE_DAMAGE_RAW_BONUS,
-	"healbonus" : OPCODE_HEALBONUS,
-	"heal_raw_bonus" : OPCODE_HEAL_RAW_BONUS,
-	"inflict" : OPCODE_INFLICT,
-	"inflictbonus" : OPCODE_INFLICT_B,
+	"healbonus"     : OPCODE_HEALBONUS,
+	"heal_raw_bonus": OPCODE_HEAL_RAW_BONUS,
+#	"inflict"       : OPCODE_INFLICT,
+	"inflictbonus"  : OPCODE_INFLICT_B,
 	"dmg_over_time" : OPCODE_DAMAGE_EFFECT,
-	"dot" : OPCODE_DAMAGE_EFFECT,
+	"dot"           : OPCODE_DAMAGE_EFFECT, #Alias
 
 	"critmod" : OPCODE_CRITMOD,
 	"element" : OPCODE_ELEMENT,
-	"weaktype" : OPCODE_ELEMENT_WEAK,
+	"weaktype": OPCODE_ELEMENT_WEAK,
 	"restype" : OPCODE_ELEMENT_RESIST,
 
 	"minhits" : OPCODE_MINHITS,
 	"maxhits" : OPCODE_MAXHITS,
 	"numhits" : OPCODE_NUMHITS,
 
-	"nomiss" : OPCODE_NOMISS,
-	"nocap" : OPCODE_NOCAP,
-	"ignore_defs" : OPCODE_IGNORE_DEFS,
+	"nomiss"     : OPCODE_NOMISS,
+	"nocap"      : OPCODE_NOCAP,
+	"ignore_defs": OPCODE_IGNORE_DEFS,
 	"energy_dmg" : OPCODE_ENERGY,
-	"drainlife" : OPCODE_DRAINLIFE,
-	"nonlethal" : OPCODE_NONLETHAL,
+	"drainlife"  : OPCODE_DRAINLIFE,
+	"nonlethal"  : OPCODE_NONLETHAL,
 
-	"fe.push" : OPCODE_FIELD_PUSH,
-	"fe.fill" : OPCODE_FIELD_FILL,
-	"fe.replace" : OPCODE_FIELD_REPLACE,
-	"fe.replace2" : OPCODE_FIELD_REPLACE2,
-	"fe.rando" : OPCODE_FIELD_RANDOMIZE,
-	"fe.consume" : OPCODE_FIELD_CONSUME,
-	"fe.take" : OPCODE_FIELD_TAKE,
-	"fe.optimize" : OPCODE_FIELD_OPTIMIZE,
-	"fe.lock" : OPCODE_FIELD_LOCK,
-	"fe.unlock" : OPCODE_FIELD_UNLOCK,
-	"fe.hyper" : OPCODE_FIELD_GDOMINION,
-	"fe.el_setdomi" : OPCODE_FIELD_SETDOMIELEM,
-	"fe.el_setlast" : OPCODE_FIELD_SETLASTELEM,
+	"fe.push"      : OPCODE_FIELD_PUSH,
+	"fe.fill"      : OPCODE_FIELD_FILL,
+	"fe.replace"   : OPCODE_FIELD_REPLACE,
+	"fe.replace2"  : OPCODE_FIELD_REPLACE2,
+	"fe.rando"     : OPCODE_FIELD_RANDOMIZE,
+	"fe.consume"   : OPCODE_FIELD_CONSUME,
+	"fe.take"      : OPCODE_FIELD_TAKE,
+	"fe.optimize"  : OPCODE_FIELD_OPTIMIZE,
+	"fe.lock"      : OPCODE_FIELD_LOCK,
+	"fe.unlock"    : OPCODE_FIELD_UNLOCK,
+	"fe.hyper"     : OPCODE_FIELD_GDOMINION,
+	"fe.el_setdomi": OPCODE_FIELD_SETDOMIELEM,
+	"fe.el_setlast": OPCODE_FIELD_SETLASTELEM,
 	"fe.elemblast" : OPCODE_FIELD_ELEMBLAST,
-	"fe.mult" : OPCODE_FIELD_MULT,
-	"fe.clear" : OPCODE_FIELD_CLEAR,
+	"fe.mult"      : OPCODE_FIELD_MULT,
+	"fe.clear"     : OPCODE_FIELD_CLEAR,
 
 	"atk_mod" : OPCODE_ATK_MOD,
 	"def_mod" : OPCODE_DEF_MOD,
@@ -567,62 +604,62 @@ const opCode = {
 	"agi_mod" : OPCODE_AGI_MOD,
 	"luc_mod" : OPCODE_LUC_MOD,
 
-	"exp_bonus" : OPCODE_EXP_BONUS,
-	"repair" : OPCODE_REPAIR_PARTIAL,
-	"fullrepair" : OPCODE_REPAIR_FULL,
-	"repair_all" : OPCODE_REPAIR_PARTIAL_ALL,
-	"fullrepair_all" : OPCODE_REPAIR_FULL_ALL,
+	"exp_bonus"     : OPCODE_EXP_BONUS,
+	"repair"        : OPCODE_REPAIR_PARTIAL,
+	"fullrepair"    : OPCODE_REPAIR_FULL,
+	"repair_all"    : OPCODE_REPAIR_PARTIAL_ALL,
+	"fullrepair_all": OPCODE_REPAIR_FULL_ALL,
 	"item.recharge" : OPCODE_ITEM_RECHARGE,
-	"item.refill" : OPCODE_ITEM_REFILL,
+	"item.refill"   : OPCODE_ITEM_REFILL,
 
 	"enemy.revive" : OPCODE_ENEMY_REVIVE,
 	"enemy.summon" : OPCODE_ENEMY_SUMMON,
 
 	"printmsg" : OPCODE_PRINTMSG,
-	"linkskill" : OPCODE_LINKSKILL,
-	"anim.play" : OPCODE_PLAYANIM,
-	"fx.add" :    OPCODE_FX_EFFECTOR_ADD,
-	"wait" : OPCODE_WAIT,
-	"post" : OPCODE_POST,
+	"linkskill": OPCODE_LINKSKILL,
+	"anim.play": OPCODE_PLAYANIM,
+	"fx.add"   : OPCODE_FX_EFFECTOR_ADD,
+	"wait"     : OPCODE_WAIT,
+	"post"     : OPCODE_POST,
 
 	"stop" : OPCODE_STOP,
 	"jump" : OPCODE_JUMP,
 
-	"get_fe_bonus" :  	OPCODE_GET_FIELD_BONUS,
-	"get_fe_chains" : 	OPCODE_GET_FIELD_CHAINS,
-	"get_fe_unique" : 	OPCODE_GET_FIELD_UNIQUE,
-	"get_synergies" : 	OPCODE_GET_SYNERGY_PARTY,
-	"get_turn" :      	OPCODE_GET_TURN,
-	"get_chain" :     	OPCODE_GET_CHAIN,
-	"get_last_element":	OPCODE_GET_LAST_ELEMENT,
-	"get_health%" :     OPCODE_GET_HEALTH_PERCENT,
-	"get_max_health" :	OPCODE_GET_MAX_HEALTH,
-	"get_health" :			OPCODE_GET_HEALTH,
-	"get_level" : 			OPCODE_GET_LEVEL,
-	"get_atk" :				OPCODE_GET_ATK,
-	"get_def" :				OPCODE_GET_DEF,
-	"get_etk" :				OPCODE_GET_ETK,
-	"get_edf" :				OPCODE_GET_EDF,
-	"get_agi" :				OPCODE_GET_AGI,
-	"get_luc" :				OPCODE_GET_LUC,
-	"get_dodges" :			OPCODE_GET_DODGES,
-	"get_defeated" : 		OPCODE_GET_DEFEATED,
-	"get_range" :       OPCODE_GET_RANGE,
-	"get_over" :        OPCODE_GET_OVER,
-	"get_weapon_dur" :  OPCODE_GET_WEAPON_DUR,
-	"get_world_time" :  OPCODE_GET_WORLD_TIME,
-	"get_world_date" :  OPCODE_GET_WORLD_DATE,
+	"get_fe_bonus"    : OPCODE_GET_FIELD_BONUS,
+	"get_fe_chains"   : OPCODE_GET_FIELD_CHAINS,
+	"get_fe_unique"   : OPCODE_GET_FIELD_UNIQUE,
+	"get_synergies"   : OPCODE_GET_SYNERGY_PARTY,
+	"get_turn"        : OPCODE_GET_TURN,
+	"get_chain"       : OPCODE_GET_CHAIN,
+	"get_last_element": OPCODE_GET_LAST_ELEMENT,
+	"get_health%"     : OPCODE_GET_HEALTH_PERCENT,
+	"get_max_health"  : OPCODE_GET_MAX_HEALTH,
+	"get_health"      : OPCODE_GET_HEALTH,
+	"get_level"       : OPCODE_GET_LEVEL,
+	"get_atk"         : OPCODE_GET_ATK,
+	"get_def"         : OPCODE_GET_DEF,
+	"get_etk"         : OPCODE_GET_ETK,
+	"get_edf"         : OPCODE_GET_EDF,
+	"get_agi"         : OPCODE_GET_AGI,
+	"get_luc"         : OPCODE_GET_LUC,
+	"get_dodges"      : OPCODE_GET_DODGES,
+	"get_defeated"    : OPCODE_GET_DEFEATED,
+	"get_range"       : OPCODE_GET_RANGE,
+	"get_over"        : OPCODE_GET_OVER,
+	"get_weapon_dur"  : OPCODE_GET_WEAPON_DUR,
+	"get_world_time"  : OPCODE_GET_WORLD_TIME,
+	"get_world_date"  : OPCODE_GET_WORLD_DATE,
 
-	"add" :  OPCODE_MATH_ADD,
-	"sub" :  OPCODE_MATH_SUB,
+	"add"  : OPCODE_MATH_ADD,
+	"sub"  : OPCODE_MATH_SUB,
 	"subi" : OPCODE_MATH_SUBI,
-	"mul" :  OPCODE_MATH_MUL,
-	"div" :  OPCODE_MATH_DIV,
+	"mul"  : OPCODE_MATH_MUL,
+	"div"  : OPCODE_MATH_DIV,
 	"divi" : OPCODE_MATH_DIVI,
 	"mulf" : OPCODE_MATH_MULF,
 	"divf" : OPCODE_MATH_DIVF,
-	"cap" :  OPCODE_MATH_CAP,
-	"mod" :  OPCODE_MATH_MOD,
+	"cap"  : OPCODE_MATH_CAP,
+	"mod"  : OPCODE_MATH_MOD,
 
 	"if_true" : OPCODE_IF_TRUE,
 	"if_chance" : OPCODE_IF_CHANCE,
@@ -635,6 +672,7 @@ const opCode = {
 	"if_ef_bonus<=" : OPCODE_IF_EF_BONUS_LESS_EQUAL_THAN,
 	"if_ef_bonus>=" : OPCODE_IF_EF_BONUS_MORE_EQUAL_THAN,
 	"if_act" : OPCODE_IF_ACT,
+	"if_full_health" : OPCODE_IF_FULL_HEALTH,
 	"if_damaged" : OPCODE_IF_DAMAGED,
 	"if_self_damaged" : OPCODE_IF_SELF_DAMAGED,
 	"if_hitcheck" : OPCODE_IF_HITCHECK,
@@ -647,333 +685,325 @@ const opCode = {
 
 var opcodeInfo = {
 	OPCODE_NULL: {
-		name = "NULL", flags = OPFLAGS_NONE, cat = "null",
+		name = "NULL", flags = OPFLAG_NONE, cat = "null",
 		desc = "Does nothing.",
 		expl = "ERROR",
 	},
 	OPCODE_ATTACK: {
-		name = "Attack", flags = OPFLAGS_NONE, cat = "combat",
+		name = "Attack", flags = OPFLAG_NONE, cat = "combat",
 		desc = "Standard attack function, tries to inflict for each hit, if capable.",
 		expl = "hits for %s damage"
 	},
 	OPCODE_FORCE_INFLICT: {
-		name = "Force inflict", flags = OPFLAGS_TARGET_SELF, cat = "combat",
+		name = "Force inflict", flags = OPFLAG_TARGET_SELF, cat = "combat",
 		desc = "Attempt to inflict an ailment, independent from attack.",
 		expl = "may inflict %s"
 	},
 	OPCODE_DAMAGERAW: {
-		name = "Raw damage", flags = OPFLAGS_TARGET_SELF|OPFLAGS_VALUE_PERCENT, cat = "combat",
+		name = "Raw damage", flags = OPFLAG_TARGET_SELF|OPFLAG_VALUE_PERCENT, cat = "combat",
 		desc = "Causes X damage.\nIf VALUE_PERCENT is set, does a percentage of target's max health.",
 		expl = "deals %s %s direct damage"
 	},
 	OPCODE_HEAL: {
-		name = "Heal", flags = OPFLAGS_TARGET_SELF|OPFLAGS_VALUE_ABSOLUTE|OPFLAGS_VALUE_PERCENT, cat = "healing",
+		name = "Heal", flags = OPFLAG_TARGET_SELF|OPFLAG_VALUE_ABSOLUTE|OPFLAG_VALUE_PERCENT, cat = "healing",
 		desc = "Heals a target.\nIf VALUE_ABSOLUTE is set, it heals a fixed amount.\n If VALUE_PERCENT is set, heals X% of target's max health.\nVALUE_ABSOLUTE takes precedence.",
 		expl = "heals %s for %s"
 	},
 	OPCODE_CURE: {
-		name = "Cure", flags = OPFLAGS_TARGET_SELF, cat = "healing",
+		name = "Cure", flags = OPFLAG_TARGET_SELF, cat = "healing",
 		dest = "Restores target's status to normal, no questions asked.",
 		expl = "restores %s status"
 	},
 	OPCODE_RESTOREPART: {
-		name = "Restore part", flags = OPFLAGS_TARGET_SELF, cat = "healing",
+		name = "Restore part", flags = OPFLAG_TARGET_SELF, cat = "healing",
 		dest = "Restores up to X disabled body parts for the target. 3+ restores all parts.",
 		expl = "restores body parts (%s)"
 	},
 	OPCODE_REVIVE: {
-		name = "Revive", flags = OPFLAGS_VALUE_PERCENT, cat = "healing",
+		name = "Revive", flags = OPFLAG_VALUE_PERCENT, cat = "healing",
 		dest = "Removes a target's DOWN status and sets health to X. If VALUE_PERCENT is set, sets it to X% of target's max health.",
 		expl = "revives the target at %s health"
 	},
 	OPCODE_OVERHEAL: {
-		name = "Overheal", flags = OPFLAGS_VALUE_ABSOLUTE, cat = "healing",
+		name = "Overheal", flags = OPFLAG_VALUE_ABSOLUTE, cat = "healing",
 		dest = "Allows healing over max health for the rest of the turn up to MHP+X, additive. If VALUE_ABSOLUTE is set, set it exactly to X. If VALUE_PERCENT is set, set it to X% of max health. If both are present, set it to X% of max health.",
 		expl = "allows %s to heal past maximum health (+%s)"
 	},
 	OPCODE_AD: {
-		name = "Set AD", flags = OPFLAGS_TARGET_SELF|OPFLAGS_VALUE_ABSOLUTE, cat = "stats",
+		name = "Set AD", flags = OPFLAG_TARGET_SELF|OPFLAG_VALUE_ABSOLUTE, cat = "stats",
 		desc = "Raises target's Active Defense by X.\nIf VALUE_ABSOLUTE is set, it sets it to X.",
 		expl = "%s AD to %s"
 	},
 	OPCODE_DECOY: {
-		name = "Decoy", flags = OPFLAGS_TARGET_SELF|OPFLAGS_VALUE_ABSOLUTE, cat = "stats",
+		name = "Decoy", flags = OPFLAG_TARGET_SELF|OPFLAG_VALUE_ABSOLUTE, cat = "stats",
 		dest = "Raises target's decoy by X.\nIf VALUE_ABSOLUTE is set, it sets it to X.",
 		expl = "%s draw attack rate by %s"
 	},
 	OPCODE_BARRIER: {
-		name = "Barrier", flags = OPFLAGS_TARGET_SELF|OPFLAGS_VALUE_ABSOLUTE, cat = "stats",
+		name = "Barrier", flags = OPFLAG_TARGET_SELF|OPFLAG_VALUE_ABSOLUTE, cat = "stats",
 		dest = "Raises target's barrier by X.\nIf VALUE_ABSOLUTE is set, it sets it to X.",
 	},
 	OPCODE_GUARD: {
-		name = "Guard", flags = OPFLAGS_TARGET_SELF|OPFLAGS_VALUE_ABSOLUTE|OPFLAGS_VALUE_PERCENT, cat = "stats",
+		name = "Guard", flags = OPFLAG_TARGET_SELF|OPFLAG_VALUE_ABSOLUTE|OPFLAG_VALUE_PERCENT, cat = "stats",
 		dest = "Raises target's guard by X.\nIf VALUE_ABSOLUTE is set, it sets it to X.\nIf VALUE_PERCENT is set, sets it to X% of target's max health.\nVALUE_ABSOLUTE takes precedence."
 	},
 	OPCODE_PROTECT: {
-		name = "Protect target", flags = OPFLAGS_TARGET_SELF, cat = "stats",
+		name = "Protect target", flags = OPFLAG_TARGET_SELF, cat = "stats",
 		dest = "User protects target with a X% chance of taking damage for the target.\nIf TARGET_SELF is set, this makes the target protect the user.",
 		expl = "%s protects %s (%s%% chance)"
 	},
 	OPCODE_RAISE_OVER: {
-		name = "Raise Over", flags = OPFLAGS_TARGET_SELF, cat = "stats",
+		name = "Raise Over", flags = OPFLAG_TARGET_SELF, cat = "stats",
 		dest = "Adds X to target's Over gauge. Does nothing on enemies.",
 		expl = "raises %s Over by %s"
 	},
 	OPCODE_SCAN: {
-		name = "Scan", flags = OPFLAGS_NONE, cat = "misc",
+		name = "Scan", flags = OPFLAG_NONE, cat = "misc",
 		dest = "Scans target with power 1 or 2. Does nothing if zero.",
 		expl = "%s draw attack rate by %s"
 	},
 	OPCODE_TRANSFORM: {
-		name = "Transform", flags = OPFLAGS_TARGET_SELF, cat = "misc",
+		name = "Transform", flags = OPFLAG_TARGET_SELF, cat = "misc",
 		dest = "If not 0, transforms target if possible. If 0, cancel transformation.",
 		expl = "transform"
 	},
 	OPCODE_DAMAGEBONUS: {
-		name = "Damage bonus", flags = OPFLAGS_VALUE_ABSOLUTE, cat = "modifiers",
+		name = "Damage bonus", flags = OPFLAG_VALUE_ABSOLUTE, cat = "modifiers",
 		dest = "Increases damage bonus for next attack. If VALUE_ABSOLUTE is set, set it to X."
 	},
 	OPCODE_HEALBONUS: {
-		name = "Healing bonus", flags = OPFLAGS_VALUE_ABSOLUTE, cat = "modifiers",
+		name = "Healing bonus", flags = OPFLAG_VALUE_ABSOLUTE, cat = "modifiers",
 		dest = "Increases healing bonus for following heals. If VALUE_ABSOLUTE is set, set it to X."
 	},
 	OPCODE_INFLICT: {
-		name = "Inflict power", flags = OPFLAGS_VALUE_ABSOLUTE, cat = "modifiers",
+		name = "Inflict power", flags = OPFLAG_VALUE_ABSOLUTE, cat = "modifiers",
 		dest = "Sets base status inflict% bonus for next attack. If VALUE_ABSOLUTE is set, set it to X."
 	},
 	OPCODE_INFLICT_B: {
-		name = "Inflict bonus", flags = OPFLAGS_VALUE_ABSOLUTE, cat = "modifiers",
+		name = "Inflict bonus", flags = OPFLAG_VALUE_ABSOLUTE, cat = "modifiers",
 		dest = "Increases status inflict% bonus for next attack. If VALUE_ABSOLUTE is set, set it to X."
 	},
 	OPCODE_CRITMOD: {
-		name = "Critical modifier", flags = OPFLAGS_VALUE_ABSOLUTE, cat = "modifiers",
+		name = "Critical modifier", flags = OPFLAG_VALUE_ABSOLUTE, cat = "modifiers",
 		dest = "Increases critical hit bonus for next attack. If VALUE_ABSOLUTE is set, set it to X."
 	},
 	OPCODE_ELEMENT: {
-		name = "Set element", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Set element", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Sets element of following attacks."
 	},
 	OPCODE_ELEMENT_WEAK: {
-		name = "Set element to weakness", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Set element to weakness", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Sets element of following attacks to the one the target is most weak to."
 	},
 	OPCODE_ELEMENT_RESIST: {
-		name = "Set element to resisted", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Set element to resisted", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Sets element of following attacks to the one the target is most resistant to."
 	},
 	OPCODE_MINHITS: {
-		name = "Set minimum hits", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Set minimum hits", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Sets minimum amount of hits for next attack command. Total number of hits is a random number between min and max."
 	},
 	OPCODE_MAXHITS: {
-		name = "Set maximum hits", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Set maximum hits", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Sets minimum amount of hits for next attack command. Total number of hits is a random number between min and max."
 	},
 	OPCODE_NUMHITS: {
-		name = "Set min/max hits", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Set min/max hits", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Sets both minimum and maximum amount of hits for the attack, effectively hitting X times."
 	},
 	OPCODE_NOMISS: {
-		name = "No miss", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "No miss", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Next attack will never miss."
 	},
 	OPCODE_IGNORE_DEFS: {
-		name = "Ignore defenses", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Ignore defenses", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "If not 0, sets current attack to ignore guard, barrier or protect.",
 		expl = "ignore defenses"
 	},
 	OPCODE_RANGE: {
-		name = "Attack range", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Attack range", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Changes attack to ranged if not 0, if 0 remove range property.",
 		expl = "%s draw attack rate by %s"
 	},
 	OPCODE_ENERGY: {
-		name = "Energy damage", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Energy damage", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Changes attack to energy damage if not 0, to kinetic damage if 0.",
 		expl = "%s draw attack rate by %s"
 	},
 	OPCODE_DRAINLIFE: {
-		name = "Drain life", flags = OPFLAGS_TARGET_SELF, cat = "modifiers",
+		name = "Drain life", flags = OPFLAG_TARGET_SELF, cat = "modifiers",
 		dest = "Sets both minimum and maximum amount of hits for the attack, effectively hitting X times."
 	},
 	OPCODE_NONLETHAL: {
-		name = "Non-lethal", flags = OPFLAGS_NONE, cat = "modifiers",
+		name = "Non-lethal", flags = OPFLAG_NONE, cat = "modifiers",
 		dest = "Marks the skill as nonlethal. It cannot decrease target's Vital below 1."
 	},
 	OPCODE_PRINTMSG: {
-		name = "Print message", flags = OPFLAGS_NONE, cat = "action",
+		name = "Print message", flags = OPFLAG_NONE, cat = "action",
 		dest = "Prints a message, defined in the messages section."
 	},
 	OPCODE_LINKSKILL: {
-		name = "Link skill", flags = OPFLAGS_NONE, cat = "action",
+		name = "Link skill", flags = OPFLAG_NONE, cat = "action",
 		dest = "Discards current state and runs a new skill. It must be defined in the TID section"
 	},
 	OPCODE_PLAYANIM: {
-		name = "Play animation", flags = OPFLAGS_NONE, cat = "action",
+		name = "Play animation", flags = OPFLAG_NONE, cat = "action",
 		dest = "Plays animation X. It must be defined in the animations section."
 	},
 	OPCODE_STOP: {
-		name = "Stop", flags = OPFLAGS_NONE, cat = "control",
+		name = "Stop", flags = OPFLAG_NONE, cat = "control",
 		dest = "Aborts execution."
 	},
 	OPCODE_JUMP: {
-		name = "Jump to line", flags = OPFLAGS_NONE, cat = "control",
+		name = "Jump to line", flags = OPFLAG_NONE, cat = "control",
 		dest = "Jumps to another line in this skill's code."
 	},
 	OPCODE_IF_CHANCE: {
-		name = "IF_CHANCE", flags = OPFLAGS_NONE, cat = "control",
+		name = "IF_CHANCE", flags = OPFLAG_NONE, cat = "control",
 		dest = "Chance% to execute next line. Otherwise next line is skipped."
 	},
 	OPCODE_IF_STATUS: {
-		name = "IF_STATUS", flags = OPFLAGS_NONE, cat = "control",
+		name = "IF_STATUS", flags = OPFLAG_NONE, cat = "control",
 		dest = "Execute next line if target has any status affliction. Otherwise next line is skipped."
 	},
 	OPCODE_IF_ACT: {
-		name = "IF_ACT", flags = OPFLAGS_NONE, cat = "control",
+		name = "IF_ACT", flags = OPFLAG_NONE, cat = "control",
 		dest = "Execute next line if target has acted this turn. Otherwise next line is skipped."
 	},
 	OPCODE_IF_DAMAGED: {
-		name = "IF_ACT", flags = OPFLAGS_TARGET_SELF, cat = "control",
+		name = "IF_ACT", flags = OPFLAG_TARGET_SELF, cat = "control",
 		dest = "Execute next line if target has received damage this turn. Otherwise next line is skipped."
 	},
 	OPCODE_IF_HITCHECK: {
-		name = "IF_HITCHECK", flags = OPFLAGS_TARGET_SELF, cat = "control",
+		name = "IF_HITCHECK", flags = OPFLAG_TARGET_SELF, cat = "control",
 		dest = "Execute next line if a standard hit check passes. Otherwise next line is skipped."
 	},
 	OPCODE_IF_CONNECT: {
-		name = "IF_CONNECT", flags = OPFLAGS_NONE, cat = "control",
+		name = "IF_CONNECT", flags = OPFLAG_NONE, cat = "control",
 		dest = "Execute next line if last attack function in this skill succeeded. Otherwise next line is skipped."
 	},
 }
 
 
 class SkillState:
-	#TODO:
-	#Follow/Chase/Counter need some adjustments.
-	#Provide a skill code to set them from a single hex value.
-	#To ensure consistency they will begin with a 1.
-	#For counter the value will contain CHANCE% (0-100), DECREMENT(0-100), MAX(0-15), ELEMENT(0-8), FILTER(0-3)
-	#So 0x1FFFFFFF
-	#For Follow and Chase it'll be CHANCE%(0-100), DECREMENT(0-100), ELEMENT(0-8)
-	#So 0x1FFFFF
 	# Core attack stats #########################
-	var hits : Array =            [1, 1]   #Number of hits (min, max)
-	var dmgBonus : int =          0        #Damage bonus. Added to attack power.
-	var dmgAddRaw : int =         0        #Raw damage to add to attacks.
-	var healPow : int =           0        #Healing power
-	var healBonus : int =         0        #Healing bonus. Added to healing power.
-	var healAddRaw : int =        0        #Raw healing to add to heals.
-	var drainLife : int =         0        #Drain life. Percentage.
-	var nonlethal : bool =        false    #Non-lethal. Cannot drop HP below 1.
-	var accMod : int =            0        #Accuracy modifier.
-	var critMod : int =           0        #Critical modifier.
-	var element : int =           0        #Element to use.
-	var fieldEffectMult : float = 1.0      #Field effect multiplier.
-	var dmgStat : int =           0        #Damage stat.
-	var nomiss : bool =           false    #If true, the attack always hits.
-	var nocap : bool =            false    #If true, the attack ignores damage cap (32000).
-	var energyDMG : bool =        false    #If true, use energy resistance stats on target.
-	var ranged : bool =           false    #If true, ignore range penalties and targetting restrictions.
-	var ignoreDefs : bool =       false    #If true, ignore special defenses (guard, barrier).
-	var ignoreArmor:bool  =       false    #If true, equipment stats are ignored.
+	var hits:Array            = [1, 1]   #Number of hits (min, max) #TODO: Remove
+	var dmgBonus:int          = 0        #Damage bonus. Added to attack power.
+	var dmgAddRaw:int         = 0        #Raw damage to add to attacks.
+	var healPow:int           = 0        #Healing power
+	var healBonus:int         = 0        #Healing bonus. Added to healing power.
+	var healAddRaw:int        = 0        #Raw healing to add to heals.
+	var drainLife:int         = 0        #Drain life. Percentage.
+	var nonlethal:bool        = false    #Non-lethal. Cannot drop HP below 1.
+	var accMod:int            = 0        #Accuracy modifier.
+	var critMod:int           = 0        #Critical modifier.
+	var element:int           = 0        #Element to use.
+	var fieldEffectMult:float = 1.0      #Field effect multiplier.
+	var dmgStat: int          = 0        #Damage stat.
+	var nomiss:bool           = false    #If true, the attack always hits.
+	var nocap:bool            = false    #If true, the attack ignores damage cap (32000).
+	var energyDMG:bool        = false    #If true, use energy resistance stats on target.
+	var ranged:bool           = false    #If true, ignore range penalties and targetting restrictions.
+	var ignoreDefs:bool       = false    #If true, ignore special defenses (guard, barrier).
+	var ignoreArmor:bool      = false    #If true, equipment stats are ignored.
 	# Infliction stats ##########################
-	var inflictPow : int =        0        #TODO: Redo this to use for Disables instead, move status inflict to gauge-based.
-	var inflictBonus : int =      0
+	var inflictPow:int        = 0        #TODO: Redo this to use for Disables instead, move status inflict to gauge-based.
+	var inflictBonus:int      = 0
 	# Effect ####################################
-	var setEffect : bool =        false    #If true, try to set an effect.
+	var setEffect:bool        = false    #If true, try to set an effect.
 	# Hit record ################################
-	var lastHit : bool =          false    #If true, the last attack connected.
-	var hitRecord : Array =       []       #Record of last succeeding hits.
-	var anyHit : bool =           false    #If true, any of the attacks has connected.
+	var lastHit:bool          = false    #If true, the last attack connected.
+	var hitRecord:Array       = []       #Record of last succeeding hits.
+	var anyHit:bool           = false    #If true, any of the attacks has connected.
 	# Onhit effects #############################
-	var chase   : Array                    #Data for chase setup    [User pointer, activation chance%, chance decrement per use, skill pointer, level, active, element to chase]
-	var follow  : Array                    #Data for followup setup [User pointer, activation chance%, chance decrement per use, skill pointer, level, active, element to follow]
-	var counter : Array                    #Data for counter setup  [Activation chance%, chance decrement per use, skill pointer, level, element to counter, max counter amount, counter none/physical/energy/all]
+	var chase:Array                      #Data for chase setup    [User pointer, activation chance%, chance decrement per use, skill pointer, level, active, element to chase]
+	var follow:Array                     #Data for followup setup [User pointer, activation chance%, chance decrement per use, skill pointer, level, active, element to follow]
+	var counter:Array                    #Data for counter setup  [Activation chance%, chance decrement per use, skill pointer, level, element to counter, max counter amount, counter none/physical/energy/all]
 	# Target override ###########################
-	var originalTarget =          null     #Keep track of original target.
+	var originalTarget        = null     #Keep track of original target.
 	# Statistics and output #####################
-	var totalHeal : int =         0        #Total amount of healing done this turn.
-	var totalAfflictions : int =  0        #Total amount of afflictions caused this turn.
-	var finalHeal : int =         0        #Final amount of healing.
-	var finalDMG : int =          0        #Final amount of damage.
-	var criticals : int = 				0
-	var revives : int =						0
+	# TODO: Remove, add directly to battle statistics for the user/target.
+	var totalHeal:int         = 0        #Total amount of healing done this turn.
+	var totalAfflictions:int  = 0        #Total amount of afflictions caused this turn.
+	var finalHeal:int         = 0        #Final amount of healing.
+	var finalDMG:int          = 0        #Final amount of damage.
+	var criticals:int         = 0
+	var revives:int           = 0
 	# Switches ##################################
-	var post = 0                           #If available, try to run post action codes. 0 = cancel running code, 1 = run it on user's group, 2 = run it on enemy's group.
-	# SVAL stack
-	var value : int =             0        #Internal data stack.
+	var post:int              = 0       #If available, try to run post action codes. 0 = cancel running code, 1 = run it on user's group, 2 = run it on enemy's group.
+	# SVAL stack #TODO: Make it a stack.
+	var value:int             = 0       #Internal data stack.
 	# Copy of init values
-	var initVals : Array
+	var initVals:Array
 
 	func _init(S:Dictionary, level:int, user, target) -> void:
 		initVals = [S, level, user, target]
 		#Initialize values from skill definition
-		element = S.element[level]
+		element         = S.element[level]
 		fieldEffectMult = float(S.fieldEffectMult[level])
-		dmgStat = S.damageStat
-		accMod = S.accMod[level]
-		critMod = S.critMod[level]
-		energyDMG = S.energyDMG
-		ranged = S.ranged[level]
-		inflictPow = S.inflictPow[level]
-		setEffect = true if (S.category == CAT_SUPPORT and S.effect != EFFECT_NONE) else false
-		anyHit = true if S.category == CAT_SUPPORT else false
-		follow  = [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
-		chase =   [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
-		counter = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL]
-		originalTarget = target
+		dmgStat         = S.damageStat
+		accMod          = S.accMod[level]
+		critMod         = S.critMod[level]
+		energyDMG       = S.energyDMG
+		ranged          = S.ranged[level]
+		inflictPow      = S.inflictPow[level]
+		setEffect       = true if (S.category == CAT_SUPPORT and S.effect != EFFECT_NONE) else false
+		anyHit          = true if  S.category == CAT_SUPPORT else false
+		follow          = [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
+		chase           = [user, 100, 33, S, level, false, core.stats.ELEMENTS.DMG_UNTYPED]
+		counter         = [100, 0, S, level, core.stats.ELEMENTS.DMG_UNTYPED, 1, PARRY_ALL]
+		originalTarget  = target
 
 	func duplicate() -> SkillState:
 		print("[SKILL_STATE] Duplicating state...")
 		var copy = SkillState.new(initVals[0], initVals[1], initVals[2], initVals[3])
-		copy.hits = hits.duplicate()
-		copy.dmgBonus = dmgBonus
-		copy.dmgAddRaw = dmgAddRaw
-		copy.healPow = healPow
-		copy.healBonus = healBonus
-		copy.healAddRaw = healAddRaw
-		copy.drainLife = drainLife
-		copy.nonlethal = nonlethal
-		copy.accMod = accMod
-		copy.critMod = critMod
-		copy.element = element
-		copy.fieldEffectMult = fieldEffectMult
-		copy.dmgStat = dmgStat
-		copy.nomiss = nomiss
-		copy.nocap = nocap
-		copy.energyDMG = energyDMG
-		copy.ranged = ranged
-		copy.ignoreDefs = ignoreDefs
-		copy.inflictPow = inflictPow
-		copy.inflictBonus = inflictBonus
-		copy.setEffect = setEffect
-		copy.lastHit = lastHit
-		copy.hitRecord = hitRecord.duplicate()
-		copy.anyHit = anyHit
-		copy.chase = chase.duplicate()
-		copy.follow = follow.duplicate()
-		copy.counter = counter.duplicate()
-		copy.originalTarget = originalTarget
-		copy.totalHeal = totalHeal
+		copy.hits             = hits.duplicate()
+		copy.dmgBonus         = dmgBonus
+		copy.dmgAddRaw        = dmgAddRaw
+		copy.healPow          = healPow
+		copy.healBonus        = healBonus
+		copy.healAddRaw       = healAddRaw
+		copy.drainLife        = drainLife
+		copy.nonlethal        = nonlethal
+		copy.accMod           = accMod
+		copy.critMod          = critMod
+		copy.element          = element
+		copy.fieldEffectMult  = fieldEffectMult
+		copy.dmgStat          = dmgStat
+		copy.nomiss           = nomiss
+		copy.nocap            = nocap
+		copy.energyDMG        = energyDMG
+		copy.ranged           = ranged
+		copy.ignoreDefs       = ignoreDefs
+		copy.inflictPow       = inflictPow
+		copy.inflictBonus     = inflictBonus
+		copy.setEffect        = setEffect
+		copy.lastHit          = lastHit
+		copy.hitRecord        = hitRecord.duplicate()
+		copy.anyHit           = anyHit
+		copy.chase            = chase.duplicate()
+		copy.follow           = follow.duplicate()
+		copy.counter          = counter.duplicate()
+		copy.originalTarget   = originalTarget
+		copy.totalHeal        = totalHeal
 		copy.totalAfflictions = totalAfflictions
-		copy.finalHeal = finalHeal
-		copy.finalDMG = finalDMG
-		copy.value = value
+		copy.finalHeal        = finalHeal
+		copy.finalDMG         = finalDMG
+		copy.value            = value
 		return copy
 
 
-func translateOpCode(o : String) -> int:
+func translateOpCode(o:String) -> int:
 	o = o.to_lower() #Ensure string is lower case.
 	return opCode[o] if o in opCode else OPCODE_NULL
 
-func hasCodePR(S):
+func hasCodePR(S) -> bool:
 	return true if S.codePR != null else false
 
 func flaggedSet(sourceValue:int, value:int, flags:int) -> int:
-	if flags & OPFLAGS_VALUE_ABSOLUTE:   return value
-	elif flags & OPFLAGS_VALUE_PERCENT:  return ( sourceValue as float * core.percent(value)) as int
+	if flags & OPFLAG_VALUE_ABSOLUTE:   return value
+	elif flags & OPFLAG_VALUE_PERCENT:  return ( sourceValue as float * core.percent(value)) as int
 	else:                                return sourceValue + value
-
 
 func calculateHeal(a, power) -> int:
 	power = float(power)
@@ -1042,12 +1072,12 @@ func tryInflict(S, state, value, user, target) -> bool:
 	else:
 		return false
 
-func calculateCrit(aLUC, bLUC, mods) -> bool:
-	var val = (((float(aLUC) + 25) * 100) / (float(bLUC) + 25))
-	val = int(clamp(val, 30, 300)) + mods
-	var rand = randi() % 1000
+func calculateCrit(aLUC, bLUC, mods:int, bonus:int = 0) -> bool:
+	var val:int = ( ((aLUC + 25) * 100) as float / (bLUC + 25) as float ) as int
+	val = int(clamp(val, 30, 300)) + mods + bonus
+	var rand:int = randi() % 1000
 	if rand < val: return true
-	else: return false
+	else:          return false
 
 func checkDrawRate(user, target, S):
 	if S.category != CAT_ATTACK:
@@ -1079,7 +1109,7 @@ func checkDrawRateRow(user, targets, S):
 		msg("But %s attracted the attack!" % finalTarget.name)
 		return group.getRowTargets(finalTarget.row, S)
 
-func checkHit(a, b, skillACC:int = 95, mod:int = 0) -> bool:
+func checkHit(a, b, skillACC:int = 95, mod:int = 0, blind:bool = false) -> bool:
 	var comp = float(((float(a.AGI) * 2.0) + float(a.LUC)) * 10.0) / ((float(b.AGI) * 2) + float(b.LUC) + 0.00001)
 	var val = 0.0
 	var rand = randi() % 1000
@@ -1088,6 +1118,8 @@ func checkHit(a, b, skillACC:int = 95, mod:int = 0) -> bool:
 	else:
 		val = (87.5 + (((comp / 20.0) * 50.0) * (comp * 2.5)) * (skillACC - mod)) * .1
 	val += 0 #buff/debuff modifiers
+	#TODO: Check for blindness condition here.
+	if blind: val = val/2
 	print("\t[checkHit] ACC check: val %s (a.AGI: %s a.LUC: %s b.AGI: %s b.LUC: %s) TS:%s base acc: 95 skill acc: %s random number: %s" % [val, a.AGI, a.LUC, b.AGI, b.LUC, comp, mod, rand])
 	val = int(clamp(val, 0, 1500))
 	if rand <= val: return true
@@ -1135,134 +1167,71 @@ func checkHitConditions(S, level, user, target, state, crit = false) -> bool:
 				msg("%s was protected by %s!" % [core.battle.control.state.color_name(target), IT[0].data.lib.name])
 				target.display.message(str(">ELEM BLOCKED BY %s" % IT[0].data.lib.name), false, "00FFFF")
 				return false
-		return checkHit(user.battle.stat, target.battle.stat, state.accMod, target.battle.dodge)
+		return checkHit(user.battle.stat, target.battle.stat, state.accMod, target.battle.dodge, bool(user.condition2 & CONDITION2_BLIND))
 	return false
 
-
-func processAttack(S, level, user, target, state, value, flags) -> void:
-	#TODO: Prevent extra hits on a downed enemy
-	#TODO: Deprecate, simplify for individual hits.
-	var hitnum:int = calculateHitNumber(state.hits)
-	var totalHits:int = 0
-	var totalDmg = 0
-	var a = user.battle.stat
-	var b = target.battle.stat
-	var dmg:float = 0.0
-	var dmgPercent:float = 0.0
-	var dmgPercentTotal:float = 0.0
-	var args = null
-	var temp = null
-	var specials:Dictionary = { guardBreak = false, barrierFullBlock = false }
-	var crit:bool = false
-	var field = core.battle.control.state.field.bonus
-	var hitInfo:Array = state.hitRecord
-	var inflictInfo:String = ""
-	var output:String = ""
-	var silent:bool = bool(flags & OPFLAGS_SILENT_ATTACK)
-	var defeats:bool = false
-	print("\tAttack: %05d + %05d = %05d power + %05d raw damage > silent: %s, hit record: %s" % [value, state.dmgBonus, state.dmgBonus + value, state.dmgAddRaw, silent, hitInfo])
+func processDamage(S, level:int, user, target, state, value:int, flags:int) -> void:
+	var dmg:float            = 0.0
+	var a                    = user.battle.stat
+	var b                    = target.battle.stat
+	var dmgPercent:float     = 0.0
+	var crit:bool            = false
+	var specials:Dictionary  = { guardBreak = false, barrierFullBlock = false }
+	var field:Array          = core.battle.control.state.field.bonus
+	var hitInfo:Array        = state.hitRecord
+	var args:Dictionary
+	var temp:Array
 	state.lastHit = false
+	print("\tDAMAGE: %05d + %05d = %05d power + %05d raw damage" % [value, state.dmgBonus, state.dmgBonus + value, state.dmgAddRaw])
+	crit = calculateCrit(a.LUC, b.LUC, state.critMod, user.battle.critBonus) #Check if this individual attack crits beforehand.
+	if crit:
+		print("\tCritical hit check passed.")
+	if checkHitConditions(S, level, user, target, state, crit):
+		state.lastHit = true                #It connected. Start processing it.
+		dmg = state.dmgBonus + value
+		args = {
+			element     = state.element,     #Current element.
+			dmgStat     = state.dmgStat,     #Main damage stat.
+			power       = dmg * .01,         #Skill power multiplier.
+			energyDMG   = state.energyDMG,   #Energy/Kinetic damage.
+			ignoreArmor = state.ignoreArmor, #Ignore armor value.
+		}
+		dmg = calculateDamage(a, b, args)   #Calculate base damage.
+		temp = target.damageResistModifier(dmg, state.element, state.energyDMG)
+		dmg = temp[0]                       #Damage modified by elemental resistances.
+		match temp[1]:                      #Check for weakness/resist, 0 if neutral hit.
+			1: user.battle.weaknessHits += 1 #1 if target is vulnerable.
+			2: user.battle.resistedHits += 1 #2 if target resists.
+		dmg *= calculateRangedDamage(S, level, user, target) #Apply range multiplier.
+		print("\tDamage so far: %05d, adding raw +%05d (=%05d)" % [dmg, state.dmgAddRaw, dmg+state.dmgAddRaw])
+		dmg += state.dmgAddRaw              #Add raw damage bonus this late so it's actually raw, but enhanced by crit.
+		if field[args.element] > 0:         #Check for field effect bonuses.
+			dmg = core.battle.control.state.field.calculate(dmg, args.element, state.fieldEffectMult)
+		if crit:                            #Critical hit, x1.5 damage.
+			print("\tCritical hit! (%s x 1.5 = %s)" % [dmg, dmg * 1.5])
+			dmg *= 1.5
+		user.battle.turnHits += 1           #Raise statistics.
+		#-- Final damage --------------------------------------------------------
+		dmg = target.finalizeDamage(round(dmg), specials, state.ignoreDefs, state.nocap)
+		var info = target.damage(dmg, [crit, false, temp[1], specials], false, state.nonlethal)                                #Deal the final amount here
+		dmgPercent = (dmg / float(target.maxHealth())) * 100 #Get damage%.
+		state.lastHit   = true  #Last hit connected, so register it so skills can check for "if_connect"
+		state.anyHit    = true  #Any hit in the state connected, so always set it here.
+		state.setEffect = true if S.effect != EFFECT_NONE else false
+		if state.drainLife > 0: #Drain life effects
+			print("\tLife drain: %s%%" % state.drainLife)
+			user.heal( int(dmg * core.percent(state.drainLife)) )
 
-	for i in range(hitnum): #For each attack, check hits individually.
-		specials.guardBreak = false; specials.barrierFullBlock = false
-		crit = calculateCrit(a.LUC, b.LUC, state.critMod) #Check if this individual attack crits beforehand.
-		if crit:
-			print("\tCritical hit check passed.")
-		#if (checkHit(a, b, state.accMod[level]) or state.nomiss == true) and target.status != STATUS_DOWN:
-		if checkHitConditions(S, level, user, target, state, crit):
-			state.lastHit = true                                                  #It connected. Start processing it.
-			dmg = state.dmgBonus + value
-			args = {
-				element = state.element,
-				dmgStat = state.dmgStat,                                                #and main damage stat
-				power = dmg * .01,                                                      #then apply skill power
-				energyDMG = state.energyDMG,                                            #and finish setting kinetic/energy.
-				ignoreArmor = state.ignoreArmor,
-			}
-			dmg = calculateDamage(a, b, args)                                         #Calculate base damage.
-			temp = target.damageResistModifier(dmg, state.element, state.energyDMG)
-			dmg = temp[0]
-			match temp[1]:                                                            #Check for weakness/resist, 0 if neutral hit.
-				1: user.battle.weaknessHits += 1
-				2: user.battle.resistedHits += 1
-			dmg *= calculateRangedDamage(S, level, user, target)
-			print("\tDamage so far: %05d, adding raw +%05d (=%05d)" % [dmg, state.dmgAddRaw, dmg+state.dmgAddRaw])
-			dmg += state.dmgAddRaw
-			if field[args.element] > 0:
-				dmg = core.battle.control.state.field.calculate(dmg, args.element, state.fieldEffectMult)
-			if crit:                                                                  #Critical hit, x1.5 damage.
-				print("\tCritical hit! (%s x 1.5 = %s)" % [dmg, dmg * 1.5])
-				dmg *= 1.5
-			totalHits += 1
-
-			dmg = target.finalizeDamage(round(dmg), specials, state.ignoreDefs, state.nocap)
-
-			var HP1:int = target.HP
-			var info = target.damage(dmg, [crit, false, temp[1], specials], true, state.nonlethal)                                #Deal the final amount here
-			var HPd:int = HP1 - target.HP
-
-			totalDmg += dmg #dmg                                                           #Add to action total
-			dmgPercent = (dmg / float(target.maxHealth())) * 100
-			dmgPercentTotal += dmgPercent
-			state.lastHit = true
-			state.anyHit = true
-			state.setEffect = true if S.effect != EFFECT_NONE else false
-			user.battle.turnDealtDMG += dmg
-			user.battle.accumulatedDealtDMG += dmg
-
-			hitInfo.push_back([dmg, crit, info[0], temp[1], specials])
-			if info[1]: #If target is defeated
-				defeats = true
-			if not target.filter(S) or info[1]: #Abort loop if target doesn't fit filter criteria (like being defeated)
-				break
-
-			if state.inflictPow > 0 and not silent:
-				if tryInflict(S, state, value, user, target):
-					inflictInfo = str("[color=#%s]%s[/color] was %s!" % [
-						core.battle.control.state.colorName(target), target.name,
-						"TODO"
-					])
-		else:
-			target.dodgeAttack(user)
-			state.lastHit = false
-
-	if not silent or defeats:
-		if hitInfo.size() > 1:
-			output = str("Hit [color=#%s]%s[/color] %s times for %.2f%% (" % [
-				core.battle.control.state.colorName(target), target.name, hitInfo.size(), dmgPercentTotal,
-			])
-			for i in range(hitInfo.size()):
-				output += str("[color=#%s]%s%s[/color]" % [
-					core.battle.control.state.msgColors.damage[hitInfo[i][3]], int(hitInfo[i][0]),
-					"!" if hitInfo[i][1] else "",
-				])
-				if i < hitInfo.size() - 1:
-					output += " "
-			output += str(") damage!")
-		elif hitInfo.size() == 1:
-			output = str("Hit [color=#%s]%s[/color] for %.2f%%([color=#%s]%s[/color]) damage! %s") % [
-				core.battle.control.state.colorName(target), target.name,
-				dmgPercentTotal,
-				core.battle.control.state.msgColors.damage[hitInfo[0][3]], int(totalDmg),
-				"Critical hit!" if crit else "",
-			]
-		else:
-			output = str("Missed [color=#%s]%s[/color]!") % [
-				core.battle.control.state.colorName(target), target.name,
-			]
-		target.display.damage(hitInfo)
-		hitInfo = [] #Clear accumulated attack info.
-	user.battle.turnHits += totalHits
-	state.finalDMG += totalDmg as int
-
-	if defeats: output += str(" %s" % target.defeatMessage())
-
-	if state.drainLife > 0: #Drain life effects
-		print("\tLife drain (%s)" % state.drainLife)
-		user.heal( int(float(totalDmg) * core.percent(state.drainLife)) )
-		#output += (str(" Drained %s health!" % [int(float(totalDmg)* (float(state.drainLife) * 0.01))]))
-	if not silent or defeats:
-		msg(str(output, " ", inflictInfo))
+		#Set hit information with the following parameters:
+		#[0]: Final damage [1]: Critical [2]: Overkill [3]: Weak/Strong [4]: Specials [5]: Damage% [6]: Defeat
+		hitInfo.push_back([dmg, crit, info[0], temp[1], specials, dmgPercent, info[1]])
+		# Set statistics.
+		user.battle.turnDealtDMG        += dmg
+		user.battle.accumulatedDealtDMG += dmg
+		state.finalDMG += dmg as int #Raise total damage for this state.
+	else: #Attack missed.
+		target.dodgeAttack(user)
+		state.lastHit = false #Last hit didn't connect, so ensure if_connect fails after this.
 
 func processDamageRaw(S, user, target, value, percent) -> int:                 #Cause raw damage to target.
 	var dmg:int = 0
@@ -1274,10 +1243,9 @@ func processDamageRaw(S, user, target, value, percent) -> int:                 #
 		target.damage(dmg, [false, false, 0, null])
 	return dmg
 
-
 func damageRaw(S, level, user, target, state, value:int, flags:int = 0, bonus:bool = false) -> void:
 	var defeats:bool = false
-	var temp:float = ( float(target.maxHealth()) * core.percent(value) ) if flags & OPFLAGS_VALUE_PERCENT else value as float
+	var temp:float = ( float(target.maxHealth()) * core.percent(value) ) if flags & OPFLAG_VALUE_PERCENT else value as float
 	if bonus: #Add elemental bonuses.
 		temp = core.battle.control.state.field.calculate(temp, state.element, state.fieldEffectMult)
 	if temp > 0:
@@ -1285,12 +1253,10 @@ func damageRaw(S, level, user, target, state, value:int, flags:int = 0, bonus:bo
 		if info[1]:
 			defeats = true
 
-
-
 func processHeal(S, state, user, target, value:float) -> float:
 	var field = core.battle.control.state.field.bonus
-	var fieldBonus : float = 0.0
-	var elementKey : String = ""
+	var fieldBonus:float  = 0.0
+	var elementKey:String = ""
 	if state.element > 0:
 		print("Heal so far: %05d, adding raw +%05d (=%05d)" % [value, state.healAddRaw, value+state.healAddRaw])
 		value += state.healAddRaw
@@ -1323,12 +1289,11 @@ func printSkillMsg(S, user, target, value) -> bool:
 			return false
 	return false
 
-func msg(text):
+func msg(text) -> void:
 	core.battle.skillControl.echo(text)
 
 func selectTargetAuto(S, level:int, user, state):
-	var side = 0 if S.targetGroup == TARGET_GROUP_ALLY else 1
-	var temp = null
+	var side:int = 0 if S.targetGroup == TARGET_GROUP_ALLY else 1
 	match S.target[level]:
 		TARGET_SELF             : return [ user ]
 		TARGET_ALL              : return state.formations[side].getAllTargets(S)
@@ -1339,7 +1304,7 @@ func selectTargetAuto(S, level:int, user, state):
 		TARGET_ROW_BACK         : return state.formations[side].getRowTargets(1, S)
 		TARGET_ROW_FRONT        : return state.formations[side].getRowTargets(0, S)
 		TARGET_SINGLE, TARGET_SPREAD:
-			temp = state.formations[side].getAllTargets(S)
+			var temp = state.formations[side].getAllTargets(S)
 			if temp.size() == 1:
 				return temp
 			else:
@@ -1364,13 +1329,14 @@ func calculateTarget(S, level:int, user, _targets) -> Array:
 	match S.target[level]:
 		TARGET_SELF:  targets.push_front(user) #Target is user. Nothing special needed.
 		TARGET_SINGLE, TARGET_SINGLE_NOT_SELF, TARGET_SPREAD: #Single target, check if the original target is gone.
-			if _targets[0].filter(S):
+			if _targets and _targets[0].filter(S):
 				temp = checkDrawRate(user, _targets[0], S)
 				targets.push_front(temp)
 			else: #Target didn't pass filter criteria, meaning it's changed since selection.
 				if S.category == CAT_ATTACK: #In the case of attacks, pick another target.
+					#TODO: See if something can be done in the case of repeating last actions, so if there aren't optimal targets or results are ambiguous, it brings up the target selection again.
 					print("[SKILL][calculateTarget] Target didn't match filter, picking another target...")
-					var newtarget = _targets[0].group.getRandomTarget(S)
+					var newtarget = user.group.getRandomTarget(S) if S.targetGroup == TARGET_GROUP_ALLY else user.group.versus.getRandomTarget(S)
 					if newtarget != null and newtarget[0] != null:
 						targets.push_front(newtarget[0])
 						print("[SKILL][calculateTarget] New target is %s" % newtarget[0].name)
@@ -1422,8 +1388,9 @@ func addEffect(S, level:int, user, target, state):
 		target.addEffect(S, level, user)
 
 
-# SKILL PROCESSING ############################################################
-func process(S, level, user, _targets, WP = null, IT = null, skipAnim:bool = false):
+# SKILL PROCESSING ################################################################################
+
+func process(S, level:int, user, _targets, WP = null, IT = null, skipAnim:bool = false):
 	print("\n[SKILL][PROCESS] ### %s's action: %s ############################################\n" % [user.name, S.name])
 	if IT != null:    msg(str("[color=#%s]%s[/color] used [color=#80E36E]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, IT.data.lib.name]))
 	else:             msg(str("[color=#%s]%s[/color] used [color=#EEFF80]%s[/color]!" % [core.battle.control.state.colorName(user), user.name, S.name]))
@@ -1440,37 +1407,40 @@ func process(S, level, user, _targets, WP = null, IT = null, skipAnim:bool = fal
 			processCombatSkill(S, level, user, targets, WP)
 	#return SKILL_FAILED
 
-func initSkillState(S, level, user, target):
+func initSkillState(S, level:int, user, target) -> SkillState:
 	return SkillState.new(S, level, user, target)
 
 func initSkillInfo() -> Dictionary:
 	return { anyHit = false, postTargetGroup = 0 }
 
-func processCombatSkill(S, level, user, targets, WP = null, IT = null, skipAnim:bool = false):
-	var temp = null
-	var tempTarget = null
+func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipAnim:bool = false):
 	var controlNode = core.battle.skillControl
-	var control = null
-	var state = null
+	var temp        = null
+	var tempTarget  = null
+	var control     = null
+	var state       = null
 	if IT != null: #Using an item, override some things.
 		user.setAD(user.battle.itemAD, true)
 	else:
 		user.setAD(S.AD[level - 1], true) #Set active defense on execution regardless of success.
 	#print("%s sets Active Defense: %s" % [user.name, user.battle.AD])
-	if WP != null: #Using a weapon.
-		user.setWeapon(WP)
-	user.charge(false)
+	if WP != null: user.setWeapon(WP) #Using a weapon
+	user.charge(false) #Stop charging FX now.
 	var info = initSkillInfo()
+
+	# Play animations ##########################################################
 	if 'startup' in S.animations and not skipAnim:
 		controlNode.startAnim(S, level, 'startup', core.battle.bg_fx)
 		yield(controlNode, "fx_finished") #Wait for animation to finish.
 		print("[SKILL][processCombatSkill] Startup animation finished")
+	# Skill pre-main setup #####################################################
 	info.postTargetGroup = 1 if S.codePO != null else 0 #Assume a post-main code is wanted if it's defined. Allow to cancel with codes.
 	if S.codeST != null: #Has a setup part. Initialize state here, copy for individual targets.
 		state = initSkillState(S, level, user, user)
 		control = controlNode.start()
 		setupSkillCode(S, level, user, user, CODE_ST, control, state)
 		yield(control, "skill_end")
+	# Main skill body ##########################################################
 	for j in targets: #Start a skill state for every target unless a ST state exists.
 		tempTarget = j
 		if tempTarget.filter(S): #Target is valid.
@@ -1481,8 +1451,8 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null, skipAnim:
 			control = controlNode.start()
 			processSkillCode(S, level, user, tempTarget, CODE_MN, control, state, info)
 			yield(control, "skill_end")
-			#yield(controlNode.wait(0.1), "timeout")                                   #Small pause for aesthetic reasons.
-
+			#yield(controlNode.wait(0.1), "timeout")  #Small pause for aesthetic reasons.
+	# Post-main setup ##########################################################
 	if S.codePO != null and info.postTargetGroup > 0: #Has a post-main part. Use a fresh state but set some variables.
 		#postTargetGroup is enabled by default but a skill can stop it from triggering if postTargetGroup is set to -1
 		print("[SKILL][processCombatSkill] Post skill code starting.")
@@ -1495,27 +1465,18 @@ func processCombatSkill(S, level, user, targets, WP = null, IT = null, skipAnim:
 				processSkillCode(S, level, user, j, CODE_PO, control, po_state)
 				yield(control, "skill_end")
 				print("[SKILL][processCombatSkill] Post skill code finished.")
-
+	# Elemental Field updating #################################################
 	if core.battle.control.state.lastElement != 0:
 		print("[SKILL][processCombatSkill] Adding element %d to field x%02d" % [core.battle.control.state.lastElement, S.fieldEffectAdd[level]])
-		#TODO: Add FE Guard effects here and in the standard functions.
-		#Add effect as a percentage for each group.
 		user.group.lastElement = core.battle.control.state.lastElement
 		for i in range(S.fieldEffectAdd[level]):
+			#TODO: Add FE Guard effects here and in the standard functions.
+			#Add effect as a percentage for each group.
 			core.battle.control.state.field.push(core.battle.control.state.lastElement)
-	#Check chains. TODO: Get info about last action to see if it hit or not.
+	# Update chains ############################################################
+	#TODO: Get info about last action to see if it hit or not
 	print("[SKILL] Checking chains...", S.chain, " ", user.battle.chain)
-	if user.battle.chain > 0:
-		if S.chain in [CHAIN_STARTER_AND_FOLLOW, CHAIN_FOLLOW]:
-			print("[SKILL] Chain start!")
-			user.battle.chain += 1
-	elif user.battle.chain == 0:
-		if S.chain in [CHAIN_STARTER, CHAIN_STARTER_AND_FOLLOW]:
-			print("[SKILL] Chain up!")
-			user.battle.chain = 1
-	if S.chain == CHAIN_FINISHER:
-		print("[SKILL] Chain finished!")
-		user.battle.chain = 0
+	user.updateChain(S.chain)
 	controlNode.finish()
 
 func processSubSkill(S, level, user, target, control = core.battle.skillControl.start()):
@@ -1561,7 +1522,7 @@ func runExtraCode(S, level, user, code_key, target = null):
 	core.battle.skillControl.finish()
 
 
-func processFL(S, level, user, target, data, type):
+func processFL(S, level:int, user, target, data, type) -> void:
 	print("%s's action FL on %s => %s LV%d" % [user.name, target.name, S.name, level])
 	match type:
 		ONHIT_FOLLOWUP, ONHIT_CHASE:
@@ -1586,7 +1547,7 @@ func processFL(S, level, user, target, data, type):
 	print("FL CODE FINISH")
 	core.battle.skillControl.finish()
 
-func processED(S, level, user, target):
+func processED(S, level:int, user, target) -> void:
 	print("%s's action ED: %s" % [user.name, S.name])
 	var control = core.battle.skillControl.start()
 	processSkillCode(S, level, user, target, CODE_ED, control)
@@ -1594,8 +1555,43 @@ func processED(S, level, user, target):
 	print("ED CODE FINISH")
 	core.battle.skillControl.finish()
 
+func logHitRecord(user, target, state) -> void:
+	var output:String = ''
+	var defeats:bool  = false
+	if state.hitRecord.size() > 1:
+		var dmgPercentTotal:int = 0
+		for i in state.hitRecord:
+			dmgPercentTotal += i[5]
+			if i[6]: defeats = true
+		output = str("Hit %s %s times for %.2f%% (" % [
+			core.battle.control.state.color_name(target), state.hitRecord.size(), dmgPercentTotal,
+		])
+		for i in range(state.hitRecord.size()):
+			output += str("[color=#%s]%s%s[/color]" % [
+				core.battle.control.state.msgColors.damage[state.hitRecord[i][3]], int(state.hitRecord[i][0]),
+				"!" if state.hitRecord[i][1] else "", #Critical
+			])
+			if i < state.hitRecord.size() - 1:
+				output += " "
+		output += str(") damage!")
+	elif state.hitRecord.size() == 1:
+		output = str("Hit %s for %.2f%%([color=#%s]%s[/color]) damage! %s") % [
+			core.battle.control.state.color_name(target), state.hitRecord[0][5],
+			core.battle.control.state.msgColors.damage[state.hitRecord[0][3]], state.hitRecord[0][0] as int,
+			"Critical hit!" if state.hitRecord[0][1] else "",
+		]
+		if state.hitRecord[0][6]: defeats = true
+	else:
+		output = str("Missed [color=#%s]%s[/color]!") % [
+			core.battle.control.state.colorName(target), target.name,
+		]
+	if defeats:
+		output += str(" %s" % target.defeatMessage())
+	target.display.damage(state.hitRecord)
+	state.hitRecord.clear() #Clear accumulated attack info.
+	msg(output)
 
-func setupSkillCode(S, level, user, target, _code, control, state):#TODO: unify all these functions.
+func setupSkillCode(S, level:int, user, target, _code, control, state):#TODO: unify all these functions.
 	processSkillCode2(S, level, user, target, _code, state, control)
 	yield(control, "skill_continue")
 	print("*skill_continue received for %s, checking effects*" % S.name)
@@ -1607,7 +1603,7 @@ func setupSkillCode(S, level, user, target, _code, control, state):#TODO: unify 
 	control.stop()
 	print("[%s] Setup stopped" % S.name)
 
-func processSkillCode(S, level, user, target, _code, control = core.battle.skillControl.start(), setState = null, info = null):
+func processSkillCode(S, level:int, user, target, _code, control = core.battle.skillControl.start(), setState = null, info = null):
 	var state = initSkillState(S, level, user, target) if setState == null else setState.duplicate()
 	processSkillCode2(S, level, user, target, _code, state, control)
 	yield(control, "skill_continue")
@@ -1617,8 +1613,9 @@ func processSkillCode(S, level, user, target, _code, control = core.battle.skill
 		addEffect(S, level, user, target, state)
 		#msg("%s was affected!" % [target.name])
 		state.anyHit = true
-
-	print("[SKILL][processSkillCode] Hit record:\n", state.hitRecord)
+	if state.hitRecord:
+		logHitRecord(user, target, state)
+		state.hitRecord.clear()
 
 # Post skill actions ##################################################################################
 # TODO: Post skill actions should be renamed.
@@ -1673,16 +1670,30 @@ func processSkillCode(S, level, user, target, _code, control = core.battle.skill
 	print("[SKILL][PROCESSSKILLCODE] %s control stopped" % S.name)
 
 
-func s_if(cond:bool = false, flags:int = 0) -> bool:
-	if flags & OPFLAGS_LOGIC_NOT:
-		cond = not cond
+func s_if(cond:bool = false, flags:int = 0) -> bool: #Wrapper to be able to easily negate logic expressions with a logic not flag.
+	if flags & OPFLAG_LOGIC_NOT: cond = not cond
 	return cond
 
-func processSkillCode2(S, level, user, target, _code, state, control):
-	level = 1                                                                     #TODO: Remember this is here...
-	var a = user.battle.stat
-	var b = target.battle.stat
-	var code = null
+func effectCheck(S, level:int, user, target, state) -> bool:
+	if S.effect != EFFECT_NONE:
+		if state.nomiss or S.category == CAT_OVER or target == user:
+			print("[%s] Provides an effect. Conditions make it apply." % S.name)
+			return true
+		else:
+			print("[%s] Provides an effect. Performing accuracy check." % S.name)
+			if checkHit(user.battle.stat, target.battle.stat, state.accMod, target.battle.dodge, bool(user.condition2 & CONDITION2_BLIND)):
+				print("Accuracy check passed.")
+				return true
+			else:
+				print("Accuracy check failed.")
+				return false
+	return false
+
+func processSkillCode2(S, level:int, user, target, _code, state, control):
+	level = 1  #TODO: Remember this is here...
+	var a           = user.battle.stat
+	var b           = target.battle.stat
+	var code        = null
 	var controlNode = core.battle.skillControl
 
 	yield(controlNode.wait(0.0001), "timeout") #Wait a little bit so the yield in processSkillCode() can wait.
@@ -1700,31 +1711,20 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 
 	if code == null:
 		print("[%s] No skill code %02d found. Taking no action." % [S.name, _code])
-		if S.effect != EFFECT_NONE:
-			if state.nomiss or S.category == CAT_OVER or target == user:
-				print("[%s] Provides an effect. No check necessary." % S.name)
-				state.setEffect = true
-			else:
-				print("[%s] Provides an effect. Performing accuracy check." % S.name)
-				if checkHit(a, b, state.accMod, target.battle.dodge):
-					state.setEffect = true;  print(" Accuracy check passed.")
-				else:
-					state.setEffect = false; print(" Accuracy check failed.")
+		state.setEffect = effectCheck(S, level, user, target, state)
 		print("[%s] Code processing finished. Emitting skill_continue signal" % S.name)
 		control.continueSkill()
 	else:
-
-		var line = null
-		var skipLine:bool = false
+		var line            = null
+		var skipLine:bool   = false
 		var cond_block:bool = false
-		var dmg = 0
-		var args = null
-		var flags = null
+		var dmg             = 0
+		var args            = null
+		var flags           = null
+		var value           = 0
 
-		var variableTarget = target
-		var b2 = b
-
-		var value = 0
+		var variableTarget  = target
+		var b2              = b
 
 		var scriptSize = code.size()
 		for j in range(scriptSize):
@@ -1734,14 +1734,14 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 			print("[%s]%02d>OPCODE:%03d VALUE:%03d(LV%02d) FLAGS:%03d [SVAL:%d]" % [S.name, j, line[0], value, level, flags, state.value])
 
 			#Check if current line overrides target to self for compatible funcs.
-			if flags & OPFLAGS_TARGET_SELF:
+			if flags & OPFLAG_TARGET_SELF:
 				variableTarget = user
 				b2 = a
 			else:
 				variableTarget = target
 				b2 = b
 			#Check if current line overrides value.
-			if flags & OPFLAGS_USE_SVAL:
+			if flags & OPFLAG_USE_SVAL:
 				print("%02d> USING STORED VALUE [sval = %s]) INSTEAD OF PROVIDED VALUE (%s) ##" % [j, state.value, value])
 				value = state.value
 
@@ -1753,9 +1753,9 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						#TODO: STOP! This is bad! The multi-hit system doesn't really work well enough.
 						#It needs to be simplified to single hits. Then collect them all together to display information at
 						#the end of the phase.
-						print(">ATTACK(%s)" % value)
+						print(">ATTACK: ", value)
 						if variableTarget.filter(S):
-							processAttack(S, level, user, variableTarget, state, value, flags)
+							processDamage(S, level, user, variableTarget, state, value, flags)
 						else:
 							print("[!!]Target doesn't meet targetting filter anymore, skipping.")
 					OPCODE_DEFEND:
@@ -1766,21 +1766,14 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							var overGain:int = variableTarget.calculateTurnOverGains() / 2
 							variableTarget.battle.over += overGain
 							print("Defend over gain: %d" % overGain)
-					OPCODE_FORCE_INFLICT:
-						print(">INFLICT(%s)" % value)
-						args = {
-							power = (float(value) * .01) + state.inflictBonus,
-							effStat = S.modStat,
-							mods = 1,
-						}
-						dmg = checkInflict(a, b, args)
-						if dmg:
-							dmg = target.inflict(S.inflict)
-							#msg(str("%s %s %s!" % [user.name, statusInfo[S.inflict].desc, target.name]))
-							state.totalAfflictions += 1
+					OPCODE_INFLICT_EX:
+						print(">INFLICT: ", value, " 0x%X" % value)
+						if value > 0x10:
+							variableTarget.tryInflict(user, value, state.critMod)
+
 					OPCODE_DAMAGERAW:
 						print(">RAW DAMAGE: %s" % value)
-						state.finalDMG += processDamageRaw(S, user, variableTarget, value, true if flags & OPFLAGS_VALUE_PERCENT else false)
+						state.finalDMG += processDamageRaw(S, user, variableTarget, value, true if flags & OPFLAG_VALUE_PERCENT else false)
 					OPCODE_DEFEAT:
 						print(">DEFEAT: %s" % value)
 						if core.chance(value):
@@ -1803,7 +1796,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						state.follow[6] = core.clampi((value & 0x00000F)      , 0, 015)
 						if state.follow[6] == 0: state.follow[6] = state.element
 						elif state.follow[6] == 15: state.follow[6] = 0
-						if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("FOLLOW: %s!" % S.name, false, messageColors.followup)
+						if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("FOLLOW: %s!" % S.name, false, messageColors.followup)
 						print("Follow params: [Name = %s, Rate = %d%%, Decrement = %d%%, Skill = %s, Level = %d, Element Lock: %d]" % [state.chase[0].name, state.chase[1], state.chase[2], str(state.chase[3].name), state.chase[4], state.chase[6]])
 					OPCODE_CHASE:
 						print(">CHASE: ", value, " 0x%X" % value)
@@ -1813,7 +1806,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						state.chase[6] = core.clampi((value & 0x00000F)      , 0, 015)
 						if state.chase[6] == 0: state.chase[6] = state.element
 						elif state.chase[6] == 15: state.chase[6] = 0
-						if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("CHASE: %s!" % S.name, false, messageColors.followup)
+						if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("CHASE: %s!" % S.name, false, messageColors.followup)
 						print("Chase params: [Name = %s, Rate = %d%%, Decrement = %d%%, Skill = %s, Level = %d, Element Lock: %d]" % [state.follow[0].name, state.follow[1], state.follow[2], str(state.follow[3].name), state.follow[4], state.follow[6]])
 					# Counters #####################################################################
 					OPCODE_COUNTER:
@@ -1825,7 +1818,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						state.counter[6] = core.clampi((value & 0x0000000F)      , 0, 015)
 						for i in range(7):
 							variableTarget.battle.counter[i] = state.counter[i]
-						if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("COUNTER: %s!" % S.name, false, messageColors.followup)
+						if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("COUNTER: %s!" % S.name, false, messageColors.followup)
 						print("Counter params: [Rate = %d%%, Decrement = %d%%, Skill = %s, Level = %d, Element Lock : %d, Max =  %d]" % [variableTarget.battle.counter[0], variableTarget.battle.counter[1], variableTarget.battle.counter[2].name, variableTarget.battle.counter[3], variableTarget.battle.counter[4], variableTarget.battle.counter[5]])
 # Chains #######################################################################
 					OPCODE_CHAIN_START:
@@ -1833,7 +1826,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if variableTarget.battle.chain == 0:
 							print("Starting chain!")
 							variableTarget.battle.chain = 1
-							if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("CHAIN START!", false, messageColors.chain)
+							if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("CHAIN START!", false, messageColors.chain)
 						else:
 							print("Chain already started! No action taken.")
 					OPCODE_CHAIN_FOLLOW:
@@ -1841,7 +1834,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if variableTarget.battle.chain > 0:
 							print("Following chain! Adding %d" % [value])
 							variableTarget.battle.chain += value
-							if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("CHAIN %d!" % value, false, messageColors.chain)
+							if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("CHAIN %d!" % value, false, messageColors.chain)
 						else:
 							print("Chain not started! No action taken.")
 					OPCODE_CHAIN_FINISH:
@@ -1849,19 +1842,19 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if variableTarget.battle.chain > 0:
 							print("Finishing chain!")
 							variableTarget.battle.chain = 0
-							if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("CHAIN FINISH!", false, messageColors.chain)
+							if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("CHAIN FINISH!", false, messageColors.chain)
 						else:
 							print("Chain not started! No action taken.")
 # Healing functions ############################################################
 					OPCODE_HEAL: #TODO: Healing functions might be consolidated in functions to save space?
 						print(">HEAL(%s)" % value)
 						dmg = 0
-						if flags & OPFLAGS_HEAL_BONUS:
+						if flags & OPFLAG_HEAL_BONUS:
 							dmg = calculateHeal(a, state.healBonus)
 							print("Bonus healing: %s" % [dmg])
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							dmg += value
-						elif flags & OPFLAGS_VALUE_PERCENT:
+						elif flags & OPFLAG_VALUE_PERCENT:
 							dmg += float(variableTarget.maxHealth()) * core.percent(value)
 						else:
 							dmg += calculateHeal(a, value)
@@ -1876,12 +1869,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_HEALROW:
 						print(">HEALROW(%s)" % value)
 						dmg = 0
-						if flags & OPFLAGS_HEAL_BONUS:
+						if flags & OPFLAG_HEAL_BONUS:
 							dmg = calculateHeal(a, state.healBonus)
 							print("Bonus healing: %s" % [dmg])
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							dmg += value
-						elif flags & OPFLAGS_VALUE_PERCENT:
+						elif flags & OPFLAG_VALUE_PERCENT:
 							dmg += float(user.maxHealth()) * core.percent(value)
 						else:
 							dmg += calculateHeal(a, value)
@@ -1893,12 +1886,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_HEALALL:
 						print(">HEALALL(%s)" % value)
 						dmg = 0
-						if flags & OPFLAGS_HEAL_BONUS:
+						if flags & OPFLAG_HEAL_BONUS:
 							dmg = calculateHeal(a, state.healBonus)
 							print("Bonus healing: %s" % [dmg])
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							dmg += value
-						elif flags & OPFLAGS_VALUE_PERCENT:
+						elif flags & OPFLAG_VALUE_PERCENT:
 							dmg += float(user.maxHealth()) * core.percent(value)
 						else:
 							dmg += calculateHeal(a, value)
@@ -1907,36 +1900,52 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							dmg = processHeal(S, state, user, i, dmg)
 							i.heal(dmg)
 							state.totalHeal += dmg
-					OPCODE_CURE: #TODO:!
-						print(">CURE(%s)" % value)
 					OPCODE_RESTOREPART:
 						print(">RESTORE PART: %s" % value)
 					OPCODE_REVIVE:
 						print(">REVIVE: %s" % value)
 						dmg = 0
-						if flags & OPFLAGS_HEAL_BONUS:
+						if flags & OPFLAG_HEAL_BONUS:
 							dmg = calculateHeal(a, state.healBonus)
 							print("Bonus healing: %s" % [dmg])
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							dmg += value
-						elif flags & OPFLAGS_VALUE_PERCENT:
+						elif flags & OPFLAG_VALUE_PERCENT:
 							dmg += 999 #TODO: Heal X%
 						else:
 							dmg += calculateHeal(a, value)
 						dmg = processHeal(S, state, user, target, dmg)
 						variableTarget.revive(dmg)
 					OPCODE_OVERHEAL:
-						print(">OVERHEAL: %s" % value)
+						print(">OVERHEAL[TODO]: %s" % value)
+					OPCODE_REINFORCE_ALL:
+						print(">REINFORCE ALL: ", value)
+						if value > 0: variableTarget.reinforceAll()
+					OPCODE_REINFORCE:
+						print(">REINFORCE: ", value)
+						if value != 0: variableTarget.reinforce(value)
+					OPCODE_REINFORCE_EX:
+						print(">REINFORCE COMPLEX: ", value, " 0x%X" % value)
+						variableTarget.reinforceComplex(value)
+					OPCODE_CURE:
+						print(">CURE: ", value)
+						if value > 0: variableTarget.cure(value)
+					OPCODE_CURE_ALL:
+						print(">CURE ALL: ", value)
+						if value > 0: variableTarget.cureAll()
+					OPCODE_CURE_TYPE:
+						print(">CURE TYPE: ", value)
+						if value > 0: variableTarget.cureType(value)
 # Standard effect functions ####################################################
 					OPCODE_AD:
-						print(">ACTIVE DEFENSE: %s(%s)" % ["=" if flags & OPFLAGS_VALUE_ABSOLUTE else "+", value])
-						variableTarget.setAD(value, flags & OPFLAGS_VALUE_ABSOLUTE)
+						print(">ACTIVE DEFENSE: %s(%s)" % ["=" if flags & OPFLAG_VALUE_ABSOLUTE else "+", value])
+						variableTarget.setAD(value, flags & OPFLAG_VALUE_ABSOLUTE)
 						print("Total: %s" % variableTarget.battle.AD)
 					OPCODE_DECOY:
 						print(">DECOY(%s)" % value)
 						var oldstat = variableTarget.battle.decoy
 						variableTarget.battle.decoy = flaggedSet(variableTarget.battle.decoy, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.decoy < oldstat:
 								variableTarget.display.message("DECOY DOWN!", false, messageColors.statdown)
 							else:
@@ -1944,7 +1953,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print("Total: %s" % variableTarget.battle.decoy)
 					OPCODE_BARRIER:
 						print(">BARRIER(%s)" % value)
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							variableTarget.battle.barrier = value
 						else:
 							variableTarget.battle.barrier += value
@@ -1961,7 +1970,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">DODGE RATE: %s" % value)
 						var oldstat = variableTarget.battle.dodge
 						variableTarget.battle.dodge = flaggedSet(variableTarget.battle.dodge, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.dodge < oldstat:
 								variableTarget.display.message("DODGE DOWN!", false, messageColors.statdown)
 							else:
@@ -1971,20 +1980,20 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">FORCED DODGE:" % value)
 						var oldstat = variableTarget.battle.forceDodge
 						variableTarget.battle.forceDodge = flaggedSet(variableTarget.battle.forceDodge, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.forceDodge > oldstat:
 								variableTarget.display.message("FORCED DODGE", false, messageColors.statup)
 						print("Total: %s" % variableTarget.battle.forceDodge)
 					OPCODE_PROTECT:
 						print(">PROTECT(%s)" % value)
-						if flags & OPFLAGS_TARGET_SELF:
+						if flags & OPFLAG_TARGET_SELF:
 							user.battle.protectedBy.push_back([target, value])
 							print("%s protects %s (%s%%)" % [target.name, user.name, value])
-							if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("%s protects %s" % [target.name, user.name], false, messageColors.protect)
+							if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("%s protects %s" % [target.name, user.name], false, messageColors.protect)
 						else:
 							target.battle.protectedBy.push_back([user, value])
 							print("%s protects %s (%s%%)" % [user.name, target.name, value])
-							if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("Protected by %s" % [user.name], false, messageColors.protect)
+							if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("Protected by %s" % [user.name], false, messageColors.protect)
 					OPCODE_RAISE_OVER:
 						print(">RAISE OVER: %s" % value)
 						if 'over' in variableTarget:
@@ -2052,14 +2061,14 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print("Raw Healing Bonus - Total: %s" % state.healAddRaw)
 					OPCODE_INFLICT:
 						print(">INFLICT: %s" % value)
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							state.inflictPow = value
 						else:
 							state.inflictPow += value
 						print("Total: %s" % state.inflictPow)
 					OPCODE_INFLICT_B:
 						print(">INFLICT BONUS: %s" % value)
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							state.inflictBonus = value
 						else:
 							state.inflictBonus += value
@@ -2165,7 +2174,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">[INDEV]ELEMENTFIELD ELEMBLAST[!]")
 					OPCODE_FIELD_MULT:
 						print(">ELEMENTFIELD SET DAMAGE MULTIPLIER: %s" % value)
-						if flags & OPFLAGS_VALUE_ABSOLUTE:
+						if flags & OPFLAG_VALUE_ABSOLUTE:
 							state.fieldEffectMult = core.percent(value)
 						else:
 							state.fieldEffectMult += core.percent(value)
@@ -2176,7 +2185,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">ATK MOD: %s" % value)
 						var oldstat = variableTarget.battle.stat.ATK
 						variableTarget.battle.stat.ATK = flaggedSet(variableTarget.battle.stat.ATK, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.stat.ATK < oldstat:
 								variableTarget.display.message("ATK DOWN!", false, messageColors.statdown)
 							else:
@@ -2186,7 +2195,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">DEF MOD: %s" % value)
 						var oldstat = variableTarget.battle.stat.DEF
 						variableTarget.battle.stat.DEF = flaggedSet(variableTarget.battle.stat.DEF, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.stat.DEF < oldstat:
 								variableTarget.display.message("DEF DOWN!", false, messageColors.statdown)
 							else:
@@ -2196,7 +2205,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						var oldstat = variableTarget.battle.stat.ETK
 						print(">ETK MOD: %s" % value)
 						variableTarget.battle.stat.ETK = flaggedSet(variableTarget.battle.stat.ETK, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.stat.ETK < oldstat:
 								variableTarget.display.message("ETK DOWN!", false, messageColors.statdown)
 							else:
@@ -2206,7 +2215,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">EDF MOD: %s" % value)
 						var oldstat = variableTarget.battle.stat.EDF
 						variableTarget.battle.stat.EDF = flaggedSet(variableTarget.battle.stat.EDF, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.stat.EDF < oldstat:
 								variableTarget.display.message("EDF DOWN!", false, messageColors.statdown)
 							else:
@@ -2216,7 +2225,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">AGI MOD: %s" % value)
 						var oldstat = variableTarget.battle.stat.AGI
 						variableTarget.battle.stat.AGI = flaggedSet(variableTarget.battle.stat.AGI, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.stat.AGI < oldstat:
 								variableTarget.display.message("AGI DOWN!", false, messageColors.statdown)
 							else:
@@ -2226,7 +2235,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">LUC MOD: %s" % value)
 						var oldstat = variableTarget.battle.stat.LUC
 						variableTarget.battle.stat.LUC = flaggedSet(variableTarget.battle.stat.LUC, value, flags)
-						if not flags & OPFLAGS_SILENT_ATTACK:
+						if not flags & OPFLAG_SILENT_ATTACK:
 							if variableTarget.battle.stat.LUC < oldstat:
 								variableTarget.display.message("LUC DOWN!", false, messageColors.statdown)
 							else:
@@ -2279,7 +2288,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						print(">EXP BONUS: %s" % value)
 						if variableTarget is core.Enemy:
 							variableTarget.XPMultiplier += (float(value) * 0.01)
-							if not flags & OPFLAGS_SILENT_ATTACK: variableTarget.display.message("EXP BONUS UP!", false, messageColors.buff)
+							if not flags & OPFLAG_SILENT_ATTACK: variableTarget.display.message("EXP BONUS UP!", false, messageColors.buff)
 						else:
 							print("EXP_BONUS not applied, target is not an enemy.")
 					OPCODE_REPAIR_PARTIAL:
@@ -2315,7 +2324,8 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 					OPCODE_ENEMY_REVIVE:
 						print(">ENEMY REVIVE: %s" % value)
 						if user is core.Enemy:
-							user.group.revive(value)
+							if user.group.canRevive():
+								user.group.revive(value)
 						else:
 							print("User is not an enemy, no effect.")
 					OPCODE_ENEMY_ARMED:
@@ -2496,12 +2506,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(value != 0, flags):
 							print("%s is not zero" % [int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s is zero. Aborting execution." % [int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s is zero. Skipping next line." % [int(value)])
 								skipLine = true
 					OPCODE_IF_OVER:
@@ -2509,12 +2519,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(variableTarget.battle.over >= value):
 							print("\tOver(%03d%%) >= %s%%, executing next line." % [variableTarget.battle.over, value])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("\tOver(%03d%%) < %s%%. Aborting execution." % [variableTarget.battle.over, int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("\tOver(%03d%%) < %s%%. Skipping next line." % [variableTarget.battle.over, int(value)])
 								skipLine = true
 					OPCODE_IF_CHANCE:
@@ -2522,12 +2532,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(core.chance(value), flags):
 							print("Chance check passed, executing next line.")
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("Chance check failed. Aborting execution.")
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("Chance check failed. Skipping next %s." % ('block' if cond_block else 'line'))
 								skipLine = true
 					OPCODE_IF_STATUS:
@@ -2535,12 +2545,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(variableTarget.condition != CONDITION_GREEN or variableTarget.condition2 != 0, flags):
 							print("Target is afflicted, executing next line.")
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("Target is not afflicted. Aborting execution.")
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("Target is not afflicted. Skipping next %s." % ('block' if cond_block else 'line'))
 								skipLine = true
 					OPCODE_IF_SVAL_EQUAL:
@@ -2548,12 +2558,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(int(state.value) == int(value), flags):
 							print("%s == %s, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s != %s. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s != %s. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					OPCODE_IF_SVAL_LESSTHAN:
@@ -2561,12 +2571,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(int(state.value) < int(value), flags):
 							print("%s < %s, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s >= %s. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s >= %s. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					OPCODE_IF_SVAL_LESS_EQUAL_THAN:
@@ -2574,12 +2584,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(int(state.value) <= int(value), flags):
 							print("%s <= %s, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s > %s. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s > %s. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					OPCODE_IF_SVAL_MORETHAN:
@@ -2587,12 +2597,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(int(state.value) > int(value), flags):
 							print("%s > %s, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s <= %s. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s <= %s. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					OPCODE_IF_SVAL_MORE_EQUAL_THAN:
@@ -2600,12 +2610,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(int(state.value) >= int(value), flags):
 							print("%s >= %s, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s < %s. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s < %s. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					OPCODE_IF_EF_BONUS_LESS_EQUAL_THAN:
@@ -2613,12 +2623,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(core.battle.control.state.field.bonus[state.element] <= value, flags):
 							print("Element bonus for %s: %s <= %s, executing next line" % [state.element, core.battle.control.state.field.bonus[state.element], value])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("Element bonus for %s: %s > %s. Aborting execution." % [state.element, core.battle.control.state.field.bonus[state.element], value])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("Element bonus for %s: %s > %s. Skipping next line." % [state.element, core.battle.control.state.field.bonus[state.element], value])
 								skipLine = true
 					OPCODE_IF_EF_BONUS_MORE_EQUAL_THAN:
@@ -2626,12 +2636,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(core.battle.control.state.field.bonus[state.element] >= value, flags):
 							print("Element bonus for %s: %s >= %s, executing next line" % [state.element, core.battle.control.state.field.bonus[state.element], value])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("Element bonus for %s: %s < %s. Aborting execution." % [state.element, core.battle.control.state.field.bonus[state.element], value])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("Element bonus for %s: %s < %s. Skipping next line." % [state.element, core.battle.control.state.field.bonus[state.element], value])
 								skipLine = true
 
@@ -2640,12 +2650,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(variableTarget.battle.turnActed and value != 0, flags):
 							print("%s has acted. Executing next line" % [int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s has not acted. Aborting execution." % [int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s has not acted. Skipping next line." % [int(value)])
 								skipLine = true
 
@@ -2654,12 +2664,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(value != 0, flags):
 							print("%s has acted. Executing next line" % [int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s has not acted. Aborting execution." % [int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s has not acted. Skipping next line." % [int(value)])
 								skipLine = true
 					OPCODE_IF_GUARDING:
@@ -2667,15 +2677,27 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(variableTarget.battle.guarding and value != 0, flags):
 							print("%s is guarding. Executing next line" % [int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("%s is not guarding. Aborting execution." % [int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("%s is not guarding. Skipping next line." % [int(value)])
 								skipLine = true
-
+					OPCODE_IF_FULL_HEALTH:
+						print(">IF FULL HEALTH %s" % value)
+						if s_if(variableTarget.isFullHealth(), flags):
+							print("%s is at full health. Executing next line." % [int(value)])
+						else:
+							if flags & OPFLAG_QUIT_ON_FALSE:
+								print("%s is not at full health. Aborting execution." % [int(value)])
+								control.continueSkill()
+								return
+							else:
+								cond_block = (flags & OPFLAG_BLOCK_START)
+								print("%s is not at full health. Skipping next line." % [int(value)])
+								skipLine = true
 					OPCODE_IF_SYNERGY_PARTY:
 						print(">IF SYNERGY IN PARTY %02d (using %02d)" % [value, value - 1])
 						value = int(value - 1)
@@ -2685,12 +2707,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							if s_if(synResult, flags):
 								print("Skill %s found in party. Executing next line." % [synS.name])
 							else:
-								if flags & OPFLAGS_QUIT_ON_FALSE:
+								if flags & OPFLAG_QUIT_ON_FALSE:
 									print("Skill %s not found in party. Aborting execution." % [synS.name])
 									control.continueSkill()
 									return
 								else:
-									cond_block = (flags & OPFLAGS_BLOCK_START)
+									cond_block = (flags & OPFLAG_BLOCK_START)
 									print("Skill %s not found in party. Skipping next %s" % [synS.name, 'block' if cond_block else 'line'])
 									skipLine = true
 						else:
@@ -2704,12 +2726,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 							if s_if(synResult, flags):
 								print("Skill %s found on %s. Executing next line." % [synS.name, variableTarget.name])
 							else:
-								if flags & OPFLAGS_QUIT_ON_FALSE:
+								if flags & OPFLAG_QUIT_ON_FALSE:
 									print("Skill %s not found on %s. Aborting execution." % [synS.name, variableTarget.name])
 									control.continueSkill()
 									return
 								else:
-									cond_block = (flags & OPFLAGS_BLOCK_START)
+									cond_block = (flags & OPFLAG_BLOCK_START)
 									print("Skill %s not found in %s. Skipping next %s" % [synS.name, variableTarget.name, 'block' if cond_block else 'line'])
 									skipLine = true
 					OPCODE_IF_RACE_ASPECT:
@@ -2722,12 +2744,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(temp2,flags):
 							print("Race aspect %d found on %s. Executing next line." % [value, variableTarget.name])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("Race aspect %d not found on %s. Aborting execution." % [value, variableTarget.name])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("Race aspect %d not found on %s. Skipping next %s" % [value, variableTarget.name, 'block' if cond_block else 'line'])
 								skipLine = true
 					OPCODE_IF_DAY:
@@ -2735,12 +2757,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(core.world.isNight() == false, flags):
 							print("It's daytime, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("It's not daytime. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("It's not daytime. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					OPCODE_IF_NIGHT:
@@ -2748,12 +2770,12 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 						if s_if(core.world.isNight() == true, flags):
 							print("It's night, executing next line" % [int(state.value),int(value)])
 						else:
-							if flags & OPFLAGS_QUIT_ON_FALSE:
+							if flags & OPFLAG_QUIT_ON_FALSE:
 								print("It's not night. Aborting execution." % [int(state.value),int(value)])
 								control.continueSkill()
 								return
 							else:
-								cond_block = (flags & OPFLAGS_BLOCK_START)
+								cond_block = (flags & OPFLAG_BLOCK_START)
 								print("It's not night. Skipping next line." % [int(state.value),int(value)])
 								skipLine = true
 					_:
@@ -2762,7 +2784,7 @@ func processSkillCode2(S, level, user, target, _code, state, control):
 				print("[%s]%02d>SKIP %s" % [S.name, j, 'LINE' if not cond_block else 'BLOCK'])
 				if cond_block:
 					#We are inside a code block.
-					if flags & OPFLAGS_BLOCK_END or line[0] == OPCODE_STOP: #TODO: Revise this. I sense trouble.
+					if flags & OPFLAG_BLOCK_END or line[0] == OPCODE_STOP: #TODO: Revise this. I sense trouble.
 						#This line ends the block.
 						cond_block = false
 						skipLine = false

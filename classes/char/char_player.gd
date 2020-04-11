@@ -110,6 +110,10 @@ func recalculateStats() -> void:
 		equip.slot[i].recalculateStats(level)
 		equip.slot[i].getBonuses(extraSkills, gearStats)
 
+	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+		conditionDefs[i] = racelib.conditionDefs[i] + classlib.conditionDefs[i]
+		conditionDefs[i] += gearStats.CON[i]
+	print("[CHAR_PLAYER][recalculateStats] Condition Defenses:", conditionDefs)
 	#TODO: Process field skill bonuses.
 
 	#stats.sum(gearStats, equip.calculateWeaponBonuses(extraSkills, currentWeapon))

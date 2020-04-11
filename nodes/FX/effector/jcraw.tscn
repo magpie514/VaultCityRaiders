@@ -37,6 +37,7 @@ position = Vector2( -40, -30 )
 z_index = -3
 
 [node name="Sprite" type="Sprite" parent="BACK"]
+scale = Vector2( 0.625, 0.625 )
 texture = ExtResource( 1 )
 flip_h = true
 
@@ -45,6 +46,7 @@ position = Vector2( 80, -10 )
 z_index = 3
 
 [node name="Sprite" type="Sprite" parent="FRONT"]
+scale = Vector2( 0.75, 0.75 )
 texture = ExtResource( 1 )
 flip_h = true
 __meta__ = {

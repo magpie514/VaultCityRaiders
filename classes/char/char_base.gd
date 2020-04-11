@@ -17,6 +17,7 @@ var condition2:int   = 0	 #Condition (Secondary) #TODO: Move to battle stats.
 var HP:int           = 0    #Character's vital (HP)
 var statBase         = stats.create()	#Base stats
 var statFinal        = stats.create()  #Calculated stats
+var conditionDefs    = core.newArray(core.CONDITIONDEFS_DEFAULT.size())
 var battle           = null            #Battle stats (See createBattleStats())
 
 # Battle display ###############################################################
@@ -74,15 +75,18 @@ class BattleStats:
 	var forceDodge:int = 0           #Always dodges X attacks this turn unless they are set to not miss
 	var chain:int = 0                #Chain counter.
 	var parry:Array = [100, 33, core.skill.PARRY_NONE]
-	var protectedBy:Array = []	     #Array of arrays, [pointer to defender, chance of defending]
+	var protectedBy:Array = []	      #Array of arrays, [pointer to defender, chance of defending]
 	var defending:bool = false       #Character is marked as defending until the end of the turn.
 	var endure:bool = false          #Character is enduring, will remain at 1HP.
-	var adamant:bool = false          #Character will endure a fatal blow if at full health.
+	var adamant:bool = false         #Character will endure a fatal blow if at full health.
+	var conditionDefs:Array    = core.newArray(core.CONDITIONDEFS_DEFAULT.size()) #Defenses for condition effects (current value, decreased as conditions hit).
+	var conditionDefsMax:Array = core.newArray(core.CONDITIONDEFS_DEFAULT.size()) #Defenses for condition effects (maximum value, increases every time the condition applies).
 	# Item use stats ############################################################################
 	var itemSPD:int = 090            #Item use speed.
 	var itemAD:int  = 110            #Item use AD set.
 	# Misc stats ################################################################################
-	var FEbonus:int = 0              #Added to elemental field bonus.
+	var critBonus:int  = 0           #Raw mod to critical bonus.
+	var FEbonus:int    = 0           #Added to elemental field bonus.
 	var eventFlags:int = 0           #Event special flags such as plot armor.
 	var overheat : int = 0           #Reduces by 1 per turn. Prevents overheat skills from being used.
 	var lastAction = null
@@ -91,29 +95,30 @@ class BattleStats:
 		over = core.clampi(x, 0, 100)
 
 	func turn_reset() -> void: #Standard reset when a new battle turn begins.
-		self.turnDMG = 0
+		self.turnDMG      = 0
 		self.turnDealtDMG = 0
-		self.turnDodges = 0
-		self.turnHeal = 0
-		self.turnActed = false
-		self.turnHits = 0
+		self.turnDodges   = 0
+		self.turnHeal     = 0
+		self.turnActed    = false
+		self.turnHits     = 0
 		self.resistedHits = 0
 		self.weaknessHits = 0
-		self.decoy = 0
-		self.guard = 0
-		self.barrier = 0
-		self.forceDodge = 0
-		self.protectedBy.clear()
-		self.defending = false
-		self.endure = false
-		self.adamant = false #Might be better to not unset it per turn. We'll see.
-		self.itemSPD = 90
-		self.itemAD = 110
-		self.follow.clear()
+		self.AD           = 100
+		self.decoy        = 0
+		self.guard        = 0
+		self.barrier      = 0
+		self.forceDodge   = 0
+		self.defending    = false
+		self.endure       = false
+		self.adamant      = false #Might be better to not unset it per turn. We'll see.
+		self.itemSPD      = 90
+		self.itemAD       = 110
+		self.critBonus    = 0
+		self.FEbonus      = 0
 		self.chase.clear()
+		self.follow.clear()
+		self.protectedBy.clear()
 		self.overAction.clear()
-		self.FEbonus = 0
-		self.AD = 100
 
 	func resetCounter() -> void:
 		counter[0] = 0    #Counter chance
@@ -146,14 +151,14 @@ func clampHealth() -> void:
 
 func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:
 	var temp:float
-	if flags & core.skill.OPFLAGS_VALUE_PERCENT:
+	if flags & core.skill.OPFLAG_VALUE_PERCENT:
 		temp = float(maxHealth()) * core.percent(x)
 	else:
 		temp = float(x)
 	if elem != 0:
 		temp = core.battle.control.state.field.calculate(temp, elem, elemMult)
 	var result:int = round(temp) as int
-	if flags & core.skill.OPFLAGS_VALUE_ABSOLUTE:
+	if flags & core.skill.OPFLAG_VALUE_ABSOLUTE:
 		battle.guard = result
 	else:
 		if battle.absoluteGuard > 0:
@@ -220,6 +225,7 @@ func endBattleTurn(defer) -> void:
 
 	battle.buff   = updateEffects(battle.buff  , defer)
 	battle.debuff = updateEffects(battle.debuff, defer)
+	#TODO: End of turn passive effects.
 	battle.overAction.clear()
 	sprite.clearEffectors()
 	#Apply damage effects
@@ -227,10 +233,20 @@ func endBattleTurn(defer) -> void:
 
 func initBattle() -> void:
 	battle = createBattleStats()
+	#Initialize condition defenses:
+	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+		battle.conditionDefsMax[i] = conditionDefs[i]
+		battle.conditionDefs[i]    = conditionDefs[i]
 	#initBattleTurn()
 
-func maxHealth():
+func maxHealth() -> int:
 	return statFinal.MHP
+
+func isFullHealth() -> bool:
+	if HP >= statFinal.MHP:
+		return true
+	else:
+		return false
 
 func getHealthN(): #Get normalized health as a float from 0 to 1.
 	return float(float(HP) / float(maxHealth()))
@@ -326,7 +342,7 @@ func defeatMessage() -> String:
 	return "%s is down!" % name
 
 func damage(x:int, data, silent:bool = false, nonlethal:bool = false) -> Array:
-	var temp = HP - x
+	var temp          = HP - x
 	var overkill:bool = false
 	var defeat:bool   = false
 	var full:bool     = true if HP >= maxHealth() else false
@@ -347,7 +363,7 @@ func damage(x:int, data, silent:bool = false, nonlethal:bool = false) -> Array:
 			defeat = true
 	battle.accumulatedDMG += HPdelta
 	battle.turnDMG += HPdelta
-	if not silent and sprite != null:
+	if sprite != null:
 		display.damage([[x, data[0], overkill, data[2], data[3]]])
 		sprite.damage()
 		sprite.damageShake()
@@ -402,47 +418,107 @@ func revive(x:int) -> void:
 		heal(x)
 		display.update()
 
-func inflict(x) -> void:
-	condition = x if HP > 0 else skill.CONDITION_DOWN
-	display.message(skill.statusInfo[x].name, false, skill.statusInfo[x].color)
+# Condition Defense Reinforcement #############################################
+func reinforceAll() -> void:
+	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+		battle.conditionDefs[i] = battle.conditionDefsMax[i]
+	display.message("FULL REINFORCE", null, "00FF00")
+
+func reinforce(what:int) -> void:
+	battle.conditionDefs[what] = battle.conditionDefsMax[what]
+	display.message("REINFORCE", null, "00FF00")
+
+func reinforceComplex(value:int) -> void:
+	if value < 0x100: return
+	var cond:int = core.clampi((value & 0xF00) >> 8, 0, 15)
+	var powr:int = core.clampi((value & 0x0F0) >> 4, 0, 15)
+	var cap:int  = core.clampi((value & 0x00F)     , 0, 1 )
+	battle.conditionDefs[cond] += powr
+	if cap == 1 and conditionDefs[cond] < 40:
+		battle.conditionDefs[cond] = core.clampi(battle.conditionDefs[cond], 0, battle.conditionDefsMax[cond])
+
+
+# Condition Curing ############################################################
+func cureAll() -> void:
+	condition = skill.CONDITION_NONE
+	condition2 = 0
+	#TODO: Reset damage effects.
+
+func cureType(what:int) -> void:
+	match(what):
+		1:
+			if condition != skill.CONDITION_DOWN:
+				condition = skill.CONDITION_NONE
+		2:
+			condition2 = 0
+		3:
+			pass #TODO: Reset damage effects
+		4:
+			pass #TODO: Reset disables.
 
 func addInflict(x:int) -> void:
 	match x:
-		skill.CONDITION_DOWN:
-			defeat()
-		skill.CONDITION_CRYO:
-			condition = skill.CONDITION_CRYO
-		skill.CONDITION_NARCOSIS:
-			condition = skill.CONDITION_NARCOSIS
-		skill.CONDITION_SEAL:
-			condition = skill.CONDITION_SEAL
-		skill.CONDITION_PARALYSIS:
+		core.stats.COND_PARALYSIS:
 			condition = skill.CONDITION_PARALYSIS
-		skill.CONDITION_BLIND:
+		core.stats.COND_NARCOSIS:
+			condition = skill.CONDITION_NARCOSIS
+		core.stats.COND_CRYO:
+			condition = skill.CONDITION_CRYO
+		core.stats.COND_SEAL:
+			condition = skill.CONDITION_SEAL
+		core.stats.COND_DEFEAT:
+			defeat()
+		core.stats.COND_BLIND:
 			condition2 = condition2 | skill.CONDITION_BLIND
-		skill.CONDITION_STUN:
+		core.stats.COND_STUN:
 			condition2 = condition2 | skill.CONDITION_STUN
-		skill.CONDITION_CURSE:
+		core.stats.COND_CURSE:
 			condition2 = condition2 | skill.CONDITION_CURSE
-		skill.CONDITION_PANIC:
+		core.stats.COND_PANIC:
 			condition2 = condition2 | skill.CONDITION_PANIC
-		skill.CONDITION_STASIS:
+		core.stats.COND_STASIS:
 			condition2 = condition2 | skill.CONDITION_STASIS
+	battle.conditionDefsMax[x] += 1
+	battle.conditionDefs[x] = battle.conditionDefsMax[x]
 
-func tryInflict(user, cond:int, power:int, crit:int) -> void:
+func tryInflict(user, value:int, crit:int) -> void:
+	var cond:int = core.clampi((value & 0xF0) >> 4, 0, 10)
+	var powr:int = core.clampi((value & 0x0F)     , 0, 15)
 	#TODO: See something about hit checks. Like a way to not have to do "if_connect" all the time?
-	if condition != skill.CONDITION_DOWN:
-		var critf:float = crit as float * .01
+	if condition != skill.CONDITION_DOWN and validateInflict(cond):
+		if battle.conditionDefsMax[cond] > 40: return
+		var critf:float = (10 + crit) as float * .01
 		var comp:float = ( ((user.battle.stat.LUC * 3) as float + 76.5) / ((battle.stat.LUC * 3) as float + 76.5) ) * 10
 		var rate:float = 0
 		if   comp as int <= 2      : rate = critf
 		elif comp > 2 and comp < 50: rate = critf * comp
 		else                       : rate = critf * 50.0
 		var finalrate:int = clamp(rate * 100, 0, 1500) as int
-		if randi() % 1000 <= finalrate: #Critical affliction. Bypass check.
+		if randi() % 1000 <= finalrate: #Critical infliction. Bypass check.
+			display.message("Critical Inflict!", null, "FF00FF")
 			addInflict(cond)
-		else: #Regular affliction. #TODO: Apply defenses.
-			addInflict(cond)
+		else: #Regular infliction.
+			battle.conditionDefs[cond] -= powr
+			if battle.conditionDefs[cond] <= 0:
+				addInflict(cond)
+			else:
+				display.message("%s :%s" % [cond, battle.conditionDefs[cond]], null, "FF00FF")
+
+func validateInflict(val:int) -> bool:
+	var ok:bool = false
+	match val:
+		core.stats.COND_PARALYSIS: ok = true
+		core.stats.COND_NARCOSIS:  ok = true
+		core.stats.COND_CRYO:      ok = true
+		core.stats.COND_SEAL:      ok = true
+		core.stats.COND_DEFEAT:    ok = true
+		core.stats.COND_BLIND:     ok = true
+		core.stats.COND_STUN:      ok = true
+		core.stats.COND_CURSE:     ok = true
+		core.stats.COND_PANIC:     ok = true
+		core.stats.COND_STASIS:    ok = true
+	return ok
+
 
 func checkProtect(S) -> Array:
 	if battle.protectedBy.empty() or S.category != skill.CAT_ATTACK:
@@ -569,6 +645,9 @@ func calculateEffectStats(S, lv:int) -> void: # Apply stat changes from an activ
 	if 'DECOY' in S.effectStatBonus:
 		battle.decoy += S.effectStatBonus['DECOY'][lv]
 		stdout += str("Decoy+%s " % S.effectStatBonus['DECOY'][lv])
+	if 'CRIT' in S.effectStatBonus:
+		battle.critBonus += S.effectStatBonus['CRIT'][lv]
+		stdout += str("Critical bonus+%s " % S.effectStatBonus['CRIT'][lv])
 	if 'FE_BONUS' in S.effectStatBonus:
 		battle.FEbonus += S.effectStatBonus['FE_BONUS'][lv]
 		stdout += str("Field Effect bonus+%s " % S.effectStatBonus['FE_BONUS'][lv])
@@ -659,6 +738,20 @@ func tryDamageEffect(user, S, val:int) -> void: #Attempt to inflict a damage ove
 	addDamageEffect(user, S, val)
 
 ###################################################################################################
+
+func updateChain(mode:int) -> void:
+	if battle.chain > 0:
+		if mode in skill.CHAIN_CONT:
+			print("[CHAR_BASE][updateChain] Chain up.")
+			battle.chain += 1
+	elif battle.chain == 0:
+		if mode in skill.CHAIN_INIT:
+			print("[CHAR_BASE][updateChain] Chain start.")
+			battle.chain = 1
+	if mode == skill.CHAIN_FINISHER:
+		print("[CHAR_BASE][updateChain] Chain finished.")
+		battle.chain = 0
+
 
 func dodgeAttack(user) -> void:
 	battle.turnDodges += 1

@@ -38,7 +38,7 @@ var example = {
 		"dimeye" : {
 			name = "Dimension Eye", slot = "FCS",
 			description = "A perfect replica of Professor Millennium's advanced dimensional sensor system. It's the only successful replica ever developed, and only Magpie can use it properly. Someone not attuned to dimensional scouting will be instantly driven mad by the sights beyond space.",
-			stat1 = ['OFF_ULT',            000,001,002,004,005, 005, 005,007,009,012,020],
+			stat1 = ['CON_BLI',            099,099,099,099,099, 099, 099,099,099,099,099],
 			stat2 = [["story","gatebrkr"], 010,008,006,004,002, 001, 001,001,001,001,001],
 		},
 		"kokurei" : {

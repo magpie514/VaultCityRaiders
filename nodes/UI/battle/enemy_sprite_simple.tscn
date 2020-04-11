@@ -146,7 +146,7 @@ position = Vector2( 0, -120 )
 texture = ExtResource( 2 )
 
 [node name="Glows" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0.553459 )
+modulate = Color( 1, 1, 1, 0.717371 )
 material = SubResource( 7 )
 position = Vector2( 0, -120 )
 texture = ExtResource( 4 )

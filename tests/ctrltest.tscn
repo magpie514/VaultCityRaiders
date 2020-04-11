@@ -86,9 +86,8 @@ margin_bottom = 90.0
 [node name="BattleLog" type="RichTextLabel" parent="Panel"]
 self_modulate = Color( 1, 1, 1, 0.811765 )
 anchor_right = 1.0
-margin_top = 620.0
-margin_right = -450.0
-margin_bottom = 720.0
+margin_left = 403.0
+margin_bottom = 72.0
 custom_fonts/normal_font = ExtResource( 16 )
 custom_constants/line_separation = -1
 bbcode_enabled = true
@@ -104,9 +103,9 @@ __meta__ = {
 
 [node name="BattleLog2" type="RichTextLabel" parent="Panel"]
 anchor_right = 1.0
-margin_top = 620.0
-margin_right = -452.0
-margin_bottom = 720.0
+margin_left = 403.0
+margin_right = -2.0
+margin_bottom = 70.0
 custom_fonts/normal_font = ExtResource( 4 )
 custom_constants/line_separation = -4
 bbcode_enabled = true

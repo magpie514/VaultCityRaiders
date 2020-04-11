@@ -124,7 +124,8 @@ const weapontypes = {
 	WPCLASS_SHIELD : { name = "Shield", icon = "" },
 	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
 }
-
+# Condition defenses, default. PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+const CONDITIONDEFS_DEFAULT = [ 02, 02, 02, 02, 02, 02, 02, 02, 02, 00, 02, 02, 02, 02]
 #
 # Important shared classes ####################################################
 const Enemy     = preload("res://classes/char/char_enemy.gd")
@@ -319,6 +320,39 @@ class StatClass:
 		DMG_KINETIC,			#Supertype for all physical damage
 		DMG_ENERGY,				#Supertype for all energy damage
 	}
+	enum { #Condition defense table
+		COND_NONE         = 0,
+		COND_PARALYSIS    = 1,
+		COND_NARCOSIS     = 2,
+		COND_CRYO         = 3,
+		COND_SEAL         = 4,
+		COND_DEFEAT       = 5,
+		COND_BLIND        = 6,
+		COND_STUN         = 7,
+		COND_CURSE        = 8,
+		COND_PANIC        = 9,
+		COND_STASIS       = 10,
+		COND_DISABLE_HEAD = 12,
+		COND_DISABLE_ARMS = 13,
+		COND_DISABLE_LEGS = 14,
+		COND_DAMAGE       = 15
+	}
+	const CONDITION_CONV = {
+		'CON_PAR': COND_PARALYSIS   ,
+		'CON_NAR': COND_NARCOSIS    ,
+		'CON_CRY': COND_CRYO        ,
+		'CON_SEA': COND_SEAL        ,
+		'CON_DWN': COND_DEFEAT      ,
+		'CON_BLI': COND_BLIND       ,
+		'CON_STU': COND_STUN        ,
+		'CON_CUR': COND_CURSE       ,
+		'CON_PAN': COND_PANIC       ,
+		'CON_STA': COND_STASIS      ,
+		'CON_HED': COND_DISABLE_HEAD,
+		'CON_ARM': COND_DISABLE_ARMS,
+		'CON_LEG': COND_DISABLE_LEGS,
+		'CON_DMG': COND_DAMAGE      ,
+	}
 	const ELEMENT_CONV = [
 		"DMG_UNTYPED",
 		"DMG_CUT",
@@ -346,52 +380,6 @@ class StatClass:
 		#{name = "unknown", color = "EEEECC", icon = "res://resources/icons/void.svg"},
 		{name = "ultimate", color = "080016", icon = "res://resources/icons/void.svg"},
 	]
-
-
-
-	func getElementKey(element):
-		var e
-		e = int(0) if element < 0 else element
-		e = e if e < ELEMENT_CONV.size() else int(0)
-		return ELEMENT_CONV[e]
-
-	func elementalModStringConvert(st:String) -> PoolStringArray:
-		st = st.to_upper() #We want this ALLCAPS.
-		if st in ELEMENT_MOD_TABLE: #String is valid.
-			var result:PoolStringArray = st.split('_', true, 2)
-			if result.size() == 2:
-				var CONV = {
-					'CUT' : 'DMG_CUT',
-					'PIE' : 'DMG_PIERCE',
-					'STK' : 'DMG_STRIKE',
-					'FIR' : 'DMG_FIRE',
-					'ICE' : 'DMG_ICE',
-					'ELE' : 'DMG_ELEC',
-					#'LUM' : 'DMG_LUMINOUS',
-					'ULT' : 'DMG_ULTIMATE',
-					'KIN' : 'DMG_KINETIC',
-					'ENE' : 'DMG_ENERGY',
-				}
-				if result[0] in ['OFF', 'RES', 'ALL']:
-					if result[1] in CONV:
-						result[1] = CONV[result[1]]
-						return result
-		return PoolStringArray(['ERR'])
-
-	func elementalModStringValidate(st:String) -> bool:
-		var result = elementalModStringConvert(st)
-		return false if result[0] == 'ERR' else true
-
-	func elementalModApply(stats, mod:String, val:int) -> void:
-		var what:PoolStringArray = elementalModStringConvert(mod)
-		if what[0] != 'ERR':
-			if what[0] == 'ALL':
-				stats.OFF[what[1]] += val
-				stats.RES[what[1]] -= val
-			else:
-				stats[what[0]][what[1]] += val
-		else:
-			print("[STATS][elementalModApply] Unknown target %s (%s)" % [what[0], what])
 
 	func create():
 		var result = {}
@@ -504,12 +492,72 @@ class StatClass:
 			for i in ELEMENTS:
 				E[i] = int(data1[i] + data2[i])
 
-	func clipElementData(E):
+	func clipElementData(E:Array) -> void:
 		for i in ELEMENTS:
-			if E[i] < 1: E[i] = int(001)
+			if E[i] < 001: E[i] = int(001)
 			if E[i] > 999: E[i] = int(999)
 
+	func createCondDefsArray() -> Array: #Creates an array for condition defenses.
+		var s:int = core.CONDITIONDEFS_DEFAULT.size()
+		var result:Array = core.newArray(s)
+		for i in range(s): result[i] = 0
+		return result
 
+	func conditionDefReset(a:Array) -> void:
+		for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+			a[i] = 0
+
+	func conditionDefStringValidate(st:String) -> bool:
+		return true if st in CONDITION_CONV else false
+
+	func conditionDefApply(stats, mod:String, val:int) -> void:
+		if conditionDefStringValidate(mod):
+			var what:int = CONDITION_CONV[mod]
+			stats.CON[what] += val
+
+	func getElementKey(element):
+		var e
+		e = int(0) if element < 0 else element
+		e = e if e < ELEMENT_CONV.size() else int(0)
+		return ELEMENT_CONV[e]
+
+	func elementalModStringConvert(st:String) -> PoolStringArray:
+		st = st.to_upper() #We want this ALLCAPS.
+		if st in ELEMENT_MOD_TABLE: #String is valid.
+			var result:PoolStringArray = st.split('_', true, 2)
+			if result.size() == 2:
+				var CONV = {
+					'CUT' : 'DMG_CUT',
+					'PIE' : 'DMG_PIERCE',
+					'STK' : 'DMG_STRIKE',
+					'FIR' : 'DMG_FIRE',
+					'ICE' : 'DMG_ICE',
+					'ELE' : 'DMG_ELEC',
+					#'LUM' : 'DMG_LUMINOUS',
+					'ULT' : 'DMG_ULTIMATE',
+					'KIN' : 'DMG_KINETIC',
+					'ENE' : 'DMG_ENERGY',
+				}
+				if result[0] in ['OFF', 'RES', 'ALL']:
+					if result[1] in CONV:
+						result[1] = CONV[result[1]]
+						return result
+		return PoolStringArray(['ERR'])
+
+	func elementalModStringValidate(st:String) -> bool:
+		var result = elementalModStringConvert(st)
+		return false if result[0] == 'ERR' else true
+
+	func elementalModApply(stats, mod:String, val:int) -> void:
+		var what:PoolStringArray = elementalModStringConvert(mod)
+		if what[0] != 'ERR':
+			if what[0] == 'ALL':
+				stats.OFF[what[1]] += val
+				stats.RES[what[1]] -= val
+			else:
+				stats[what[0]][what[1]] += val
+		else:
+			print("[STATS][elementalModApply] Unknown target %s (%s)" % [what[0], what])
 #
 
 # Helper functions ############################################################

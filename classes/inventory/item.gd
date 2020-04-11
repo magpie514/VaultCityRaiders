@@ -72,7 +72,8 @@ const armortypes = {
 
 class DragonGem:
 	const EXP_TABLE = [
-		[0, 100, 200, 300, 400,  500, 600, 700, 800, 900]
+		[000000, 000100, 000200, 000300, 000400,  000500, 000600, 000700, 000800, 000900], #DEBUG
+		[000000, 001100, 004500, 012000, 025000,  055000, 120000, 350000, 700000, 999999], #EXPERIMENTAL 1
 	]
 	var id = null
 	var level : int = 1
@@ -192,7 +193,7 @@ class DragonGemContainer:
 			if slot[i] != null:
 				#print("[GEMCONTAINER][calcStats] %s LV.%s in slot %s" % [slot[i].lib.name, slot[i].level, i])
 				slot[i].getStats(type, result)
-		print("[GEMCONTAINER][calcStats] this container provides %s" % result)
+		#print("[GEMCONTAINER][calcStats] this container provides %s" % result)
 		self.stats = result
 		var sk = {}
 		var sk_mod = {}
@@ -504,6 +505,7 @@ class Gear:
 		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
 		OFF = core.stats.createElementData(),
 		RES = core.stats.createElementData(),
+		CON = core.stats.createConDefsArray(),
 		SKL = [],
 	}
 	var lib:Dictionary
@@ -532,6 +534,7 @@ class Armor:
 		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
 		OFF = core.stats.createElementData(),
 		RES = core.stats.createElementData(),
+		CON = core.stats.createCondDefsArray(), #Condition Defenses
 		SKL = [],
 	}
 	var tid = null
@@ -584,6 +587,9 @@ class Armor:
 							elif core.stats.elementalModStringValidate(part.lib[ind][0]):
 								print("%s > %s:%s (tune:%s)" % [part.lib.name, part.lib[ind][0], part.lib[ind][val], val])
 								core.stats.elementalModApply(stats, part.lib[ind][0], part.lib[ind][val])
+							elif core.stats.conditionDefStringValidate(part.lib[ind][0]):
+								print("%s > %s:%s (tune:%s)" % [part.lib.name, part.lib[ind][0], part.lib[ind][val], val])
+								core.stats.conditionDefApply(stats, part.lib[ind][0], part.lib[ind][val])
 						TYPE_ARRAY, TYPE_STRING_ARRAY:
 							if part.lib[ind][val] > 0:
 								stats.SKL.push_back([part.lib[ind][0], part.lib[ind][val]])
@@ -591,6 +597,7 @@ class Armor:
 
 	func recalculateStats(lv:int) -> void:
 		core.stats.reset(stats, 0) #Reset stats with an element value of 0, so they can be added later.
+		core.stats.conditionDefReset(stats.CON)
 		var up = 1 if upgraded else 0
 		if lib.parts != null:
 			print("[ARMOR][recalculateStats] Part stats for %s (level %d)" % [lib.name, lv])
@@ -612,6 +619,11 @@ class Armor:
 
 	func getBonuses(tmpSkill:Array, tmpStats:Dictionary) -> void:
 		core.stats.sum(tmpStats, stats)
+		if 'CON' in stats:
+			print("[ARMOR][getBonuses] CON: %s" % [stats.CON])
+			tmpStats.CON = core.stats.createCondDefsArray()
+			for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+				tmpStats.CON[i] = stats.CON[i]
 		if 'SKL' in stats:
 			print("[ARMOR][getBonuses] SKL: %s" % [stats.SKL])
 			for i in stats.SKL:
@@ -633,6 +645,7 @@ class Weapon:
 		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
 		OFF = core.stats.createElementData(),
 		RES = core.stats.createElementData(),
+		CON = core.stats.createCondDefsArray(), #Condition Defenses
 		SKL = [],
 	}
 

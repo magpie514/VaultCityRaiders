@@ -190,7 +190,7 @@ func _on_Repeat_pressed() -> void:
 		for i in lastAct.target:
 			if not i in p:
 				print("[BATTLECONTROLS][_on_Repeat_pressed] targetting inactive target.")
-				lastAct.target.erase(i)
+				lastAct.target = core.skill.calculateTarget(lastAct.skill, lastAct.level, lastAct.user, [])
 	if lastAct.IT != null:
 		if not lastAct.IT.data.lib.charge:
 			for i in currentChar.group.inventory.general:

@@ -28,19 +28,30 @@ font_data = ExtResource( 1 )
 
 [sub_resource type="StyleBoxEmpty" id=4]
 
-[node name="DamageNumber" type="Label"]
+[node name="DamageNumber" type="Position2D"]
+z_index = 10
+script = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 margin_left = -22.0
-margin_top = -20.0
+margin_top = -16.0
 margin_right = 22.0
-margin_bottom = 12.0
+margin_bottom = 16.0
 grow_horizontal = 2
 custom_styles/normal = SubResource( 1 )
 custom_fonts/font = SubResource( 2 )
 text = "999"
 align = 1
-script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": ""
+}
 
-[node name="CritLabel" type="Label" parent="."]
+[node name="CritLabel" type="Label" parent="Label"]
 anchor_right = 1.0
 margin_bottom = 8.0
 custom_fonts/font = SubResource( 3 )
@@ -51,11 +62,14 @@ valign = 1
 clip_text = true
 uppercase = true
 
-[node name="OverkillLabel" type="Label" parent="."]
+[node name="OverkillLabel" type="Label" parent="Label"]
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
+margin_left = -22.0
 margin_top = -8.0
+margin_right = 22.0
 custom_fonts/font = SubResource( 3 )
 custom_colors/font_color = Color( 0.960784, 1, 0, 1 )
 text = "OVERKILL"
@@ -64,11 +78,14 @@ valign = 1
 clip_text = true
 uppercase = true
 
-[node name="GuardBreakLabel" type="Label" parent="."]
+[node name="GuardBreakLabel" type="Label" parent="Label"]
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
+margin_left = -22.0
 margin_top = -8.0
+margin_right = 22.0
 custom_fonts/font = SubResource( 3 )
 custom_colors/font_color = Color( 0, 0.823529, 1, 1 )
 text = "BREAK"
@@ -77,7 +94,7 @@ valign = 1
 clip_text = true
 uppercase = true
 
-[node name="Hits" type="Label" parent="."]
+[node name="Hits" type="Label" parent="Label"]
 self_modulate = Color( 0, 0, 0, 0 )
 anchor_right = 1.0
 margin_top = 1.0
@@ -87,7 +104,7 @@ size_flags_horizontal = 2
 custom_fonts/font = ExtResource( 3 )
 align = 1
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Hits"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Label/Hits"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -99,3 +116,6 @@ bbcode_enabled = true
 meta_underlined = false
 tab_size = 0
 scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}

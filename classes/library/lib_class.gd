@@ -7,6 +7,8 @@ var example = {
 			name = "DEBUG",
 			description = "Debug class with high stat growth.",
 			statSpread = [ [004, 001, 001, 001, 001, 001, 001], [052, 032, 032, 032, 032, 032, 032] ],
+			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+			conditionDefs = [ 03, 03, 04, 05, 03, 03, 03, 02, 03, 01, 02, 03, 03, 02],
 			weapons = [core.WPCLASS_HANDGUN],
 			skills = [
 				["debug", "debug"],
@@ -18,6 +20,8 @@ var example = {
 			name = "Orbital Fighter",
 			description = "A class specializing in fast and strong energy skills and chains.",
 			statSpread = [ [005,000,000,003,002,004,001], [032,000,006,032,024,052,018] ],
+			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+			conditionDefs = [ 02, 00, 01, 01, 02, 00, 01, 02, 01, 00, 01, 00, 00, 01],
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_LONGSWORD],
 			skills = [
 				"story/plasfeld",
@@ -38,6 +42,8 @@ var example = {
 			name = "G-Driver",
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [004,000,000,003,002,003,001], [032,000,006,032,024,040,018] ],
+			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+			conditionDefs = [ 01, 00, 02, 02, 01, 02, 00, 02, 00, 02, 01, 00, 00, 02],
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_POLEARM],
 			skills = [
 				# Gun skills ##########
@@ -61,6 +67,8 @@ var example = {
 			name = "Akashic Knight",
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
+			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+			conditionDefs = [ 00, 00, 02, 01, 01, 02, 00, 02, 00, 00, 00, 00, 00, 01],
 			weapons = [core.WPCLASS_HANDGUN, core.WPCLASS_SHORTSWORD, core.WPCLASS_SHIELD],
 			skills = [
 				"debug/defdown",  #Defense down
@@ -77,6 +85,8 @@ var example = {
 			name = "Muramasa",
 			description = "A defensive class specializing in high defensive maneuvers, counters, and ghostly abilities",
 			statSpread = [ [004, 000, 000, 003, 002, 003, 001], [032, 000, 006, 032, 024, 040, 018] ],
+			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+			conditionDefs = [ 02, 01, 00, 02, 02, 00, 00, 02, 01, 00, 00, 02, 00, 01],
 			weapons = [core.WPCLASS_SHIELD, core.WPCLASS_SHORTSWORD, core.WPCLASS_LONGSWORD],
 			skills = [
 				#Needs huge rework. I need a Japanese dictionary pronto.
@@ -91,6 +101,8 @@ var example = {
 			description = "Brutal fighter using the power of flames and time.",
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_SHORTSWORD, core.WPCLASS_POLEARM],
 			statSpread = [ [004, 004, 001, 002, 001, 000, 002], [040, 048, 008, 022, 008, 008, 024] ],
+			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+			conditionDefs = [ 03, 03, 04, 05, 03, 03, 03, 02, 03, 01, 02, 03, 03, 02],
 			skills = [
 				#Define Anna's roles better.
 				["debug", "vampdran"],
@@ -173,6 +185,8 @@ func initTemplate():
 		"description" : { loader = LIBSTD_STRING },
 		"weapons" : { loader = LIBSTD_VARIABLEARRAY, default = [ core.WPCLASS_SHIELD ] },
 		"statSpread" : { loader = LIBSTD_STATSPREAD },
+		#                                                            PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+		"conditionDefs": { loader = LIBSTD_CONDITIONDEFS, default = [ 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00] },
 		"skills" : { loader = LIBSTD_SKILL_LIST },
 	}
 

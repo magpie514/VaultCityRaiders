@@ -23,7 +23,7 @@ func popDamageNums():
 	if damageQueue.size() > 0:
 		var v = damageQueue.pop_front()
 		var d = _dmgNum.instance()
-		effectHook.add_child(d)
+		chr.sprite.get_parent().add_child(d)
 		d.init(v)
 		damageDelay = 32
 
@@ -94,7 +94,7 @@ func setActionText(act):
 		S = act.override
 		print("[BATTLE STATE][addAction] Using override %s" % S.name)
 	else: S = act.skill
-	var target = ""
+	var target:String = ""
 	if act.target != null:
 		#FIXME: When repeating actions, act.target might be empty. Check for array size for retargetting, can cause errors.
 		match(S.target[act.level]):

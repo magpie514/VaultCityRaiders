@@ -26,6 +26,8 @@ func recalculateStats():
 	modstats.DEF = S.DEF
 	modstats.ETK = S.ETK
 	modstats.EDF = S.EDF
+	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+		conditionDefs[i] = lib.conditionDefs[i]
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
 

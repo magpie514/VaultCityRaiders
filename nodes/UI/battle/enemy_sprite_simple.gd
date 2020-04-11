@@ -14,10 +14,6 @@ func init(spr, C, slot):
 	chr = C
 	$Sprite.texture = load(spr)
 	lock = false
-	if slot < 3:
-		scale = Vector2(1.2, 1.2)
-	else:
-		modulate.v = 0.8
 	#chr.display.effectHook = effectHook #Set effect hook for associated display.
 	begin()
 

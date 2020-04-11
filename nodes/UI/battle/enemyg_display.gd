@@ -17,9 +17,10 @@ func update():
 	pass
 
 func revive(C, slot:int) -> void:
-	grid[slot] = createDisplay(slot)
-	if group.formation[slot].sprite != null:
-		group.formation[slot].sprite.queue_free()
+	#grid[slot] = createDisplay(slot)
+#	if group.formation[slot].sprite != null:
+#		group.formation[slot].sprite.queue_free()
+	C.display = grid[slot]
 	group.formation[slot].sprite = core.battle.displayManager.initSprite(group.formation[slot], slot)
 
 func createDisplay(slot:int):

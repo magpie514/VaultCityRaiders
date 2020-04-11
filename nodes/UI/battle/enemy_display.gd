@@ -4,30 +4,32 @@ signal display_info(x)
 signal hide_info
 
 onready var tween = $Tween
-var _dmgNum = preload("res://nodes/UI/damage_numbers.tscn")
-var _miscMsg = preload("res://nodes/UI/battle/misc_message.tscn")
-var chr = null
-var style = core._charPanel.new(self, "res://resources/tres/char_display.tres", "custom_styles/panel")
-var fade = 1.0
-var damageQueue = []
-var damageDelay = 0
-var effectHook #Set from sprite init
+var style             = core._charPanel.new(self, "res://resources/tres/char_display.tres", "custom_styles/panel")
+var _dmgNum           = preload("res://nodes/UI/damage_numbers.tscn")
+var _miscMsg          = preload("res://nodes/UI/battle/misc_message.tscn")
+var chr               = null
+var fade:float        = 1.0
+var damageQueue:Array = []
+var damageDelay:int   = 0
+var effectHook:Node #Set from sprite init
 
-func init(c):
+func init(c) -> void:
 	chr = c
 	$Label.text = chr.name
+	#effectHook = c.sprite.effectHook
 	update()
+	show()
 	set_process(true)
 
-func stop():
-	set_process(false)
-	queue_free()
+func stop() -> void:
+	hide()
+	#set_process(false)
 
 func popDamageNums():
 	if damageQueue.size() > 0:
 		var v = damageQueue.pop_front()
 		var d = _dmgNum.instance()
-		$EffectHook.add_child(d)
+		chr.sprite.get_parent().add_child(d)
 		d.init(v)
 		damageDelay = 32
 

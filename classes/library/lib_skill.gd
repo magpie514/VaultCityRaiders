@@ -166,9 +166,9 @@ var example = {
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
-				["get_chain"  , skill.OPFLAGS_TARGET_SELF],
+				["get_chain"  , skill.OPFLAG_TARGET_SELF],
 				["mul"        , 010,000,000,000,000, 000,000,000,000,000],
-				["dmgbonus"   , 000,000,000,000,000, 000,000,000,000,000, skill.OPFLAGS_USE_SVAL],
+				["dmgbonus"   , 000,000,000,000,000, 000,000,000,000,000, skill.OPFLAG_USE_SVAL],
 				["attack"     , 150,125,132,132,140, 140,147,147,147,160],
 				["fe.consume" , 006,004,004,004,004, 004,004,004,004,004],
 			],
@@ -195,9 +195,9 @@ var example = {
 				["nomiss"       ,001, 0],
 				["ignore_defs"  ,001, 0],
 				["guardbreak"   ,001, 0],
-				["get_chain"    , skill.OPFLAGS_TARGET_SELF],
+				["get_chain"    , skill.OPFLAG_TARGET_SELF],
 				["mul"          , 999, 0],
-				["dmgbonus"     , skill.OPFLAGS_USE_SVAL],
+				["dmgbonus"     , skill.OPFLAG_USE_SVAL],
 				["attack"       , 99999, 0],
 				["ef_clear"     , 001, 0],
 			],
@@ -274,7 +274,7 @@ var example = {
 			category = skill.CAT_PASSIVE,
 			fx = [ "effector/jshield" ],
 			codeEF = [
-				["if_ef_bonus>=", 002, skill.OPFLAGS_BLOCK_START],
+				["if_ef_bonus>=", 002, skill.OPFLAG_BLOCK_START],
 					["guard"        , 025, 0],
 					["fx.add"       , 001, 0],
 			],
@@ -321,8 +321,8 @@ var example = {
 			AD = 			[115, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			spdMod = 	[150, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			codeMN = [
-				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000, skill.OPFLAGS_BLOCK_START],
-					["guard",          010,000,000,000,000,   000,000,000,000,000, skill.OPFLAGS_VALUE_PERCENT],
+				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000, skill.OPFLAG_BLOCK_START],
+					["guard",          010,000,000,000,000,   000,000,000,000,000, skill.OPFLAG_VALUE_PERCENT],
 			],
 			codePO = [
 				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000],
@@ -348,7 +348,7 @@ var example = {
 				["follow" , 0x164211, 0]
 			],
 			codeFL = [
-				["if_synergy",  001, skill.OPFLAGS_TARGET_SELF],
+				["if_synergy",  001, skill.OPFLAG_TARGET_SELF],
 					["fe.mult",     200, 033, 033, 033, 033,   033, 033, 033, 033, 033],
 				["attack",			045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
 			],
@@ -374,15 +374,15 @@ var example = {
 				["get_range",   000,000,000,000,000,  000,000,000,000,000],
 				["mul",         010,000,000,000,000,  000,000,000,000,000],
 				["subi",        100,000,000,000,000,  000,000,000,000,000],
-				["agi_mod",     000, skill.OPFLAGS_VALUE_PERCENT|skill.OPFLAGS_USE_SVAL]
+				["agi_mod",     000, skill.OPFLAG_VALUE_PERCENT|skill.OPFLAG_USE_SVAL]
 			],
 			codeMN = [
-				["if_synergy",  001, skill.OPFLAGS_TARGET_SELF],
+				["if_synergy",  001, skill.OPFLAG_TARGET_SELF],
 				["fe.mult",     240,240,240,240,240,  240,240,240,240,240],
-				["get_dodges",  000,000,000,000,000,  000,000,000,000,000, skill.OPFLAGS_TARGET_SELF],
+				["get_dodges",  000,000,000,000,000,  000,000,000,000,000, skill.OPFLAG_TARGET_SELF],
 				["mul",         035,035,035,035,035,  035,035,035,035,035],
 				["add",         100,100,100,100,100,  100,100,100,100,100],
-				["attack",		 000, skill.OPFLAGS_USE_SVAL],
+				["attack",		 000, skill.OPFLAG_USE_SVAL],
 			],
 			synergy = ["debug/dncsword"]
 		},
@@ -425,7 +425,7 @@ var example = {
 			AD =     [100,100,100,100,100, 100,100,100,100,100],
 			codeMN = [
 				["element"    ,007, 0],
-				["attack"     ,025, skill.OPFLAGS_SILENT_ATTACK],
+				["attack"     ,025, skill.OPFLAG_SILENT_ATTACK],
 				["element"    ,001, 0],
 				["energy_dmg" ,000, 0],
 				["attack"     ,045,125,132,132,140, 140,147,147,147,160],
@@ -508,14 +508,14 @@ var example = {
 			codeMN = [
 				["nomiss"     , 001, 0],
 				["ignore_defs", 001, 0],
-				["if_synergy_party", 001, skill.OPFLAGS_BLOCK_START|skill.OPFLAGS_TARGET_SELF ],
+				["if_synergy_party", 001, skill.OPFLAG_BLOCK_START|skill.OPFLAG_TARGET_SELF ],
 					["fe.push" , 006,125,132,132,140,  140,147,147,147,160],
 					["anim.play", 001, 0],
-					["dmgbonus", 035,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_END],
-				["if_synergy_party", 002, skill.OPFLAGS_BLOCK_START|skill.OPFLAGS_TARGET_SELF ],
+					["dmgbonus", 035,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_BLOCK_END],
+				["if_synergy_party", 002, skill.OPFLAG_BLOCK_START|skill.OPFLAG_TARGET_SELF ],
 					["guardbreak", 001, 0],
 					["nocap"     , 001, 0],
-					["dmgbonus", 9999999999, skill.OPFLAGS_BLOCK_END],
+					["dmgbonus", 9999999999, skill.OPFLAG_BLOCK_END],
 				[ "attack", 130,125,132,132,140, 140,147,147,147,160 ],
 			],
 			synergy = [ "story/plasfeld", "story/gdominia" ],
@@ -594,9 +594,9 @@ var example = {
 			AD = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			codeST = [
 				["get_weapon_dur"],
-				["if_sval<=", 1, skill.OPFLAGS_BLOCK_START],
+				["if_sval<=", 1, skill.OPFLAG_BLOCK_START],
 					["drainlife", 025,125,132,132,140, 140,147,147,147,160],
-					["dmgbonus", 100, skill.OPFLAGS_BLOCK_END],
+					["dmgbonus", 100, skill.OPFLAG_BLOCK_END],
 			],
 			codeMN = [
 				["attack", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
@@ -629,7 +629,7 @@ var example = {
 				["attack",    100,125,132,132,140, 140,147,147,147,160],
 			],
 			codeED = [
-				["dmgraw", 050, 002, 002, 002, 002,   002, 002, 002, 002, 002, skill.OPFLAGS_VALUE_PERCENT],
+				["dmgraw", 050, 002, 002, 002, 002,   002, 002, 002, 002, 002, skill.OPFLAG_VALUE_PERCENT],
 			],
 		},
 		"lunablaz": {
@@ -691,7 +691,7 @@ var example = {
 				["mul"          ,002,004,004,004,004,   004,004,004,004,004],
 				["fe.consume"   ,004,004,004,004,004,   004,004,004,004,004],
 				["fe.replace"   ,000,004,004,004,004,   004,004,004,004,004],
-				["dmgbonus"     ,000,004,004,004,004,   004,004,004,004,004, skill.OPFLAGS_USE_SVAL],
+				["dmgbonus"     ,000,004,004,004,004,   004,004,004,004,004, skill.OPFLAG_USE_SVAL],
 			],
 			codeMN = [
 				["attack"       ,050,125,132,132,140,   140,147,147,147,160],
@@ -713,10 +713,10 @@ var example = {
 			spdMod = [080,100,100,100,100,   100,100,100,100,100],
 			AD =     [110,100,100,100,100,   100,100,100,100,100],
 			codeST = [
-				["get_synergies"     ,001,004,004,004,004,   004,004,004,004,004, skill.OPFLAGS_TARGET_SELF],
+				["get_synergies"     ,001,004,004,004,004,   004,004,004,004,004, skill.OPFLAG_TARGET_SELF],
 				["mul"               ,015,004,004,004,004,   004,004,004,004,004],
 				["cap"               ,050,004,004,004,004,   004,004,004,004,004],
-				["dmgbonus"          ,000,004,004,004,004,   004,004,004,004,004, skill.OPFLAGS_USE_SVAL],
+				["dmgbonus"          ,000,004,004,004,004,   004,004,004,004,004, skill.OPFLAG_USE_SVAL],
 			],
 			codeMN = [
 				["attack"            ,080,125,132,132,140,   140,147,147,147,160],
@@ -769,16 +769,17 @@ var example = {
 # Enemy exclusive skills ##########################################################################
 	"enemy": {
 		"repair": {
-			name = "Repair",
+			name = "Minion Repair",
 			description = "",
+			dangerous = true,
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			energyDMG = true,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
-			spdMod = [080,100,100,100,100, 100,100,100,100,100],
-			AD     = 105,
+			spdMod = 080,
+			AD     = 115,
 			codeMN = [
 				["enemy.revive" ,100,125,132,132,140, 140,147,147,147,160],
 			],
@@ -822,11 +823,11 @@ var example = {
 			AD = [050,048,046,044,042, 038,036,034,032,030],
 			codeEF = [
 				["protect",         100,013,016,019,022,  030,032,035,037,040],
-				["if_synergy",      001,001,001,001,001,  001,001,001,001,001, skill.OPFLAGS_BLOCK_START|skill.OPFLAGS_TARGET_SELF],
-				["counter", 0x6400200, skill.OPFLAGS_TARGET_SELF]
+				["if_synergy",      001,001,001,001,001,  001,001,001,001,001, skill.OPFLAG_BLOCK_START|skill.OPFLAG_TARGET_SELF],
+				["counter", 0x6400200, skill.OPFLAG_TARGET_SELF]
 			],
 			codeFL = [
-				["chain_follow",    001,001,001,001,001,  001,001,001,001,002, skill.OPFLAGS_TARGET_SELF],
+				["chain_follow",    001,001,001,001,001,  001,001,001,001,002, skill.OPFLAG_TARGET_SELF],
 				["element",         006,013,016,019,022,  030,032,035,037,040],
 				["attack", 					060,013,016,019,022,  030,032,035,037,040],
 			],
@@ -914,9 +915,9 @@ var example = {
 				["decoy",					010,001,001,001,001,  001,001,001,001,001],
 			],
 			codeMN = [
-				["counter", 0x6400200, skill.OPFLAGS_TARGET_SELF],
+				["counter", 0x6400200, skill.OPFLAG_TARGET_SELF],
 				["decoy"  ,	100,001,001,001,001,  001,001,001,001,001],
-				["atk_mod",	120,001,001,001,001,  001,001,001,001,001, skill.OPFLAGS_VALUE_PERCENT],
+				["atk_mod",	120,001,001,001,001,  001,001,001,001,001, skill.OPFLAG_VALUE_PERCENT],
 			],
 			codePO = [
 				["ad",							-05,-01,-01,-01,-01,  -01,-01,-01,-01,-01],
@@ -942,7 +943,7 @@ var example = {
 			spdMod = [100,100,100,100,100,   100,100,100,100,100],
 			AD =     [105,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
-				["attack"        , 100,125,132,132,140,   140,147,147,147,160, skill.OPFLAGS_SILENT_ATTACK],
+				["attack"        , 100,125,132,132,140,   140,147,147,147,160, skill.OPFLAG_SILENT_ATTACK],
 				["if_race_aspect", 003,003,003,003,003,   003,003,003,003,003],
 				["dmgbonus",       100,125,132,132,140,   140,147,147,147,160],
 				["energy_dmg",     001,001,132,132,140,   140,147,147,147,160],
@@ -994,10 +995,11 @@ var example = {
 			modStat = core.stats.STAT.LUC,
 			accMod = [090,099,099,099,099,   099,099,099,099,099],
 			spdMod = [090,100,100,100,100,   100,100,100,100,100],
-			AD =     [095,100,100,100,100,   100,100,100,100,100],
+			AD =     [110,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["attack"       ,125,125,132,132,140,   140,147,147,147,160],
-				#TODO: Try to inflict freeze.
+				["if_connect"   ,001, 0],
+					["inflict",     0x31, 0],
 				#TODO: Try to hit back row with a fire energy hit.
 			],
 		},
@@ -1010,13 +1012,14 @@ var example = {
 			element = core.stats.ELEMENTS.DMG_ICE,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
-			accMod = [095,099,099,099,099,   099,099,099,099,099],
+			accMod = [092,099,099,099,099,   099,099,099,099,099],
 			spdMod = [075,100,100,100,100,   100,100,100,100,100],
 			AD =     [105,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["nonlethal"    ,001, 0],
 				["attack"       ,999,125,132,132,140,   140,147,147,147,160],
-				#TODO: Try to inflict cryo.
+				["if_connect"   ,001, 0],
+					["inflict"      ,0x31, 0]
 			],
 		},
 		"valkaccl": {
@@ -1257,7 +1260,7 @@ var example = {
 			ranged = true,
 			spdMod = [135, 135, 135, 135, 135,   135, 135, 135, 135, 135],
 			codeMN = [
-				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025, skill.OPFLAGS_VALUE_PERCENT],
+				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025, skill.OPFLAG_VALUE_PERCENT],
 				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025],
 				["AD",    -15, -15, -15, -15, -15,   -15, -15, -15, -15, -15]
 			],
@@ -1332,7 +1335,7 @@ var example = {
 			energyDMG = false,
 			ranged = false,
 			codeMN = [
-				["attack", 040, 105, 110, 115, 125,   130, 135, 140, 145, 160, skill.OPFLAGS_SILENT_ATTACK],
+				["attack", 040, 105, 110, 115, 125,   130, 135, 140, 145, 160, skill.OPFLAG_SILENT_ATTACK],
 				["element", 004, 105, 110, 115, 125,   130, 135, 140, 145, 160],
 				["attack", 060, 105, 110, 115, 125,   130, 135, 140, 145, 160],
 			],
@@ -1453,7 +1456,8 @@ var example = {
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			codeEF = [
-				["heal", 025, 0],
+				["if_full_health", skill.OPFLAG_LOGIC_NOT],
+					["heal", 025, 0],
 			],
 		},
 		"heal": {
@@ -1480,9 +1484,9 @@ var example = {
 			spdMod = [080, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			AD = [105, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			codeMN = [
-				[ "vital.set", 001, skill.OPFLAGS_TARGET_SELF|skill.OPFLAGS_VALUE_ABSOLUTE ],
-				[ "get_max_health", skill.OPFLAGS_TARGET_SELF ],
-				[ "heal", 0, skill.OPFLAGS_USE_SVAL|skill.OPFLAGS_VALUE_ABSOLUTE],
+				[ "vital.set", 001, skill.OPFLAG_TARGET_SELF|skill.OPFLAG_VALUE_ABSOLUTE ],
+				[ "get_max_health", skill.OPFLAG_TARGET_SELF ],
+				[ "heal", 0, skill.OPFLAG_USE_SVAL|skill.OPFLAG_VALUE_ABSOLUTE],
 			],
 		},
 		"rowheal": {
@@ -1560,7 +1564,7 @@ var example = {
 			],
 			codeMN = [
 				["heal",          080,125,132,132,140,  140,147,147,147,160],
-				["if_ef_bonus>=", 005,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_QUIT_ON_FALSE],
+				["if_ef_bonus>=", 005,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_QUIT_ON_FALSE],
 				["heal",          080,125,132,132,140,  140,147,147,147,160],
 			],
 		},
@@ -1572,10 +1576,10 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
 			codeMN = [
-				["if_race_aspect", 002,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
-					["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["if_race_aspect", 002,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_BLOCK_START],
+					["heal",          075,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_VALUE_ABSOLUTE],
 					["stop",          001,001,001,001,001,  001,001,001,001,001],
-				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_VALUE_ABSOLUTE],
 			],
 		},
 		"healmec": {
@@ -1586,10 +1590,10 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
 			codeMN = [
-				["if_race_aspect", 001,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
-					["heal",          085,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["if_race_aspect", 001,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_BLOCK_START],
+					["heal",          085,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_VALUE_ABSOLUTE],
 					["stop",          001,001,001,001,001,  001,001,001,001,001],
-				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["heal",          015,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_VALUE_ABSOLUTE],
 			],
 		},
 		"revive": {
@@ -1601,7 +1605,7 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			ranged = true,
 			codeMN = [
-				["revive",       015,125,132,132,140,  140,147,147,147,160, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["revive",       015,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_VALUE_ABSOLUTE],
 			],
 		},
 		"barricad": {
@@ -1622,7 +1626,7 @@ var example = {
 			spdMod = [150, 180, 180, 180, 180,   200, 200, 200, 200, 200],
 			AD = [050, 048, 046, 044, 042,   038, 036, 034, 032, 030],
 			codeMN = [
-				["guard", 012, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAGS_VALUE_PERCENT],
+				["guard", 012, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAG_VALUE_PERCENT],
 			],
 		},
 		"solidbun": {
@@ -1684,7 +1688,7 @@ var example = {
 			spdMod = [180, 180, 180, 180, 180,   200, 200, 200, 200, 200],
 			AD = [050, 048, 046, 044, 042,   038, 036, 034, 032, 030],
 			codeMN = [
-				["guard", 010, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAGS_VALUE_PERCENT],
+				["guard", 010, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAG_VALUE_PERCENT],
 			],
 		},
 		"trikshot": {
@@ -1729,7 +1733,7 @@ var example = {
 			AD =     [110,100,100,100,100, 100,100,100,100,100],
 			codeMN = [
 				["attack"    , 045,125,132,132,140, 140,147,147,147,160],
-				["if_connect", 001, skill.OPFLAGS_QUIT_ON_FALSE],
+				["if_connect", 001, skill.OPFLAG_QUIT_ON_FALSE],
 					["chase", 0x164230, 0],
 			],
 			codeFL = [
@@ -1749,10 +1753,10 @@ var example = {
 			spdMod = [090,100,100,100,100,   100,100,100,100,100],
 			AD =     [090,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
-				["if_chance", 020,125,132,132,140,   140,147,147,147,160, skill.OPFLAGS_BLOCK_START],
+				["if_chance", 020,125,132,132,140,   140,147,147,147,160, skill.OPFLAG_BLOCK_START],
 					["printmsg",  002,002,002,002,002,   002,002,002,002,002],
 					["element",   007,002,002,002,002,   002,002,002,002,002],
-					["attack",    220,125,132,132,140,   140,147,147,147,160, skill.OPFLAGS_BLOCK_END],
+					["attack",    220,125,132,132,140,   140,147,147,147,160, skill.OPFLAG_BLOCK_END],
 				["attack",    080,125,132,132,140,   140,147,147,147,160],
 			],
 			messages = [
@@ -1819,7 +1823,7 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			filter = skill.FILTER_ALIVE,
 			codeMN = [
-				["heal", 999, 999, 999, 999, 999,   999, 999, 999, 999, 999, skill.OPFLAGS_VALUE_ABSOLUTE],
+				["heal", 999, 999, 999, 999, 999,   999, 999, 999, 999, 999, skill.OPFLAG_VALUE_ABSOLUTE],
 			],
 		},
 		"defdown": {
