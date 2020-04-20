@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://nodes/UI/battle/enemy_info_display.gd" type="Script" id=1]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://nodes/UI/bar_multi.tscn" type="PackedScene" id=3]
 [ext_resource path="res://nodes/UI/bar.tscn" type="PackedScene" id=4]
 [ext_resource path="res://nodes/UI/Elements.tscn" type="PackedScene" id=5]
+[ext_resource path="res://nodes/UI/battle/condition_defs.tscn" type="PackedScene" id=6]
 
 [sub_resource type="DynamicFont" id=1]
 size = 13
@@ -59,7 +60,7 @@ outline_color = Color( 0.00784314, 0.54902, 0.694118, 0.294118 )
 extra_spacing_bottom = -2
 font_data = ExtResource( 2 )
 
-[sub_resource type="StyleBoxFlat" id=9]
+[sub_resource type="StyleBoxFlat" id=7]
 content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
@@ -70,7 +71,7 @@ corner_radius_top_right = 18
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="StyleBoxFlat" id=8]
 draw_center = false
 border_width_left = 1
 border_width_top = 1
@@ -82,14 +83,14 @@ corner_radius_bottom_left = 25
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=10]
+[sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 0.317647, 0, 0, 1 )
 corner_radius_bottom_right = 21
 corner_radius_bottom_left = 25
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="StyleBoxFlat" id=10]
 draw_center = false
 border_width_left = 1
 border_width_top = 1
@@ -111,6 +112,9 @@ anti_aliasing = false
 margin_right = 960.0
 margin_bottom = 90.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Name" type="Label" parent="."]
 margin_left = 60.0
@@ -132,6 +136,7 @@ margin_top = 20.0
 margin_right = 40.0
 margin_bottom = 80.0
 custom_fonts/font = SubResource( 1 )
+custom_constants/line_spacing = 3
 text = "ATK
 DEF
 ETK
@@ -229,10 +234,10 @@ margin_bottom = 59.0
 bgcolor = Color( 0, 0, 0, 0.333333 )
 
 [node name="VitalStatic" type="Label" parent="."]
-margin_left = 140.0
-margin_top = 21.0
-margin_right = 240.0
-margin_bottom = 35.0
+margin_left = 10.0
+margin_top = -30.0
+margin_right = 110.0
+margin_bottom = -16.0
 text = "Vital"
 align = 1
 valign = 2
@@ -253,17 +258,17 @@ margin_bottom = 29.0
 
 [node name="ConditionStatic" type="Label" parent="."]
 margin_left = 140.0
-margin_top = 56.0
+margin_top = 30.0
 margin_right = 240.0
-margin_bottom = 70.0
+margin_bottom = 44.0
 text = "Condition"
 align = 1
 valign = 2
 
 [node name="Condition" type="Label" parent="ConditionStatic"]
-margin_top = 13.0
+margin_top = 11.0
 margin_right = 100.0
-margin_bottom = 28.0
+margin_bottom = 26.0
 text = "STATUS_NAME"
 align = 1
 valign = 2
@@ -273,6 +278,9 @@ margin_left = 770.0
 margin_right = 960.0
 margin_bottom = 45.0
 custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="BuffLine0" type="Label" parent="Buffs"]
 margin_left = 10.0
@@ -393,6 +401,7 @@ margin_right = 770.0
 margin_bottom = 90.0
 
 [node name="DescPanel" type="Panel" parent="."]
+visible = false
 margin_left = 370.0
 margin_right = 760.0
 margin_bottom = 90.0
@@ -425,7 +434,7 @@ margin_right = 40.0
 margin_bottom = 14.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-custom_styles/normal = SubResource( 9 )
+custom_styles/normal = SubResource( 7 )
 custom_fonts/font = SubResource( 6 )
 clip_text = true
 
@@ -434,7 +443,7 @@ margin_left = 310.0
 margin_top = 19.0
 margin_right = 360.0
 margin_bottom = 33.0
-custom_styles/normal = SubResource( 7 )
+custom_styles/normal = SubResource( 8 )
 custom_fonts/font = SubResource( 6 )
 text = "BIO"
 align = 1
@@ -444,7 +453,7 @@ visible = false
 show_behind_parent = true
 margin_right = 50.0
 margin_bottom = 14.0
-custom_styles/normal = SubResource( 10 )
+custom_styles/normal = SubResource( 9 )
 custom_fonts/font = SubResource( 6 )
 align = 1
 
@@ -453,7 +462,7 @@ margin_left = 350.0
 margin_top = 19.0
 margin_right = 390.0
 margin_bottom = 33.0
-custom_styles/normal = SubResource( 8 )
+custom_styles/normal = SubResource( 10 )
 custom_fonts/font = SubResource( 6 )
 text = "SPI"
 align = 2
@@ -480,3 +489,9 @@ margin_top = 18.0
 margin_right = 50.0
 margin_bottom = 34.0
 text = "RACE: RACE"
+
+[node name="ConditionPanel" parent="." instance=ExtResource( 6 )]
+margin_left = 370.0
+margin_top = 10.0
+margin_right = -310.0
+margin_bottom = -80.0

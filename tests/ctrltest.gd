@@ -16,21 +16,20 @@ func _ready():
 	testmform = core.battle.enemy
 	testmform.versus = testguild
 	testguild.versus = testmform
+	$Panel/UIDisplay.init()
 	$SkillController.speed = battleSpeed
 	core.battle.control = self
 	core.battle.skillControl = $SkillController
 	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
-	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
+	core.battle.UI = $Panel/UIDisplay
 	core.battle.displayManager = preload("res://classes/battle/display_manager.gd").new(testguild, testmform, core.battle.background)
 	state.init(testguild, testmform, self)
+	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
 	$Panel/BattleControls.init(state, self)
 	$Panel/BattleControls.hide()
-	$Panel/GuildDisplay.init(testguild)
-	$Panel/EnemyGroupDisplay.init(testmform)
 	$Panel/WinPanel.hide() #Hide the VICTORY panel if I forget it.
 
-	$Panel/GuildDisplay.connectUISignals(self)
-	$Panel/EnemyGroupDisplay.connectUISignals(self)
+	$Panel/UIDisplay.connectUISignals(self)
 	$Panel/InfoDisplay.init(self)
 	echo("[color=#EEEE77]%s[/color] appeared!" % testmform.name)
 	$Panel/ViewportContainer/Viewport/BattleView.init(testmform)
@@ -39,7 +38,7 @@ func _ready():
 	print("We are done here!")
 	core.stopMusic()
 	yield(wait(24.0), "timeout")
-	$Panel/GuildDisplay.disconnectUISignals(self)
+	$Panel/UIDisplay.disconnectUISignals(self)
 	print("Done")
 	core.world.passTime(1)
 	core.changeScene("res://tests/debug_menu.tscn")
@@ -71,7 +70,7 @@ func battle():
 		state.enemyActions()
 		$Panel/ActionQueue.init(state.actions())
 
-		$Panel/GuildDisplay.update()
+		$Panel/UIDisplay.update()
 
 		playerActions.clear()
 		playerChars = testguild.activeMembers()
@@ -83,18 +82,18 @@ func battle():
 			C = playerChars[islot]
 			#yield(waitFixed(0.05), "timeout")
 			C.charge(false)
-			C.display.highlight(true)
-			C.display.setActionText(null)
+			C.UIdisplay.highlight(true)
+			C.UIdisplay.setActionText(null)
 
 			# Show controls to pick action. It's stored in reply.
 			reply = null
 			$Panel/BattleControls.setup(C, islot, self)
 			yield($Panel/BattleControls, "finished")
 			# Action or cancel.
-			C.display.highlight(false)
+			C.UIdisplay.highlight(false)
 			if reply is state.Action:
 				#Player chose a valid action, register it and move to next.
-				C.display.setActionText(reply)
+				C.UIdisplay.setActionText(reply)
 				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
 				islot += 1
 			elif islot > 0:
@@ -120,8 +119,7 @@ func battle():
 		# Done collecting player actions from here ####################################################
 		state.prepareActionQueue()
 		$DebugActionQueue.text = state.printQueuePanel()
-		$Panel/GuildDisplay.battleTurnUpdate() 			#Reset turn counters (accumulated damage, etc)
-		$Panel/EnemyGroupDisplay.battleTurnUpdate()
+		$Panel/UIDisplay.battleTurnUpdate() 			#Reset turn counters (accumulated damage, etc)
 
 # Action starts here ###########################################################
 		$Panel/ActionQueue.init(state.actions())
@@ -142,7 +140,7 @@ func battle():
 			if A.user.canAct():
 				if state.status():
 					#Play ACTION animation.
-					A.user.display.highlight(true)
+					A.user.UIdisplay.highlight(true)
 					if A.act != state.ACT_DEFEND:
 						A.user.sprite.act()
 						yield(A.user.sprite.player, "animation_finished")
@@ -151,10 +149,9 @@ func battle():
 					state.updateActions(A)
 					state.sort()
 					if A.act != state.ACT_DEFEND: yield(wait(1.0), "timeout")
-					$Panel/GuildDisplay.update()
-					$Panel/EnemyGroupDisplay.update()
+					$Panel/UIDisplay.update()
 					$Panel/FieldEffect.updateDisplay(state.field)
-					if A.side == state.SIDE_PLAYER: A.user.display.highlight(false)
+					A.user.UIdisplay.highlight(false)
 					if checkResolution(): return
 				else:
 					print("Skipping action, battle is over.")

@@ -63,7 +63,6 @@ var XP:int             = 0    #Experience points.
 var SP:int             = 0    #Skill Points. Gained at level up to raise skills.
 var race               = null #TID
 var aclass             = null #TID
-var skills:Array       = []   #Array of class ID + level
 var extraSkills:Array  = []   #Skills given by equipment or other special things.
 
 var links = null     #Party links. Array of [trust, link1, link2, link3]
@@ -84,6 +83,15 @@ func checkPassives(runEF:bool = false) -> void:
 		if S.category == skill.CAT_PASSIVE:
 			initPassive(S, i[1], runEF)
 
+func hasSkill(what):
+	for i in skills:
+		if core.tid.compare(classlib.skills[i[0]], what):
+			return [ core.lib.skill.getIndex(classlib.skills[i[0]]), i[1] ]
+	for i in extraSkills:
+		if core.tid.compare(i, what):
+			return [ core.lib.skill.getIndex(i[0]), i[1] ]
+	return null
+
 func endBattleTurn(defer):
 	battle.over += calculateTurnOverGains()
 	.endBattleTurn(defer)
@@ -91,6 +99,44 @@ func endBattleTurn(defer):
 func getEquipSpeedMod() -> int:
 	return equip.getWeaponSpeedMod(currentWeapon)
 
+func defend() -> void:
+	var gain:int = calculateTurnOverGains() / 2
+	battle.over += gain
+	.defend()
+
+func damagePreventionPass(S, user, elem:int = 0, crit:bool=false) -> bool:
+	#Check if inventory items can negate an incoming hit.
+	var IT:Array
+	if crit:
+		IT = group.inventory.canCounterEvent(core.lib.item.COUNTER_CRITICAL, inventory)
+		if not IT.empty():
+			group.inventory.takeConsumable(IT[0])
+			print("\t[SKILL][canHit] %s was protected by %s!" % [name, IT[0].data.lib.name])
+			skill.msg("%s was protected by %s!" % [core.battle.control.state.color_name(self), IT[0].data.lib.name])
+			display.message(str(">CRIT BLOCKED BY %s" % IT[0].data.lib.name), "00FFFF")
+			return false
+	IT = group.inventory.canCounterAttack(elem, inventory)
+	if not IT.empty() and elem > 0:
+		group.inventory.takeConsumable(IT[0])
+		print("\t[SKILL][canHit] %s was protected by %s!" % [name, IT[0].data.lib.name])
+		skill.msg("%s was protected by %s!" % [core.battle.control.state.color_name(self), IT[0].data.lib.name])
+		display.message(str(">ELEM BLOCKED BY %s" % IT[0].data.lib.name), "00FFFF")
+		return false
+	return .damagePreventionPass(S, user, crit)
+
+func addInflict(x:int) -> void:
+#	match(x):
+	if x in core.lib.item.COND_COUNTER_CONV:
+		var tmp:int = core.lib.item.COND_COUNTER_CONV[x]
+		var IT:Array = group.inventory.canCounterEvent(tmp, inventory)
+		if not IT.empty():
+			group.inventory.takeConsumable(IT[0])
+			print("[CHAR_PLAYER][addInflict] %s was protected by %s!" % [name, IT[0].data.lib.name])
+			skill.msg("%s was protected by %s!" % [core.battle.control.state.color_name(self), IT[0].data.lib.name])
+			display.message(str(">COND BLOCKED BY %s" % IT[0].data.lib.name), "00FFFF")
+			battle.conditionDefs[x] = battle.conditionDefsMax[x]
+			return
+	.addInflict(x)
 func recalculateStats() -> void:
 	#Get stats from race/class.
 	var raceStats = stats.create()
@@ -109,7 +155,6 @@ func recalculateStats() -> void:
 	for i in core.Inventory.Equip.ARMOR_SLOT:
 		equip.slot[i].recalculateStats(level)
 		equip.slot[i].getBonuses(extraSkills, gearStats)
-
 	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
 		conditionDefs[i] = racelib.conditionDefs[i] + classlib.conditionDefs[i]
 		conditionDefs[i] += gearStats.CON[i]
@@ -176,7 +221,7 @@ func defeat() -> void:
 		print("\t[CHAR_BASE][defeat] %s was protected by %s!" % [name, IT[0].data.lib.name])
 		if battle != null:
 			skill.msg("%s was hurt, but held on thanks to the %s!" % [name, IT[0].data.lib.name])
-			display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), false, "00FFFF")
+			display.message(str(">HELD ON USING %s" % IT[0].data.lib.name), "00FFFF")
 			HP = getHealthPercent(IT[0].data.level + 1)
 			return
 	.defeat()

@@ -21,8 +21,9 @@ func showChar(c):
 	$StatStatic/BLUC.init([float(c.statBase.LUC) / 255.0, float(c.statFinal.LUC - c.statBase.LUC) / 255.0, float(c.battle.stat.LUC - c.statFinal.LUC) / 255.0], ["FF0000", "FF9900", "0088FF"] )
 
 	$VitalStatic/Vital.text = str("%d/%d" % [c.HP, c.battle.stat.MHP])
-	$ConditionStatic/Condition.text = str("%s" % core.skill.conditionInfo[c.condition].name)
-	$ConditionStatic/Condition.add_color_override("font_color", core.skill.conditionInfo[c.condition].color)
+	$ConditionStatic/Condition.text = str("%s" % core.stats.CONDITION_DATA[c.condition].name)
+	$ConditionStatic/Condition.add_color_override("font_color", core.stats.CONDITION_DATA[c.condition].color)
+	$ConditionPanel.init(c)
 
 	$DescPanel/Desc.bbcode_text = str(c.lib.description)
 	$DescPanel/Name.text = c.name

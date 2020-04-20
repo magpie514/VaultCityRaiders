@@ -3,9 +3,11 @@
 [ext_resource path="res://resources/fonts/Square.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://nodes/UI/damage_numbers.gd" type="Script" id=2]
 [ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=3]
+[ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
-content_margin_top = 2.0
+content_margin_top = 0.0
+content_margin_bottom = 0.0
 bg_color = Color( 0, 0, 0, 0.203922 )
 border_width_top = 3
 border_width_bottom = 3
@@ -16,93 +18,79 @@ anti_aliasing = false
 anti_aliasing_size = 5
 
 [sub_resource type="DynamicFont" id=2]
-size = 24
+size = 26
+outline_size = 1
+outline_color = Color( 0.482353, 0.482353, 0.482353, 1 )
 extra_spacing_top = 1
 extra_spacing_char = 1
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=3]
-size = 6
-extra_spacing_char = 3
-font_data = ExtResource( 1 )
-
-[sub_resource type="StyleBoxEmpty" id=4]
+[sub_resource type="StyleBoxEmpty" id=3]
 
 [node name="DamageNumber" type="Position2D"]
 z_index = 10
 script = ExtResource( 2 )
 
 [node name="Label" type="Label" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -22.0
-margin_top = -16.0
-margin_right = 22.0
-margin_bottom = 16.0
+margin_left = -50.0
+margin_right = 50.0
+margin_bottom = 31.0
 grow_horizontal = 2
 custom_styles/normal = SubResource( 1 )
 custom_fonts/font = SubResource( 2 )
-text = "999"
+text = "99999"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false,
 "_editor_description_": ""
 }
 
-[node name="CritLabel" type="Label" parent="Label"]
-anchor_right = 1.0
-margin_bottom = 8.0
-custom_fonts/font = SubResource( 3 )
-custom_colors/font_color = Color( 1, 0, 0, 1 )
-text = "CRITICAL"
-align = 1
-valign = 1
-clip_text = true
-uppercase = true
-
 [node name="OverkillLabel" type="Label" parent="Label"]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -22.0
-margin_top = -8.0
-margin_right = 22.0
-custom_fonts/font = SubResource( 3 )
+visible = false
+anchor_right = 1.0
+margin_top = -14.0
+custom_styles/normal = SubResource( 1 )
+custom_fonts/font = ExtResource( 4 )
 custom_colors/font_color = Color( 0.960784, 1, 0, 1 )
 text = "OVERKILL"
 align = 1
 valign = 1
 clip_text = true
 uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="GuardBreakLabel" type="Label" parent="Label"]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -22.0
-margin_top = -8.0
-margin_right = 22.0
-custom_fonts/font = SubResource( 3 )
-custom_colors/font_color = Color( 0, 0.823529, 1, 1 )
-text = "BREAK"
+[node name="CritLabel" type="Label" parent="Label"]
+anchor_right = 1.0
+margin_top = 31.0
+margin_bottom = 45.0
+custom_styles/normal = SubResource( 1 )
+custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+text = "CRITICAL"
 align = 1
 valign = 1
 clip_text = true
 uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Hits" type="Label" parent="Label"]
 self_modulate = Color( 0, 0, 0, 0 )
+anchor_top = 1.0
 anchor_right = 1.0
-margin_top = 1.0
-margin_bottom = 6.0
+anchor_bottom = 1.0
+margin_top = -6.0
+margin_bottom = -1.0
 grow_horizontal = 2
 size_flags_horizontal = 2
 custom_fonts/font = ExtResource( 3 )
 align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Label/Hits"]
 anchor_right = 1.0
@@ -110,11 +98,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 rect_clip_content = false
 mouse_filter = 2
-custom_styles/normal = SubResource( 4 )
+custom_styles/normal = SubResource( 3 )
 custom_fonts/normal_font = ExtResource( 3 )
 bbcode_enabled = true
 meta_underlined = false
 tab_size = 0
+text = "1234567890"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false

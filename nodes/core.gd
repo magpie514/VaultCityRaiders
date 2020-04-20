@@ -124,7 +124,7 @@ const weapontypes = {
 	WPCLASS_SHIELD : { name = "Shield", icon = "" },
 	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
 }
-# Condition defenses, default. PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
+# Condition defenses, default.  PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
 const CONDITIONDEFS_DEFAULT = [ 02, 02, 02, 02, 02, 02, 02, 02, 02, 00, 02, 02, 02, 02]
 #
 # Important shared classes ####################################################
@@ -299,7 +299,7 @@ class _tid: #TID (Thing ID) helper class.
 		return result
 
 	func compare(tid1, tid2) -> bool: #Compare two TIDs.
-		return true if (tid1[0] == tid2[0] and tid1[1] == tid2[2]) else false
+		return true if (tid1[0] == tid2[0] and tid1[1] == tid2[1]) else false
 
 class StatClass:
 	const STAT_CAP = 255
@@ -321,22 +321,38 @@ class StatClass:
 		DMG_ENERGY,				#Supertype for all energy damage
 	}
 	enum { #Condition defense table
-		COND_NONE         = 0,
-		COND_PARALYSIS    = 1,
-		COND_NARCOSIS     = 2,
-		COND_CRYO         = 3,
-		COND_SEAL         = 4,
-		COND_DEFEAT       = 5,
-		COND_BLIND        = 6,
-		COND_STUN         = 7,
-		COND_CURSE        = 8,
-		COND_PANIC        = 9,
-		COND_STASIS       = 10,
-		COND_DISABLE_HEAD = 12,
-		COND_DISABLE_ARMS = 13,
-		COND_DISABLE_LEGS = 14,
-		COND_DAMAGE       = 15
+		COND_PARALYSIS    = 00,
+		COND_NARCOSIS     = 01,
+		COND_CRYO         = 02,
+		COND_SEAL         = 03,
+		COND_DEFEAT       = 04,
+		COND_BLIND        = 05,
+		COND_STUN         = 06,
+		COND_CURSE        = 07,
+		COND_PANIC        = 08,
+		COND_STASIS       = 09,
+		COND_DISABLE_HEAD = 10,
+		COND_DISABLE_ARMS = 11,
+		COND_DISABLE_LEGS = 12,
+		COND_DAMAGE       = 13
 	}
+	var CONDITION_DATA = {
+		COND_DEFEAT    : { name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = 'DWN'},
+		COND_PARALYSIS : { name = "Paralisis"    , desc = "paralized"    , color = "FFFF00", short = 'PAR'},
+		COND_NARCOSIS  : { name = "Narcosis"     , desc = "put to sleep" , color = "2222FF", short = 'SLP'},
+		COND_CRYO      : { name = "Cryostasis"   , desc = "frozen"       , color = "3388FF", short = 'CRY'},
+		COND_SEAL      : { name = "Seal"         , desc = "sealed"       , color = "118822", short = 'SEA'},
+		COND_STUN      : { name = "Stun"         , desc = "stunned"      , color = "BBBB22", short = 'STU' },
+		COND_BLIND     : { name = "Blind"        , desc = "blinded"      , color = "333333", short = 'BLI' },
+		COND_CURSE     : { name = "Curse"        , desc = "cursed"       , color = "660000", short = 'CUR' },
+		COND_PANIC     : { name = "Panic"        , desc = "paniced"      , color = "448800", short = 'PAN' },
+		COND_STASIS    : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'STA' },
+		COND_DISABLE_HEAD : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'HED' },
+		COND_DISABLE_ARMS : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'ARM' },
+		COND_DISABLE_LEGS : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'LEG' },
+		COND_DAMAGE    : { name = "Damage"       , desc = "hurt"         , color = "FF00FF", short = 'DMG' },
+	}
+
 	const CONDITION_CONV = {
 		'CON_PAR': COND_PARALYSIS   ,
 		'CON_NAR': COND_NARCOSIS    ,
@@ -515,7 +531,7 @@ class StatClass:
 			var what:int = CONDITION_CONV[mod]
 			stats.CON[what] += val
 
-	func getElementKey(element):
+	func getElementKey(element) -> String:
 		var e
 		e = int(0) if element < 0 else element
 		e = e if e < ELEMENT_CONV.size() else int(0)
@@ -576,11 +592,11 @@ static func newMatrix2D(w:int, h:int) -> Array:
 			a[i][j] = 0
 	return a
 
-static func valArray(val, size) -> Array: #Creates an array of given size where all values are val.
-	var a = []
+static func valArray(val, size:int) -> Array: #Creates an array of given size where all values are val.
+	var a:Array = []
 	a.resize(size)
-	for i in a:
-		i = val
+	for i in range(size):
+		a[i] = val
 	return a
 
 static func itoba8(val:int) -> PoolByteArray:
@@ -739,7 +755,7 @@ func _ready():
 	scene = root.get_child(root.get_child_count() - 1)
 
 
-func initBattle(form, elv = 0, music = "res://resources/music/EOIV_Storm.ogg"):
+func initBattle(form, elv:int = 0, music = "res://resources/music/EOIV_Storm.ogg"):
 	var formation = load("res://classes/group/group_enemy.gd").new()
 	formation.init(form, elv)
 	battle.enemy = formation

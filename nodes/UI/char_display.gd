@@ -19,30 +19,9 @@ var damageQueue = []
 var action = null
 var style = core._charPanel.new(self, "res://resources/tres/char_display.tres", "custom_styles/panel")
 
-func popDamageNums():
-	if damageQueue.size() > 0:
-		var v = damageQueue.pop_front()
-		var d = _dmgNum.instance()
-		chr.sprite.get_parent().add_child(d)
-		d.init(v)
-		damageDelay = 32
 
-func damage(x):
+func damage() -> void:
 	update()
-	damageQueue.push_back(x)
-	if damageDelay == 0:
-		damageDelay = 1
-	var n = 0
-	for i in x:
-		if typeof(i) == TYPE_ARRAY:
-			n += i[0]
-	if n > 0:
-		chr.sprite.damageShake()
-		damageShake()
-
-func message(msg, data, color):
-	$MessageDisplay.add(msg, data, color)
-
 
 func init(C):
 	chr = C
@@ -51,31 +30,13 @@ func init(C):
 	resetDamageCount()
 	update()
 
-func damageShake():
-	if shakeTimer == 0:
-		origPosition = Vector2(rect_position.x, rect_position.y)
-		shakeTimer = 20
-		blink = 20
-	else:
-		shakeTimer = 20
-		blink = 20
-
 func _process(delta):
-	if shakeTimer > 0:
-		rect_position = Vector2(origPosition.x, origPosition.y + (-6 + randi() % 12))
-		shakeTimer -= 1
-		if shakeTimer == 0:
-			rect_position = Vector2(origPosition.x, origPosition.y)
 	if blink > 0 or blink == -1:
 		style.setTemp("damage" if OS.get_ticks_msec() % 2 else _theme)
 		if blink > 0:
 			blink -= 1
 		if blink == 0:
 			style.setTemp(_theme)
-	if damageDelay > 0 && blink == 0:
-		damageDelay -= 1
-		if damageDelay == 0:
-			popDamageNums()
 
 func resetDamageCount():
 	lastVital = chr.HP
@@ -173,7 +134,7 @@ func update() -> void:
 
 		#Set colors from active condition.
 		style.fromStatus(chr.condition)
-		$Status.text = core.skill.conditionInfo[chr.condition].short
+		$Status.text = core.stats.CONDITION_DATA[chr.condition].short
 
 		$Name.text = chr.name
 		$ComplexBar/HP.text = str("%03d" % vital)

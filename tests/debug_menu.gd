@@ -97,6 +97,11 @@ func _on_DGemRemove_pressed(WP, slot) -> void:
 	$Panel6.close()
 	$Panel5.init(C, self)
 
+func _on_item_selected(I) -> void:
+	core.guild.giveItem(I)
+	$Panel7.close()
 
-func _on_Button7_pressed() -> void:
-	core.changeScene("res://tests/ERAS.tscn")
+
+func _on_GetItem_pressed() -> void:
+	if core.guild != null:
+		$Panel7.init(core.guild, self)

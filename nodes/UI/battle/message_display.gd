@@ -1,33 +1,31 @@
 extends Control
 
-var msgNode = load("res://nodes/UI/battle/misc_message.tscn")
-var queue = []
+const msgNode = preload("res://nodes/UI/battle/misc_message.tscn")
+var stack:Array = []
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+func add(msg:String, col:Color) -> void:
+	if msg:
+		var node = addMsg()
+		node.init(msg, col)
+		stack.push_back(node)
+	refresh()
 
-func add(n, crit, color):
-	var node = msgNode.instance()
-	node.init(n, crit, color)
+func refresh() -> void:
+	var slot:int = 1
+	for i in stack:
+		i.rect_position.y = slot * -10
+		slot += 1
+
+func addMsg() -> Node:
+	var node := msgNode.instance()
+	var slot:int = stack.size()
 	add_child(node)
-	queue.push_front(node)
-	if queue.size() > 2:
-		var old = queue.pop_back()
-		old.queue_free()
-	redraw()
-	set_process(true)
+	node.connect("done", self, "_on_done")
+	return node
 
-func redraw() -> void:
-	if queue.size() == 0:
-		set_process(false)
-	for i in range(queue.size()):
-		queue[i].set_position(Vector2(0, queue[i].get_size().y * i))
+func _on_done(what:Control) -> void:
+	what.disconnect("done", self, "_on_done")
+	stack.erase(what)
+	what.queue_free()
+	refresh()
 
-func _process(delta: float) -> void:
-	for i in queue:
-		i.self_modulate.a -= 0.3 * delta
-		if i.self_modulate.a < 0.4:
-			queue.erase(i)
-			i.queue_free()
-	redraw()

@@ -157,6 +157,13 @@ var example = {
 				LUC = [002, 002, 003, 003, 004,   004, 004, 005, 005, 006],
 			}
 		},
+		"hope" : {
+			name = "Hope",
+			levels = 10,
+			shape = GEMSHAPE_CIRCLE,
+			color = "#0022FF",
+			#TODO: Some way to increase starting Over gauge.
+		},
 # Diamond (skill) gems ########################################################
 		"flame" : {
 			name = "Flame",
@@ -529,7 +536,7 @@ var example = {
 				merciless = [050, 055, 060, 065, 080,   085, 090, 095, 100, 110],
 			}
 		},
-		"scttr" : {
+		"scttr" : { #TODO: Rework
 			name = "Scatter",
 			levels = 10,
 			desc = "Linked skill hits multiple times, but at reduced power.",

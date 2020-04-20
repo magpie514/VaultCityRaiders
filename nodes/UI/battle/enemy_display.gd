@@ -3,14 +3,10 @@ extends Panel
 signal display_info(x)
 signal hide_info
 
-onready var tween = $Tween
-var style             = core._charPanel.new(self, "res://resources/tres/char_display.tres", "custom_styles/panel")
-var _dmgNum           = preload("res://nodes/UI/damage_numbers.tscn")
-var _miscMsg          = preload("res://nodes/UI/battle/misc_message.tscn")
-var chr               = null
-var fade:float        = 1.0
-var damageQueue:Array = []
-var damageDelay:int   = 0
+onready var tween:Tween = $Tween
+var style               = core._charPanel.new(self, "res://resources/tres/char_display.tres", "custom_styles/panel")
+var chr                 = null
+var fade:float          = 1.0
 var effectHook:Node #Set from sprite init
 
 func init(c) -> void:
@@ -25,25 +21,14 @@ func stop() -> void:
 	hide()
 	#set_process(false)
 
-func popDamageNums():
-	if damageQueue.size() > 0:
-		var v = damageQueue.pop_front()
-		var d = _dmgNum.instance()
-		chr.sprite.get_parent().add_child(d)
-		d.init(v)
-		damageDelay = 32
-
 func highlight(x):
 	pass
 
-func damage(x):
+func damage():
 	update()
-	damageQueue.push_back(x)
-	if damageDelay == 0:
-		damageDelay = 1
 
-func message(msg, data, color):
-	$MessageDisplay.add(msg, data, color)
+func message(msg, color) -> void:
+	chr.messageNode.add(msg, color)
 
 func resize(v):
 	rect_size.x = v.x
@@ -66,16 +51,13 @@ func updateAD(x:int) -> void:
 func update():
 	$ComplexBar.value = chr.getHealthN()
 	style.fromStatus(chr.condition)
-	$Status.text = core.skill.conditionInfo[chr.condition].short
+	$Status.text = core.stats.CONDITION_DATA[chr.condition].short
 	updateAD(chr.battle.AD)
 	updateDEbar(chr.calculateDamageEffects())
 
-func _process(delta):
+func _process(delta:float) -> void:
 	modulate.a = fade
-	if damageDelay > 0:
-		damageDelay -= 1
-		if damageDelay == 0:
-			popDamageNums()
+
 
 func _on_EnemyDisplay_mouse_entered():
 	if chr != null:

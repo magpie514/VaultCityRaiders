@@ -1,0 +1,66 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://nodes/UI/battle/message_display.tscn" type="PackedScene" id=1]
+[ext_resource path="res://nodes/UI/battle/ConditionDisplay.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+const DamageNumber = preload(\"res://nodes/UI/damage_numbers.tscn\")
+var count:float    = 0
+var active:bool    = false
+var record:String  = \"\"
+var hits:int       = 0
+var damagez:int    = 0
+var number:Node
+
+func message(msg, color:Color) -> void:
+	$Control/MessageDisplay.add(msg, color)
+
+func damage(dmg:int, crit:bool = false, resist:int = 0) -> void:
+	var d:Node  = DamageNumber.instance()
+	add_child(d)
+	if active:
+		hits += 1
+		if hits >= 5: record = \"[color=#FFFFFF] %sX HIT![/color]\" % hits
+		damagez += dmg
+		record += \" %s\" % damageString(d, dmg, crit, resist)
+		d.init(damagez, crit, resist, record)
+		number.queue_free()
+	else:
+		damagez = dmg
+		d.init(dmg, crit, resist)
+		record += damageString(d, dmg, crit, resist)
+	if d.connect(\"done\", self, \"on_dmgnum_done\"): return
+	number = d
+	active = true
+
+func condition(cond:Array, val:int, Max:int) -> void:
+	$Control/ConditionDisplay.display(cond, val, Max)
+
+func damageString(node:Node, dmg:int, crit:bool = false, resist:int = 0) -> String:
+	return str(\"[color=#%s]%s%s[/color]\" % [node.getColor(dmg, resist), abs(dmg), '!' if crit else ''])
+
+# Signals #####################################################################
+func on_dmgnum_done() -> void:
+	active  = false
+	record  = ''
+	hits    = 0
+	damagez = 0
+"
+
+[node name="CharDisplay" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Control" type="Control" parent="."]
+margin_right = 10.0
+margin_bottom = 10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MessageDisplay" parent="Control" instance=ExtResource( 1 )]
+margin_left = -60.0
+margin_right = 70.0
+
+[node name="ConditionDisplay" parent="Control" instance=ExtResource( 2 )]

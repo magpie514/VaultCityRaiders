@@ -308,6 +308,9 @@ class Inventory:
 					result.push_back(Item.new(i, IN[i][0], IN[i][1], IN[i][2], C.inventory))
 		return result
 
+	func getFreeSlot() -> int:
+		return general.size()
+
 	func updateCounters() -> void:
 		counters.clear()
 		for i in general:
@@ -343,11 +346,16 @@ class Inventory:
 	func canCounterEvent(type:int = 0, personal:Array = []) -> Array:
 		var result:Array = []
 		for what in [
-			[core.lib.item.COUNTER_CRITICAL, 'critical'],
-			[core.lib.item.COUNTER_BUFF, 'buff'],
-			[core.lib.item.COUNTER_DEBUFF, 'debuff'],
-			[core.lib.item.COUNTER_DISABLE, 'disable'],
-			[core.lib.item.COUNTER_DEFEAT, 'defeat'],
+			[core.lib.item.COUNTER_CRITICAL  , 'critical'   ],
+			[core.lib.item.COUNTER_BUFF      , 'buff'       ],
+			[core.lib.item.COUNTER_DEBUFF    , 'debuff'     ],
+			[core.lib.item.COUNTER_COND_PARA , core.stats.CONDITION_DATA[core.stats.COND_PARALYSIS].name],
+			[core.lib.item.COUNTER_COND_CRYO , core.stats.CONDITION_DATA[core.stats.COND_CRYO].name],
+			[core.lib.item.COUNTER_COND_STUN , core.stats.CONDITION_DATA[core.stats.COND_STUN].name],
+			[core.lib.item.COUNTER_COND_DOWN , core.stats.CONDITION_DATA[core.stats.COND_DEFEAT].name],
+			[core.lib.item.COUNTER_COND_PANIC, core.stats.CONDITION_DATA[core.stats.COND_PANIC].name],
+			[core.lib.item.COUNTER_COND_ARMS , core.stats.CONDITION_DATA[core.stats.COND_DISABLE_ARMS].name],
+
 		]:
 			if what[0] == type:
 				for i in personal:

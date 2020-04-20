@@ -26,16 +26,17 @@ var example = {
 			skills = [
 				"story/plasfeld",
 				"story/jshield",
-				["story", "jhunter"],
-				["story", "jrailgun"],
-				["story", "blueshft"],
-				["story", "brknthun"],
+				"story/jhunter",
+				"story/jrailgun",
+				"story/blueshft",
+				"story/brknthun",
 				# Core skills #########
-				["story", "freerang"],
+				"story/freerang",
 				"story/jcraw",
+				"story/fastcraw",
 				#Filler
-				["debug", "gmissile"],
-				["debug", "gatebrkr"],
+				"debug/gmissile",
+				"debug/gatebrkr",
 			],
 		},
 		"gdriver" : { #0a0a-DT-KSSG Sarah "Magpie" Miller's story mode base class.

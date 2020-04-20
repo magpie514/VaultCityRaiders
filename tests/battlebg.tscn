@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://tests/battlebg.gd" type="Script" id=1]
+[ext_resource path="res://nodes/UI/battle/CharDisplay.tscn" type="PackedScene" id=2]
 
 [node name="BattleView" type="Node2D"]
 z_index = -10
@@ -13,49 +14,109 @@ z_index = -20
 position = Vector2( 480, 360 )
 
 [node name="B1" type="Position2D" parent="Enemy"]
-position = Vector2( -288, 60 )
+position = Vector2( -288, 113 )
 z_index = -2
+
+[node name="Position2D" type="Position2D" parent="Enemy/B1"]
+z_index = 20
+
+[node name="CharDisplay" parent="Enemy/B1/Position2D" instance=ExtResource( 2 )]
 
 [node name="B2" type="Position2D" parent="Enemy"]
-position = Vector2( -336, 160 )
+position = Vector2( -336, 213 )
 z_index = -2
+
+[node name="Position2D" type="Position2D" parent="Enemy/B2"]
+z_index = 20
+
+[node name="CharDisplay" parent="Enemy/B2/Position2D" instance=ExtResource( 2 )]
 
 [node name="B3" type="Position2D" parent="Enemy"]
-position = Vector2( -384, 260 )
+position = Vector2( -384, 313 )
 z_index = -2
 
+[node name="Position2D" type="Position2D" parent="Enemy/B3"]
+z_index = 20
+
+[node name="CharDisplay" parent="Enemy/B3/Position2D" instance=ExtResource( 2 )]
+
 [node name="F1" type="Position2D" parent="Enemy"]
-position = Vector2( -96, 60 )
+position = Vector2( -96, 113 )
+
+[node name="Position2D" type="Position2D" parent="Enemy/F1"]
+z_index = 20
+
+[node name="CharDisplay" parent="Enemy/F1/Position2D" instance=ExtResource( 2 )]
 
 [node name="F2" type="Position2D" parent="Enemy"]
-position = Vector2( -144, 160 )
+position = Vector2( -144, 213 )
+
+[node name="Position2D" type="Position2D" parent="Enemy/F2"]
+z_index = 20
+
+[node name="CharDisplay" parent="Enemy/F2/Position2D" instance=ExtResource( 2 )]
 
 [node name="F3" type="Position2D" parent="Enemy"]
-position = Vector2( -192, 260 )
+position = Vector2( -192, 313 )
+
+[node name="Position2D" type="Position2D" parent="Enemy/F3"]
+z_index = 20
+
+[node name="CharDisplay" parent="Enemy/F3/Position2D" instance=ExtResource( 2 )]
 
 [node name="Player" type="Node2D" parent="."]
 position = Vector2( 480, 360 )
 
 [node name="B1" type="Position2D" parent="Player"]
-position = Vector2( 288, 60 )
+position = Vector2( 288, 113 )
 z_index = -2
+
+[node name="Position2D" type="Position2D" parent="Player/B1"]
+z_index = 20
+
+[node name="CharDisplay" parent="Player/B1/Position2D" instance=ExtResource( 2 )]
 
 [node name="B2" type="Position2D" parent="Player"]
-position = Vector2( 336, 160 )
+position = Vector2( 336, 213 )
 z_index = -2
+
+[node name="Position2D" type="Position2D" parent="Player/B2"]
+z_index = 20
+
+[node name="CharDisplay" parent="Player/B2/Position2D" instance=ExtResource( 2 )]
 
 [node name="B3" type="Position2D" parent="Player"]
-position = Vector2( 384, 260 )
+position = Vector2( 384, 313 )
 z_index = -2
 
+[node name="Position2D" type="Position2D" parent="Player/B3"]
+z_index = 20
+
+[node name="CharDisplay" parent="Player/B3/Position2D" instance=ExtResource( 2 )]
+
 [node name="F1" type="Position2D" parent="Player"]
-position = Vector2( 96, 60 )
+position = Vector2( 96, 113 )
+
+[node name="Position2D" type="Position2D" parent="Player/F1"]
+z_index = 20
+
+[node name="CharDisplay" parent="Player/F1/Position2D" instance=ExtResource( 2 )]
 
 [node name="F2" type="Position2D" parent="Player"]
-position = Vector2( 144, 160 )
+position = Vector2( 144, 213 )
+
+[node name="Position2D" type="Position2D" parent="Player/F2"]
+z_index = 20
+
+[node name="CharDisplay" parent="Player/F2/Position2D" instance=ExtResource( 2 )]
 
 [node name="F3" type="Position2D" parent="Player"]
-position = Vector2( 192, 260 )
+position = Vector2( 192, 313 )
+
+[node name="Position2D" type="Position2D" parent="Player/F3"]
+z_index = 20
+
+[node name="CharDisplay" parent="Player/F3/Position2D" instance=ExtResource( 2 )]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 480, 400 )

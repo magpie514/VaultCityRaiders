@@ -1,9 +1,9 @@
 extends "res://classes/char/char_base.gd"
 
 var tid = null
-var skills = []
-var ability:Array = core.newArray(2) #Passive skill. [TID, level]
 var lib = null
+
+var ability:Array = core.newArray(2) #Passive skill. [TID, level]
 var XPMultiplier:float = 1.0
 var summoner = null
 var armed:bool = true #If the enemy is supposed to be wielding weapons or not.
@@ -13,10 +13,18 @@ var ID:int = 0        #Unique ID. Used only for mons.
 func checkPassives(runEF:bool = false) -> void:
 	#.initPassive(ability[0], ability[1])
 	.initPassive(core.lib.skill.getIndex(['debug','regenera']), 1, runEF)
+
+func hasSkill(what):
+	for i in skills:
+		if core.tid.compare(lib.skills[i[0]], what):
+			return [ core.lib.skill.getIndex(lib.skills[i[0]]), i[1] ]
+	return null
+
+
 ###################################################################################################
 
 
-func recalculateStats():
+func recalculateStats() -> void:
 	var S = stats.create()
 	stats.setFromSpread(S, lib.statSpread, level)
 	stats.setElementDataFromArray(S.RES, lib.RES)
@@ -26,19 +34,17 @@ func recalculateStats():
 	modstats.DEF = S.DEF
 	modstats.ETK = S.ETK
 	modstats.EDF = S.EDF
-	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
-		conditionDefs[i] = lib.conditionDefs[i]
+	for i in range(core.CONDITIONDEFS_DEFAULT.size()):	conditionDefs[i] = lib.conditionDefs[i]
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
 
 func initDict(C): #Initialize an enemy from a data dict.
-	side = 1
-	lib = C
-	ID = randi() #TODO: Assign an unique integer ID to this enemy.
-	self.name = str(lib.name)
+	side        = 1
+	lib         = C
+	ID          = randi() #TODO: Assign an unique integer ID to this enemy.
+	self.name   = str(lib.name)
 	energyColor = C.energyColor
-	for i in lib.skill:
-		skills.push_back(core.tid.fromArray(i))
+	skills      = lib.skillSetup[0] #TODO: Change from Rank.
 	recalculateStats()
 	fullHeal()
 	print(getTooltip())
@@ -54,9 +60,7 @@ func defeat() -> void:
 	core.battle.control.state.EXP += int(100 * XPMultiplier)
 	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
 	sprite.defeat()
-	display.stop()
 	group.defeat(slot, self)
-	#skill.msg(str(lib.defeatMsg % name))
 
 func onSummonerDefeat():
 	print("[CHAR_ENEMY][onSummonerDefeat] %s's summoner fell!" % name)
@@ -67,8 +71,7 @@ func pickSkill():
 	if skills == null:
 		return core.tid.create("debug", "debug")
 	else:
-		var slot = randi() % skills.size()
-		var S = core.lib.skill.getIndex(skills[slot])
+		var slot = randi() % 4
 		return skills[slot]
 
 func pickTarget(S, level, F, P, state):
@@ -105,9 +108,9 @@ func pickTarget(S, level, F, P, state):
 
 func thinkBattleAction(F, P, state):
 	match lib.ai:
-		0:
+		0: #Random pick.
 			return thinkRandom(F, P, state)
-		1:
+		1: #Pattern pick.
 			if lib.aiPattern == null:
 				return thinkRandom(F, P, state)
 			else:
@@ -116,46 +119,51 @@ func thinkBattleAction(F, P, state):
 			return thinkRandom(F, P, state)
 
 func thinkRandom(F, P, state) -> Array:
-	var action = pickSkill()
-	var S = core.lib.skill.getIndex(action)
-	var target = pickTarget(S, 1, F, P, state)
-	print("[%s] using %s on %s" % [name, S.name, target])
-	return [ action, 1, target ]
+	var action = pickSkill() #Choose randomly.
+	var S      = core.lib.skill.getIndex(lib.skills[action[0]]) #Action skill
+	var l:int  = action[1] #Action level
+	var target = pickTarget(S, l, F, P, state)
+	print("[thinkRandom][%s] using %s LV.%s on %s" % [name, S.name, l, target])
+	return [ action, l, target ]
 
 func thinkPattern(F, P, state, aiPattern):
-	var pattern = aiPattern.pattern
-	var index = (state.turn - 1) % pattern.size()
+	var pattern    = aiPattern.pattern
+	var index      = (state.turn - 1) % pattern.size()
 	var targetHint = core.lib.enemy.AITARGET_RANDOM
-	var action = null
-	var S = null
-	var target = null
-	var temp = null
+	var action     = null
+	var S          = null
+	var target     = null
+	var temp       = null
 	if index <= pattern.size():
 		print("turn %s, index %s:" % [state.turn, index])
 	match pattern[index][0]:
 		core.lib.enemy.AIPATTERN_SIMPLE:
 			action = skills[(pattern[index][1][0])]
+			action = lib.skills[action[0]]
 			targetHint = pattern[index][1][1]
 			S = core.lib.skill.getIndex(action)
 			print("[SIMPLE, %s]" % [S.name])
 		core.lib.enemy.AIPATTERN_PICK_2_IF_ALLY_USED_1_ALREADY:
 			action = skills[(pattern[index][1][0])]
+			action = lib.skills[action[0]]
 			targetHint = pattern[index][1][1]
 			temp = "false"
 			if state.checkForAction(action):
 				action = skills[(pattern[index][2][0])]
+				action = lib.skills[action[0]]
 				targetHint = pattern[index][2][1]
 				temp = "true"
 			S = core.lib.skill.getIndex(action)
 			print("[PICK_2_IF_ALLY_USED_1_ALREADY, %s, %s]" % [temp, S.name])
-
 		core.lib.enemy.AIPATTERN_PICK_RANDOMLY:
 			if core.chance(pattern[index][1]):
 				action = skills[pattern[index][2][0]]
+				action = lib.skills[action[0]]
 				temp = "true"
 				targetHint = pattern[index][2][1]
 			else:
 				action = skills[pattern[index][3][0]]
+				action = lib.skills[action[0]]
 				temp = "false"
 				targetHint = pattern[index][3][1]
 			S = core.lib.skill.getIndex(action)
@@ -163,10 +171,12 @@ func thinkPattern(F, P, state, aiPattern):
 		core.lib.enemy.AIPATTERN_PICK_2_IF_WEAK:
 			if int(getHealthN() * 100) <= pattern[index][1]:
 				action = skills[pattern[index][2][0]]
+				action = lib.skills[action[0]]
 				temp = "true"
 				targetHint = pattern[index][2][1]
 			else:
 				action = skills[pattern[index][3][0]]
+				action = lib.skills[action[0]]
 				temp = "false"
 				targetHint = pattern[index][3][1]
 			S = core.lib.skill.getIndex(action)
@@ -174,16 +184,47 @@ func thinkPattern(F, P, state, aiPattern):
 		core.lib.enemy.AIPATTERN_PICK_2_IF_CAN_REVIVE:
 			if not group.canRevive():
 				action = skills[pattern[index][1][0]]
+				action = lib.skills[action[0]]
 				temp = "true"
 				targetHint = pattern[index][1][1]
 			else:
 				action = skills[pattern[index][2][0]]
+				action = lib.skills[action[0]]
 				temp = "false"
 				targetHint = pattern[index][2][1]
 			S = core.lib.skill.getIndex(action)
 			print("[PICK 2 IF CAN_REVIVE, (%s, %s), %s]" % [temp, int(getHealthN() * 100), S.name])
+		core.lib.enemy.AIPATTERN_PICK_2_IF_NIGHT:
+			if not core.world.isNight():
+				action = skills[pattern[index][1][0]]
+				action = lib.skills[action[0]]
+				temp = "true"
+				targetHint = pattern[index][1][1]
+			else:
+				action = skills[pattern[index][2][0]]
+				action = lib.skills[action[0]]
+				temp = "false"
+				targetHint = pattern[index][2][1]
+			S = core.lib.skill.getIndex(action)
+			print("[PICK 2 IF NIGHT, (%s, %s), %s]" % [temp, not core.world.isNight(), S.name])
+#TODO:core.lib.enemy.AIPATTERN_PICK_2_IF_CONDITION:
+#TODO:core.lib.enemy.AIPATTERN_PICK_2_IF_DISABLED:
+		core.lib.enemy.AIPATTERN_PICK_2_IF_DAY:
+			if core.world.isNight():
+				action = skills[pattern[index][1][0]]
+				action = lib.skills[action[0]]
+				temp = "true"
+				targetHint = pattern[index][1][1]
+			else:
+				action = skills[pattern[index][2][0]]
+				action = lib.skills[action[0]]
+				temp = "false"
+				targetHint = pattern[index][2][1]
+			S = core.lib.skill.getIndex(action)
+			print("[PICK 2 IF DAY, (%s, %s), %s]" % [temp, core.world.isNight(), S.name])
 		_:
 			action = skills[0]
+			action = lib.skills[action[0]]
 			targetHint = core.lib.enemy.AITARGET_RANDOM
 			S = core.lib.skill.getIndex(action)
 			print("[ERROR, using %s]" % [S.name])
@@ -219,8 +260,7 @@ func thinkPattern(F, P, state, aiPattern):
 			print("[AITARGET] Unknown targethint %d, picking randomly." % targetHint)
 			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])
-	if S.chargeAnim[0]:
-		sprite.charge(true)
+	if S.chargeAnim[0]: sprite.charge(true)
 	return [ action, 1, target ]
 
 func filter(S:Dictionary) -> bool:

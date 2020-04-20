@@ -34,7 +34,7 @@ var example = {
 			spdMod = [300,200,200,200,200, 200,200,200,200,200],
 			AD =     [050,049,048,047,046, 045,044,043,042,041],
 			codeMN = [
-				["defend",   000,000,000,000,000, 000,000,000,000,000],
+				["defend",   001,000,000,000,000, 000,000,000,000,000],
 			],
 		},
 		"defup": {
@@ -220,6 +220,19 @@ var example = {
 			codeMN = [
 				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
 			],
+		},
+		"fastcraw": {
+			name = "CRAW Fast Deploy",
+			description = "Chance of deploying CRAW at the start of a battle.",
+			category = skill.CAT_PASSIVE,
+			target = skill.TARGET_SELF,
+			element = core.stats.ELEMENTS.DMG_ELEC,
+			codeEF = [
+				["get_turn"],
+				["if_sval<=", 001, 0],
+					["skill.auto", 001, 0],
+			],
+			linkSkill = [ "story/jcraw" ]
 		},
 		"jcraw": {
 			name = "CRAW",
@@ -1094,6 +1107,7 @@ var example = {
 		"firewave": {
 			name = "Fire Wave",
 			description = "",
+			animations = { 'main' : "/nodes/FX/basic_test2.tscn" },
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -1705,7 +1719,7 @@ var example = {
 			spdMod = [100,100,100,100,100, 100,100,100,100,100],
 			AD =     [100,100,100,100,100, 100,100,100,100,100],
 			codeMN = [
-				["if_status", 000,125,132,132,140, 140,147,147,147,160],
+				["if_condition", 000,125,132,132,140, 140,147,147,147,160],
 					["dmgbonus",  095,125,132,132,140, 140,147,147,147,160],
 				["attack",    065,125,132,132,140, 140,147,147,147,160],
 			],
@@ -1934,6 +1948,7 @@ func initTemplate():
 		"animFlags"       : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0]},
 		"fx"              : { loader = LIBEXT_FX, default = [] },
 
+		"filter"    : { loader = LIBSTD_INT },
 		"ranged"    : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
 		"levels"    : { loader = LIBSTD_INT, default = 10 },
 		"accMod"    : { loader = LIBSTD_SKILL_ARRAY, default = [090,090,090,090,090, 090,090,090,090,090] },
@@ -1941,13 +1956,12 @@ func initTemplate():
 		"critMod"   : { loader = LIBSTD_SKILL_ARRAY, default = [005,005,005,005,005, 005,005,005,005,005] },
 		"AD"        : { loader = LIBSTD_SKILL_ARRAY, default = [100,100,100,100,100, 100,100,100,100,100] },
 		"initAD"    : { loader = LIBSTD_SKILL_ARRAY, default = [100,100,100,100,100, 100,100,100,100,100] },
-		"filter"    : { loader = LIBSTD_INT },
 		"messages"  : { loader = LIBEXT_SKILL_MESSAGES },
+		"chain"     : { loader = LIBSTD_INT, default = core.skill.CHAIN_NONE },
 
 		#TODO: Review these! Might need to use a new format allowing to specify custom data in some way.
 		"linkSkill" : { loader = LIBSTD_SKILL_LIST },
 		"synergy"   : { loader = LIBSTD_SKILL_LIST },
-		"chain"     : { loader = LIBSTD_INT, default = core.skill.CHAIN_NONE },
 		"summons"   : { loader = LIBSTD_SUMMONS, default = null},
 
 		"codePR" : { loader = LIBEXT_SKILL_CODE },

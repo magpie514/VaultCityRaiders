@@ -4,7 +4,7 @@ var skill = core.skill
 enum { #Flags for scripted fights.
 	EVENTFLAGS_NONE =       0b0000,     #Normal operation
 	EVENTFLAGS_INVINCIBLE = 0b0001,     #Character has plot armor and negates most damage.
-	EVENTFLAGS_GOLUF      = 0b0010,     #Character refuses to die. Like a certain old man.
+	EVENTFLAGS_G0LUF      = 0b0010,     #Character refuses to die like a certain brave old man.
 }
 
 
@@ -19,11 +19,14 @@ var statBase         = stats.create()	#Base stats
 var statFinal        = stats.create()  #Calculated stats
 var conditionDefs    = core.newArray(core.CONDITIONDEFS_DEFAULT.size())
 var battle           = null            #Battle stats (See createBattleStats())
+var skills:Array     = []   #Array of skill index numeric ID + level
 
 # Battle display ###############################################################
-var display            = null      #Reference to the character's UI element for quick access.
+var display            = null      #Reference to the character's display element for quick access.
+var UIdisplay          = null      #Reference to the character's UI
 var sprite             = null      #Reference to the character's sprite in combat.
 var energyColor:String = "#AAFFFF" #Color used for certain effects.
+
 # Miscelaneous shortcut vars ###################################################
 var slot:int = 0 #Character's position slot in its group.
 var row:int  = 0 #Character's calculated row
@@ -49,6 +52,7 @@ class BattleStats:
 	# Statistics to implement
 	var turnAfflictions:int = 0       #Amount of condition afflictions this turn.
 	var turnHealedAfflictions:int = 0 #Amount of healed afflictions this turn.
+	var turnCriticals:int         = 0 #Amount of criticals for this turn.
 	# Switches ##################################################################################
 	var turnActed:bool = false        #True if character acted this turn
 	var paralyzed:bool = false        #If true, character is unable to act due to paralysis this turn.
@@ -110,7 +114,7 @@ class BattleStats:
 		self.forceDodge   = 0
 		self.defending    = false
 		self.endure       = false
-		self.adamant      = false #Might be better to not unset it per turn. We'll see.
+		self.adamant      = false
 		self.itemSPD      = 90
 		self.itemAD       = 110
 		self.critBonus    = 0
@@ -194,7 +198,7 @@ func initBattleTurn() -> void:
 	checkEffects(battle.effect     , true)   #Then special effects such as active passives and such.
 	checkEffects(battle.eventEffect, true)   #And finally effects from scripted events.
 	applyBattleStatMultipliers()
-	display.update()
+	#UIdisplay.update()
 	#TODO: Set paralysis value as a chance(50) bool. Only check if it's true/false if paralysis is the current main condition.
 	#Paralysis calculated at the end of the sequence in case any effect adds or removes paralysis.
 	battle.paralyzed = checkParalysis()      #Check for paralysis. If true, the character can't act normally.
@@ -209,7 +213,7 @@ func updateBattleStats() -> void:
 	checkEffects(battle.effect)
 	checkEffects(battle.eventEffect)
 	applyBattleStatMultipliers()
-	display.update()
+	UIdisplay.update()
 
 func endBattleTurn(defer) -> void:
 	#Reset guard and barrier values now so they don't show in the player UI.
@@ -281,6 +285,14 @@ func calcSPD(spd:int) -> int:
 func getEquipSpeedMod():
 	return 0
 
+func damagePreventionPass(S, user, elem:int = 0, crit:bool = false) -> bool: #Check if a hit can be prevented.
+	#TODO: Check parry.
+	if battle.forceDodge > 0:
+		display.message("Full dodge!", "0088BB")
+		battle.forceDodge -= 1
+		return false
+	return true #Hit connects (so far).
+
 func damageProtectionPass(x:int, info, ignoreDefs = false) -> int: # Modify damage according to defenses and deplete said defenses if applicable.
 	if battle.eventFlags & EVENTFLAGS_INVINCIBLE:
 		info.barrierFullBlock = true
@@ -332,50 +344,55 @@ func damageResistModifier(x:float, _type:int, energyDMG:bool) -> Array:
 	var result = x * resistMod
 	return [result, weak]
 
+const MAX_DMG_NOCAP = 9223372036854775807
+const MAX_DMG       = 32000
 func finalizeDamage(x, info, ignoreDefs:bool = false, nocap:bool = false) -> int:
 	#Apply active defense, reduce damage from guard or barrier.
 	#var finalDmg : float = x * (float(battle.AD) * .01)
 	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info, ignoreDefs)
-	return core.clampi(finalDmg, 1, core.skill.MAX_DMG if not nocap else 2^63)
+	return clamp(finalDmg, 1, MAX_DMG_NOCAP if nocap else MAX_DMG) as int
 
 func defeatMessage() -> String:
 	return "%s is down!" % name
 
-func damage(x:int, data, silent:bool = false, nonlethal:bool = false) -> Array:
+func damage(x:int, crit:bool = false, resist:int = 0, nonlethal:bool = false) -> Array:
 	var temp          = HP - x
 	var overkill:bool = false
 	var defeat:bool   = false
 	var full:bool     = true if HP >= maxHealth() else false
-	var HP1:int = HP
+#	var HP1:int = HP
 	HP = int(clamp(temp, 1.0 if nonlethal else 0.0, maxHealth()))
 	if x > 0 and nonlethal and HP == 1:
-		display.message("Spared!", false, "EFEFEF")
-	var HPdelta:int = HP1 - HP
+		display.message("Spared!", "EFEFEF")
 	if HP == 0: #Defeated!
 		if int(abs(temp)) >= maxHealth() / 2: #Check for overkill.
 			overkill = true
+			display.message("Overkill!", "EFEFEF")
 		if battle.adamant and full:
 			HP = 1
-			display.message("Survived!", false, "EFEFEF")
+			display.message("Survived!", "EFEFEF")
 			#TODO: Should display some animation and play a sound here.
 		else:
-			defeat()
-			defeat = true
-	battle.accumulatedDMG += HPdelta
-	battle.turnDMG += HPdelta
+			if battle.eventFlags & EVENTFLAGS_G0LUF: #Hold on to dear life like a certain hero.
+				HP = 0
+				display.message("Refused to fall!", "000000")
+			else:
+				defeat()
+				defeat = true
+	battle.accumulatedDMG += x
+	battle.turnDMG        += x
 	if sprite != null:
-		display.damage([[x, data[0], overkill, data[2], data[3]]])
 		sprite.damage()
 		sprite.damageShake()
-	return [overkill, defeat]
+		display.damage(x, crit, resist)
+		UIdisplay.damage()
+	return [ overkill, defeat ]
 
 func setAD(x:int, absolute:bool = false) -> void: #Set active defense.
-	if absolute:
-		battle.AD = x
-	else:
-		battle.AD += x
-	if battle != null and display != null:
-		display.updateAD(battle.AD)
+	if absolute: battle.AD =  x
+	else       : battle.AD += x
+	if battle != null and UIdisplay != null:
+		UIdisplay.updateAD(battle.AD)
 	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
 func defeat() -> void: #Process defeat.
@@ -398,19 +415,25 @@ func defeat() -> void: #Process defeat.
 		battle.damageEffect.clear()
 	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
+func defend() -> void:
+	battle.defending = true
+	display.message("DEFEND", skill.messageColors.protect)
+	reinforceOnDefend()
+
+
 # Healing #########################################################################################
 func heal(x:int) -> void:
 	HP = int(clamp(HP + x, 0, maxHealth()))
 	if HP == 0:	defeat()
 	battle.turnHeal += x
-	display.damage([[-x, false, false, 0, null]])
+	display.damage(-x)
 
 func overHeal(x, y) -> void:
 	var temp = maxHealth() + y
 	HP = clamp(HP+x, 0, temp) as int
 	if HP == 0:	defeat()
 	battle.turnHeal += x
-	display.damage([[-x, false, false, 0, null]])
+	display.damage(-x)
 
 func revive(x:int) -> void:
 	if condition == skill.CONDITION_DOWN:
@@ -422,11 +445,17 @@ func revive(x:int) -> void:
 func reinforceAll() -> void:
 	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
 		battle.conditionDefs[i] = battle.conditionDefsMax[i]
-	display.message("FULL REINFORCE", null, "00FF00")
+	display.message("FULL REINFORCE", "00FF00")
 
 func reinforce(what:int) -> void:
 	battle.conditionDefs[what] = battle.conditionDefsMax[what]
-	display.message("REINFORCE", null, "00FF00")
+	display.message("REINFORCE", "00FF00")
+
+func reinforceOnDefend(value:int = 1) -> void:
+	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
+		if battle.conditionDefs[i] < battle.conditionDefsMax[i]:
+			battle.conditionDefs[i] = min(battle.conditionDefs[i] + value, battle.conditionDefsMax[i]) as int
+	display.message("REINFORCE", "00FF00")
 
 func reinforceComplex(value:int) -> void:
 	if value < 0x100: return
@@ -434,7 +463,7 @@ func reinforceComplex(value:int) -> void:
 	var powr:int = core.clampi((value & 0x0F0) >> 4, 0, 15)
 	var cap:int  = core.clampi((value & 0x00F)     , 0, 1 )
 	battle.conditionDefs[cond] += powr
-	if cap == 1 and conditionDefs[cond] < 40:
+	if cap == 1 and conditionDefs[cond] < 20:
 		battle.conditionDefs[cond] = core.clampi(battle.conditionDefs[cond], 0, battle.conditionDefsMax[cond])
 
 
@@ -481,28 +510,49 @@ func addInflict(x:int) -> void:
 	battle.conditionDefsMax[x] += 1
 	battle.conditionDefs[x] = battle.conditionDefsMax[x]
 
-func tryInflict(user, value:int, crit:int) -> void:
-	var cond:int = core.clampi((value & 0xF0) >> 4, 0, 10)
-	var powr:int = core.clampi((value & 0x0F)     , 0, 15)
-	#TODO: See something about hit checks. Like a way to not have to do "if_connect" all the time?
+
+func checkInflict() -> bool: #Check if target has a negative condition.
+	return true if (condition != core.skill.CONDITION_GREEN or condition2 != 0) else false
+
+func tryInflict2(user, cond:int, powr:int, crit:int) -> int: #Returns 0 if immune. 1 if gauge is decreased, 2 if success.
 	if condition != skill.CONDITION_DOWN and validateInflict(cond):
-		if battle.conditionDefsMax[cond] > 40: return
+		if battle.conditionDefsMax[cond] > 20: return 0 #Immunity
+		if powr > 20: return 2 #Win
 		var critf:float = (10 + crit) as float * .01
-		var comp:float = ( ((user.battle.stat.LUC * 3) as float + 76.5) / ((battle.stat.LUC * 3) as float + 76.5) ) * 10
-		var rate:float = 0
+		var comp:float  = ( ((user.battle.stat.LUC * 3) as float + 76.5) / ((battle.stat.LUC * 3) as float + 76.5) ) * 10
+		var rate:float  = 0
 		if   comp as int <= 2      : rate = critf
 		elif comp > 2 and comp < 50: rate = critf * comp
 		else                       : rate = critf * 50.0
 		var finalrate:int = clamp(rate * 100, 0, 1500) as int
-		if randi() % 1000 <= finalrate: #Critical infliction. Bypass check.
-			display.message("Critical Inflict!", null, "FF00FF")
-			addInflict(cond)
+		if randi() % 1100 <= finalrate: #Critical infliction. Bypass check.
+			return 3
 		else: #Regular infliction.
 			battle.conditionDefs[cond] -= powr
 			if battle.conditionDefs[cond] <= 0:
-				addInflict(cond)
+				return 2 #Infliction success.
 			else:
-				display.message("%s :%s" % [cond, battle.conditionDefs[cond]], null, "FF00FF")
+				return 1 #Infliction in progress.
+	return 0
+func tryInflict(user, value:int, crit:int) -> void:
+	var cond:int = core.clampi(((value & 0xF0) >> 4) - 1, 0, 15)
+	var powr:int = core.clampi((value & 0x0F)     , 0, 15)
+	#TODO: See something about hit checks. Like a way to not have to do "if_connect" all the time?
+	match(tryInflict2(user, cond, powr, crit)):
+		0:
+			display.message("Resisted!", "FF00FF")
+			return
+		1:
+			display.condition([cond, -powr], battle.conditionDefs[cond], battle.conditionDefsMax[cond])
+		2:
+			display.message(core.stats.CONDITION_DATA[cond].name, "FF00FF")
+			addInflict(cond)
+		3:
+			display.message("Critical Inflict!", "FF00FF")
+			display.message(core.stats.CONDITION_DATA[cond].name, "FF00FF")
+			addInflict(cond)
+
+
 
 func validateInflict(val:int) -> bool:
 	var ok:bool = false
@@ -517,6 +567,7 @@ func validateInflict(val:int) -> bool:
 		core.stats.COND_CURSE:     ok = true
 		core.stats.COND_PANIC:     ok = true
 		core.stats.COND_STASIS:    ok = true
+		core.stats.COND_DAMAGE:    ok = true
 	return ok
 
 
@@ -544,6 +595,9 @@ func newEffect(S, lv:int, user) -> Array:
 	]
 	return E
 
+func autoEffect(_tid:Array) -> void:
+	pass
+
 func addEffect(S, lv:int, user) -> void:
 	#TODO: Effects with duration 0 should be added to the stack anyway and removed at the end of turn.
 	if S == null:
@@ -570,7 +624,7 @@ func addEffect(S, lv:int, user) -> void:
 		print("[CHAR_BASE][addEffect] Adding %sL%s to %s, duration %s" % [S.name, tempLV, user.name, E[2]])
 		holder.push_back(E)
 		initEffect(E, true)
-		display.message(S.name, false, mcolor)
+		display.message(S.name, mcolor)
 
 
 func refreshEffect(E:Array, data:Array, holder:Array) -> void:
@@ -705,8 +759,7 @@ func newDamageEffect(S, dmg:int, duration:int, element:int, user) -> Array:
 	return DE
 
 func processDamageEffect(DE) -> bool:
-	var info = damage(DE[1], [false, false, 0, null])
-	#display.damage([[DE[1], false, false, 0, null]])
+	var info:Array = damage(DE[1])
 	return info[1]
 
 func calculateDamageEffects() -> int: #Gets an estimate of how much damage the character is going to receive at the end of the turn.
@@ -721,21 +774,32 @@ func damageEffects() -> void:
 		var defeats:bool = processDamageEffect(DE)
 		if defeats: return
 
-func addDamageEffect(user, S, val:int) -> void: #Add the damage over time effect.
+func addDamageEffect(user, S, damage:int, duration:int, element:int) -> void: #Add the damage over time effect.
 	for tmp in battle.damageEffect:
 		if tmp[0] == S: #Already set, fail or renew.
 			print("[CHAR_BASE][addDamageEffect] Already set!")
 			return
-	var dmg:int = core.clampi((val & 0x0FFFF00) >> 8, 0, 32000)
-	var dur:int = core.clampi((val & 0x00000F0) >> 4, 0, 15   )
-	var ele:int = core.clampi((val & 0x000000F)     , 0, 10   )
-	var DE:Array = newDamageEffect(S, dmg, dur, ele, user)
+	var DE:Array = newDamageEffect(S, damage, duration, element, user)
 	print("[CHAR_BASE][addDamageEffect] %s %s %s %s %s" % [DE[0].name, DE[1], DE[2], DE[3], DE[4].name])
 	battle.damageEffect.push_back(DE)
 	if battle.damageEffect.size() > 4: battle.damageEffect.pop_front()
 
 func tryDamageEffect(user, S, val:int) -> void: #Attempt to inflict a damage over time effect.
-	addDamageEffect(user, S, val)
+	var pwr:int = core.clampi((val & 0xF000000) >> 24, 0, 15   )
+	var dmg:int = core.clampi((val & 0x0FFFF00) >>  8, 0, 32000)
+	var dur:int = core.clampi((val & 0x00000F0) >>  4, 0, 15   )
+	var ele:int = core.clampi((val & 0x000000F)      , 0, 10   )
+	print("[CHAR_BASE][tryDamageEffect] ", pwr, dmg, dur, ele)
+	match tryInflict2(user, core.stats.COND_DAMAGE, pwr, 5):
+		0:
+			display.message("Immunity.", "333333")
+			return
+		1: display.condition([core.stats.COND_DAMAGE, -pwr], battle.conditionDefs[core.stats.COND_DAMAGE], battle.conditionDefsMax[core.stats.COND_DAMAGE])
+		2:
+			addDamageEffect(user, S, dmg, dur, ele); display.message("Critical Inflict!", "FF00FF")
+		3:
+			display.message("Critical Inflict!", "FF00FF")
+			addDamageEffect(user, S, dmg, dur, ele)
 
 ###################################################################################################
 
@@ -755,7 +819,7 @@ func updateChain(mode:int) -> void:
 
 func dodgeAttack(user) -> void:
 	battle.turnDodges += 1
-	display.message("Dodged!", false, "EFEFEF")
+	display.message("Dodged!", "EFEFEF")
 
 func canAct() -> bool: #Checks if char can perform a regular action.
 	match condition: #Main Condition check. (TODO: Finish)
@@ -813,6 +877,7 @@ func canCounter(target, element:int, data:Array): #Checks if char is able to per
 	return [false, null]
 
 # Safety checks ###################################################################################
+func hasSkill(what): pass #VIRTUAL
 
 func isAble() -> bool: #Checks if character is active.
 	if condition == skill.CONDITION_DOWN: return false

@@ -17,17 +17,17 @@ func _init(guild, eform, BG) -> void:
 			var C = groups[0].formation[slot]
 			initSprite(C, slot)
 
-func initSprite(C, slot:int):
+func initSprite(C, slot:int) -> void:
 	var spr:String = C.lib.spriteFile if C is core.Enemy else placeholder_1
 	var node:Node  = getAnchorNode(C, slot)
-
 	if node != null:
 		var sprite:Node = SpriteH.instance()
 		node.add_child(sprite)
 		C.sprite = sprite
+		C.UIdisplay = core.battle.UI.grid[1 if C is core.Enemy else 0][slot]
+		C.UIdisplay.init(C)
+		C.display = node.get_node("Position2D/CharDisplay")
 		sprite.init(spr, C, slot)
-		return sprite
-	return null
 
 func addEffector(C, fx:String) -> void:
 	var temp:String = str("res://nodes/FX/%s.tscn" % fx)

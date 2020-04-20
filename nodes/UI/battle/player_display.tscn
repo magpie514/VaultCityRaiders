@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://nodes/UI/battle/player_display.gd" type="Script" id=1]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://nodes/UI/Elements.tscn" type="PackedScene" id=5]
 [ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=6]
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=7]
+[ext_resource path="res://nodes/UI/battle/condition_defs.tscn" type="PackedScene" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 size = 13
@@ -70,6 +71,9 @@ ETK
 EDF
 AGI
 LUC"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ATK" type="Label" parent="StatStatic"]
 margin_left = 100.0
@@ -329,3 +333,9 @@ margin_bottom = 90.0
 [node name="Elements" parent="." instance=ExtResource( 5 )]
 margin_left = 270.0
 margin_right = 390.0
+
+[node name="ConditionPanel" parent="." instance=ExtResource( 8 )]
+margin_left = 390.0
+margin_top = 10.0
+margin_right = -290.0
+margin_bottom = -80.0

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://tests/dmgnum.gd" type="Script" id=1]
+[ext_resource path="res://nodes/UI/battle/CharDisplay.tscn" type="PackedScene" id=2]
 
 [node name="Panel" type="Panel"]
 margin_left = 420.0
@@ -8,6 +9,9 @@ margin_top = 330.0
 margin_right = 460.0
 margin_bottom = 370.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button" type="Button" parent="."]
 margin_left = 60.0
@@ -35,6 +39,8 @@ margin_top = 40.0
 margin_right = 270.0
 margin_bottom = 62.0
 text = "Multihits"
+
+[node name="CharDisplay" parent="." instance=ExtResource( 2 )]
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="Button2" to="." method="_on_Button2_pressed"]
 [connection signal="pressed" from="Button3" to="." method="_on_Button3_pressed"]

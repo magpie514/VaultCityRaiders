@@ -70,6 +70,13 @@ func printData():
 		for key2 in data[key]:
 			print("[%s/%s]: %s" % [key, key2, data[key][key2]])
 
+func getData() -> Array:
+	var result:Array = []
+	for key in data:
+		for key2 in data[key]:
+			result.push_back([key, key2])
+	return result
+
 func loadKey(loader, val):
 	var result = call(loader, val)
 	return result
@@ -138,7 +145,7 @@ func loaderStatSpread(val):
 		return [ copyIntegerArray(val[0]), copyIntegerArray(val[1]) ]
 
 
-func loaderElementData(val):
+func loaderElementData(val) -> Array:
 	if val == null:
 		return [
 		#  CUT  PIE  BLU   FIR  ICE  ELE   ULT  KIN  NRG
@@ -165,39 +172,40 @@ func loaderTIDArray(val):
 	if val == null:
 		return null
 	else:
-		var result : Array = []
+		var result:Array = []
 		for i in val:
 			var tmp = loaderTID(i)
 			result.push_back(tmp)
 		return result
 
-func loaderSkillList(val):
+func loaderSkillList(val) -> Array:
 	if val == null:
 		return [ loaderTID(null) ]
 	else:
-		var result = []
+		var result:Array = []
 		for i in val:
 			result.push_back(loaderTID(i))
 		return result
 
-func loaderSkillArray(val):
-	var result:Array = core.newArray(10)
+func loaderSkillArray(val) -> Array:
+	var SIZE:int     = 10
+	var result:Array = core.newArray(SIZE)
 	match(typeof(val)):
 		TYPE_INT:
-			for i in range(10):
+			for i in range(SIZE):
 				result[i] = int(val)
 		TYPE_BOOL:
-			for i in range(10):
+			for i in range(SIZE):
 				result[i] = int(1) if val else int(0)
 		TYPE_ARRAY:
-			var temp : int = val.size()
-			for i in range(10):
+			var temp:int = val.size()
+			for i in range(SIZE):
 				if i > temp:
-					result[i] = val[temp]
+					result[i] = int(val[temp])
 				else:
-					result[i] = val[i]
+					result[i] = int(val[i])
 		TYPE_NIL:
-			for i in range(10):
+			for i in range(SIZE):
 				result[i] = int(0)
 	return result
 
@@ -213,24 +221,24 @@ func loaderStatBonus(val) -> Dictionary:
 func loaderSummons(val):
 	if val == null or typeof(val) != TYPE_ARRAY:
 		return null
-	var result = []
+	var result:Array = []
 	for i in range(val.size()):
 		var tmp = val[i]
-		var entry = {}
-		entry.tid = core.tid.fromArray(tmp.tid if "tid" in tmp else ["debug", "debug"])
-		entry.level = int(tmp.level if "level" in tmp else 1)
-		entry.amount = int(tmp.amount if "amount" in tmp else 1)
-		entry.amount = int(clamp(entry.amount, 0, 4)) #Prevent more than 4 summons at once because come on.
-		entry.chance = int(tmp.chance if "chance" in tmp else 95)
+		var entry:Dictionary = {}
+		entry.tid         = core.tid.from(tmp.tid if "tid" in tmp else ["debug", "debug"])
+		entry.level       = int(tmp.level if "level" in tmp else 1)
+		entry.amount      = int(tmp.amount if "amount" in tmp else 1)
+		entry.amount      = int(clamp(entry.amount, 0, 4)) #Prevent more than 4 summons at once because come on.
+		entry.chance      = int(tmp.chance if "chance" in tmp else 95)
 		entry.restrictRow = int(tmp.restrictRow if "restrictRow" in tmp else 0)
-		entry.msg = str(tmp.msg if "msg" in tmp else "{name} came to help!")
-		entry.failmsg = str(tmp.failmsg if "failmsg" in tmp else "But nobody came...")
-		entry.center = bool(tmp.center if "center" in tmp else true)
+		entry.msg         = str(tmp.msg if "msg" in tmp else "{name} came to help!")
+		entry.failmsg     = str(tmp.failmsg if "failmsg" in tmp else "But nobody came...")
+		entry.center      = bool(tmp.center if "center" in tmp else true)
 		result.push_back(entry)
 	return result
 
 func loaderConditionDefs(val) -> Array:
-	var result:Array = core.newArray(16)
+	var result:Array = core.valArray(0, core.CONDITIONDEFS_DEFAULT.size())
 	if val.size() != core.CONDITIONDEFS_DEFAULT.size():
 		print("[!!][LIB_BASE][loaderConditionDefs] Condition Defenses array of incorrect size.")
 		var s:int = val.size()

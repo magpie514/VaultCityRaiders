@@ -1,0 +1,134 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://resources/fonts/3x5.font" type="BitmapFont" id=1]
+[ext_resource path="res://nodes/UI/battle/ConditionBar.gd" type="Script" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+signal done
+onready var overlay:Node = $Overlay
+var count:float          = 0.0
+
+func _ready() -> void:
+	#init(15, 2, 5, 13)
+	pass
+
+func _process(delta:float) -> void:
+	count += delta
+	if count > 1.3:
+		#queue_free()
+		emit_signal(\"done\", self)
+		pass
+	elif count > 1.0:
+		modulate.a = lerp(0.9, 0.0, (count - 1.0) / 1.3)
+	elif count > 0.25:
+		overlay.modulate.a = lerp(1.0, 0.0, (count - 0.25) / 0.5)
+
+
+func init(cond:int, power:int, value:int, _max:int) -> void:
+	$Panel.modulate = core.stats.CONDITION_DATA[cond].color
+	$Label.text     = core.stats.CONDITION_DATA[cond].short
+	$Gauge.init(value, _max)
+	overlay.init(value, abs(power) as int, \"FFFFFF\" if power > 0 else \"000000\")
+	set_process(true)
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=3]
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Control
+
+var value:int   = 0
+var diff:int    = 0
+var color:Color = \"FFFFFF\"
+
+func init(_value:int, _diff:int, _color:Color) -> void:
+	value = _value
+	diff  = _diff
+	color = _color
+	update()
+
+func _draw() -> void:
+	var size:int = (rect_size.x / 20) as int
+	for i in range(20):
+		if i > value and i <= value + diff:
+			draw_bar(Rect2(i + size * i, 0, size, rect_size.y), color)
+
+func draw_bar(rect:Rect2, col:Color) -> void:
+	rect = rect.grow_individual(0, 0, -1, 0)
+	draw_rect(rect, col)
+	draw_rect(rect, col.darkened(0.5), false)
+"
+
+[node name="ConditionGauge" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -80.0
+margin_top = -23.0
+margin_right = -880.0
+margin_bottom = -714.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+margin_top = 10.0
+margin_right = 160.0
+margin_bottom = 23.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tab" type="Panel" parent="Panel"]
+margin_top = -7.0
+margin_right = 44.0
+margin_bottom = 1.0
+custom_styles/panel = SubResource( 3 )
+
+[node name="Label" type="Label" parent="."]
+margin_top = 5.0
+margin_right = 44.0
+margin_bottom = 10.0
+custom_fonts/font = ExtResource( 1 )
+text = "CND"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Gauge" type="Control" parent="."]
+margin_left = 2.0
+margin_top = 11.0
+margin_right = 159.0
+margin_bottom = 21.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Overlay" type="Control" parent="."]
+margin_left = 2.0
+margin_top = 11.0
+margin_right = 159.0
+margin_bottom = 21.0
+script = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

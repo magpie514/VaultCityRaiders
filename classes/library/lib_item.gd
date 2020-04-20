@@ -1,47 +1,49 @@
 extends "res://classes/library/lib_base.gd"
 
 enum {
-	COUNTER_NONE =          0x000000, #No counter.
-	COUNTER_BUFF =          0x000001, #Counter a buff.
-	COUNTER_DEBUFF =        0x000002, #Counter a debuff.
-	COUNTER_CRITICAL =      0x000004, #Counter a critical hit.
-	COUNTER_DEFEAT = 				0x000008, #Counter a defeat with 1%Vital.
+	COUNTER_NONE         = 0b000000000000000000000000000, #No counter.
+	COUNTER_BUFF         = 0b000000000000000000000000001, #Counter a buff.
+	COUNTER_DEBUFF       = 0b000000000000000000000000010, #Counter a debuff.
+	COUNTER_CRITICAL     = 0b000000000000000000000000100, #Counter a critical hit.
+	COUNTER_DEFEAT       = 0b000000000000000000000001000, #Counter a defeat with 1%Vital.
+	COUNTER_DMG_CUT      = 0b000000000000000000000010000, #Counter a cut/wind hit.
+	COUNTER_DMG_PIERCE   = 0b000000000000000000000100000, #Counter a pierce/earth hit.
+	COUNTER_DMG_STRIKE   = 0b000000000000000000001000000, #Counter a blunt/water hit.
+	COUNTER_DMG_FIRE     = 0b000000000000000000010000000, #Counter a fire hit.
+	COUNTER_DMG_COLD     = 0b000000000000000000100000000, #Counter a cold hit.
+	COUNTER_DMG_ELEC     = 0b000000000000000001000000000, #Counter an electric hit.
+	COUNTER_DMG_UNKNOWN  = 0b000000000000000010000000000, #Counter a time/light/spirit hit.
+	COUNTER_DMG_ULTIMATE = 0b000000000000000100000000000, #Counter a gravity/dark/ultimate hit.
+	COUNTER_COND_PARA    = 0b000000000000001000000000000, #Counter paralysis effect.
+	COUNTER_COND_STUN    = 0b000000000000010000000000000, #Counter stun effect.
+	COUNTER_COND_DOWN    = 0b000000000000100000000000000, #Counter defeat effect.
+	COUNTER_COND_CRYO    = 0b000000000001000000000000000, #Counter cryostasis effect.
+	COUNTER_COND_PANIC   = 0b000000000010000000000000000, #Counter panic effect.
+	COUNTER_COND_ARMS    = 0b000000010000000000000000000, #Counter disable arms effect.
 
-	COUNTER_DMG_CUT =       0x000010, #Counter a cut/wind hit.
-	COUNTER_DMG_PIERCE =    0x000020, #Counter a pierce/earth hit.
-	COUNTER_DMG_STRIKE =     0x000040, #Counter a blunt/water hit.
-	COUNTER_DMG_FIRE =      0x000080, #Counter a fire hit.
-	COUNTER_DMG_COLD =      0x000100, #Counter a cold hit.
-	COUNTER_DMG_ELEC =      0x000200, #Counter an electric hit.
-	COUNTER_DMG_UNKNOWN =   0x000400, #Counter a time/light/spirit hit.
-	COUNTER_DMG_ULTIMATE =  0x000800, #Counter a gravity/dark/ultimate hit.
+}
 
-	COUNTER_DISABLE =       0x001000, #Counter a disable arm/leg/head effect.
-
-	COUNTER_STATUS_PARA =   0x002000, #Counter paralysis effect.
-	COUNTER_STATUS_STUN =   0x004000, #Counter stun effect.
-	COUNTER_STATUS_DEFEAT = 0x008000, #Counter defeat effect.
-
+var COND_COUNTER_CONV = {
+	core.stats.COND_PARALYSIS    : COUNTER_COND_PARA,
+	core.stats.COND_STUN         : COUNTER_COND_STUN,
+	core.stats.COND_DEFEAT       : COUNTER_COND_DOWN,
+	core.stats.COND_CRYO         : COUNTER_COND_CRYO,
+	core.stats.COND_DISABLE_ARMS : COUNTER_COND_ARMS,
+	core.stats.COND_PANIC        : COUNTER_COND_PANIC,
 }
 
 var ELEMENT_CONV = {
-	core.stats.ELEMENTS.DMG_CUT :      COUNTER_DMG_CUT,
-	core.stats.ELEMENTS.DMG_PIERCE :   COUNTER_DMG_PIERCE,
-	core.stats.ELEMENTS.DMG_STRIKE :    COUNTER_DMG_STRIKE,
+	core.stats.ELEMENTS.DMG_CUT      : COUNTER_DMG_CUT,
+	core.stats.ELEMENTS.DMG_PIERCE   : COUNTER_DMG_PIERCE,
+	core.stats.ELEMENTS.DMG_STRIKE   : COUNTER_DMG_STRIKE,
 
-	core.stats.ELEMENTS.DMG_FIRE :     COUNTER_DMG_FIRE,
-	core.stats.ELEMENTS.DMG_ICE :      COUNTER_DMG_COLD,
-	core.stats.ELEMENTS.DMG_ELEC :     COUNTER_DMG_ELEC,
+	core.stats.ELEMENTS.DMG_FIRE     : COUNTER_DMG_FIRE,
+	core.stats.ELEMENTS.DMG_ICE      : COUNTER_DMG_COLD,
+	core.stats.ELEMENTS.DMG_ELEC     : COUNTER_DMG_ELEC,
 
-	8 :                          COUNTER_DMG_UNKNOWN, #Placeholder for what will become element 7.
+	8                                : COUNTER_DMG_UNKNOWN, #Placeholder for what will become element 7.
 	core.stats.ELEMENTS.DMG_ULTIMATE : COUNTER_DMG_ULTIMATE,
 }
-
-var STATUS_CONV = { #TODO: Very much to do.
-	1: COUNTER_STATUS_PARA,
-}
-
-
 
 var example = {
 	"debug" : {
@@ -53,7 +55,6 @@ var example = {
 		"grenade" : {
 			name = "Grenade",
 			description = "Goes boom on stuff",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			skill = [001,001,001,001,001, 001,001,001,001,001],
@@ -66,7 +67,6 @@ var example = {
 		"nostrum" : {
 			name = "Nostrum",
 			description = "Over the counter medicine for adventurers. Works in a pinch, but it's not effective on machines.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			skill = [001,001,001,001,001, 001,001,001,001,001],
@@ -77,7 +77,6 @@ var example = {
 		"panacea" : {
 			name = "Panacea",
 			description = "A medicine capable of restoring any ailments.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			skill = [001,001,001,001,001, 001,001,001,001,001],
@@ -88,7 +87,6 @@ var example = {
 		"repair1" : {
 			name = "Frame Repair Kit",
 			description = "Basic nanorepair kit for machines.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			charge = true,
@@ -102,7 +100,6 @@ var example = {
 		"repair2" : {
 			name = "Frame Repair Kit test",
 			description = "Basic nanorepair kit for machines.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			charge = true,
@@ -114,7 +111,6 @@ var example = {
 		"scfcshrd" : {
 			name = "Shard of Sacrifice",
 			description = "The user's Vital is reduced to 1. Target is healed for user's max Vital.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			charge = true,
@@ -126,9 +122,8 @@ var example = {
 			]
 		},
 		"lifeshrd" : {
-			name = "Life Shard",
-			description = "Can bring even machines and spirits from the brink of death.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
+			name = "Time Shard",
+			description = "Revive any fallen party member.",
 			category = 0,
 			maxLevel = 10,
 			skill = [001,001,001,001,001, 001,001,001,001,001],
@@ -137,7 +132,6 @@ var example = {
 		"defshrd": {
 			name = "Defense Shard",
 			description = "Increases DEF for one ally.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			skill = [001,001,001,001,001, 001,001,001,001,001],
@@ -146,7 +140,6 @@ var example = {
 		"erthward": {
 			name = "Earth Ward",
 			description = "Fully protects a party member from one Pierce attack.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			charge = true,
@@ -158,7 +151,6 @@ var example = {
 		"fireward": {
 			name = "Fire Ward",
 			description = "Fully protects a party member from one Fire attack.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			charge = true,
@@ -167,10 +159,28 @@ var example = {
 			counter = true,
 			counters = COUNTER_DMG_FIRE,
 		},
+		"everflam": {
+			name = "Everlasting Flame",
+			description = "Crystal with a small, warm flame. Protects a party member from Cryostasis condition.",
+			category = 0,
+			maxLevel = 10,
+			charge = true,
+			chargeRate = [025,025,025,025,025, 025,025,025,025,025],
+			chargeUse =  [100,100,100,100,100, 100,100,100,100,100],
+			counter = true,
+			counters = COUNTER_COND_CRYO,
+		},
+		"flamshrd": {
+			name = "Shard of Flame",
+			description = "Small shard with a small, warm flame. Protects a party member from Cryostasis condition.",
+			category = 0,
+			maxLevel = 10,
+			counter = true,
+			counters = COUNTER_COND_CRYO,
+		},
 		"fortcoin": {
 			name = "Fortune Coin",
 			description = "A lucky charm from a legendary gambler. Completely negates a critical hit.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			charge = true,
@@ -182,11 +192,10 @@ var example = {
 		"blaklotu": {
 			name = "Black Lotus",
 			description = "A very valuable flower, ripe with energy. It can prevent a party member from passing out at zero health.",
-			value = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800],
 			category = 0,
 			maxLevel = 10,
 			counter = true,
-			counters = COUNTER_DEFEAT,
+			counters = COUNTER_COND_DOWN,
 		}
 	}
 }
@@ -195,7 +204,7 @@ func initTemplate():
 	return {
 		"name": { loader = LIBSTD_STRING },
 		"description": { loader = LIBSTD_STRING },
-		"value": { loader = LIBSTD_SKILL_ARRAY },
+		"value": { loader = LIBSTD_SKILL_ARRAY, default = [00150,00300,00600,01200,02400, 04800,09600,19200,38400,76800] },
 		"category": { loader = LIBSTD_INT }, #TODO: Find out what this meant. Keep it for now, might be reusable for field/battle stuff?
 		"maxLevel": { loader = LIBSTD_INT },
 		"charge": { loader = LIBSTD_BOOL, default = false },

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://tests/debug_menu.gd" type="Script" id=1]
 [ext_resource path="res://tests/debug_partydisplay.tscn" type="PackedScene" id=2]
@@ -74,7 +74,40 @@ func close():
 	if $DGemRemove.is_connected(\"pressed\", parent, \"_on_DGemRemove_pressed\"):
 		$DGemRemove.disconnect(\"pressed\", parent, \"_on_DGemRemove_pressed\")
 	parent = null
-	hide()"
+	hide()
+"
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Panel
+var guild = null
+var buttons = []
+var parent = null
+
+func init(Gu, parent_):
+	show()
+	guild = Gu
+	parent = parent_
+	$Label.text = \"Please select an item to add to your inventory.\"
+	var list:Array = core.lib.item.getData()
+	for i in list:
+		var G = core.lib.item.getIndex(i)
+		if G != null:
+			var button = Button.new()
+			button.text = \"%s\" % [G.name]
+			button.hint_tooltip = \"%s\\n%s\" % [button.text, G.description]
+			button.flat = true
+			button.align = Button.ALIGN_LEFT
+			button.connect(\"pressed\", parent, \"_on_item_selected\", [i])
+			buttons.push_front(button)
+			$ScrollContainer/VBoxContainer.add_child(button)
+
+func close():
+	for i in buttons:
+		i.queue_free()
+	buttons = []
+	parent = null
+	hide()
+"
 
 [node name="Control" type="Control"]
 margin_right = 40.0
@@ -264,6 +297,20 @@ margin_top = 90.0
 margin_right = 460.0
 margin_bottom = 165.0
 
+[node name="Button" type="Button" parent="Panel2"]
+margin_left = 12.0
+margin_top = 200.0
+margin_right = 235.0
+margin_bottom = 225.0
+text = "Get Dragon Gem"
+
+[node name="GetItem" type="Button" parent="Panel2"]
+margin_left = 240.0
+margin_top = 200.0
+margin_right = 460.0
+margin_bottom = 225.0
+text = "Get Item"
+
 [node name="Panel3" type="Panel" parent="."]
 margin_left = 490.0
 margin_right = 960.0
@@ -373,6 +420,12 @@ margin_bottom = 180.0
 margin_top = 180.0
 margin_bottom = 230.0
 
+[node name="Button" type="Button" parent="Panel5"]
+margin_left = 12.0
+margin_top = 240.0
+margin_right = 120.0
+margin_bottom = 265.0
+
 [node name="Panel6" type="Panel" parent="." groups=[
 "CharMenus",
 ]]
@@ -412,6 +465,44 @@ margin_top = 40.0
 margin_right = 460.0
 margin_bottom = 60.0
 text = "Remove"
+
+[node name="Panel7" type="Panel" parent="." groups=[
+"CharMenus",
+]]
+margin_left = 490.0
+margin_top = 390.0
+margin_right = 960.0
+margin_bottom = 720.0
+script = SubResource( 4 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel7"]
+margin_left = 12.0
+margin_top = 60.0
+margin_right = 460.0
+margin_bottom = 320.0
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel7/ScrollContainer"]
+
+[node name="Label" type="Label" parent="Panel7"]
+margin_right = 470.0
+margin_bottom = 20.0
+text = "Lorem Ipsum"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemCancel" type="Button" parent="Panel7"]
+margin_left = 10.0
+margin_top = 20.0
+margin_right = 460.0
+margin_bottom = 40.0
+text = "Cancel"
 [connection signal="pressed" from="Panel/Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="Panel/Button5" to="." method="_on_Button5_pressed"]
 [connection signal="pressed" from="Panel/Button6" to="." method="_on_Button6_pressed"]
@@ -419,6 +510,7 @@ text = "Remove"
 [connection signal="pressed" from="Panel2/Heal" to="." method="_on_Heal_pressed"]
 [connection signal="value_changed" from="Panel2/ELVSlider" to="." method="_on_ELVSlider_value_changed"]
 [connection signal="value_changed" from="Panel2/RankSlider" to="." method="_on_RankSlider_value_changed"]
+[connection signal="pressed" from="Panel2/GetItem" to="." method="_on_GetItem_pressed"]
 [connection signal="pressed" from="Panel4/Repair" to="Panel4" method="_on_Repair_pressed"]
 [connection signal="pressed" from="Panel4/DGem" to="." method="_on_DGem_pressed"]
 [connection signal="pressed" from="Panel6/DGemCancel" to="." method="_on_DGemCancel_pressed"]

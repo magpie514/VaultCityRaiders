@@ -297,36 +297,38 @@ __meta__ = {
 
 [node name="WeaponMenu" parent="." instance=ExtResource( 7 )]
 visible = false
-margin_left = -1.0
-margin_top = -148.0
-margin_right = 359.0
-margin_bottom = 212.0
+margin_left = -28.0
+margin_top = -118.0
+margin_right = 332.0
+margin_bottom = 242.0
 
 [node name="SkillMenu" parent="." instance=ExtResource( 8 )]
 visible = false
-margin_left = -1.0
-margin_top = -150.0
-margin_right = 359.0
-margin_bottom = 210.0
+margin_left = -28.0
+margin_top = -118.0
+margin_right = 332.0
+margin_bottom = 242.0
 
 [node name="ItemMenu" parent="." instance=ExtResource( 9 )]
 visible = false
-margin_left = -1.0
-margin_top = -146.0
-margin_right = 359.0
-margin_bottom = 214.0
+margin_left = -28.0
+margin_top = -118.0
+margin_right = 332.0
+margin_bottom = 242.0
 
 [node name="OverMenu" parent="." instance=ExtResource( 12 )]
 visible = false
-margin_left = -1.0
-margin_top = -148.0
-margin_right = 359.0
-margin_bottom = 212.0
+margin_left = -28.0
+margin_top = -118.0
+margin_right = 332.0
+margin_bottom = 242.0
 
 [node name="TargetPanel" parent="." instance=ExtResource( 10 )]
 visible = false
-margin_left = -399.0
-margin_right = 1.0
+margin_left = -67.0
+margin_top = 172.0
+margin_right = 333.0
+margin_bottom = 242.0
 [connection signal="select" from="Main/WeaponPanel/Weapon1" to="." method="_on_Weapon_pressed" binds= [ 0 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon2" to="." method="_on_Weapon_pressed" binds= [ 1 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon3" to="." method="_on_Weapon_pressed" binds= [ 2 ]]

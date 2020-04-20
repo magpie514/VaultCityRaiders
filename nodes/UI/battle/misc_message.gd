@@ -1,23 +1,21 @@
 extends Label
+signal done
 
-var msg:String  = ''
 var count:float = 0.0
 
-func init(n, crit, color:Color) -> void:
+func init(n:String, color:Color) -> void:
 	count = 1.0
-	msg = n
-	text = str(">%s" % msg)
+	text = str(">%s" % n)
 	percent_visible = 0.0
-	if color != null: set("custom_colors/font_color", color)
-	if crit: 	$CritLabel.show()
-	else:			$CritLabel.hide()
-	$CritLabel.rect_size.x = rect_size.x #Keep centered, copying the X size of the main label just works.
+	set("custom_colors/font_color", color)
 	count = 0.0
 	set_process(true)
 
 func _process(delta: float) -> void:
-	count += 2 * delta
-	percent_visible = count
-	if count > 1.0:
+	count += delta
+	percent_visible = count * 4
+	if count > 1.5:
 		count = 0.0
 		set_process(false)
+		emit_signal("done", self)
+

@@ -2,6 +2,8 @@ extends "res://classes/group/group_base.gd"
 const Adventurer = preload("res://classes/char/char_player.gd")
 const Inventory  = preload("res://classes/inventory/item.gd")
 const DragonGem  = Inventory.DragonGem
+const Consumable = Inventory.Consumable
+const Item       = Inventory.Item
 
 var roster:Array         = core.newArray(24)         #All characters in the guild.
 var formationSlots:Array = core.newArray(MAX_SIZE)   #???
@@ -74,6 +76,10 @@ func giveDGem(G) -> bool: #Add a DGem to inventory.
 	#TODO: Make -> bool, return status in case inventory is full!
 	dragonGems.push_back(G)
 	sortDGems()
+	return true
+
+func giveItem(I) -> bool:
+	inventory.giveConsumable(Item.new(inventory.getFreeSlot(), Item.ITEM_CONSUMABLE, I))
 	return true
 
 func sortDGems() -> void: #Sort DGem inventory.

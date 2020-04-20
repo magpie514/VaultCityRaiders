@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+const Gauge = preload(\"res://nodes/UI/battle/Condition.tscn\")
+var stack:Array = []
+
+func display(cond:Array, val:int, Max:int) -> void:
+	if cond[1] != 0:
+		var gauge = addGauge()
+		gauge.init(cond[0], cond[1], val, Max)
+		stack.push_front(gauge)
+	refresh()
+
+func refresh() -> void:
+	var slot:int = 1
+	for i in stack:
+		i.rect_position.y = slot * -20
+		i.rect_position.x = -80 + (slot * -2)
+		slot += 1
+
+func addGauge() -> Node:
+	var gauge:Control = Gauge.instance()
+	var slot:int = stack.size()
+	add_child(gauge)
+	var ERR:int = gauge.connect(\"done\", self, \"_on_done\")
+	return gauge
+
+func _on_done(what:Control) -> void:
+	what.disconnect(\"done\", self, \"_on_done\")
+	stack.erase(what)
+	what.queue_free()
+	refresh()
+
+"
+
+[node name="ConditionDisplay" type="Control"]
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

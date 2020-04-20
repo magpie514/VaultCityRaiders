@@ -12,23 +12,20 @@ func getDefeated() -> int:	return defeated.size()
 func updateFormation():
 	var M = null
 
-func initBattleTurn():
+func initBattleTurn() -> void:
 	var current = null
 	for i in range(MAX_SIZE):
 		current = formation[i]
 		if current != null and current.condition == core.skill.CONDITION_DOWN:
 			print("[GROUP_ENEMY] %s is down, removing from battle..." % [current.name])
-			current.display.stop() #TODO: Move to .defeat() on char_enemy?
 			formation[i] = null
-	display.update()
+	#display.update()
 	.initBattleTurn()
 
-
-
 func initMember(d, lvbonus:int = 0):
-	var m = enemy.new()
+	var m   = enemy.new()
 	m.level = d.level + lvbonus
-	m.tid = d.tid
+	m.tid   = d.tid
 	m.initDict(core.lib.enemy.getIndex(d.tid))
 	return m
 
@@ -39,38 +36,12 @@ func getSummoned(C) -> Array:
 			result.push_back(i)
 	return result
 
-func defeat(slot:int, C): #Do stuff when the enemy is down.
+func defeat(slot:int, C) -> void: #Do stuff when the enemy is down.
 	var summoned = getSummoned(C)
 	for i in summoned: #Notify summons that this enemy is down.
 		i.onSummonerDefeat()
 	formation[slot] = null
 	if C.lib.canResurrect: defeated.push_front(C) #If it can be resurrected, add to the list.
-
-func revive(x:int) -> void:
-	#Only get here if AI determined a revive is possible
-	var F = defeated.pop_front()
-	var pos:int = -1
-	if formation[F.slot] == null:
-		pos = F.slot
-	else:
-		for i in range(MAX_SIZE):
-			if formation[i] == null:
-				pos = i
-				break
-	if pos > 0:
-		formation[pos] = F
-		F.slot  = pos
-		F.row   = 0 if pos < ROW_SIZE else 1
-		F.group = self
-		display.revive(F, pos)
-		F.revive(x)
-
-func canRevive() -> bool:
-	if defeated.size() > 0:
-		if emptySlot():
-			print("[GROUP_ENEMY] Can revive: %s" % defeated.size())
-			return true
-	return false
 
 func canSummon() -> bool:
 	if summonRestriction > 0:
@@ -133,34 +104,59 @@ func findSummonSlot(SU) -> int:
 				slot = j
 	return slot
 
-func summon(user, slot, SU):
+func summon(user, slot:int, SU) -> void:
 	print("[GROUP_ENEMY][summon] Trying to summon %s" % [str(SU)])
 	addMember(SU, slot)
+	core.battle.displayManager.initSprite(formation[slot], slot)
 	formation[slot].summoner = user
 
-func addMember(data, slot):
-	formation[slot] = initMember(data)
-	formation[slot].slot = slot
-	formation[slot].row = 0 if slot < ROW_SIZE else 1
-	formation[slot].group = self
+func revive(x:int) -> void:
+	#Only get here if AI determined a revive is possible
+	var F = defeated.pop_front()
+	var pos:int = -1
+	if formation[F.slot] == null: #Use previously occupied slot.
+		pos = F.slot
+		print("[GROUP_ENEMY][revive] Reviving at old position (%s)" % pos)
+		print(F)
+	else:
+		for i in range(MAX_SIZE): #Find a new slot.
+			if formation[i] == null:
+				pos = i
+				print("[GROUP_ENEMY][revive] Reviving at position %s" % pos)
+				break
+	if pos > 0: #Valid position found.
+		#display.revive(F, pos)
+		formation[pos]       = F
+		formation[pos].slot  = pos
+		formation[pos].row   = 0 if pos < ROW_SIZE else 1
+		formation[pos].group = self
+		core.battle.displayManager.initSprite(F, pos)
+		F.revive(x)
+	else: #Revival failed.
+		return
+
+func canRevive() -> bool:
+	if defeated.size() > 0:
+		if emptySlot():
+			print("[GROUP_ENEMY] Can revive: %s" % defeated.size())
+			return true
+	return false
+
+func addMember(data, slot:int, lvbonus:int = 0) -> void:
+	formation[slot]         = initMember(data, lvbonus)
+	formation[slot].slot    = slot
+	formation[slot].row     = 0 if slot < ROW_SIZE else 1
+	formation[slot].group   = self
 	formation[slot].initBattle()
-	formation[slot].display = display.createDisplay(slot)
-	#display.bars[slot] = formation[slot].display
-	#formation[slot].sprite = initSprite(formation[slot], slot)
-	#display.connectSignals(display.bars[slot], core.battle.control)
+	#formation[slot].sprite = core.battle.displayManager.initSprite(formation[slot], slot)
 
-
-func init(tid, lvbonus = 0):
+func init(tid, lvbonus:int = 0) -> void:
 	formation = core.newArray(MAX_SIZE)
-	var form = core.lib.mform.getIndex(tid)
-	lib = form
-	name = lib.name
+	var form  = core.lib.mform.getIndex(tid)
+	lib       = form
+	name      = lib.name
 	for i in range(MAX_SIZE):
-		if form.formation[i] != null:
-			formation[i]       = initMember(lib.formation[i],  lvbonus)
-			formation[i].group = self
-			formation[i].slot  = i
-			formation[i].row   = 0 if i < ROW_SIZE else 1
+		if form.formation[i] != null: addMember(lib.formation[i], i, lvbonus)
 
-func loadDebug():
+func loadDebug() -> void:
 	init(["debug", "debug"])

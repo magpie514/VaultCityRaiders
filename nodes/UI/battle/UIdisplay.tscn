@@ -1,0 +1,73 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://nodes/UI/char_display.tscn" type="PackedScene" id=1]
+[ext_resource path="res://nodes/UI/guild_display.gd" type="Script" id=2]
+[ext_resource path="res://nodes/UI/battle/enemy_display.tscn" type="PackedScene" id=3]
+
+[node name="UIDisplay" type="Control"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -99.0
+margin_right = 960.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AF0" parent="." instance=ExtResource( 1 )]
+margin_left = 550.0
+margin_right = 750.0
+
+[node name="AF1" parent="." instance=ExtResource( 1 )]
+margin_left = 550.0
+margin_top = 31.0
+margin_right = 750.0
+margin_bottom = 61.0
+
+[node name="AF2" parent="." instance=ExtResource( 1 )]
+margin_left = 550.0
+margin_top = 62.0
+margin_right = 750.0
+margin_bottom = 92.0
+
+[node name="AB0" parent="." instance=ExtResource( 1 )]
+margin_left = 760.0
+margin_right = 960.0
+
+[node name="AB1" parent="." instance=ExtResource( 1 )]
+margin_left = 760.0
+margin_top = 31.0
+margin_right = 960.0
+margin_bottom = 61.0
+
+[node name="AB2" parent="." instance=ExtResource( 1 )]
+margin_left = 760.0
+margin_top = 62.0
+margin_right = 960.0
+margin_bottom = 92.0
+
+[node name="BF0" parent="." instance=ExtResource( 3 )]
+margin_left = 200.0
+margin_right = 400.0
+
+[node name="BF1" parent="." instance=ExtResource( 3 )]
+margin_left = 200.0
+margin_top = 32.0
+margin_right = 400.0
+margin_bottom = 64.0
+
+[node name="BF2" parent="." instance=ExtResource( 3 )]
+margin_left = 200.0
+margin_top = 64.0
+margin_right = 400.0
+margin_bottom = 96.0
+
+[node name="BB0" parent="." instance=ExtResource( 3 )]
+
+[node name="BB1" parent="." instance=ExtResource( 3 )]
+margin_top = 32.0
+margin_bottom = 64.0
+
+[node name="BB2" parent="." instance=ExtResource( 3 )]
+margin_top = 64.0
+margin_bottom = 96.0

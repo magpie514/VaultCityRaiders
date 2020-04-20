@@ -163,7 +163,7 @@ func addAction(side, slot, act:Action) -> void:
 
 	# Visual and interface related functions go here.
 	if act.skill.chargeAnim[act.level] != 0: user.charge(true)
-	if act.skill.initAD[act.level] != 100: user.display.updateAD(act.skill.initAD[act.level])
+	if act.skill.initAD[act.level] != 100: user.UIdisplay.updateAD(act.skill.initAD[act.level])
 	pushAction(act)
 
 func updateActions(A) -> void:
@@ -208,7 +208,7 @@ func enemyActions() -> void: #Think enemy actions.
 		result.skill = core.lib.skill.getIndex(action[0])
 		result.level = action[1]
 		result.target = action[2]
-		i.display.update()
+		#i.UIdisplay.update()
 		addAction(SIDE_ENEMY, i.slot, result)
 
 func checkActionExecution(user, target) -> bool: #Check if an action can be performed before getting to details.
@@ -249,8 +249,8 @@ func checkFollow(F, last) -> void:
 	var S = F[1] #Follow settings
 	print("[BATTLE_STATE][CHECKFOLLOW] %s is marked by %s with skill %s LV%d" % [T.name, S[0].name, S[3].name, S[4]])
 	#Play ACTION animation.
-	if S[0].side == SIDE_PLAYER: S[0].display.highlight(true)
-	else: S[0].sprite.act()
+	S[0].UIdisplay.highlight(true)
+	S[0].sprite.act()
 	yield(core.battle.control.wait(0.1), "timeout")
 	core.skill.processFL(S[3], S[4], S[0], T, [S[1], S[2]], F[2])
 	yield(controlNode, "skill_finished")
@@ -281,12 +281,12 @@ func checkPriorityActions() -> void:
 			#Execute PR code blocks of involved skills.
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
 			#Play ACTION animation.
-			if i[3] == SIDE_PLAYER: i[2].display.highlight(true)
-			else: i[2].sprite.act()
+			i[2].UIdisplay.highlight(true)
+			i[2].sprite.act()
 			core.skill.runExtraCode(i[0], i[1], i[2], core.skill.CODE_PR)
 			yield(controlNode, "skill_finished")
-			if i[3] == SIDE_PLAYER: i[2].display.highlight(false)
-			i[2].display.update()
+			i[2].UIdisplay.highlight(false)
+			i[2].UIdisplay.update()
 			print("[BATTLE_STATE][checkPriorityActions] PR returned!")
 			yield(core.battle.control.wait(0.5), "timeout")
 			print("[BATTLE_STATE][checkPriorityActions]")

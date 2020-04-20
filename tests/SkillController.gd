@@ -49,7 +49,7 @@ func wait(x):
 	$FXTimer.start()
 	return self
 
-func startAnim(S, level, x, display:Position2D) -> void:
+func startAnim(S, level:int, x, display:Position2D) -> void:
 	var temp = S.animations[x] if x in S.animations else "res://nodes/FX/basic.tscn"
 	anim = load(temp).instance()
 	display.add_child(anim)
