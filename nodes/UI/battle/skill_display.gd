@@ -1,12 +1,12 @@
 extends Panel
 var S = null
 var skill = core.skill
-var textures : Array = core.newArray(8)
-var elements : Array = core.newArray(3)
+var textures: Array = core.newArray(9)
+var elements: Array = core.newArray(3)
 var colors = ["000000", "880000", "FF0000", "FF8800", "FFFF00", "88FF88", "00FFFF", "88FFFF", "FFFFFF"]
 
 func _init() -> void:
-	for i in range(8):
+	for i in range(9):
 		textures[i] = load(core.stats.ELEMENT_DATA[i].icon)
 
 func _ready():

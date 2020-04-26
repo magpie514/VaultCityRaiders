@@ -156,7 +156,7 @@ func loadDebug():
 	print("Weapon library:")
 	printData()
 
-func name(id):
+func name(id) -> String:
 	var entry = getIndex(id)
 	return entry.name if entry else "ERROR"
 
@@ -164,8 +164,8 @@ func loaderSkillList(val):
 	if val == null:
 		return [ null, null ]
 	else:
-		var result = [
-			core.tid.from(val[0]) if val[0] != null else null,
-			core.tid.from(val[1]) if val[1] != null else null,
-		]
+		var result:Array = [0,0]
+		for i in [0, 1]:
+			if val[i] != null: result[i] = core.tid.from(val[i])
+			else             : result[i] = null
 		return result

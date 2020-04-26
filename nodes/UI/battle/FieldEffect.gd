@@ -1,9 +1,9 @@
 extends Panel
-var textures = core.newArray(8)
+var textures:Array = core.newArray(9)
 
 
 func _ready() -> void:
-	for i in range(8):
+	for i in range(9):
 		textures[i] = load(core.stats.ELEMENT_DATA[i].icon)
 
 

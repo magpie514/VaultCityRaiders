@@ -1,5 +1,4 @@
 extends Control
-signal selection(x)
 const PARTY_SIZE       = 6
 var grid:Array
 

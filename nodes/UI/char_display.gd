@@ -2,9 +2,6 @@ extends Panel
 signal display_info(x)
 signal hide_info
 
-var _dmgNum = preload("res://nodes/UI/damage_numbers.tscn")
-var _miscMsg = preload("res://nodes/UI/battle/misc_message.tscn")
-
 onready var effectHook = get_node("EffectHook")
 onready var LookAtMePanel = get_node("EffectHook/LookAtMePanel")
 
@@ -18,7 +15,6 @@ var _theme = "normal"
 var damageQueue = []
 var action = null
 var style = core._charPanel.new(self, "res://resources/tres/char_display.tres", "custom_styles/panel")
-
 
 func damage() -> void:
 	update()
@@ -70,7 +66,7 @@ func setActionText(act):
 					target = act.target[0].name
 	$Action.text = "%s\n%s" % [S.name if act.IT == null else act.IT.data.lib.name, target]
 	$Action.show()
-	if S.chargeAnim[act.level] != 0: charge(true)
+	#if S.chargeAnim[act.level] != 0: charge(true)
 	if S.initAD[act.level] != 100: updateAD(S.initAD[act.level])
 	action = true
 
@@ -88,10 +84,6 @@ func highlight(b) -> void: #Highlights this character to show it's acting or cho
 		LookAtMePanel.hide()
 		LookAtMePanel.set_process(false)
 		LookAtMePanel.get_node("Tween").stop(LookAtMePanel)
-
-func charge(b:bool = false) -> void: #Charge effect
-	$EffectHook/Charge.emitting = b
-	$EffectHook/Charge.self_modulate = Color(chr.energyColor)
 
 func updateAD(x:int) -> void: #Update Active Defense display.
 	if chr.battle != null:
@@ -129,34 +121,20 @@ func update() -> void:
 
 		#Make the panel blink if health is under 15%.
 		if vitalN < 0.15 and vitalN > 0.0: blink = -1
-		elif blink == -1:                  blink = 0
-
+		elif blink == -1                 : blink = 0
 
 		#Set colors from active condition.
 		style.fromStatus(chr.condition)
 		$Status.text = core.stats.CONDITION_DATA[chr.condition].short
 
-		$Name.text = chr.name
+		$Name.text          = chr.name
 		$ComplexBar/HP.text = str("%03d" % vital)
-		$ComplexBar.value = vitalN
-		$ComplexBar/DMG.text = str("%03d" % chr.EP)
+		$ComplexBar.value   = vitalN
 
 func _ready() -> void:
 	shakeTimer = 0
 	origPosition = rect_position
 	set_process(true)
-
-func selectable(f) -> void:
-	if f:
-		style.set("select")
-		$Button.show()
-		if action != null:
-			$Action.hide()
-	else:
-		$Button.hide()
-		update()
-		if action != null:
-			$Action.show()
 
 func _on_Button_mouse_entered() -> void:
 	highlight(true)

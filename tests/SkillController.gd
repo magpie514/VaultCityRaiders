@@ -5,6 +5,8 @@ signal fx_finished
 signal skill_special_finished
 signal onhit_finished
 signal action_finished
+signal notify_all_finished
+signal notify_finished
 
 const ANIM_SPEEDS = [2.5, 2.0, 1.0, 0.5]
 
@@ -25,6 +27,14 @@ func finish() -> void:
 func finishSpecial() -> void:
 	print("SKILL SPECIAL FINISHED SIGNAL")
 	emit_signal("skill_special_finished")
+
+func finishNotification() -> void:
+	print("SKILL NOTIFY FINISHED SIGNAL")
+	emit_signal("notify_finished")
+
+func finishNotifications() -> void:
+	print("SKILL NOTIFY ALL FINISHED SIGNAL")
+	emit_signal("notify_all_finished")
 
 func finishFollows() -> void:
 	print("ONHIT FINISHED SIGNAL")

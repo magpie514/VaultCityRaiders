@@ -56,11 +56,11 @@ func defeatMessage() -> String:
 	return str(lib.defeatMsg % name)
 
 func defeat() -> void:
-	.defeat()
 	core.battle.control.state.EXP += int(100 * XPMultiplier)
-	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
 	sprite.defeat()
+	.defeat()
 	group.defeat(slot, self)
+	print("[CHAR_ENEMY] %s defeated! +%d EXP Total enemies defeated: %s" % [name, 100 * XPMultiplier, group.defeated])
 
 func onSummonerDefeat():
 	print("[CHAR_ENEMY][onSummonerDefeat] %s's summoner fell!" % name)

@@ -92,9 +92,9 @@ class BattleStats:
 	var critBonus:int  = 0           #Raw mod to critical bonus.
 	var FEbonus:int    = 0           #Added to elemental field bonus.
 	var eventFlags:int = 0           #Event special flags such as plot armor.
-	var overheat : int = 0           #Reduces by 1 per turn. Prevents overheat skills from being used.
 	var lastAction = null
 	var overAction:Array = []        #Temporary storage for Over actions while AI or player are choosing.
+	var event_listener = [ [] ]
 	func set_over(x:int) -> void:
 		over = core.clampi(x, 0, 100)
 
@@ -123,6 +123,14 @@ class BattleStats:
 		self.follow.clear()
 		self.protectedBy.clear()
 		self.overAction.clear()
+		self.resetEventListeners()
+
+	func resetEventListeners() -> void:
+		for i in event_listener: i.clear()
+
+	func addEventListener(event_type:int, S:Dictionary, lv:int) -> void:
+		print("[BATTLE_STATS][addEventListener] %s lv.%s" % [S.name, lv])
+		event_listener[event_type].push_back([S, lv])
 
 	func resetCounter() -> void:
 		counter[0] = 0    #Counter chance
@@ -141,7 +149,15 @@ class BattleStats:
 
 ###############################################################################
 
-func createBattleStats():
+func reportEvent(event_type:int, target) -> void:
+	#yield()
+	for i in battle.event_listener[event_type]:
+		skill.runExtraCode(i[0], i[1] + 1, self, skill.CODE_GD, target)
+		#yield(core.battle.skillControl, "skill_finished")
+		#print("=======REPORT RETURNED==========")
+	#core.battle.skillControl.finishNotification()
+
+func createBattleStats() -> BattleStats:
 	return BattleStats.new()
 
 func checkParalysis() -> bool:
@@ -173,13 +189,11 @@ func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:
 func recalculateStats():
 	pass
 
-func resetBattleStatMultipliers():
-	for i in stats.STATS:
-		battle.statmult[i] = int(100)
+func resetBattleStatMultipliers() -> void:
+	for i in stats.STATS: battle.statmult[i] = int(100)
 
-func applyBattleStatMultipliers():
-	for i in stats.STATS:
-		battle.stat[i] = int(float(battle.stat[i]) * (float(battle.statmult[i]) * 0.01))
+func applyBattleStatMultipliers() -> void:
+	for i in stats.STATS: battle.stat[i] = int(float(battle.stat[i]) * (float(battle.statmult[i]) * 0.01))
 
 func initBattleTurn() -> void:
 	clampHealth()
@@ -219,13 +233,8 @@ func endBattleTurn(defer) -> void:
 	#Reset guard and barrier values now so they don't show in the player UI.
 	battle.guard   = 0
 	battle.barrier = 0
-	#Placeholder for skills that cause overheat.
-	if battle.overheat > 0:
-		battle.overheat -= 1
-		if battle.overheat == 0:
-			battle.overheat = 0
-	if condition2 & skill.CONDITION2_STUN:
-		condition2 = condition2 & ~skill.CONDITION2_STUN
+	#Remove stun condition at the end of the turn.
+	if condition2 & skill.CONDITION2_STUN:	condition2 = condition2 & ~skill.CONDITION2_STUN
 
 	battle.buff   = updateEffects(battle.buff  , defer)
 	battle.debuff = updateEffects(battle.debuff, defer)
@@ -277,6 +286,7 @@ func getOverN() -> float:
 
 func calcSPD(spd:int) -> int:
 	var AGI:float = battle.stat.AGI as float
+	if condition == skill.CONDITION_PARALYSIS: AGI = AGI / 2.0
 	var equipSpeedMod:float = float(getEquipSpeedMod() + 100)
 	var skillSpeedMod:float = float(spd) * 0.01
 	#return (equipSpeedMod * AGI * skillSpeedMod * mod * statBonus.mult.SPD) / 10000
@@ -368,7 +378,7 @@ func damage(x:int, crit:bool = false, resist:int = 0, nonlethal:bool = false) ->
 		if int(abs(temp)) >= maxHealth() / 2: #Check for overkill.
 			overkill = true
 			display.message("Overkill!", "EFEFEF")
-		if battle.adamant and full:
+		if battle.adamant and full: #Activate adamant effect.
 			HP = 1
 			display.message("Survived!", "EFEFEF")
 			#TODO: Should display some animation and play a sound here.
@@ -393,26 +403,28 @@ func setAD(x:int, absolute:bool = false) -> void: #Set active defense.
 	else       : battle.AD += x
 	if battle != null and UIdisplay != null:
 		UIdisplay.updateAD(battle.AD)
-	print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
+	#print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
 func defeat() -> void: #Process defeat.
 	condition = skill.CONDITION_DOWN
 	HP = 0 #Set HP to zero in case this was called outside of damage()
 	#Ensure some things are removed on defeat.
-	if battle != null:
+	if battle != null: #In case it's called from outside battle (dungeon traps, etc)
+		core.battle.state.queueEvent(core.battle.state.NOTIFY_ON_DEFEAT, self)
 		charge(false)
-		battle.AD = 100
+		battle.AD         = 100
+		battle.dodge      = 0
+		battle.forceDodge = 0
+		battle.defending  = false
 		battle.follow.clear()
 		battle.chase.clear()
 		battle.resetCounter()
 		battle.resetParry()
-		battle.dodge = 0
-		battle.forceDodge = 0
-		battle.defending = false
 		battle.buff.clear()
 		battle.debuff.clear()
 		battle.effect.clear()
 		battle.damageEffect.clear()
+		battle.resetEventListeners()
 	print("[CHAR_BASE][DEFEAT] %s is down." % name)
 
 func defend() -> void:
@@ -489,8 +501,6 @@ func addInflict(x:int) -> void:
 	match x:
 		core.stats.COND_PARALYSIS:
 			condition = skill.CONDITION_PARALYSIS
-		core.stats.COND_NARCOSIS:
-			condition = skill.CONDITION_NARCOSIS
 		core.stats.COND_CRYO:
 			condition = skill.CONDITION_CRYO
 		core.stats.COND_SEAL:
@@ -505,8 +515,6 @@ func addInflict(x:int) -> void:
 			condition2 = condition2 | skill.CONDITION_CURSE
 		core.stats.COND_PANIC:
 			condition2 = condition2 | skill.CONDITION_PANIC
-		core.stats.COND_STASIS:
-			condition2 = condition2 | skill.CONDITION_STASIS
 	battle.conditionDefsMax[x] += 1
 	battle.conditionDefs[x] = battle.conditionDefsMax[x]
 
@@ -535,7 +543,7 @@ func tryInflict2(user, cond:int, powr:int, crit:int) -> int: #Returns 0 if immun
 				return 1 #Infliction in progress.
 	return 0
 func tryInflict(user, value:int, crit:int) -> void:
-	var cond:int = core.clampi(((value & 0xF0) >> 4) - 1, 0, 15)
+	var cond:int = core.clampi(((value & 0xF0) >> 4) - 1, 0, 10)
 	var powr:int = core.clampi((value & 0x0F)     , 0, 15)
 	#TODO: See something about hit checks. Like a way to not have to do "if_connect" all the time?
 	match(tryInflict2(user, cond, powr, crit)):
@@ -552,13 +560,10 @@ func tryInflict(user, value:int, crit:int) -> void:
 			display.message(core.stats.CONDITION_DATA[cond].name, "FF00FF")
 			addInflict(cond)
 
-
-
 func validateInflict(val:int) -> bool:
 	var ok:bool = false
 	match val:
 		core.stats.COND_PARALYSIS: ok = true
-		core.stats.COND_NARCOSIS:  ok = true
 		core.stats.COND_CRYO:      ok = true
 		core.stats.COND_SEAL:      ok = true
 		core.stats.COND_DEFEAT:    ok = true
@@ -566,7 +571,6 @@ func validateInflict(val:int) -> bool:
 		core.stats.COND_STUN:      ok = true
 		core.stats.COND_CURSE:     ok = true
 		core.stats.COND_PANIC:     ok = true
-		core.stats.COND_STASIS:    ok = true
 		core.stats.COND_DAMAGE:    ok = true
 	return ok
 
@@ -739,10 +743,12 @@ func removeEffect(E, holder) -> void:
 func checkPassives(runEF:bool = false) -> void: pass #[VIRTUAL] Checks passive skills.
 
 func initPassive(S, lv:int = 1, runEF:bool = false) -> void:
-	if S.effectStatBonus != null:
-		calculateEffectStats(S, lv)
-	if runEF:
-		skill.runExtraCode(S, lv+1, self, skill.CODE_EF, self)
+	if S.effectStatBonus != null: calculateEffectStats(S, lv)
+	if S.codeGD != null:
+		print("[CHAR_BASE][initPassive] %s wants to listen to GD events." % name)
+		battle.addEventListener(group.EVENT_ON_DEFEAT, S, lv)
+		core.battle.state.addEventListener(group.EVENT_ON_DEFEAT, self)
+	if runEF and S.codeEF != null: skill.runExtraCode(S, lv+1, self, skill.CODE_EF, self)
 
 ###################################################################################################
 
@@ -823,26 +829,26 @@ func dodgeAttack(user) -> void:
 
 func canAct() -> bool: #Checks if char can perform a regular action.
 	match condition: #Main Condition check. (TODO: Finish)
-		skill.CONDITION_DOWN:      return false
-		skill.CONDITION_PARALYSIS: return battle.paralyzed
-		skill.CONDITION_NARCOSIS:  return false
-		skill.CONDITION_CRYO:      return false
-		skill.CONDITION_SEAL: return false
+		skill.CONDITION_DOWN      : return false
+		skill.CONDITION_PARALYSIS : return battle.paralyzed
+		skill.CONDITION_CRYO      : return false
+		skill.CONDITION_SEAL      : return false
 		_: pass
 	# Secondary Condition checks.
 	if condition2 & skill.CONDITION2_STUN:   return false
-	if condition2 & skill.CONDITION2_PANIC:  return battle.panic
-	if condition2 & skill.CONDITION2_STASIS: return false
+	return true
+
+func canSkill() -> bool: #Check if char can perform a skill.
+	if condition2 & skill.CONDITION2_PANIC:  return false
 	return true
 
 
 func canOver() -> bool: #Checks if char can perform Over actions.
 	match condition:
-		skill.CONDITION_DOWN:  return false #Is defeated and cannot use Over.
-		skill.CONDITION_CRYO:  return false #Is frozen and cannot use Over.
-		skill.CONDITION_SEAL:  return false #Is sealed and cannot use Over.
+		skill.CONDITION_DOWN : return false #Is defeated and cannot use Over.
+		skill.CONDITION_CRYO : return false #Is frozen and cannot use Over.
+		skill.CONDITION_SEAL : return false #Is sealed and cannot use Over.
 		_: pass
-	if condition2 & skill.CONDITION2_STASIS: return false
 	if condition2 & skill.CONDITION2_PANIC:  return false
 	return true
 
@@ -886,13 +892,9 @@ func isAble() -> bool: #Checks if character is active.
 func filter(S:Dictionary) -> bool: #Checks if character meets the conditions to be targeted.
 	match S.filter:
 		skill.FILTER_ALIVE:
-			return false if (condition == skill.CONDITION_DOWN or condition2 & skill.CONDITION2_STASIS) else true
-		skill.FILTER_ALIVE_OR_STASIS:
 			return false if condition == skill.CONDITION_DOWN else true
 		skill.FILTER_DOWN:
 			return false if condition != skill.CONDITION_DOWN else true
-		skill.FILTER_STASIS:
-			return true if condition2 & skill.CONDITION2_STASIS else false
 		skill.FILTER_STATUS:
 			if condition != skill.CONDITION_GREEN and condition != skill.CONDITION_DOWN:
 				return false
@@ -911,7 +913,7 @@ func setInitAD(S:Dictionary, lv:int) -> void: #Sets Active Defense before battle
 	setAD(S.initAD[lv], true)
 	print("[SKILL][setInitAD] Active Defense set to %d" % battle.AD)
 
-func useBattleSkill(state, act:int, S, lv:int, targets, WP = null, IT = null, skipAnim:bool = false) -> void:
+func useBattleSkill(act:int, S, lv:int, targets, WP = null, IT = null, skipAnim:bool = false) -> void:
 	core.skill.process(S, lv, self, targets, WP, IT, skipAnim)
 
 func checkRaceType(type) -> bool:

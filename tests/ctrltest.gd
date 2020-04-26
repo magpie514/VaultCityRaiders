@@ -12,16 +12,17 @@ var reply           = null
 var battleSpeed:int = 0
 
 func _ready():
-	testguild = core.guild
-	testmform = core.battle.enemy
-	testmform.versus = testguild
-	testguild.versus = testmform
+	testguild                = core.guild
+	testmform                = core.battle.enemy
+	testmform.versus         = testguild
+	testguild.versus         = testmform
 	$Panel/UIDisplay.init()
-	$SkillController.speed = battleSpeed
-	core.battle.control = self
+	$SkillController.speed   = battleSpeed
+	core.battle.state        = state
+	core.battle.control      = self
 	core.battle.skillControl = $SkillController
-	core.battle.background = $Panel/ViewportContainer/Viewport/BattleView
-	core.battle.UI = $Panel/UIDisplay
+	core.battle.background   = $Panel/ViewportContainer/Viewport/BattleView
+	core.battle.UI           = $Panel/UIDisplay
 	core.battle.displayManager = preload("res://classes/battle/display_manager.gd").new(testguild, testmform, core.battle.background)
 	state.init(testguild, testmform, self)
 	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
@@ -57,8 +58,6 @@ func battle():
 		if checkResolution(): return #Make sure end of turn special effects didn't cause a victory or defeat.
 		$Panel/FieldEffect.updateDisplay(state.field)
 		#Show battle log and hide large action text.
-		$Panel/BattleLog2.bbcode_text = ""
-		$Panel/BattleLog2.hide()
 		$Panel/BattleLog.show()
 
 		#From now on it's the new turn.
@@ -96,6 +95,10 @@ func battle():
 				C.UIdisplay.setActionText(reply)
 				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
 				islot += 1
+			elif typeof(reply) == TYPE_STRING:
+				match(reply):
+					'skip': islot = playerChars.size()
+					_     : pass
 			elif islot > 0:
 				#Player cancelled current action, clean up and go back.
 				C.battle.overAction.clear() #Remove Over skills.
@@ -107,7 +110,7 @@ func battle():
 				islot -= 1
 			$Panel/BattleControls.closeAll()
 
-		yield(waitFixed(0.25), "timeout")
+		yield(wait(0.25, true), "timeout")
 		for i in playerActions:
 			C = testguild.formation[i[1]]
 			if not C.battle.overAction.empty():
@@ -118,21 +121,18 @@ func battle():
 
 		# Done collecting player actions from here ####################################################
 		state.prepareActionQueue()
-		$DebugActionQueue.text = state.printQueuePanel()
+		#$DebugActionQueue.text = state.printQueuePanel()
 		$Panel/UIDisplay.battleTurnUpdate() 			#Reset turn counters (accumulated damage, etc)
 
 # Action starts here ###########################################################
 		$Panel/ActionQueue.init(state.actions())
 		$Panel/BattleLog.hide()
-		$Panel/BattleLog2.show()
-		$Panel/BattleLog2.bbcode_text = ""
 	#First check if any actions have a priority setup.
 		state.checkPriorityActions()
-		yield($SkillController, "skill_special_finished")
+		#yield($SkillController, "skill_special_finished")
 
 	#Now run everything else.
 		while state.amount() > 0:
-			$Panel/BattleLog2.bbcode_text = ""
 			A = state.popAction()
 			$Panel/CurrentAction.show()
 			$Panel/CurrentAction.init(A)
@@ -146,6 +146,7 @@ func battle():
 						yield(A.user.sprite.player, "animation_finished")
 					state.initAction(A)
 					yield($SkillController, "action_finished")
+					#yield(state.initAction(A), "completed")
 					state.updateActions(A)
 					state.sort()
 					if A.act != state.ACT_DEFEND: yield(wait(1.0), "timeout")
@@ -156,8 +157,8 @@ func battle():
 				else:
 					print("Skipping action, battle is over.")
 		state.endTurn()
-		yield($SkillController, "skill_special_finished")
-		yield(wait(0.5), "timeout")
+		#yield($SkillController, "skill_special_finished")
+		yield(wait(0.2, true), "timeout")
 		print("Checking if state changed...")
 		if checkResolution(): return
 		print("Actual end of turn")
@@ -169,7 +170,7 @@ func getBattleDelay(x):
 func echo(text):
 	text = str(text)
 	$Panel/BattleLog.addLine(text)
-	$Panel/BattleLog2.bbcode_text += "%s\n" % text
+	#$Panel/BattleLog2.bbcode_text += "%s\n" % text
 
 func wait(time, absolute = false): #Wait some time (affected by battle speed)
 	$Timer.wait_time = time if absolute else getBattleDelay(time)
@@ -223,12 +224,9 @@ func _on_QuitButton_pressed(): #Quit button.
 
 func showInfo(what, type, level = 0): #Show the info panel.
 	match type:
-		0:
-			$Panel/InfoDisplay.showPlayer(what)
-		1:
-			$Panel/InfoDisplay.showEnemy(what)
-		2:
-			$Panel/InfoDisplay.showSkill(what, level)
+		0:$Panel/InfoDisplay.showPlayer(what)
+		1:$Panel/InfoDisplay.showEnemy(what)
+		2:$Panel/InfoDisplay.showSkill(what, level)
 	$Panel/InfoDisplay.show()
 
 func hideInfo(): #Hide the info panel.

@@ -16,16 +16,16 @@ anti_aliasing = false
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends Panel
-var textures:Array = core.newArray(8)
+var textures:Array = core.newArray(9)
 onready var origPos:Vector2 = self.get_position()
 var timer:int = 0
 
 func _init() -> void:
-	for i in range(8):
+	for i in range(9):
 		textures[i] = load(core.stats.ELEMENT_DATA[i].icon)
 
 func init(A) -> void: #A:Action
-	if A.act == core.battle.control.state.ACT_DEFEND: 
+	if A.act == core.battle.control.state.ACT_DEFEND:
 		hide()
 		return
 	else: show()
@@ -63,8 +63,8 @@ func _process(delta: float) -> void:
 "
 
 [node name="CurrentAction" type="Panel"]
-margin_right = 220.0
-margin_bottom = 40.0
+margin_right = 290.0
+margin_bottom = 50.0
 custom_styles/panel = SubResource( 1 )
 script = SubResource( 2 )
 __meta__ = {
@@ -74,19 +74,20 @@ __meta__ = {
 [node name="Label" type="Label" parent="."]
 margin_left = 10.0
 margin_top = 2.0
-margin_right = 200.0
+margin_right = 236.0
 margin_bottom = 20.0
 custom_fonts/font = ExtResource( 1 )
 text = "CHARACTER NAME"
+align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label2" type="Label" parent="."]
-margin_top = 18.0
-margin_right = 218.0
-margin_bottom = 40.0
+margin_top = 23.0
+margin_right = 284.0
+margin_bottom = 45.0
 custom_fonts/font = ExtResource( 3 )
 text = "SKILL NAME"
 align = 2

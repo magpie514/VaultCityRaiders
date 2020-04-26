@@ -146,7 +146,7 @@ var data = {
 				null,
 				null,
 			],
-			skills = [ [0, 1], [1, 1], [2, 1] ],
+			skills = [ [0, 1], [1, 1], [2, 1], [3, 1] ],
 			links = [
 				[100, A.LINK_RIVAL, A.LINK_NONE, A.LINK_NONE],
 				[070, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],

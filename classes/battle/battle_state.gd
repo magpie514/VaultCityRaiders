@@ -1,17 +1,38 @@
-
-#signal skill_finished
-
 const FIELD_EFFECT_SIZE = 12
 const ElementField = preload("res://classes/battle/field_effects.gd")
 const msgColors = {
-	names = ["9999FF", "FF9999", "99FF99"],
-	damage = ["FF7842", "FC4547", "FFC542"],
+	names   = ["9999FF", "FF9999", "99FF99"],
+	damage  = ["FF7842", "FC4547", "FFC542"],
 	healing = ["44FF94"],
 }
 
 enum { ACT_DEFEND, ACT_FIGHT, ACT_SKILL, ACT_ITEM, ACT_RUN, ACT_OVER }
 enum { SIDE_PLAYER, SIDE_ENEMY, SIDE_SPECIAL }
 enum { RESULT_ONGOING, RESULT_VICTORY, RESULT_DEFEAT, RESULT_GUILD_ESCAPE, RESULT_ENEMY_ESCAPE, RESULT_SPECIAL }
+
+enum { #Global event notification subsystem.
+	NOTIFY_ON_DEFEAT = 0, #Characters in this list get notified when any character is defeated and run any codeGD in their effects and passives.
+}
+
+var turn:int         = 0                  #Current turn for this battle. Influences AI.
+var quit:bool        = false              #If battle should continue or not.
+var resolution:int   = 0                  #Result for the encounter when quitting.
+var formations:Array = core.newArray(2)   #Pointers to the participating groups.
+var actionQueue      = core.newArray(1)   #Action queue.
+var field            = ElementField.new() #Elemental field.
+var lastElement:int  = 0                  #Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
+var onhit            = []                 #Temporary var to store extra onhit effects.
+var UI               = null               #Pointer to user interface.
+var lastAct          = []                 #Last action?
+var nextAct          = []                 #Next action?
+var EXP:int          = 0                  #Accumulated EXP reward for the encounter.
+var notifyListeners:Array = [             #Report to these characters when notifications happen. See event notification enum for array details.
+	 [], #NOTIFY_ON_DEFEAT: Characters here request to be informed of defeats. Run their codeGD skill codes if able.
+	 ]
+var notifyQueue:Array = [
+	[], #NOTIFY_ON_DEFEAT: List of on_defeat events to notify.
+]
+
 
 class Action:
 	var user = null          #Pointer to user.
@@ -32,20 +53,6 @@ class Action:
 	func _init(_act:int = ACT_SKILL) -> void:
 		act = _act
 
-var turn:int = 0                         #Current turn for this battle. Influences AI.
-var quit:bool = false                    #If battle should continue or not.
-var resolution:int = 0                   #Result for the encounter when quitting.
-var formations:Array = core.newArray(2)  #Pointers to the participating groups.
-var actionQueue = core.newArray(1)       #Action queue.
-var field = ElementField.new()           #Elemental field.
-var lastElement:int = 0                  #Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
-var onhit = []                           #Temporary var to store extra onhit effects.
-var UI = null                            #Pointer to user interface.
-var lastAct = []                         #Last action?
-var nextAct = []                         #Next action?
-var EXP:int = 0                          #Accumulated EXP reward for the encounter.
-
-
 func dprint(text:String) -> void: #TODO: Convert this into a proper debug printer.
 	print(text)
 
@@ -56,9 +63,10 @@ func _init() -> void:
 	quit = false
 
 func init(player, enemy, ui_node) -> void: #Actual initialization of the battle queue.
-	UI = ui_node
+	UI                      = ui_node
 	formations[SIDE_PLAYER] = player
-	formations[SIDE_ENEMY] = enemy
+	formations[SIDE_ENEMY]  = enemy
+	resetEventListeners()
 	resetActionQueue()
 	field.init() #Initialize elemental field.
 	for i in formations: #Initialize both formations. Iterated in case I add more factions at once.
@@ -73,17 +81,49 @@ func colorName(user) -> String:
 func color_name(user) -> String:
 	return "[color=#%s]%s[/color]" % [msgColors.names[user.side], user.name]
 
+
+func logHitRecord(user, target, state) -> void:
+	var output:String = ''
+	var defeats:bool  = false
+	if state.hitRecord.size() > 1:
+		var dmgPercentTotal:int = 0
+		for i in state.hitRecord:
+			dmgPercentTotal += i[5]
+			if i[6]: defeats = true
+		output = str("Hit %s %s times for %.2f%% (" % [ color_name(target), state.hitRecord.size(), dmgPercentTotal ])
+		for i in range(state.hitRecord.size()):
+			output += str("[color=#%s]%s%s[/color]" % [
+				msgColors.damage[state.hitRecord[i][3]], int(state.hitRecord[i][0]),
+				"!" if state.hitRecord[i][1] else "", #Critical
+			])
+			if i < state.hitRecord.size() - 1: output += " "
+		output += str(") damage!")
+	elif state.hitRecord.size() == 1:
+		output = str("Hit %s for %.2f%%([color=#%s]%s[/color]) damage! %s") % [
+			color_name(target), state.hitRecord[0][5],
+			msgColors.damage[state.hitRecord[0][3]], state.hitRecord[0][0] as int,
+			"Critical hit!" if state.hitRecord[0][1] else "",
+		]
+		if state.hitRecord[0][6]: defeats = true
+	else:
+		output = str("Missed [color=#%s]%s[/color]!") % [ colorName(target), target.name ]
+	if defeats:
+		output += str(" %s" % target.defeatMessage())
+	state.hitRecord.clear() #Clear accumulated attack info.
+	echo(output)
+
 func passTurn(): #Advances the turn counter and makes groups update its members.
 	turn += 1
 	echo("TURN %s START" % turn)
 	field.passTurn()
 	resetActionQueue() #Relieve the queue from any potential trash data.
+	resetEventListeners()
 	for i in formations: #Make participating groups update their members.
 		i.initBattleTurn()
 
 func endTurn():
 	var controlNode = core.battle.skillControl
-	yield(controlNode.wait(0.001), "timeout") #Wait a little bit so the yield on caller can wait.
+	#yield(controlNode.wait(0.001), "timeout") #Wait a little bit so the yield on caller can wait.
 	print("Turn %s ended. Updating characters..." % turn)
 	core.world.passTime()
 	var defer = []
@@ -95,9 +135,9 @@ func endTurn():
 		for i in defer:
 			print("  [ED:%sL%s] %s > %s" % [i[0].name, i[1], i[2].name, i[3].name])
 			core.skill.processED(i[0], i[1], i[2], i[3])
-			yield(controlNode, "skill_finished")
+			#yield(controlNode, "skill_finished")
 			print("....ED CODE RETURNED....")
-	controlNode.emit_signal("skill_special_finished")
+	#controlNode.emit_signal("skill_special_finished")
 
 func resetActionQueue() -> void: #Resets the action queue.
 	dprint("[BATTLE_STATE][resetActionQueue] Resetting action queue.")
@@ -223,43 +263,57 @@ func checkActionExecution(user, target) -> bool: #Check if an action can be perf
 	return false
 
 func initAction(act) -> void:
+	yield(core.battle.control.wait(0.001), "timeout")
+	var skip_animations:bool = (act.act == ACT_DEFEND)
 	if checkActionExecution(act.user, act.target):
-		act.user.useBattleSkill(self, act.act, act.skill, act.level, act.target, act.WP, act.IT, (act.act == ACT_DEFEND))
-		yield(core.battle.skillControl, "skill_finished")
+		if act.target.empty():
+			print("[SKILL][PROCESS][!] No targets specified, trying to autotarget.")
+			#return
+		var targets = core.skill.calculateTarget(act.skill, act.level, act.user, act.target)
+		if targets != null and targets.size() == 0:
+			print("[SKILL][PROCESS][!] No targets found.")
+		if not skip_animations:
+			if 'startup' in act.skill.animations:
+				core.battle.skillControl.startAnim(act.skill, act.level, 'startup', core.battle.bg_fx)
+				yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
+				print("[BATTLE_STATE][initAction] Startup animation finished")
+			if 'main' in act.skill.animations and targets.size() == 1:
+				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targets[0].sprite.effectHook)
+				yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
+				print("[BATTLE_STATE][initAction] Main animation finished")
+		act.user.useBattleSkill(act.act, act.skill, act.level, act.target, act.WP, act.IT, skip_animations)
+		#yield(core.battle.skillControl, "skill_finished")
 		# Process post-skill actions.
 		if onhit.size() > 0:
 			while onhit.size() > 0:
 				var F = onhit.pop_front()
 				if F[1][0].canFollow(F[1][3], F[1][4], F[0]):
 					checkFollow(F, onhit.size() == 0)
-					yield(core.battle.skillControl, "skill_special_finished")
-			yield(core.battle.skillControl, "onhit_finished")
-			core.battle.skillControl.actionFinish()
-		else:
-			print("[BATTLE_STATE][INITACTION] No onhit, all done.")
-			core.battle.skillControl.actionFinish()
+					#yield(core.battle.skillControl, "skill_special_finished")
+			#yield(core.battle.skillControl, "onhit_finished")
+		notifyEvents() #Notify of minor combat events (defeats, weakness hit, resistance hit...)
+		core.battle.skillControl.actionFinish()
 	else:
 		if act.IT != null:
 			print("[BATTLE_STATE][INITACTION] %s was trying to use %s, but was unable to act, giving it back." % [act.user.name, act.IT.lib.name])
 			act.user.group.inventory.returnConsumable(act.IT)
 
-func checkFollow(F, last) -> void:
+func checkFollow(F, last:bool) -> void:
 	var controlNode = core.battle.skillControl
 	var T = F[0] #Target
 	var S = F[1] #Follow settings
 	print("[BATTLE_STATE][CHECKFOLLOW] %s is marked by %s with skill %s LV%d" % [T.name, S[0].name, S[3].name, S[4]])
 	#Play ACTION animation.
 	S[0].UIdisplay.highlight(true)
-	S[0].sprite.act()
-	yield(core.battle.control.wait(0.1), "timeout")
+	#S[0].sprite.act()
+	#yield(core.battle.control.wait(0.1), "timeout")
 	core.skill.processFL(S[3], S[4], S[0], T, [S[1], S[2]], F[2])
-	yield(controlNode, "skill_finished")
+	#yield(controlNode, "skill_finished")
 	print("[BATTLE_STATE][CHECKFOLLOW] Follow returned!")
-	yield(core.battle.control.wait(0.5), "timeout")
-	print("[BATTLE_STATE][CHECKFOLLOW] FL WAIT OK!")
-	controlNode.finishSpecial()
-	if last:
-		controlNode.finishFollows()
+	#yield(core.battle.control.wait(0.3), "timeout")
+	#print("[BATTLE_STATE][CHECKFOLLOW] FL WAIT OK!")
+	#controlNode.finishSpecial()
+	if last: controlNode.finishFollows()
 
 
 func collectPriorityActions(act, temp) -> void:
@@ -281,17 +335,17 @@ func checkPriorityActions() -> void:
 			#Execute PR code blocks of involved skills.
 			print("  [PR:%sL%s] %s" % [i[0].name, i[1], i[2].name])
 			#Play ACTION animation.
-			i[2].UIdisplay.highlight(true)
-			i[2].sprite.act()
+			#i[2].UIdisplay.highlight(true)
+			#i[2].sprite.act()
 			core.skill.runExtraCode(i[0], i[1], i[2], core.skill.CODE_PR)
-			yield(controlNode, "skill_finished")
-			i[2].UIdisplay.highlight(false)
+			#yield(controlNode, "skill_finished")
+			#i[2].UIdisplay.highlight(false)
 			i[2].UIdisplay.update()
-			print("[BATTLE_STATE][checkPriorityActions] PR returned!")
-			yield(core.battle.control.wait(0.5), "timeout")
-			print("[BATTLE_STATE][checkPriorityActions]")
-	yield(core.battle.control.wait(0.1), "timeout") #Small pause.
-	controlNode.emit_signal("skill_special_finished") #Notify we are done processing all priority special actions.
+			#print("[BATTLE_STATE][checkPriorityActions] PR returned!")
+			#yield(core.battle.control.wait(0.5), "timeout")
+			#print("[BATTLE_STATE][checkPriorityActions]")
+	#yield(core.battle.control.wait(0.1), "timeout") #Small pause.
+	#controlNode.emit_signal("skill_special_finished") #Notify we are done processing all priority special actions.
 
 func actions() -> Array: #Returns a total list of actions without popping them.
 	var result:Array = []
@@ -299,28 +353,51 @@ func actions() -> Array: #Returns a total list of actions without popping them.
 		result.push_back(actionQueue[i])
 	return result
 
+# Combat event notifications ##################################################
+func addEventListener(event:int, listener) -> void: #Add character to listen to give event type.
+	 #A character is requesting to be notified of certain combat events.
+	print("[BATTLE_STATE][addEventListener] %s wants to be reported of event type %s" % [listener.name, event])
+	if listener in notifyListeners[event]:
+		print("[BATTLE_STATE][addEventListener] %s is already accounted for." % listener.name)
+		return #Do nothing.
+	else: notifyListeners[event].push_back(listener)
+
+func resetEventListeners() -> void: #Reset listener arrays.
+	for i in notifyListeners: i.clear()
+
+func resetEventQueue() -> void: #Reset event queue arrays.
+	for i in notifyQueue: i.clear()
+
+func queueEvent(event:int, target) -> void:
+	print("[BATTLE_STATE][queueEvent] Adding event of type:%s (target: %s) to queue" % [event, target.name])
+	notifyQueue[event].push_back(target)
+
+func notifyEvents() -> void:
+	for what in [NOTIFY_ON_DEFEAT]:
+		var queue:Array = notifyQueue[what]
+		for i in notifyListeners[what]:
+			for j in queue:
+				print("[BATTLE_STATE][reportEvent] Notifying %s about %s" % [i.name, j.name])
+				i.reportEvent(what, j)
+
 # Debug functions #############################################################
 func echoArray(a) -> void: #Prints all the contents of an array.
-	for i in a:
-		echo(i)
+	for i in a:	echo(i)
 
 func printQueueTargets(a):
 	var result = ""
-	for i in a:
-		result += str("[%s:%s]" % [i.slot, i.name])
+	for i in a:	result += str("[%s:%s]" % [i.slot, i.name])
 	return result
 
 func printQueue() -> void:
 	print("= Action queue =")
 	print("Actions: %s" % actionQueue.size())
 	print("Revive enemies: %s" % str(formations[SIDE_ENEMY].defeated))
-	for i in actionQueue:
-		print("[%1s]%s %sL%02d SPD:%s>%s" % [i.user.slot, i.user.name, i.skillTid, i.level, i.spd, printQueueTargets(i.target)])
+	for i in actionQueue: print("[%1s]%s %sL%02d SPD:%s>%s" % [i.user.slot, i.user.name, i.skillTid, i.level, i.spd, printQueueTargets(i.target)])
 
 func printQueuePanel():
 	var result = "= Action Queue =\n"
 	result += ("Actions: %s\n" % actionQueue.size())
 	result += ("Revive enemies: %s\n" % str(formations[SIDE_ENEMY].defeated))
-	for i in actionQueue:
-		result += str("[%1s]%s %sL%02d SPD:%s>%s\n" % [i.user.slot, i.user.name, i.skillTid, i.level, i.spd, printQueueTargets(i.target)])
+	for i in actionQueue: result += str("[%1s]%s %sL%02d SPD:%s>%s\n" % [i.user.slot, i.user.name, i.skillTid, i.level, i.spd, printQueueTargets(i.target)])
 	return result

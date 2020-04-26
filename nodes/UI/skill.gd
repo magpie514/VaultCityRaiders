@@ -2,12 +2,12 @@ extends Control
 signal display_info(x)
 signal hide_info
 
-var textures:Array = core.newArray(8)
+var textures:Array = core.newArray(9)
 var S = null
 var level:int = 1
 
 func _init() -> void:
-	for i in range(8):
+	for i in range(9):
 		textures[i] = load(core.stats.ELEMENT_DATA[i].icon)
 
 enum {

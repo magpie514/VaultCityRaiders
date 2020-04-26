@@ -8,8 +8,8 @@ var example = {
 			description = "This is a debug class with ridiculously high stat growth.",
 			#               HP   ATK  DEF  ETK  EDF  AGI  LUC    HP   ATK  DEF  ETK  EDF  AGI  LUC
 			statSpread = [ [050, 010, 010, 010, 010, 010, 010], [999, 255, 255, 255, 255, 255, 255] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 99, 99, 99, 99, 99, 99, 99, 99, 99],
 			aspect = core.RACEF_MEC,
 			race = [ core.RACE_MACHINE ],
 		},
@@ -19,8 +19,8 @@ var example = {
 			name = "Human",
 			description = "The third of the three races engineered by Tiamat, the Originator. They have an inherent affinity to technology.",
 			statSpread = [ [045, 011, 013, 011, 010, 013, 014], [460, 120, 135, 100, 090, 130, 150] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 03, 03, 04, 05, 03, 03, 03, 02, 03, 01, 02, 03, 03, 02],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 03, 04, 05, 03, 03, 03, 02, 03, 03, 02],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			race = [ core.RACE_HUMAN ],
 		},
@@ -28,8 +28,8 @@ var example = {
 			name = "Cyborg",
 			description = "A human partially augmented by technology. They are limited by their human bodies, but their augments allow for higher potential.",
 			statSpread = [ [035, 010, 012, 010, 008, 012, 013], [380, 100, 100, 100, 075, 125, 120] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 04, 04, 05, 05, 04, 04, 04, 02, 03, 01, 03, 03, 03, 03],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 04, 05, 05, 04, 04, 04, 02, 03, 03, 03],
 			aspect = core.RACEF_BIO|core.RACEF_SPI|core.RACEF_MEC,
 			flags = [ core.RACE_HUMAN, core.RACE_MACHINE ],
 		},
@@ -37,8 +37,8 @@ var example = {
 			name = "Elf",
 			description = "A human with fairy blood, which raises their affinity to nature and the elements.",
 			statSpread = [ [040, 009, 010, 012, 012, 014, 011], [410, 090, 094, 140, 135, 140, 110] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 04, 04, 04, 02, 04, 04, 03, 04, 03, 01, 03, 03, 03, 03],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 04, 04, 02, 04, 04, 03, 04, 03, 03, 03],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			race = [ core.RACE_HUMAN, core.RACE_FAIRY ],
 		},
@@ -46,8 +46,8 @@ var example = {
 			name = "Vampire",
 			description = "Humans afflicted by a dark curse, turning them undead and requiring blood to live. A perfected form of ghoul.",
 			statSpread = [ [048, 013, 012, 013, 011, 012, 005], [500, 135, 130, 135, 100, 125, 035] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 05, 07, 05, 03, 99, 05, 05, 99, 05, 02, 02, 03, 03, 04],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 05, 05, 03, 99, 05, 05, 99, 05, 03, 04],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			race = [ core.RACE_HUMAN, core.RACE_UNDEAD ],
 		},
@@ -55,8 +55,8 @@ var example = {
 			name = "Skeleton",
 			description = "Was once human, then died, then got back, all boney. But with a constant smile.",
 			statSpread = [ [048, 013, 012, 013, 011, 012, 005], [500, 135, 130, 135, 100, 125, 035] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 05, 99, 05, 02, 99, 04, 05, 05, 04, 01, 02, 02, 02, 05],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 05, 05, 02, 99, 04, 05, 05, 04, 02, 05],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			race = [ core.RACE_HUMAN, core.RACE_UNDEAD ],
 		},
@@ -64,8 +64,8 @@ var example = {
 			name = "Robot",
 			description = "A race created by humans. They AI and physical capabilities are highly variable, but their potential is tied to their equipment.",
 			statSpread = [ [060, 015, 015, 015, 010, 010, 005], [520, 150, 165, 120, 090, 110, 085] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 04, 99, 05, 05, 04, 02, 05, 99, 05, 01, 03, 03, 03, 04],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 04, 05, 05, 04, 02, 05, 99, 05, 03, 04],
 			aspect = core.RACEF_SPI|core.RACEF_MEC,
 			flags = [ core.RACE_MACHINE ],
 		},
@@ -73,8 +73,8 @@ var example = {
 			name = "Choujin",
 			description = "One of the potential ultimate forms of humanity. A human soul in a full machine body. Being a type of robot, their potential is also tied to their equipment",
 			statSpread = [ [000, 000, 000, 000, 000, 000, 000], [000, 000, 000, 000, 000, 000, 000] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 04, 99, 05, 04, 04, 02, 05, 05, 05, 01, 03, 03, 03, 05],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 04, 05, 04, 04, 02, 05, 05, 05, 03, 05],
 			aspect = core.RACEF_SPI|core.RACEF_MEC,
 			player = false,
 			flags = [ core.RACE_MACHINE ],
@@ -83,8 +83,8 @@ var example = {
 			name = "Fairy",
 			description = "The second of the three races engineered by Tiamat, the Originator. They have an inherent affinity to nature and the elements.",
 			statSpread = [ [040, 008, 008, 014, 014, 013, 010], [415, 090, 085, 150, 150, 130, 100] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 99, 04, 05, 01, 05, 02, 02, 99, 05, 02, 02, 02, 02, 03],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 05, 01, 05, 02, 02, 99, 05, 02, 03],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			flags = [ core.RACE_FAIRY ],
 		},
@@ -92,8 +92,8 @@ var example = {
 			name = "??????", #This race should be the regular player-usable instance of dragon and act like Breath of Fire or something.
 			description = "A human with dragon blood, which raises their affinity to power. They can change into a dragon form.",
 			statSpread = [ [065, 014, 011, 014, 012, 013, 005], [600, 145, 120, 145, 130, 135, 050] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 05, 03, 99, 99, 05, 03, 05, 05, 05, 01, 04, 04, 04, 02],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 05, 99, 99, 05, 03, 05, 05, 05, 04, 02],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			flags = [ core.RACE_HUMAN, core.RACE_DRAGON ],
 		},
@@ -101,8 +101,8 @@ var example = {
 			name = "Dragon",
 			description = "The first of the three races engineered by Tiamat, the Originator, and the closest to her heart. They have an inherent affinity to power.",
 			statSpread = [ [065, 014, 011, 014, 012, 013, 005], [600, 145, 120, 145, 130, 135, 050] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 05, 04, 99, 99, 05, 03, 05, 99, 99, 02, 05, 05, 05, 02],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 05, 99, 99, 05, 03, 05, 99, 99, 05, 02],
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			player = false,
 			flags = [ core.RACE_DRAGON ],
@@ -111,8 +111,8 @@ var example = {
 			name = "God",  #This is just some fantasy bull and not meant to represent anyone's view of theology.
 			description = "Higher beings born from the power of belief. Their power is tied to the prayer of their believers.",
 			statSpread = [ [065, 014, 011, 014, 012, 013, 005], [600, 145, 120, 145, 130, 135, 050] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 03, 03, 04, 99, 99, 99, 05, 99, 04, 03, 03, 03, 03, 05],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 03, 04, 99, 99, 99, 05, 99, 04, 03, 05],
 			aspect = core.RACEF_SPI,
 			player = false,
 			flags = [ core.RACE_GOD ],
@@ -121,8 +121,8 @@ var example = {
 			name = "Originator",
 			description = "Born from the primordial chaos, Originators are gifted with the power to create universes. Only two are known to exist.",
 			statSpread = [ [650, 014, 011, 014, 012, 013, 005], [999, 145, 120, 145, 130, 135, 050] ],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 99, 99, 05, 99, 99, 03, 03, 99, 99, 99, 99, 05, 05, 99],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 05, 99, 99, 03, 03, 99, 99, 05, 99],
 			aspect = core.RACEF_SPI,
 			player = false,
 			flags = [ core.RACE_ORIGINATOR ],
@@ -135,8 +135,8 @@ func initTemplate():
 		"name": { loader = LIBSTD_STRING },
 		"description": { loader = LIBSTD_STRING },
 		"statSpread": { loader = LIBSTD_STATSPREAD },
-		#                                                            PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-		"conditionDefs": { loader = LIBSTD_CONDITIONDEFS, default = [ 02, 02, 02, 02, 02, 02, 02, 02, 02, 02, 02, 02, 02, 02] },
+		#                                                            PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+		"conditionDefs": { loader = LIBSTD_CONDITIONDEFS, default = [ 02, 02, 02, 02, 02, 02, 02, 02, 02, 02] },
 		"aspect" : { loader = LIBSTD_INT },
 		"player" : { loader = LIBSTD_BOOL, default = true },
 		"skills" : { loader = LIBSTD_SKILL_LIST },

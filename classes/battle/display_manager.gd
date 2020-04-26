@@ -29,6 +29,28 @@ func initSprite(C, slot:int) -> void:
 		C.display = node.get_node("Position2D/CharDisplay")
 		sprite.init(spr, C, slot)
 
+func addHitSpark(S, lv:int, anchor:Position2D) -> void:
+	var temp = S.animations['onhit'] if 'onhit' in S.animations else "res://nodes/FX/basic.tscn"
+	var anim = load(temp).instance()
+	anchor.add_child(anim)
+	if S.animFlags[lv] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
+		anim.modulate = core.stats.ELEMENT_DATA[S.element[lv]].color
+		print("[DISPLAY_MANAGER][addHitSpark] Setting color from element! %s" % str(anim.modulate))
+	#anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
+	#anim.connect("anim_done", self, "on_anim_done")
+	anim.play(1.0)
+
+func playMainAnim(S, lv:int, anchor:Position2D) -> void:
+	var temp = S.animations['startup'] if 'startup' in S.animations else "res://nodes/FX/basic.tscn"
+	var anim = load(temp).instance()
+	anchor.add_child(anim)
+	if S.animFlags[lv] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
+		anim.modulate = core.stats.ELEMENT_DATA[S.element[lv]].color
+		print("[DISPLAY_MANAGER][addHitSpark] Setting color from element! %s" % str(anim.modulate))
+	#anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
+	#anim.connect("anim_done", self, "on_anim_done")
+	anim.play(1.0)
+
 func addEffector(C, fx:String) -> void:
 	var temp:String = str("res://nodes/FX/%s.tscn" % fx)
 	print("[DISPLAY_MANAGER][addEffector] Trying to find file %s (input:%s)" % [temp, fx])

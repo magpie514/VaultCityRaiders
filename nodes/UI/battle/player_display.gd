@@ -4,6 +4,7 @@ func _ready():
 	hide()
 
 func showChar(c):
+	if c == null: return
 	show()
 	$Name.text = str("%s %s %-24s" % [c.racelib.name, c.classlib.name, c.name])
 	$Level.text = str("LV.%03d" % c.level)

@@ -26,14 +26,14 @@ func init(C):
 	for i in C.skills:
 		var TID = C.getSkillTID(i)
 		var S = core.getSkillPtr(TID)
-		if S.type == 0 and (S.category in validSkills):
+		if S.requiresWeapon == 0 and (S.category in validSkills):
 			var button = skillNode.instance()
 			button.init(S, i[1], button.COST_EP)
 			addButton(button, [TID, i[1]])
 	if not C.extraSkills.empty():
 		for i in C.extraSkills:
 			var S = core.getSkillPtr(i[0])
-			if S.type == 0 and (S.category in validSkills):
+			if S.category in validSkills:
 				var button = skillNode.instance()
 				button.init(S, i[1], button.COST_EP, true)
 				addButton(button, [i[0], i[1]])

@@ -1,4 +1,8 @@
 extends Node
+# Important shared classes ####################################################
+const Enemy     = preload("res://classes/char/char_enemy.gd")
+const Player    = preload("res://classes/char/char_player.gd")
+const Inventory = preload("res://classes/inventory/item.gd")
 
 # Misc utility constants ######################################################
 #Encoding/Decoding tables for "base52" encoding. It's not a standard base.
@@ -16,33 +20,34 @@ const decode_base52 = {
 }
 
 var scene = null #Current scene
-var battle:Dictionary = {
-	enemy = null,
-	bgm = null,
-	control = null,
+var battle:Dictionary = { #Useful pointers for battle stuff.
+	state          = null,
+	enemy          = null,
+	bgm            = null,
+	control        = null,
 	displayManager = null,
-	skillControl = null,
-	background = null,
-	bg_fx = null,
+	skillControl   = null,
+	background     = null,
+	bg_fx          = null,
 }
-var world : WorldClass = WorldClass.new()
+var world:WorldClass = WorldClass.new()
 # Internal Data libraries #####################################################
 var lib = {
-	skill = null,
-	race = null,
-	aclass = null,
-	weapon = null,
-	item = null,
-	dgem = null,
-	armor = null,
-	enemy = null,
-	mform = null,
+	skill  = null, #Skill library. Important and must be first.
+	race   = null, #Player race library.
+	aclass = null, #Player class library.
+	weapon = null, #Weapon library.
+	item   = null, #Item library.
+	dgem   = null, #Dragon Gem library.
+	armor  = null, #Armor/Vehicle library.
+	enemy  = null, #Enemy library.
+	mform  = null, #Enemy formation library.
 }
-var stats = StatClass.new()
-var tid = _tid.new()
-var skill = null
-var guild = null
-var init = false
+var stats:StatClass = StatClass.new()
+var tid:_tid  = _tid.new()
+var skill     = null #Pointer to skill class. Important.
+var guild     = null #Pointer to player guild.
+var init:bool = false
 # Important shared constants ##################################################
 
 enum { #General race types
@@ -69,22 +74,22 @@ enum { #General race types
 
 #TODO: Write some sort of function to check if all lists like this have a proper match.
 const racetypes = {
-	RACE_NONE: { name = "Unknown", desc = "???" },
-	RACE_HUMAN: { name = "Human", desc = "" },
-	RACE_CONSTRUCT: { name = "Construct", desc = "" },
-	RACE_MACHINE : { name = "Machine", desc = "" },
-	RACE_SPIRIT: { name = "Spirit", desc = "" },
-	RACE_ELEMENTAL: { name = "Elemental", desc = "" },
-	RACE_GIANT: { name = "Giant", desc = "" },
-	RACE_ANGEL: { name = "Angel", desc = "" },
-	RACE_DEMON: { name = "Demon", desc = "" },
-	RACE_DRAGON: { name = "Dragon", desc = "" },
-	RACE_FAIRY: { name = "Fairy", desc = "" },
-	RACE_UNDEAD: { name = "Undead", desc = "" },
-	RACE_BEAST: { name = "Beast", desc = "" },
-	RACE_GOD: { name = "God", desc = "" },
-	RACE_ELDRITCH: { name = "Eldritch", desc = "" },
-	RACE_ORIGINATOR: { name = "Originator", desc = "" },
+	RACE_NONE       : { name = "Unknown", desc = "???" },
+	RACE_HUMAN      : { name = "Human", desc = "" },
+	RACE_CONSTRUCT  : { name = "Construct", desc = "" },
+	RACE_MACHINE    : { name = "Machine", desc = "" },
+	RACE_SPIRIT     : { name = "Spirit", desc = "" },
+	RACE_ELEMENTAL  : { name = "Elemental", desc = "" },
+	RACE_GIANT      : { name = "Giant", desc = "" },
+	RACE_ANGEL      : { name = "Angel", desc = "" },
+	RACE_DEMON      : { name = "Demon", desc = "" },
+	RACE_DRAGON     : { name = "Dragon", desc = "" },
+	RACE_FAIRY      : { name = "Fairy", desc = "" },
+	RACE_UNDEAD     : { name = "Undead", desc = "" },
+	RACE_BEAST      : { name = "Beast", desc = "" },
+	RACE_GOD        : { name = "God", desc = "" },
+	RACE_ELDRITCH   : { name = "Eldritch", desc = "" },
+	RACE_ORIGINATOR : { name = "Originator", desc = "" },
 }
 
 enum { #Race Aspect
@@ -111,26 +116,21 @@ enum { #Weapon classes
 }
 
 const weapontypes = {
-	WPCLASS_NONE : { name = "???", icon = "" },
-	WPCLASS_FIST : { name = "Fists", icon = "" },
+	WPCLASS_NONE       : { name = "???", icon = "" },
+	WPCLASS_FIST       : { name = "Fists", icon = "" },
 	WPCLASS_SHORTSWORD : { name = "Short Sword", icon = "" },
-	WPCLASS_LONGSWORD : { name = "Long Sword", icon = "" },
-	WPCLASS_POLEARM : { name = "Polearm", icon = "" },
-	WPCLASS_HAMMER : { name = "Hammer", icon = "" },
-	WPCLASS_AXE : { name = "Axe", icon = "" },
-	WPCLASS_HANDGUN : { name = "Handgun", icon = "" },
-	WPCLASS_FIREARM : { name = "Firearm", icon = "" },
-	WPCLASS_ARTILLERY : { name = "Artillery", icon = "" },
-	WPCLASS_SHIELD : { name = "Shield", icon = "" },
-	WPCLASS_ONBOARD : { name = "Onboard", icon = "" },
+	WPCLASS_LONGSWORD  : { name = "Long Sword", icon = "" },
+	WPCLASS_POLEARM    : { name = "Polearm", icon = "" },
+	WPCLASS_HAMMER     : { name = "Hammer", icon = "" },
+	WPCLASS_AXE        : { name = "Axe", icon = "" },
+	WPCLASS_HANDGUN    : { name = "Handgun", icon = "" },
+	WPCLASS_FIREARM    : { name = "Firearm", icon = "" },
+	WPCLASS_ARTILLERY  : { name = "Artillery", icon = "" },
+	WPCLASS_SHIELD     : { name = "Shield", icon = "" },
+	WPCLASS_ONBOARD    : { name = "Onboard", icon = "" },
 }
-# Condition defenses, default.  PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-const CONDITIONDEFS_DEFAULT = [ 02, 02, 02, 02, 02, 02, 02, 02, 02, 00, 02, 02, 02, 02]
-#
-# Important shared classes ####################################################
-const Enemy     = preload("res://classes/char/char_enemy.gd")
-const Player    = preload("res://classes/char/char_player.gd")
-const Inventory = preload("res://classes/inventory/item.gd")
+# Condition defenses, default.  PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+const CONDITIONDEFS_DEFAULT = [ 02, 04, 04, 03, 02, 02, 02, 03, 02, 02]
 
 class WorldClass:
 	#|        Night                          |      Morning |        Day                       |     Evening  | Night        |
@@ -180,7 +180,7 @@ class CounterClass: #Simple incrementing counter.
 	var count:int = 0
 	var limit:int = 65535 #Default to something that fits in 16 bits.
 
-	func _init(val:int = 0):
+	func _init(val:int = 0) -> void:
 		count = val
 
 	func next() -> int:
@@ -282,14 +282,10 @@ class _tid: #TID (Thing ID) helper class.
 	func from(a) -> PoolStringArray: #Create a TID from an unknown definition.
 		#print("[TID][from] ", a, " ", typeof(a))
 		match(typeof(a)):
-			TYPE_STRING:
-				return fromString(a)
-			TYPE_ARRAY:
-				return fromArray(a)
-			TYPE_STRING_ARRAY:
-				return fromArray(a)
-			_:
-				return create("debug", "debug")
+			TYPE_STRING       : return fromString(a)
+			TYPE_ARRAY        : return fromArray(a)
+			TYPE_STRING_ARRAY : return fromArray(a)
+			_                 : return create('debug', 'debug')
 
 	func copy(tid) -> PoolStringArray: #Makes a copy of a TID.
 		return create(tid[0], tid[1])
@@ -306,56 +302,47 @@ class StatClass:
 	const MAX_DMG = 32000
 	const STATS = [ 'MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC' ]
 	const GEAR_STATS = [ 'MEP', 'SKL' ]
-	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC	}
+	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC }
 	enum ELEMENTS {
-		DMG_UNTYPED = 0,	#Cannot be resisted
-		DMG_CUT,					#Slash or wind attacks
-		DMG_PIERCE,				#Perforating or earth attacks.
-		DMG_STRIKE,				#Strike/explosive or water attacks.
-		DMG_FIRE,					#Fire attacks
-		DMG_ICE,					#Ice attacks
-		DMG_ELEC,					#Electric attacks
-		#DMG_UNKNOWN,			#Time/Light/Spirit attacks (Use sparingly)
-		DMG_ULTIMATE,			#Gravity/Dark attacks (Use sparingly)
-		DMG_KINETIC,			#Supertype for all physical damage
-		DMG_ENERGY,				#Supertype for all energy damage
+		DMG_UNTYPED  = 0,	#Cannot be resisted
+		DMG_CUT      , #Slash or wind attacks
+		DMG_PIERCE   , #Perforating or earth attacks.
+		DMG_STRIKE   , #Strike/explosive or water attacks.
+		DMG_FIRE     , #Fire attacks
+		DMG_ICE      , #Ice attacks
+		DMG_ELEC     , #Electric attacks
+		DMG_UNKNOWN  , #Time/Light/Spirit attacks (Use sparingly)
+		DMG_ULTIMATE , #Gravity/Dark attacks (Use sparingly)
+		DMG_KINETIC  , #Supertype for all physical damage
+		DMG_ENERGY   , #Supertype for all energy damage
 	}
 	enum { #Condition defense table
 		COND_PARALYSIS    = 00,
-		COND_NARCOSIS     = 01,
-		COND_CRYO         = 02,
-		COND_SEAL         = 03,
-		COND_DEFEAT       = 04,
-		COND_BLIND        = 05,
-		COND_STUN         = 06,
-		COND_CURSE        = 07,
-		COND_PANIC        = 08,
-		COND_STASIS       = 09,
-		COND_DISABLE_HEAD = 10,
-		COND_DISABLE_ARMS = 11,
-		COND_DISABLE_LEGS = 12,
-		COND_DAMAGE       = 13
+		COND_CRYO         = 01,
+		COND_SEAL         = 02,
+		COND_DEFEAT       = 03,
+		COND_BLIND        = 04,
+		COND_STUN         = 05,
+		COND_CURSE        = 06,
+		COND_PANIC        = 07,
+		COND_DISABLE_ARMS = 08,
+		COND_DAMAGE       = 09
 	}
 	var CONDITION_DATA = {
-		COND_DEFEAT    : { name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = 'DWN'},
-		COND_PARALYSIS : { name = "Paralisis"    , desc = "paralized"    , color = "FFFF00", short = 'PAR'},
-		COND_NARCOSIS  : { name = "Narcosis"     , desc = "put to sleep" , color = "2222FF", short = 'SLP'},
-		COND_CRYO      : { name = "Cryostasis"   , desc = "frozen"       , color = "3388FF", short = 'CRY'},
-		COND_SEAL      : { name = "Seal"         , desc = "sealed"       , color = "118822", short = 'SEA'},
-		COND_STUN      : { name = "Stun"         , desc = "stunned"      , color = "BBBB22", short = 'STU' },
-		COND_BLIND     : { name = "Blind"        , desc = "blinded"      , color = "333333", short = 'BLI' },
-		COND_CURSE     : { name = "Curse"        , desc = "cursed"       , color = "660000", short = 'CUR' },
-		COND_PANIC     : { name = "Panic"        , desc = "paniced"      , color = "448800", short = 'PAN' },
-		COND_STASIS    : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'STA' },
-		COND_DISABLE_HEAD : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'HED' },
-		COND_DISABLE_ARMS : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'ARM' },
-		COND_DISABLE_LEGS : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'LEG' },
-		COND_DAMAGE    : { name = "Damage"       , desc = "hurt"         , color = "FF00FF", short = 'DMG' },
+		COND_PARALYSIS    : { name = "Paralisis"    , desc = "paralized"    , color = "FFFF00", short = 'PAR'},
+		COND_CRYO         : { name = "Cryostasis"   , desc = "frozen"       , color = "3388FF", short = 'CRY'},
+		COND_SEAL         : { name = "Seal"         , desc = "sealed"       , color = "118822", short = 'SEA'},
+		COND_DEFEAT       : { name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = 'DWN'},
+		COND_STUN         : { name = "Stun"         , desc = "stunned"      , color = "BBBB22", short = 'STU'},
+		COND_BLIND        : { name = "Blind"        , desc = "blinded"      , color = "333333", short = 'BLI'},
+		COND_CURSE        : { name = "Curse"        , desc = "cursed"       , color = "660000", short = 'CUR'},
+		COND_PANIC        : { name = "Panic"        , desc = "paniced"      , color = "448800", short = 'PAN'},
+		COND_DISABLE_ARMS : { name = "Stasis"       , desc = "warped"       , color = "440088", short = 'ARM'},
+		COND_DAMAGE       : { name = "Damage"       , desc = "hurt"         , color = "FF00FF", short = 'DMG'},
 	}
 
 	const CONDITION_CONV = {
 		'CON_PAR': COND_PARALYSIS   ,
-		'CON_NAR': COND_NARCOSIS    ,
 		'CON_CRY': COND_CRYO        ,
 		'CON_SEA': COND_SEAL        ,
 		'CON_DWN': COND_DEFEAT      ,
@@ -363,10 +350,7 @@ class StatClass:
 		'CON_STU': COND_STUN        ,
 		'CON_CUR': COND_CURSE       ,
 		'CON_PAN': COND_PANIC       ,
-		'CON_STA': COND_STASIS      ,
-		'CON_HED': COND_DISABLE_HEAD,
 		'CON_ARM': COND_DISABLE_ARMS,
-		'CON_LEG': COND_DISABLE_LEGS,
 		'CON_DMG': COND_DAMAGE      ,
 	}
 	const ELEMENT_CONV = [
@@ -377,13 +361,13 @@ class StatClass:
 		"DMG_FIRE",
 		"DMG_ICE",
 		"DMG_ELEC",
-		#"DMG_UNKNOWN",
+		"DMG_UNKNOWN",
 		"DMG_ULTIMATE",
 	]
 	const ELEMENT_MOD_TABLE = [
-		'OFF_CUT', 'OFF_PIE', 'OFF_STK', 'OFF_FIR', 'OFF_ICE', 'OFF_ELE', 'OFF_LUM', 'OFF_ULT', 'OFF_KIN', 'OFF_ENE',
-		'RES_CUT', 'RES_PIE', 'RES_STK', 'RES_FIR', 'RES_ICE', 'RES_ELE', 'RES_LUM', 'RES_ULT', 'RES_KIN', 'RES_ENE',
-		'ALL_CUT', 'ALL_PIE', 'ALL_STK', 'ALL_FIR', 'ALL_ICE', 'ALL_ELE', 'ALL_LUM', 'ALL_ULT', 'ALL_KIN', 'ALL_ENE',
+		'OFF_CUT', 'OFF_PIE', 'OFF_STK', 'OFF_FIR', 'OFF_ICE', 'OFF_ELE', 'OFF_UNK', 'OFF_ULT', 'OFF_KIN', 'OFF_ENE',
+		'RES_CUT', 'RES_PIE', 'RES_STK', 'RES_FIR', 'RES_ICE', 'RES_ELE', 'RES_UNK', 'RES_ULT', 'RES_KIN', 'RES_ENE',
+		'ALL_CUT', 'ALL_PIE', 'ALL_STK', 'ALL_FIR', 'ALL_ICE', 'ALL_ELE', 'ALL_UNK', 'ALL_ULT', 'ALL_KIN', 'ALL_ENE',
 	]
 	const ELEMENT_DATA = [
 		{name = "untyped", color = "CCCCCC", icon = "res://resources/icons/untyped.svg"},
@@ -393,7 +377,7 @@ class StatClass:
 		{name = "fire", color = "E36E6E", icon = "res://resources/icons/fire.svg"},
 		{name = "ice", color = "6ED8E3", icon = "res://resources/icons/ice.svg"},
 		{name = "elec", color = "E2E36E", icon = "res://resources/icons/elec.svg"},
-		#{name = "unknown", color = "EEEECC", icon = "res://resources/icons/void.svg"},
+		{name = "unknown", color = "EEEECC", icon = "res://resources/icons/luminous.svg"},
 		{name = "ultimate", color = "080016", icon = "res://resources/icons/void.svg"},
 	]
 
@@ -430,10 +414,8 @@ class StatClass:
 		if aStat != null:
 			for i in range(STATS.size()):
 				S[STATS[i]] = int(aStat[i])
-		if aOFF != null:
-			setElementDataFromArray(S.OFF, aOFF)
-		if aRES != null:
-			setElementDataFromArray(S.RES, aRES)
+		if aOFF != null: setElementDataFromArray(S.OFF, aOFF)
+		if aRES != null: setElementDataFromArray(S.RES, aRES)
 
 	func setFromSpread(S, spread, level):
 		if spread != null:
@@ -461,7 +443,7 @@ class StatClass:
 			sumElementDataInto(S.OFF, stats1.OFF, stats2.OFF)
 			sumElementDataInto(S.RES, stats1.RES, stats2.RES)
 
-	func clipStats(S):
+	func clipStats(S) -> void:
 		for i in STATS:
 			if i != "MHP":
 				if S[i] < 0: S[i] = int(000)
@@ -469,24 +451,21 @@ class StatClass:
 			else:
 				if S[i] < 0: S[i] = int(000)
 
-	static func interpolateStat(spread, key, level:int):
+	static func interpolateStat(spread, key, level:int) -> int:
 		return int( lerp( float(spread[0][key]), float(spread[1][key]), float(level) * .01 ) )
 
-	func createElementData():
-		var result = {}
-		for i in ELEMENTS:
-			result[i] = int(000)
+	func createElementData() -> Dictionary:
+		var result:Dictionary = {}
+		for i in ELEMENTS: result[i] = int(000)
 		return result
 
-	func printElementData(E):
-		var result = ""
-		for i in ELEMENTS:
-			result += "%s: %s " % [i, E[i]]
+	func printElementData(E) -> String:
+		var result:String = ""
+		for i in ELEMENTS: result += "%s: %s " % [i, E[i]]
 		return result
 
-	func resetElementData(E, val:int = 100):
-		for i in ELEMENTS:
-			E[i] = val
+	func resetElementData(E, val:int = 100) -> void:
+		for i in ELEMENTS: E[i] = val
 
 	func setElementDataFromArray(E, a):
 		if a != null:
@@ -520,8 +499,7 @@ class StatClass:
 		return result
 
 	func conditionDefReset(a:Array) -> void:
-		for i in range(core.CONDITIONDEFS_DEFAULT.size()):
-			a[i] = 0
+		for i in range(core.CONDITIONDEFS_DEFAULT.size()): a[i] = 0
 
 	func conditionDefStringValidate(st:String) -> bool:
 		return true if st in CONDITION_CONV else false
@@ -532,9 +510,8 @@ class StatClass:
 			stats.CON[what] += val
 
 	func getElementKey(element) -> String:
-		var e
-		e = int(0) if element < 0 else element
-		e = e if e < ELEMENT_CONV.size() else int(0)
+		var e:int = 0 if element < 0 else element
+		e = e if e < ELEMENT_CONV.size() else 0
 		return ELEMENT_CONV[e]
 
 	func elementalModStringConvert(st:String) -> PoolStringArray:
@@ -549,7 +526,7 @@ class StatClass:
 					'FIR' : 'DMG_FIRE',
 					'ICE' : 'DMG_ICE',
 					'ELE' : 'DMG_ELEC',
-					#'LUM' : 'DMG_LUMINOUS',
+					'UNK' : 'DMG_UNKNOWN',
 					'ULT' : 'DMG_ULTIMATE',
 					'KIN' : 'DMG_KINETIC',
 					'ENE' : 'DMG_ENERGY',
@@ -749,10 +726,10 @@ func initGameState(_seed):
 		init = true
 
 
-func _ready():
+func _ready() -> void:
 	seed(OS.get_unix_time())
 	var root = get_tree().get_root()
-	scene = root.get_child(root.get_child_count() - 1)
+	scene    = root.get_child(root.get_child_count() - 1)
 
 
 func initBattle(form, elv:int = 0, music = "res://resources/music/EOIV_Storm.ogg"):

@@ -7,18 +7,21 @@ const BACK_ROW  = 1                            #The back row. Wow.
 const MON_ROW   = 2                            #The front row that is really the summoned monster row.
 const ROW_SIZE  = 3                            #Amount of members in every row.
 const MAX_SIZE  = ROW_SIZE * 2                 #Max size of standard group (mons not included)
-const ROW_ITER  = [ [0,1,2],[3,4,5],[6,7,8] ]  #Iterators for each row. For convenience. Order is front, back, mon.
+const ROW_ITER  = [ [0,1,2],[3,4,5] ]  #Iterators for each row. For convenience. Order is front, back, mon.
 
-var name:String     = ""   #Name of the group.
-var formation       = null #Formation of the group (pointers to characters)
-var lastElement:int = 0    #Last element used by the group.
-var FEguard:int     = 0    #Chance (0-100%) to prevent standard additions to the element field.
-var versus          = null #Pointer to opposing group.
+enum {
+	EVENT_ON_DEFEAT = 0, #Triggered when any character is defeated on the field.
+}
+
+var name:String           = ""   #Name of the group.
+var formation             = null #Formation of the group (pointers to characters)
+var lastElement:int       = 0    #Last element used by the group.
+var FEguard:int           = 0    #Chance (0-100%) to prevent standard additions to the element field.
+var versus                = null #Pointer to opposing group.
 
 # Virtuals ########################################################################################
 func getDefeated() -> int: return 0 #Get number of defeated group members.
 ###################################################################################################
-
 
 # Battle turn hooks ###############################################################################
 func initBattle() -> void: #Executed at the start of a battle.

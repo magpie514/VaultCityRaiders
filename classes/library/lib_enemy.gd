@@ -40,10 +40,10 @@ var example = {
 				[0045, 001, 038, 012, 015, 011, 005],
 				[0250, 001, 135, 125, 096, 120, 050]
 			],
-			#                PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-			conditionDefs = [ 02, 08, 05, 03, 03, 09, 08, 02, 09, 01, 02, 99, 99, 08],
-			OFF = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
-			RES = [ 075, 075, 125,  005, 125, 050,  100, 100, 110 ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 02, 05, 03, 03, 09, 08, 02, 09, 99, 08],
+			OFF = [ 100,100,100,  150,100,100,  100,100,  100,100 ],
+			RES = [ 075,075,125,  005,125,050,  100,100,  100,110 ],
 			race = core.RACE_ELDRITCH, aspect = core.RACEF_SPI,
 			canResurrect = false,
 			defeatMsg = "%s returned to the void!",
@@ -68,8 +68,8 @@ var example = {
 				[0045, 010, 010, 010, 010, 010, 010],
 				[0500, 100, 100, 100, 100, 100, 100]
 			],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 1,
@@ -90,18 +90,18 @@ var example = {
 			name = "Solid Debugger",
 			description = "Combat testing robot specialized in high kinetic defense.",
 			statSpread = [[0045, 010, 030, 010, 010, 010, 010], [0500, 100, 300, 100, 100, 100, 100]],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
-			skills = [ ["core", "defend"], ["debug", "bash"] ]
+			skills = [ "core/defend", "debug/bash" ]
 		}, "debug2": {
 			name = "Barrier Debugger",
 			description = "Combat testing robot specialized in high energy defense.",
 			statSpread = [[0045, 010, 010, 010, 030, 010, 010], [0500, 100, 100, 100, 300, 100, 100]],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
@@ -110,8 +110,8 @@ var example = {
 			name = "Speed Debugger",
 			description = "Combat testing robot specialized in high mobility.",
 			statSpread = [[0045, 010, 010, 010, 010, 030, 030], [0500, 100, 100, 100, 100, 300, 300]],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 0,
@@ -121,8 +121,8 @@ var example = {
 			name = "Repair Debugger",
 			description = "Combat testing robot specialized in team maintenance.",
 			statSpread = [[0045, 010, 010, 010, 030, 010, 030], [0500, 100, 100, 100, 100, 100, 300]],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 090, 100, 090,  120, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			race = core.RACE_MACHINE, aspect = core.RACEF_MEC,
 			defeatMsg = "%s exploded!",
 			ai = 1,
@@ -144,8 +144,8 @@ var example = {
 				[0015, 001, 008, 012, 008, 011, 005],
 				[0200, 001, 095, 125, 096, 120, 050]
 			],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			defeatMsg = "%s exploded!",
 			ai = 1,
 			aiPattern = {
@@ -164,8 +164,8 @@ var example = {
 				[0015, 001, 008, 012, 008, 011, 005],
 				[0200, 001, 095, 125, 096, 120, 050]
 			],
-			OFF = [ 100, 100, 100,  100, 100, 100,  100, 100, 100 ],
-			RES = [ 100, 100, 100,  150, 100, 100,  100, 100, 100 ],
+			OFF = [ 100,100,100, 100,100,100, 100,100, 100,100 ],
+			RES = [ 090,100,090, 120,100,100, 100,100, 100,100 ],
 			weakThreshold = 025,
 			defeatMsg = "%s exploded!",
 			ai = 1,
@@ -199,17 +199,17 @@ func initTemplate():
 		"canResurrect" : { loader = LIBSTD_BOOL, default = true },        #If the enemy can be resurrected. If not, it won't be added to the resurrect list.
 		"description"  : { loader = LIBSTD_STRING },                      #Enemy description.
 		"statSpread"   : { loader = LIBSTD_STATSPREAD },                  #Stat spread.
-		# Condition defenses                                         PAR NAR CRY SEA DWN BLI STU CUR PAN STA HED ARM LEG DMG
-		"conditionDefs": { loader = LIBSTD_CONDITIONDEFS, default = [ 03, 04, 04, 04, 04, 03, 03, 03, 03, 01, 03, 03, 03, 03] },
+		# Condition defenses                                         PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+		"conditionDefs": { loader = LIBSTD_CONDITIONDEFS, default = [ 03, 04, 04, 04, 03, 03, 03, 03, 03, 03] },
 		"armed"        : { loader = LIBSTD_BOOL, default = false },       #If enemy is supposed to be wielding a weapon or not.
-		"OFF"          : { loader = LIBSTD_ELEMENTDATA },                 #Elemental offense.
-		"RES"          : { loader = LIBSTD_ELEMENTDATA },                 #Elemental defense.
+		"OFF"          : { loader = LIBSTD_ELEMENTDATA, default = [ 100,100,100, 100,100,100, 100,100, 100,100 ] }, #Elemental offense.
+		"RES"          : { loader = LIBSTD_ELEMENTDATA, default = [ 100,100,100, 100,100,100, 100,100, 100,100 ] }, #Elemental defense.
 		"race"         : { loader = LIBSTD_INT },                         #Race type (for "slayer/brand" effects)
 		"aspect"       : { loader = LIBSTD_INT },                         #Race aspects (BIO/MEC/SPI), affects vulnerability to certain effects.
 		"defeatMsg"    : { loader = LIBSTD_STRING, default = "%s was defeated!" },	#Message to display when defeated. "%s倒した！"
 		"ai"           : { loader = LIBSTD_INT },                         #AI mode
 		"aiPattern"    : { loader = LIBEXT_AIPATTERN },	                  #AI pattern
-		"skills"       : { loader = LIBEXT_ENEMY_SKILL },                  #Enemy skill list.
+		"skills"       : { loader = LIBEXT_ENEMY_SKILL },                 #Enemy skill list.
 		"skillSetup"   : { loader = LIBEXT_SKILL_SETUP, default = [ [ [0,1], [1,1], [2,1], [3,1] ] ] },  #Skill setup [skill array index, level]
 	}
 

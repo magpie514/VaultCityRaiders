@@ -1,8 +1,8 @@
 const FIELD_EFFECT_SIZE = 12
 
 var data:Array   = core.valArray(0, FIELD_EFFECT_SIZE)              #Element field layout
-var bonus:Array  = core.newArray(8)                                 #Bonus per element
-var chain:Array  = core.newArray(8)                                 #Amount of chains per element
+var bonus:Array  = core.newArray(9)                                 #Bonus per element
+var chain:Array  = core.newArray(9)                                 #Amount of chains per element
 var chains:int   = 0                                                #Calculated amount of chains
 var unique:int   = 0                                                #Count of individual elements
 var maxChain:int = 0                                                #Highest chain
@@ -34,10 +34,8 @@ func init(t = null) -> void:
 			random(0)
 
 func getBonus(elem:int, side:int = 0) -> float:
-	if hyper != 0 and side == hyper:
-		return 1.5 if elem == core.stats.ELEMENTS.DMG_ULTIMATE else 0.75
-	else:
-		return (float(bonus[elem]) * .01)
+	if hyper != 0 and side == hyper:	return 2.0 #G-Dominion bonus.
+	else                           : return (float(bonus[elem]) * .01)
 
 func fieldMod(elem:int, mult:float) -> float:
 	return 1.0 + ( getBonus(elem) * mult )
@@ -130,65 +128,56 @@ func random(t:int) -> void:
 	if locked > 0: return
 	match(t):
 		0: #Random fill
-			for i in frange:
-				data[i] = randi() % 7
-		1: #Random fill, but including ultimate.
-			for i in frange:
-				data[i] = randi() % 8
+			for i in frange: data[i] = randi() % 9
+		1: #Random fill, no empty spaces.
+			for i in frange: data[i] = 1 + (randi() % 8)
 		2: #Random fill with increased chance of a chain.
-			var el : int = 0
+			var el:int = 0
 			for i in range(FIELD_EFFECT_SIZE):
 				if el != 0 and core.chance(50):
 					data[i] = el
 				else:
-					el = randi() % 7
+					el = randi() % 9
 					data[i] = el
 		3: #Fill with random element (except untyped)
-			var el : int = 1 + randi() % 7
+			var el:int = 1 + (randi() % 8)
 			fill(el)
 	update()
 
-func optimize() -> void:
-	#Simply sorts all elements. This makes repeats form a chain.
+func optimize() -> void: #Simply sorts all elements. This makes repeats form a chain.
 	if locked > 0: return
 	data.sort()
 	update()
 
-func replace(elem1:int, elem2:int) -> void:
+func replace(elem1:int, elem2:int) -> void: #Replace all instances of elem1 for elem2.
+	if locked > 0: return
+	for i in frange:
+		if data[i] == elem1: data[i] = elem2
+	update()
+
+func fillChance(elem:int, chance:int) -> void: #Fill all slots with elem, but with a chance for every slot.
+	if locked > 0: return
+	for i in frange:
+		if core.chance(chance):	data[i] = elem
+	update()
+
+func replaceChance(elem1:int, elem2:int, chance:int) -> void: #Replace all elem1 for elem2 with a random chance every slot.
 	if locked > 0: return
 	for i in frange:
 		if data[i] == elem1:
-			data[i] = elem2
+			if core.chance(chance): data[i] = elem2
 	update()
 
-func fillChance(elem:int, chance:int) -> void:
+func replaceChance2(elem:int, chance:int) -> void: #Wait this is the same as fillchange what?
 	if locked > 0: return
 	for i in frange:
-		if core.chance(chance):
-			data[i] = elem
+		if core.chance(chance): data[i] = elem
 	update()
 
-func replaceChance(elem1:int, elem2:int, chance:int) -> void:
+func consume(elem:int, elem2:int = 0) -> void: #Remove all elem. Replace by elem2 if specified.
 	if locked > 0: return
 	for i in frange:
-		if data[i] == elem1:
-			if core.chance(chance):
-				data[i] = elem2
-	update()
-
-func replaceChance2(elem:int, chance:int) -> void:
-	if locked > 0: return
-	for i in frange:
-		if core.chance(chance):
-			data[i] = elem
-	update()
-
-func consume(elem:int, elem2:int = 0) -> void:
-	#Remove all elem. Replace by elem2 if specified.
-	if locked > 0: return
-	for i in frange:
-		if data[i] == elem:
-			data[i] = elem2
+		if data[i] == elem: data[i] = elem2
 	data.sort_custom(self.Sorters, "_consume_sort")
 	update()
 

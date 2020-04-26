@@ -77,7 +77,7 @@ func init(C, slot):
 	for i in C.skills:
 		TID = C.getSkillTID(i)
 		S = core.getSkillPtr(TID)
-		if S.type == 1 and S.requiresWeapon == WP.lib.wclass and S.category in [core.skill.CAT_ATTACK, core.skill.CAT_SUPPORT]:
+		if S.requiresWeapon == WP.lib.wclass and S.category in [core.skill.CAT_ATTACK, core.skill.CAT_SUPPORT]:
 			button = skillNode.instance()
 			button.init(S, i[1], button.COST_WP)
 			addButton(button, [[TID, i[1]], WP])

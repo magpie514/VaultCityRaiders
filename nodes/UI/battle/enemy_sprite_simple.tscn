@@ -149,7 +149,7 @@ position = Vector2( 0, -120 )
 texture = ExtResource( 2 )
 
 [node name="Glows" type="Sprite" parent="SpriteHook/Sprite"]
-modulate = Color( 1, 1, 1, 0.535523 )
+modulate = Color( 1, 1, 1, 0.420912 )
 material = SubResource( 7 )
 texture = ExtResource( 4 )
 script = SubResource( 8 )

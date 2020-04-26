@@ -228,3 +228,7 @@ func _on_OverMenu_selection(x) -> void:
 	print("[BATTLECONTROLS][_on_OverMenu_selection]\n\t%s" % str(x))
 	currentPanel = self
 	action = x
+
+
+func _on_SKIP_pressed() -> void:
+	exit('skip')
