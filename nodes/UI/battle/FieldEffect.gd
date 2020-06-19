@@ -77,4 +77,9 @@ func _on_TEST05_pressed() -> void:
 	updateDisplay(core.battle.control.state.field)
 
 func _on_FEDebug_pressed() -> void:
-	$FEPanel.show()
+	$FEPanel.visible = not $FEPanel.visible
+
+
+func _on_SHIFT_pressed() -> void:
+	core.battle.control.state.field.shift(1)
+	updateDisplay(core.battle.control.state.field)

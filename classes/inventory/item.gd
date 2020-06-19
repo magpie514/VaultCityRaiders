@@ -75,81 +75,100 @@ class DragonGem:
 		[000000, 000100, 000200, 000300, 000400,  000500, 000600, 000700, 000800, 000900], #DEBUG
 		[000000, 001100, 004500, 012000, 025000,  055000, 120000, 350000, 700000, 999999], #EXPERIMENTAL 1
 	]
-	var id = null
-	var level : int = 1
-	var XP : int = 0
-	var lib = null
+	const WEAPON_STATS = [ 'WRD','DUR','ATK','DEF','ETK','EDF','AGI','LUC','OVR','CRI' ]
+	const BODY_STATS   = [ 'MHP','MEP','ATK','DEF','ETK','EDF','AGI','LUC','OVR','CRI' ]
+	const MON_STATS    = [ 'MHP','MEP','ATK','DEF','ETK','EDF','AGI','LUC' ]
+	var level:int = 0     #Calculated DGem level
+	var XP:int    = 0     #Total experience value.
+	var id        = null  #DGem's TID.
+	var lib       = null  #Pointer to librarby.
 	func _init(type, xp):
-		self.id = core.tid.from(type)
-		self.lib = core.lib.dgem.getIndex(id)
-		self.XP = xp
-		self.level = 1
-		setLevel()
-		print("[GEM] Initialized dragon gem %s LV.%s" % [lib.name, level])
+		self.id    = core.tid.from(type)
+		self.lib   = core.lib.dgem.getIndex(id)
+		self.XP    = xp
+		self.level = 0
+		print(setLevelByEXP())
+		print("[GEM] Initialized dragon gem %s LV.%s" % [lib.name, level+1])
 
 	func save() -> Array:
 		return [self.id, self.XP]
 
-	func setLevel():
+	func setLevelByEXP() -> bool:
 		var levelup = false
-		while level < 9 and XP >= EXP_TABLE[0][self.level]:
+		while level < (lib.levels - 1) and XP >= EXP_TABLE[0][self.level]:
 			#print("[GEM] Level up!")
 			level += 1
 			levelup = true
 		return levelup
+
+	func setLevel(val:int) -> void:
+		val = core.clampi(val, 0, lib.levels - 1)
+		XP = EXP_TABLE[0][val]
+		level = val
 
 	func getSkill():
 		return lib.skill
 
 	func getUnicodeIcon():
 		match lib.shape:
-			core.lib.dgem.GEMSHAPE_DIAMOND:
-				return '◆'
-			core.lib.dgem.GEMSHAPE_CIRCLE:
-				return '●'
-			core.lib.dgem.GEMSHAPE_SQUARE:
-				return '■'
+			core.lib.dgem.GEMSHAPE_DIAMOND:  return '◆'
+			core.lib.dgem.GEMSHAPE_CIRCLE:   return '●'
+			core.lib.dgem.GEMSHAPE_SQUARE:   return '■'
+			core.lib.dgem.GEMSHAPE_TRIANGLE: return '▲'
+			core.lib.dgem.GEMSHAPE_STAR:     return '★'
 
 	func printGem() -> String:
-		var result : String = "%s %s LV.%02d/%02d" % [getUnicodeIcon(), lib.name, level, lib.levels]
+		var result:String = "%s %s LV.%02d/%02d" % [getUnicodeIcon(), lib.name, level, lib.levels]
 		return result
 
-
-	func getStats(type : int, D : Dictionary) -> void:
-		var where = null
+	func getStats(type:int, D:Dictionary) -> void:
+		var where:Dictionary
+		var which:Array
 		match(type):
 			0:
 				where = lib.on_weapon
+				which = WEAPON_STATS
 				#print("[GEM][getStats] Calculating for weapon.")
 			1:
 				where = lib.on_body
+				which = BODY_STATS
 				print("[GEM][getStats] Calculating for body.")
+			2:
+				where = lib.on_mon
+				which = MON_STATS
+				print("[GEM][getStats] Calculating for mon.")
+
 		for i in where:
-			if i in D:
-				if i == 'OFF' or i == 'RES':
-					for j in core.stats.ELEMENTS:
-						D[i][j] += where[i][j][level]
-				else:
-					D[i] += where[i][level]
-			else:
-				if i == 'OFF' or i == 'RES':
-					D[i] = {}
-					for j in core.stats.ELEMENTS:
-						D[i][j] = where[i][j][level]
-				else:
-					D[i] = where[i][level]
+			if i in which:
+				D[i] += where[i][level-1]
+			elif core.stats.elementalModStringValidate(i):
+				core.stats.elementalModApply(D, i, where[i][level-1])
 
 
 
 class DragonGemContainer:
 	const GEM_SLOTS = 9
+	var STATS_DEFAULT:Dictionary = {
+		MHP = int(0), MEP = int(0), #Body/Mon exclusive stats.
+		WRD = int(0), DUR = int(0), #Weapon exclusive stats.
+		ATK = int(0), ETK = int(0),
+		DEF = int(0), EDF = int(0),
+		AGI = int(0), LUC = int(0),
+		OFF = core.stats.createElementData(),
+		RES = core.stats.createElementData(),
+		CON = core.stats.createCondDefsArray(), #Condition Defenses
+		OVR = int(0), #Starting Over gauge bonus.
+		GEM = int(100), #Gem exp growth rate%.
+		SKL = [],
+	}
 	var slot = core.newArray(GEM_SLOTS)
 	var type = 0
-	var stats = null
+	var stats:Dictionary = {}
 	var skills = null
 
-	func _init(loc : int, data = null) -> void:
+	func _init(loc:int, data = null) -> void:
 		self.type = loc
+		stats = STATS_DEFAULT.duplicate(true)
 		#print("[GEMCONTAINER][_init] Init gem on %s with data %s" % [["body", "self"][loc], data])
 		if data == null:
 			for i in range(GEM_SLOTS):
@@ -164,7 +183,7 @@ class DragonGemContainer:
 		calcStats()
 		#print("[GEMCONTAINER][_init] Result: %s %s" % [loc, slot])
 
-	func attach(G : DragonGem, sl : int):
+	func attach(G:DragonGem, sl:int):
 		if sl > GEM_SLOTS:
 			calcStats()
 			return
@@ -172,7 +191,7 @@ class DragonGemContainer:
 		print("[GEMCONTAINER][attach] %s in slot %s" % [slot[sl], sl])
 		calcStats()
 
-	func detach(sl : int):
+	func detach(sl:int):
 		if sl > GEM_SLOTS:
 			return null
 		elif slot[sl] == null:
@@ -187,13 +206,18 @@ class DragonGemContainer:
 		if M == null:
 			pass
 
+	func gainEXP(val:int):
+		for i in range(GEM_SLOTS): #TODO: Use calculated slot unlock instead.
+			slot[i].gainEXP( round(val as float * core.percent(stats.GEM)) as int )
+		calcStats()
+
 	func calcStats():
-		var result = {}
+		var result:Dictionary = STATS_DEFAULT.duplicate(true)
 		for i in range(GEM_SLOTS): #TODO: Use weapon level instead
 			if slot[i] != null:
 				#print("[GEMCONTAINER][calcStats] %s LV.%s in slot %s" % [slot[i].lib.name, slot[i].level, i])
 				slot[i].getStats(type, result)
-		#print("[GEMCONTAINER][calcStats] this container provides %s" % result)
+		print("[GEMCONTAINER][calcStats] this container provides %s" % result)
 		self.stats = result
 		var sk = {}
 		var sk_mod = {}
@@ -220,7 +244,7 @@ class DragonGemContainer:
 						sk_mod[sk_last] = tmp2
 			sk_last = temp if (slot[i] != null and slot[i].lib.shape == core.lib.dgem.GEMSHAPE_DIAMOND) else null
 
-		var sk2 = []
+		var sk2:Array = []
 		for i in sk:
 			sk2.push_back([i, sk[i], sk_mod[i] if i in sk_mod else null])
 
@@ -230,8 +254,8 @@ class DragonGemContainer:
 			print(i[0])
 
 	func printGems() -> String:
-		var result = "["
-		var gem : DragonGem
+		var result:String = "["
+		var gem:DragonGem
 		for i in range(GEM_SLOTS):
 			gem = slot[i]
 			if i == 8:
@@ -532,11 +556,11 @@ class ArmorPart:
 		data[1] = stat2 + 1
 
 class Armor:
-	var DEFAULT : Dictionary = {
+	var DEFAULT:Dictionary = {
 		tid = core.tid.from("debug/debug"),
 		gem = null,
 	}
-	var STATS_DEFAULT : Dictionary = {
+	var STATS_DEFAULT:Dictionary = {
 		MHP = int(0), MEP = int(0),
 		ATK = int(0), ETK = int(0),
 		DEF = int(0), EDF = int(0), AGI = int(0), LUC = int(0),
@@ -556,6 +580,7 @@ class Armor:
 		if tmp_tid == null: tmp_tid = data.tid if 'tid' in data else DEFAULT.tid
 		self.tid = core.tid.from(tmp_tid)
 		self.lib = core.lib.armor.getIndex(self.tid)
+		print("[ARMOR][_init] Initializing armor ", self.lib.name)
 		stats = STATS_DEFAULT.duplicate(true)
 		if 'parts' in data:
 			if data.parts != null:
@@ -654,6 +679,7 @@ class Weapon:
 		OFF = core.stats.createElementData(),
 		RES = core.stats.createElementData(),
 		CON = core.stats.createCondDefsArray(), #Condition Defenses
+		OVR = int(0), #Starting Over gauge bonus.
 		SKL = [],
 	}
 
@@ -690,11 +716,11 @@ class Weapon:
 
 	func recalculateStats() -> void:
 		var gemstats = DGem.stats
-		stats.ATK = lib.ATK[level] + (gemstats.ATK if 'ATK' in gemstats else 0)
-		stats.ETK = lib.ETK[level] + (gemstats.ETK if 'ETK' in gemstats else 0)
-		stats.WRD = lib.weight[level] + (gemstats.WRD if 'WRD' in gemstats else 0)
+		stats.ATK = lib.ATK[level]        + (gemstats.ATK if 'ATK' in gemstats else 0)
+		stats.ETK = lib.ETK[level]        + (gemstats.ETK if 'ETK' in gemstats else 0)
+		stats.WRD = lib.weight[level]     + (gemstats.WRD if 'WRD' in gemstats else 0)
 		stats.DUR = lib.durability[level] + (gemstats.DUR if 'DUR' in gemstats else 0)
-		for i in ['DEF', 'EDF', 'AGI', 'LUC']:
+		for i in ['DEF', 'EDF', 'AGI', 'LUC', 'OVR', 'CRI']:
 			stats[i] = gemstats[i] if i in gemstats else 0
 		for i in ['OFF', 'RES']:
 			if i in gemstats:
@@ -704,6 +730,9 @@ class Weapon:
 
 	func getBonuses(tmpSkill:Array, tmpStats:Dictionary) -> void:
 		core.stats.sum(tmpStats, stats)
+		for i in ['OVR', 'CRI']:
+			if i in stats:
+				tmpStats[i] = stats[i]
 		if 'SKL' in stats:
 			print("[WEAPON][getBonuses] SKL: %s" % [stats.SKL])
 			for i in stats.SKL:

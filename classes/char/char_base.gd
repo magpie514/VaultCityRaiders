@@ -17,6 +17,7 @@ var condition2:int   = 0	 #Condition (Secondary) #TODO: Move to battle stats.
 var HP:int           = 0    #Character's vital (HP)
 var statBase         = stats.create()	#Base stats
 var statFinal        = stats.create()  #Calculated stats
+var armorDefs:Array  #Armor-provided defenses. For armor-ignoring skills.
 var conditionDefs    = core.newArray(core.CONDITIONDEFS_DEFAULT.size())
 var battle           = null            #Battle stats (See createBattleStats())
 var skills:Array     = []   #Array of skill index numeric ID + level
@@ -37,7 +38,7 @@ class BattleStats:
 	# Core stats ################################################################################
 	var stat = core.stats.create()    #Calculated battle stats
 	var statmult:Dictionary = {}      #Stat multipliers
-	var over:int = 33 setget set_over #Over counter
+	var over:int = 00 setget set_over #Over counter
 	# Statistics ################################################################################
 	var accumulatedDMG:int = 0        #Damage accumulated during current battle
 	var accumulatedDealtDMG:int = 0   #Damage dealt accumulated during current battle
@@ -70,26 +71,28 @@ class BattleStats:
 	var counter:Array = [100, 100, null, 0, core.stats.ELEMENTS.DMG_UNTYPED, 3, core.skill.PARRY_NONE]
 	var delayed:Array = []           #Array of arrays [user, countdown, skill, level] Similar to above, a delayed skill will activate after X turns
 	# Defensive stats ###########################################################################
+	var conditionDefs:Array    = core.newArray(core.CONDITIONDEFS_DEFAULT.size()) #Defenses for condition effects (current value, decreased as conditions hit).
+	var conditionDefsMax:Array = core.newArray(core.CONDITIONDEFS_DEFAULT.size()) #Defenses for condition effects (maximum value, increases every time the condition applies).
 	var AD:int = 100                 #Active Defense. Global final damage multiplier.
 	var decoy:int = 0                #Chance to draw enemy attacks to self.
-	var guard:int = 0                #Prevents an amount of damage. Like a health buffer.
-	var absoluteGuard:int = 0        #Absolute Guard. Is it not depleted over turns and takes over regular guard until depleted.
-	var barrier:int = 0              #Nullifies X damage from the received total.
+	var barrier:int = 0              #Prevents an amount of damage. Like a health buffer.
+	var barrierHold:int = 0          #Holds X% barrier at the end of a turn.
+	var block:int = 0                #Nullifies X damage from the received total.
 	var dodge:int = 0                #Dodge rate%
 	var forceDodge:int = 0           #Always dodges X attacks this turn unless they are set to not miss
 	var chain:int = 0                #Chain counter.
 	var parry:Array = [100, 33, core.skill.PARRY_NONE]
 	var protectedBy:Array = []	      #Array of arrays, [pointer to defender, chance of defending]
 	var defending:bool = false       #Character is marked as defending until the end of the turn.
-	var endure:bool = false          #Character is enduring, will remain at 1HP.
+	var endure:bool  = false         #Character is enduring, will remain at 1HP.
+	var endureCooldown:int = 0			#Endure cannot be used until it's 0.
 	var adamant:bool = false         #Character will endure a fatal blow if at full health.
-	var conditionDefs:Array    = core.newArray(core.CONDITIONDEFS_DEFAULT.size()) #Defenses for condition effects (current value, decreased as conditions hit).
-	var conditionDefsMax:Array = core.newArray(core.CONDITIONDEFS_DEFAULT.size()) #Defenses for condition effects (maximum value, increases every time the condition applies).
 	# Item use stats ############################################################################
 	var itemSPD:int = 090            #Item use speed.
 	var itemAD:int  = 110            #Item use AD set.
 	# Misc stats ################################################################################
 	var critBonus:int  = 0           #Raw mod to critical bonus.
+	var healMod:int    = 100         #Modifier% to healing received.
 	var FEbonus:int    = 0           #Added to elemental field bonus.
 	var eventFlags:int = 0           #Event special flags such as plot armor.
 	var lastAction = null
@@ -109,8 +112,8 @@ class BattleStats:
 		self.weaknessHits = 0
 		self.AD           = 100
 		self.decoy        = 0
-		self.guard        = 0
 		self.barrier      = 0
+		self.block        = 0
 		self.forceDodge   = 0
 		self.defending    = false
 		self.endure       = false
@@ -119,6 +122,7 @@ class BattleStats:
 		self.itemAD       = 110
 		self.critBonus    = 0
 		self.FEbonus      = 0
+		self.healMod      = 100
 		self.chase.clear()
 		self.follow.clear()
 		self.protectedBy.clear()
@@ -150,41 +154,28 @@ class BattleStats:
 ###############################################################################
 
 func reportEvent(event_type:int, target) -> void:
-	#yield()
 	for i in battle.event_listener[event_type]:
 		skill.runExtraCode(i[0], i[1] + 1, self, skill.CODE_GD, target)
-		#yield(core.battle.skillControl, "skill_finished")
-		#print("=======REPORT RETURNED==========")
-	#core.battle.skillControl.finishNotification()
 
 func createBattleStats() -> BattleStats:
 	return BattleStats.new()
 
 func checkParalysis() -> bool:
-	if condition != skill.CONDITION_PARALYSIS:
-		return false
-	else:
-		return true if core.chance(50) else false
+	if condition != skill.CONDITION_PARALYSIS: return false
+	else                                     : return true if core.chance(50) else false
 
 func clampHealth() -> void:
 	HP = core.clampi(HP, 0, maxHealth())
 
 func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:
 	var temp:float
-	if flags & core.skill.OPFLAG_VALUE_PERCENT:
-		temp = float(maxHealth()) * core.percent(x)
-	else:
-		temp = float(x)
-	if elem != 0:
+	if flags & core.skill.OPFLAG_VALUE_PERCENT: temp = float(maxHealth()) * core.percent(x)
+	else                                      : temp = float(x)
+	if elem != 0: #Elemental, use field bonuses.
 		temp = core.battle.control.state.field.calculate(temp, elem, elemMult)
 	var result:int = round(temp) as int
-	if flags & core.skill.OPFLAG_VALUE_ABSOLUTE:
-		battle.guard = result
-	else:
-		if battle.absoluteGuard > 0:
-			battle.absoluteGuard += result
-		else:
-			battle.guard += result
+	if flags & core.skill.OPFLAG_VALUE_ABSOLUTE: battle.barrier = result
+	else                                       : battle.barrier += result
 
 func recalculateStats():
 	pass
@@ -230,9 +221,9 @@ func updateBattleStats() -> void:
 	UIdisplay.update()
 
 func endBattleTurn(defer) -> void:
-	#Reset guard and barrier values now so they don't show in the player UI.
-	battle.guard   = 0
+	#Reset barrier and block values now so they don't show in the player UI.
 	battle.barrier = 0
+	battle.block = 0
 	#Remove stun condition at the end of the turn.
 	if condition2 & skill.CONDITION2_STUN:	condition2 = condition2 & ~skill.CONDITION2_STUN
 
@@ -245,6 +236,7 @@ func endBattleTurn(defer) -> void:
 	damageEffects()
 
 func initBattle() -> void:
+	recalculateStats()
 	battle = createBattleStats()
 	#Initialize condition defenses:
 	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
@@ -310,36 +302,50 @@ func damageProtectionPass(x:int, info, ignoreDefs = false) -> int: # Modify dama
 		return 0 #Character has plot armor, act as a full barrier block.
 
 	if ignoreDefs: return x #Incoming damage ignores defenses.
-
-	if battle.absoluteGuard > 0: #Absolute Guard is active, prioritize over regular.
-		var check:int = battle.absoluteGuard - x
-		if check > 0:
-			x = x - battle.absoluteGuard
-			battle.absoluteGuard = check
-		else: #Guard Break.
-			x -= battle.absoluteGuard
-			battle.absoluteGuard = 0
-			battle.guard = 0
-			info.guardBreak = true
-	else: #No Absolute Guard, check regular.
-		if battle.guard > 0:
-			var check:int = battle.guard - x
-			if check > 0:
-				x -= battle.guard
-				battle.guard = check
-			else: #Guard Break
-				x -= battle.guard
-				battle.guard = 0
-				info.guardBreak = true
-	if battle.barrier > 0: #Process barrier afterwards.
-		x = x - battle.barrier
+	else: x = damageBarriers(x, info)
+	if x <= 0:
+		display.message("FULL BLOCK", "339966")
+		return 0
+	if battle.block > 0: #Process barrier afterwards.
+		x = x - battle.block
 		if x <= 0: #Full block, damage was completely negated.
 			info.barrierFullBlock = true
 	return x
 
-func damageResistModifier(x:float, _type:int, energyDMG:bool) -> Array:
+func damageBarriers(x:int, info = null) -> int:
+	var check:int = 0
+	if battle.barrier > 0:      #Check Guard instead.
+		check = battle.barrier - x
+		if check > 0:
+			x             -= battle.barrier
+			battle.barrier = check
+		else: #Guard Break!
+			x                -= battle.barrier
+			battle.barrier    = 0
+			if info != null: info.guardBreak = true
+			display.message("GUARD BREAK!", "FF00FF")
+	return x
+
+
+func getWeakestElementalResist() -> int:
+	var weakest:int = 1
+	for i in range(1,9):
+		var type:String = stats.getElementKey(i)
+		if battle.stat.RES[type] > battle.stat.RES[stats.getElementKey(weakest)]:
+			weakest = i
+	return weakest
+
+func getStrongestElementalResist() -> int:
+	var strongest:int = 2 #Default to strike.
+	for i in range(1,9):
+		var type:String = stats.getElementKey(i)
+		if battle.stat.RES[type] < battle.stat.RES[stats.getElementKey(strongest)]:
+			strongest = i
+	return strongest
+
+func damageResistModifier(x:float, _type:int, energy:bool) -> Array:
 	# Apply Kinetic/Energy damage modifiers first..
-	if energyDMG: x = x * core.percent(battle.stat.RES.DMG_ENERGY)
+	if energy: x = x * core.percent(battle.stat.RES.DMG_ENERGY)
 	else:         x = x * core.percent(battle.stat.RES.DMG_KINETIC)
 
 	var type : String = stats.getElementKey(_type)
@@ -357,7 +363,7 @@ func damageResistModifier(x:float, _type:int, energyDMG:bool) -> Array:
 const MAX_DMG_NOCAP = 9223372036854775807
 const MAX_DMG       = 32000
 func finalizeDamage(x, info, ignoreDefs:bool = false, nocap:bool = false) -> int:
-	#Apply active defense, reduce damage from guard or barrier.
+	#Apply active defense, reduce damage from barrier.
 	#var finalDmg : float = x * (float(battle.AD) * .01)
 	var finalDmg = damageProtectionPass(x * core.percent(battle.AD), info, ignoreDefs)
 	return clamp(finalDmg, 1, MAX_DMG_NOCAP if nocap else MAX_DMG) as int
@@ -435,14 +441,19 @@ func defend() -> void:
 
 # Healing #########################################################################################
 func heal(x:int) -> void:
-	HP = int(clamp(HP + x, 0, maxHealth()))
+	if battle != null:
+		print("[CHAR_BASE][heal] Healing %s (Mod: %s%%)" % [x, battle.healMod])
+		x = round( core.percentMod(x, battle.healMod) ) as int
+	HP = core.clampi(HP + x, 0, maxHealth())
 	if HP == 0:	defeat()
 	battle.turnHeal += x
 	display.damage(-x)
 
 func overHeal(x, y) -> void:
+	if battle != null:
+		x = round( core.percentMod(x, battle.healMod) ) as int
 	var temp = maxHealth() + y
-	HP = clamp(HP+x, 0, temp) as int
+	HP = core.clampi(HP + x, 0, temp)
 	if HP == 0:	defeat()
 	battle.turnHeal += x
 	display.damage(-x)
@@ -520,7 +531,7 @@ func addInflict(x:int) -> void:
 
 
 func checkInflict() -> bool: #Check if target has a negative condition.
-	return true if (condition != core.skill.CONDITION_GREEN or condition2 != 0) else false
+	return true if (condition != core.skill.CONDITION_GREEN or condition2 != 0 or battle.damageEffect.size() > 0) else false
 
 func tryInflict2(user, cond:int, powr:int, crit:int) -> int: #Returns 0 if immune. 1 if gauge is decreased, 2 if success.
 	if condition != skill.CONDITION_DOWN and validateInflict(cond):
@@ -542,10 +553,16 @@ func tryInflict2(user, cond:int, powr:int, crit:int) -> int: #Returns 0 if immun
 			else:
 				return 1 #Infliction in progress.
 	return 0
-func tryInflict(user, value:int, crit:int) -> void:
-	var cond:int = core.clampi(((value & 0xF0) >> 4) - 1, 0, 10)
-	var powr:int = core.clampi((value & 0x0F)     , 0, 15)
+func tryInflict(user, value:int, crit:int, hit:bool = true) -> void:
+	var cond:int = core.clampi(((value & 0xF00) >> 8) - 1, 0, 10)
+	var powr:int = core.clampi(((value & 0x0F0) >> 4)    , 0, 15)
+	var chck:int = core.clampi(((value & 0x00F)     )    , 0, 1)
 	#TODO: See something about hit checks. Like a way to not have to do "if_connect" all the time?
+	if chck != 0:
+		if not hit:
+			print("[CHAR_BASE][tryInflict] Hit check failed.")
+			return
+		else: print("[CHAR_BASE][tryInflict] Hit check succeed.")
 	match(tryInflict2(user, cond, powr, crit)):
 		0:
 			display.message("Resisted!", "FF00FF")
@@ -691,12 +708,12 @@ func calculateEffectStats(S, lv:int) -> void: # Apply stat changes from an activ
 			temp = S.effectStatBonus[key]
 			core.stats.elementalModApply(battle.stat, key, temp[lv])
 			stdout += str("%s+%s " % [key, temp[lv]])
-	if 'GUARD' in S.effectStatBonus:
-		battle.guard += S.effectStatBonus['GUARD'][lv]
-		stdout += str("Guard+%s " % S.effectStatBonus['GUARD'][lv])
 	if 'BARRIER' in S.effectStatBonus:
 		battle.barrier += S.effectStatBonus['BARRIER'][lv]
-		stdout += str("Barrier+%s " % S.effectStatBonus['BARRIER'][lv])
+		stdout += str("Guard+%s " % S.effectStatBonus['GUARD'][lv])
+	if 'BLOCK' in S.effectStatBonus:
+		battle.block += S.effectStatBonus['BLOCK'][lv]
+		stdout += str("Barrier+%s " % S.effectStatBonus['BLOCK'][lv])
 	if 'EVASION' in S.effectStatBonus:
 		battle.dodge += S.effectStatBonus['EVASION'][lv]
 		stdout += str("Dodge+%s " % S.effectStatBonus['EVASION'][lv])
@@ -742,13 +759,13 @@ func removeEffect(E, holder) -> void:
 # Passive combat skills ###########################################################################
 func checkPassives(runEF:bool = false) -> void: pass #[VIRTUAL] Checks passive skills.
 
-func initPassive(S, lv:int = 1, runEF:bool = false) -> void:
+func initPassive(S, lv:int = 0, runEF:bool = false) -> void:
 	if S.effectStatBonus != null: calculateEffectStats(S, lv)
 	if S.codeGD != null:
 		print("[CHAR_BASE][initPassive] %s wants to listen to GD events." % name)
 		battle.addEventListener(group.EVENT_ON_DEFEAT, S, lv)
 		core.battle.state.addEventListener(group.EVENT_ON_DEFEAT, self)
-	if runEF and S.codeEF != null: skill.runExtraCode(S, lv+1, self, skill.CODE_EF, self)
+	if runEF and S.codeEF != null: skill.runExtraCode(S, lv, self, skill.CODE_EF, self)
 
 ###################################################################################################
 

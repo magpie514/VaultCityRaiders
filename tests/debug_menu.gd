@@ -88,7 +88,9 @@ func _on_LoadDebugParty_pressed() -> void:
 	core.changeScene("res://tests/debug_menu.tscn")
 
 func _on_DGemCancel_pressed() -> void:
+	var C = $Panel4.C
 	$Panel6.close()
+	$Panel5.init(C, self)
 
 func _on_DGemRemove_pressed(WP, slot) -> void:
 	var C = $Panel4.C
@@ -101,7 +103,19 @@ func _on_item_selected(I) -> void:
 	core.guild.giveItem(I)
 	$Panel7.close()
 
+func _on_dgem_selected(G) -> void:
+	core.guild.giveDGem([G, 0])
+	$Panel8.close()
+
 
 func _on_GetItem_pressed() -> void:
 	if core.guild != null:
 		$Panel7.init(core.guild, self)
+
+
+func _on_GetDGem_pressed() -> void:
+	if core.guild != null:
+		$Panel8.init(core.guild, self)
+
+func _on_DGem_Cancel_pressed() -> void:
+	$Panel5.close(self)

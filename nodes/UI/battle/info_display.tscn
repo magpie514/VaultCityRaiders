@@ -10,6 +10,9 @@
 anchor_right = 1.0
 anchor_bottom = 0.125
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="SkillDisplay" parent="." instance=ExtResource( 2 )]
 visible = false

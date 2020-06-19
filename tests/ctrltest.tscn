@@ -170,9 +170,7 @@ valign = 1
 [node name="UIDisplay" parent="Panel" instance=ExtResource( 7 )]
 
 [node name="InfoDisplay" parent="Panel" instance=ExtResource( 5 )]
-visible = false
 margin_top = 620.0
-margin_right = -452.0
 margin_bottom = 630.0
 
 [node name="QuitButton" type="Button" parent="."]
@@ -193,10 +191,10 @@ script = ExtResource( 13 )
 
 [node name="Panel2" type="Panel" parent="."]
 modulate = Color( 1, 1, 1, 0.235294 )
-margin_left = 448.0
-margin_top = 620.0
-margin_right = 727.0
-margin_bottom = 640.0
+margin_left = 2.0
+margin_top = 463.0
+margin_right = 64.0
+margin_bottom = 563.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -206,34 +204,45 @@ margin_right = 84.0
 margin_bottom = 21.0
 text = "Speed"
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button" type="Button" parent="Panel2"]
-margin_left = -8.0
-margin_top = 18.0
-margin_right = 52.0
-margin_bottom = 38.0
+margin_top = 20.0
+margin_right = 60.0
+margin_bottom = 40.0
 text = "VFAST"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button2" type="Button" parent="Panel2"]
-margin_left = -8.0
-margin_top = 37.0
-margin_right = 52.0
-margin_bottom = 57.0
+margin_top = 39.0
+margin_right = 60.0
+margin_bottom = 59.0
 text = "FAST"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button3" type="Button" parent="Panel2"]
-margin_left = -8.0
-margin_top = 57.0
-margin_right = 52.0
-margin_bottom = 77.0
+margin_top = 59.0
+margin_right = 60.0
+margin_bottom = 79.0
 text = "NORM"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Button4" type="Button" parent="Panel2"]
-margin_left = -8.0
-margin_top = 76.0
-margin_right = 52.0
-margin_bottom = 96.0
+margin_top = 78.0
+margin_right = 60.0
+margin_bottom = 98.0
 text = "SLOW"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="Panel/Time/Button" to="." method="_on_Button_pressed"]
 [connection signal="finished" from="Panel/BattleControls" to="." method="_on_BattleControls_finished"]
 [connection signal="pressed" from="QuitButton" to="." method="_on_QuitButton_pressed"]

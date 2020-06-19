@@ -11,6 +11,10 @@ var data = {
 		day = 1,
 		IDcounter = 67,
 	},
+	formationSlots = [
+		0, 2, 4, #Front
+		1, 6, 3, #Back
+	],
 	roster = [
 		{ name = "Jay",
 			race = "debug/choujin",	aclass = "debug/ofight",
@@ -19,8 +23,8 @@ var data = {
 			energyColor = "#1100FF",
 			equip = [
 				# Weapons
-				{ tid = "story/orbicann", level = 0, uses = 25, extra = null, gem = [ ["core/speed", 1001], ["core/speed", 1001], [["core", "shock"], 1001], [["core", "reson"], 1001], [["core", "shock"], 1001], [["core", "reson"], 1000], [["core", "shock"], 1000], [["core", "power"], 1000] ] },
-				{ tid = "story/fomablad", level = 0, uses = 25, extra = null, gem = [ [["core", "shock"], 1001], [["core", "reson"], 1001] ] },
+				{ tid = "story/orbicann", level = 0, uses = 25, extra = null, gem = [ ["core/chaos", 1001], ["core/charge", 1001], ["core/shock", 1001], ["core/reson", 1001], ["core/shock", 1001], ["core/reson", 1000], ["core/shock", 1000], ["core/power", 1000] ] },
+				{ tid = "story/fomablad", level = 0, uses = 25, extra = null, gem = [ ["core/shock", 1001], ["core/reson", 1001] ] },
 				null,
 				null,
 				# Armor
@@ -47,11 +51,11 @@ var data = {
 			equip = [
 				# Weapons
 				{ tid = "story/bstglaiv", level = 0, uses = 50, extra = null, gem = [ ["core/protect", 900], [["core", "power"], 900], [["core", "protect"], 0], [["core", "rebierth"], 0], [["core", "protect"], 0], [["core", "accel"], 900] ] },
-				{ tid = "story/soldrifl", level = 0, uses = 25, extra = null, gem = [ ["core/void", 900], [["core", "charge"], 900] ] },
-				null,
+				{ tid = "story/soldrifl", level = 0, uses = 25, extra = null, gem = [ ["core/void", 900], ["core/charge", 900] ] },
+				{ tid = "story/stardust", level = 2, uses = 99, extra = null, gem = [ ["core/protect", 900], ["core/charge", 900] ] },
 				null,
 				# Armor
-				{ tid = "story/KSSGfrm1", parts = null},
+				{ tid = "story/kssgfrm1", parts = null },
 				# Gear
 				{ tid = ["debug", "debug"] },
 				null,
@@ -73,7 +77,7 @@ var data = {
 			energyColor = "#DD0000",
 			equip = [
 				# Weapons
-				{ tid = "story/hellfngr", level = 0, uses = 1, extra = null, gem = [ [["core", "speed"], 101], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 1], [["core", "decel"], 800],[["core", "cut"], 901] ] },
+				{ tid = "story/hellfngr", level = 0, uses = 1, extra = null, gem = [ ["core/speed", 101], ["core/flame", 100], ["core/power", 1], ["core/flame", 100], ["core/power", 1], ["core/flame", 1], ["core/decel", 800],["core/cut", 901] ] },
 				{ tid = "story/deviclaw", level = 0, uses = 1, extra = null, gem = [ [["core", "speed"], 101], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 100], [["core", "power"], 1], [["core", "flame"], 1], [["core", "decel"], 800],[["core", "cut"], 901] ] },
 				null,
 				null,
@@ -101,7 +105,7 @@ var data = {
 			energyColor = "#4477FF",
 			equip = [
 				# Weapons
-				{ tid = "story/polrstar", level = 0, uses = 25, extra = null, gem = [ [["core", "echo"], 200], [["core", "power"], 900], [["core", "life"], 901], [["core", "power"], 901], [["core", "life"], 901], [["core", "rebicold"], 901], [["core", "life"], 901], [["core", "atunm"], 901] ] },
+				{ tid = "story/polrstar", level = 0, uses = 25, extra = null, gem = [ ["core/echo", 200], ["core/power", 900], ["core/life", 901], ["core/power", 901], ["core/life", 901], ["core/rebicold", 901], ["core/life", 901], ["core/atunm", 901] ] },
 				null,
 				null,
 				null,
@@ -181,10 +185,32 @@ var data = {
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-	],
-	formationSlots = [
-		0, 2, 4,
-		1, null, 3,
+		{ name = "Cromwell",
+			race = "debug/origin",	aclass = "story/cromwell",
+			XP = 500,
+			portrait = null,
+			equip = [
+				# Weapons
+				null,
+				null,
+				null,
+				null,
+				# Armor
+				null,
+				# Gear
+				null,
+				null,
+				null,
+			],
+			skills = [ [0,1], ],
+			links = [
+				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
+				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
+				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
+				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
+				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
+			],
+		},
 	],
 	inventory = [
 		[1, "core/nostrum",  { level = 1 }],
@@ -203,6 +229,9 @@ var data = {
 		[1, "core/scfcshrd", { level = 1, charge = 100 }],
 		[1, "core/everflam", { level = 1, charge = 100 }],
 		[1, "core/flamshrd", { level = 1 }],
+	],
+	dragonGemSets = [
+		{ name = "1234567890123456", user = null, data = [ ["core/protect", 900], ["core/power", 900], ["core/protect", 0], ["core/rebierth", 0], ["core/protect", 0], ["core/accel", 900] ] },
 	],
 	dragonGems = [
 		[["core", "flame"], 0],
@@ -253,7 +282,10 @@ var data = {
 		[["core", "echo"], 100],
 		[["core", "echo"], 200],
 		[["core", "echo"], 300],
-
+		["core/radiance", 0000],
+		["core/radiance", 0100],
+		["core/radiance", 0300],
+		["core/radiance", 1000],
 
 
 		[["core", "power"], 300],
@@ -307,5 +339,8 @@ var data = {
 		[["core", "intel"], 0],
 		[["core", "intel"], 500],
 		[["core", "intel"], 999],
+		["core/hope", 000],
+		["core/hope", 500],
+		["core/hope", 999],
 	]
 }

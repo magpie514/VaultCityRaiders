@@ -59,8 +59,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ConditionDisplay" parent="Control" instance=ExtResource( 2 )]
+
 [node name="MessageDisplay" parent="Control" instance=ExtResource( 1 )]
 margin_left = -60.0
+margin_top = -10.0
 margin_right = 70.0
-
-[node name="ConditionDisplay" parent="Control" instance=ExtResource( 2 )]
+margin_bottom = 0.0

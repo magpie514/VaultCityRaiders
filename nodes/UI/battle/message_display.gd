@@ -17,7 +17,7 @@ func refresh() -> void:
 		slot += 1
 
 func addMsg() -> Node:
-	var node := msgNode.instance()
+	var node    := msgNode.instance()
 	var slot:int = stack.size()
 	add_child(node)
 	node.connect("done", self, "_on_done")

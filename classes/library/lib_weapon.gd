@@ -41,7 +41,7 @@ var example = {
 			ETK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
 			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ ["sto_wp", "sever"], ["sto_wp", "orbishld"] ],
+			skill = [ "sto_wp/sever", "sto_wp/orbishld" ],
 			over = "story/thunswrd",
 		},
 		"fomablad": {
@@ -51,7 +51,7 @@ var example = {
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
 			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ ["sto_wp", "dualshrs"], ["sto_wp", "thoukniv"] ],
+			skill = [ "sto_wp/dualshrs", "sto_wp/thoukniv" ],
 			over = ["sto_wp", "lighflam"]
 		},
 		"soldrifl": {
@@ -65,14 +65,27 @@ var example = {
 			over = ["debug", "debug"]
 		},
 		"bstglaiv": {
-			name = "MTM-GA12 Boost Glaive", wclass = core.WPCLASS_POLEARM,
+			name        = "MTM-GA12 Boost Glaive", wclass = core.WPCLASS_POLEARM,
 			description = "Magpie's custom glaive, created by herself. It's a glaive equipped with rocket boosters, G-crystals and shotgun shells, and is reinforced by graviton reflow.",
-			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
-			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
-			weight = [001, 001, 001, 001, 001, 001, 001, 001, 001, 000],
-			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ "debug/shckstab", "story/gemshrap" ],
-			over = "debug/debug"
+			ATK         = [010,012,014,016,020, 022,024,026,028,032],
+			ETK         = [008,011,012,015,016, 020,022,023,025,030],
+			weight      = [001,001,001,001,001, 001,001,001,001,000],
+			durability  = [032,034,037,042,050, 053,056,059,062,070],
+			skill       = [ "debug/shckstab", "story/gemshrap" ],
+			over        = "debug/debug"
+		},
+		"stardust": {
+			name        = "MTM-GA01 Stardust", wclass = core.WPCLASS_HANDGUN,
+			description = "Magpie's custom carbine, a heavily modified version of her SWAT-issued sidearm. What it lacks on power, it compensates with high speed.",
+			ATK         = [010,012,014,016,020, 022,024,026,028,030],
+			ETK         = [005,007,009,009,012, 015,017,019,019,020],
+			weight      = [001,001,001,001,001, 001,001,001,001,000],
+			durability  = [032,034,037,042,050, 053,056,059,062,070],
+			skill       = [ "sto_wp/brstfire", "sto_wp/shckhmmr" ],
+			over        = "debug/debug",
+			codeWPA1    = [
+				["attack", 010,014,020,026,035, 041,049,055,062,070],
+			]
 		},
 		"hellfngr": {
 			name = "Hellfanger", wclass = core.WPCLASS_LONGSWORD,
@@ -101,8 +114,12 @@ var example = {
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [002, 002, 002, 002, 002, 002, 002, 002, 002, 000],
 			durability = [50, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ ["sto_wp", "ganrei"], ["sto_wp", "reienzan"] ],
-			over = "sto_wp/zanken"
+			skill = [ "sto_wp/ganrei", "sto_wp/reienzan" ],
+			over = "sto_wp/zanken",
+			codeWPA0 = [ #Increase damage on targets with a SPI race aspect.
+				["if_race_aspect", 0b100, 000],
+					["dmgbonus"      , 005, 000],
+			]
 		},
 		"kokukou": {
 			name = "Kokukouga", wclass = core.WPCLASS_SHORTSWORD,
@@ -139,15 +156,19 @@ var example = {
 
 func initTemplate():
 	return {
-		"name" : { loader = LIBSTD_STRING },
-		"description" : { loader = LIBSTD_STRING },
-		"wclass" : { loader = LIBSTD_INT, default = core.WPCLASS_NONE },
-		"ATK" : { loader = LIBSTD_SKILL_ARRAY },
-		"ETK" : { loader = LIBSTD_SKILL_ARRAY },
-		"weight" : { loader = LIBSTD_SKILL_ARRAY },
-		"durability" : { loader = LIBSTD_SKILL_ARRAY },
-		"skill" : { loader = LIBEXT_SKILL_LIST },
-		"over" : { loader = LIBSTD_TID },
+		"name"        : { loader = LIBSTD_STRING, default = "ErrorSD" },
+		"description" : { loader = LIBSTD_STRING, default = "If you are seeing this, something was wrong." },
+		"wclass"      : { loader = LIBSTD_INT, default = core.WPCLASS_NONE },
+		"ATK"         : { loader = LIBSTD_SKILL_ARRAY },
+		"ETK"         : { loader = LIBSTD_SKILL_ARRAY },
+		"weight"      : { loader = LIBSTD_SKILL_ARRAY },
+		"durability"  : { loader = LIBSTD_SKILL_ARRAY },
+		"skill"       : { loader = LIBEXT_SKILL_LIST },
+		"over"        : { loader = LIBSTD_TID, default = ['debug', 'debug'] },
+		"codeWPA0"    : { loader = LIBSTD_SKILL_CODE },
+		"codeWPA1"    : { loader = LIBSTD_SKILL_CODE },
+		"codeWPS0"    : { loader = LIBSTD_SKILL_CODE },
+		"codeWPS1"    : { loader = LIBSTD_SKILL_CODE },
 	}
 
 

@@ -34,6 +34,7 @@ func recalculateStats() -> void:
 	modstats.DEF = S.DEF
 	modstats.ETK = S.ETK
 	modstats.EDF = S.EDF
+	armorDefs    = [S.DEF, S.EDF] #"Armor" stats.
 	for i in range(core.CONDITIONDEFS_DEFAULT.size()):	conditionDefs[i] = lib.conditionDefs[i]
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
@@ -261,7 +262,7 @@ func thinkPattern(F, P, state, aiPattern):
 			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])
 	if S.chargeAnim[0]: sprite.charge(true)
-	return [ action, 1, target ]
+	return [ action, 0, target ]
 
 func filter(S:Dictionary) -> bool:
 	if S.targetBlacklist != null:

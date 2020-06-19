@@ -24,20 +24,20 @@ var example = {
 			weight = [003, 001],
 			parts = {
 				onboard = 1,
-				statSpread = [ [052, 009, 012, 015, 012, 015, 006], [520, 100, 125, 150, 165, 160, 095] ],
+				statSpread = [ [052,009,012,015,012,015,006], [520,100,125,150,165,160,095] ],
 			}
 		},
-		"KSSGfrm1" : {
+		"kssgfrm1" : {
 			name = "KSSG Frame", arclass = 'FRAME',
 			description = "Magpie's choujin frame. Incomplete, she is unable to access her true form because of power limiters put in place by professor Millennium. It's shielded against dimensional distortions.",
 			DEF =    [004, 020], EDF = [012, 032],
 			weight = [003, 001],
 			parts = {
 				onboard = 1,
-				statSpread = [ [042, 010, 010, 014, 011, 010, 010], [460, 090, 125, 140, 155, 125, 135] ],
+				statSpread = [ [042,013,010,014,011,010,010], [460,130,125,140,155,125,135] ],
 				default = {
 					'ENGINE' : ["story/hollow", 5, 5],
-					'FCS' : ["story/dimeye", 5, 5],
+					'FCS'    : ["story/dimeye", 5, 5],
 				}
 			}
 		},

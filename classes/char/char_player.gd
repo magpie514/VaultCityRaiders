@@ -66,6 +66,7 @@ var aclass             = null #TID
 var extraSkills:Array  = []   #Skills given by equipment or other special things.
 
 var links = null     #Party links. Array of [trust, link1, link2, link3]
+var overBonus:int = 0 #Bonus to Over at start of battle.
 
 var equip = core.Inventory.Equip.new()
 var currentWeapon = equip.slot[0]
@@ -91,6 +92,10 @@ func hasSkill(what):
 		if core.tid.compare(i, what):
 			return [ core.lib.skill.getIndex(i[0]), i[1] ]
 	return null
+
+func initBattle() -> void:
+	.initBattle()
+	battle.over = overBonus
 
 func endBattleTurn(defer):
 	battle.over += calculateTurnOverGains()
@@ -140,6 +145,7 @@ func addInflict(x:int) -> void:
 func recalculateStats() -> void:
 	#Get stats from race/class.
 	var raceStats = stats.create()
+	var startingOver:int = 0
 	#TODO: Reset it to race defaults instead.
 	stats.resetElementData(raceStats.OFF)
 	stats.resetElementData(raceStats.RES)
@@ -151,22 +157,23 @@ func recalculateStats() -> void:
 	#Get stats from equipment.
 	extraSkills.clear()
 	var gearStats = stats.create()
+	currentWeapon.recalculateStats()
 	currentWeapon.getBonuses(extraSkills, gearStats)
 	for i in core.Inventory.Equip.ARMOR_SLOT:
 		equip.slot[i].recalculateStats(level)
 		equip.slot[i].getBonuses(extraSkills, gearStats)
+	armorDefs = [gearStats.DEF, gearStats.EDF]
 	for i in range(core.CONDITIONDEFS_DEFAULT.size()):
 		conditionDefs[i] = racelib.conditionDefs[i] + classlib.conditionDefs[i]
 		conditionDefs[i] += gearStats.CON[i]
+	startingOver = gearStats.OVR
 	print("[CHAR_PLAYER][recalculateStats] Condition Defenses:", conditionDefs)
 	#TODO: Process field skill bonuses.
 
-	#stats.sum(gearStats, equip.calculateWeaponBonuses(extraSkills, currentWeapon))
-	#stats.sum(gearStats, equip.calculateArmorBonuses(extraSkills, level))
-	#stats.sum(gearStats, equip.calculateGearBonuses())
 	print("[CHAR_PLAYER][recalculateStats] ", extraSkills)
-
 	stats.sumInto(statFinal, statBase, gearStats)
+	overBonus = startingOver
+	#print(statFinal)
 
 func setCharClass(t) -> void:
 	aclass = core.tid.from(t)
@@ -179,7 +186,7 @@ func setCharRace(t) -> void:
 func initSkillList(sk) -> void:
 	skills.clear()
 	for i in sk:
-		skills.push_back([ int(i[0]), int(i[1]) ]) #skill TID, level
+		skills.push_back([ int(i[0]), int(i[1]) - 1 ]) #skill TID, level
 
 func initDict(C):	#Load the character from save data
 	side = 0
@@ -199,10 +206,8 @@ func initDict(C):	#Load the character from save data
 			personalInventory.push_back([int(i[0]), core.tid.fromArray(i[1]), i[2].duplicate(true)])
 	initSkillList(C.skills)                    #Init adventurer's skill list.
 	initLinkList(C.links)                      #Init adventurer's links and trust with other guild members.
-	if 'energyColor' in C:
-		energyColor = C.energyColor
-	else:
-		energyColor = DEFAULT.energyColor
+	if 'energyColor' in C: energyColor = C.energyColor
+	else                 : energyColor = DEFAULT.energyColor
 	setXP(C.XP)                                #Set level from experience points.
 	recalculateStats()
 	fullHeal()
@@ -211,7 +216,7 @@ func initDict(C):	#Load the character from save data
 func initJson(json):
 	pass
 
-func revive(x: int) -> void:
+func revive(x:int) -> void:
 	.revive(x)
 
 func defeat() -> void:

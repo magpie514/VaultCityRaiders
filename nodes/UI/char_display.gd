@@ -105,13 +105,10 @@ func update() -> void:
 		if chr.battle != null: #Show battle-only stuff.
 			updateAD(chr.battle.AD)
 			updateDEbar(chr.calculateDamageEffects())
-			if chr.battle.guard > 0 or chr.battle.absoluteGuard > 0: #Show Guard indicator.
+			if chr.battle.barrier > 0: #Show Guard indicator.
 				$ComplexBar/Guard.show()
 				$ComplexBar.guard = true
-				if chr.battle.absoluteGuard > 0:
-					$ComplexBar/Guard.text = str(chr.battle.absoluteGuard)
-				else:
-					$ComplexBar/Guard.text = str(chr.battle.guard)
+				$ComplexBar/Guard.text = str(chr.battle.barrier)
 			else:
 				$ComplexBar.guard = false
 				$ComplexBar/Guard.hide()

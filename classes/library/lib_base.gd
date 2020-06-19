@@ -16,6 +16,7 @@ const LIBSTD_ELEMENTDATA   = "loaderElementData"
 const LIBSTD_SKILL_ARRAY   = "loaderSkillArray"
 const LIBSTD_SKILL_LIST    = "loaderSkillList"
 const LIBSTD_SUMMONS       = "loaderSummons"
+const LIBSTD_SKILL_CODE    = "loaderSkillCode"
 
 func initTemplate():
 	return null
@@ -217,6 +218,51 @@ func loaderStatBonus(val) -> Dictionary:
 				result[i] = val[i]
 	return result
 
+func loaderSkillCode(a): #Loads skill codes.
+	var skill = core.skill
+	var _template = core.skill.LINE_TEMPLATE
+
+	match(typeof(a)): #Check input type
+		TYPE_NIL:
+			#Input is null, this skill isn't meant to have code, so we return null back.
+			return null
+		TYPE_ARRAY:
+			#Input is an array. This is the expected input, so we process it further.
+			var result = core.newArray(a.size())
+			var line = null #Placeholder for the current line.
+			for j in a.size():
+				line = a[j]
+				result[j] = _template.duplicate(true) #Initialize line as a copy of the template, saves the trouble of keeping sync.
+				match(typeof(line)): #Determine line format.
+					TYPE_STRING: #Line is just an instruction, usually a 'get' with default values.
+						result[j][0] = skill.translateOpCode(line)
+					TYPE_ARRAY:  #We have an array, the standard instruction. There are a few variants.
+						match(line.size()):
+							1:  # Instruction only, in case one wants to keep it as array for consistency.
+								result[j][0] = skill.translateOpCode(line[0])
+							2:  # Instruction + flags
+								result[j][0] = skill.translateOpCode(line[0])
+								result[j][11] = int(line[1])
+							3:  # Instruction + single value + flags
+								result[j][0] = skill.translateOpCode(line[0])
+								for i in range(1, 11): result[j][i] = int(line[1])
+								result[j][11] = int(line[2])
+							11: # Instruction + values for 10 levels
+								result[j][0] = skill.translateOpCode(line[0])
+								for i in range(1, 11): result[j][i] = int(line[i])
+							12: # Instruction + values for 10 levels + flags
+								result[j][0] = skill.translateOpCode(line[0])
+								for i in range(1, 11): result[j][i] = int(line[i])
+								result[j][11] = int(line[11])
+							_:  # Unexpected line. Print an error.
+								print("\t[!!][SKILL][loaderSkillCode] Line size is not normal, returning null line.")
+					_: # Unexpected type. Print an error.
+						print("\t[!!][SKILL][loaderSkillCode] Line is neither string or array, returning null line.")
+			return result
+		_:
+			#Input is...something else. Likely user error. Return a line with no effect as a last resort.
+			print("\t[!!][SKILL][loaderSkillCode] Provided skill code is not an array. Please verify. ")
+			return [ _template.duplicate() ]
 
 func loaderSummons(val):
 	if val == null or typeof(val) != TYPE_ARRAY:

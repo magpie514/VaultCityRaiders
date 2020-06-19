@@ -1,153 +1,102 @@
 extends Panel
 signal selection(x)
 
-var _targetButton = load("res://nodes/UI/target_button.tscn")
+onready var buttons:Array = [
+	[$AF0, $AF1, $AF2, $AB0, $AB1, $AB2],
+	[$BF0, $BF1, $BF2, $BB0, $BB1, $BB2],
+]
 
-var buttons = []
-var rows = [[],[]]
+onready var rows:Array = [
+	[ [$AF0, $AF1, $AF2], [$AB0, $AB1, $AB2]  ],
+	[ [$BF0, $BF1, $BF2], [$BB0, $BB1, $BB2]  ]
+]
+
 var controls = null
 var skill = null
 var state = null
-var _level = 0
+var level:int = 0
 
-func makeEntry(chr, prev):
-	var result = {
-		chr = chr,
-		button = _targetButton.instance(),
-		next = null,
-		prev = prev
-	}
-	if prev != null:
-		prev.next = result
-	return result
+func prep(parent) -> void: #Connect info signals to parent.
+	for side in buttons:
+		for i in side:
+			i.connect("display_info", parent, "showInfo")
+			i.connect("hide_info"   , parent, "hideInfo")
+			i.connect("select"      , self, "targetSelectSignal")
+			i.connect("mouseover"   , self, "onHighlight")
 
-func init(S, parent, level, override = null):
-	var group = null
+func clear() -> void:
+	for side in buttons:
+		for i in side:
+			i.disabled = true
+			i.style.setTheme("disable")
+
+func refresh() -> void:
+	for group in [0, 1]:
+		for slot in range(6):
+			var C = core.battle.state.formations[group].formation[slot]
+			buttons[group][slot].init(C, '')
+
+func init(S, parent, lv:int, override = null) -> void:
+	var targetGroup:int = 0
+	var otherGroup:int  = 1
 	skill = S
 	state = controls.state
-	var test = connect("selection", parent, "getTarget")
-	if override != null:
-		$Label.text = "%s" % override.name
-	else:
-		$Label.text = "%s" % S.name
-	var flip = false
-	match(S.targetGroup):
-		core.skill.TARGET_GROUP_ALLY:
-			group = state.formations[state.SIDE_PLAYER]
-		core.skill.TARGET_GROUP_ENEMY:
-			group = state.formations[state.SIDE_ENEMY]
-			flip = true
-	var targets = group.formation
-	var temp = null
-	var temp2 = null
-	var current = null
-	var key = 1
+	if override != null: $Label.text = "%s" % override.name
+	else               : $Label.text = "%s" % S.name
+	refresh()
 	clear()
+	match(S.targetGroup):
+		core.skill.TARGET_GROUP_ALLY : targetGroup = state.SIDE_PLAYER
+		core.skill.TARGET_GROUP_ENEMY: targetGroup = state.SIDE_ENEMY
+	var group = state.formations[targetGroup]
 	for i in range(group.MAX_SIZE):
-		current = targets[i]
-		if i == group.ROW_SIZE:
-			temp = null
-			key = 1
-		if current != null:
-			temp2 = makeEntry(current, temp)
-			buttons.push_back(temp2)
-			temp = temp2
-			add_child(temp2.button)
-			buttonPosition(group, i, temp2.button, flip)
-			temp2.button.init(current, str("%1s%1s" % ["S" if i < group.ROW_SIZE else "", key]))
-			rows[(0 if i < group.ROW_SIZE else 1)].push_back(temp2)
-			connectUISignals(temp2.button)
-			if current.filter(S):
-				temp2.button.disabled = false
+		var C = group.formation[i]
+		var node:Node = buttons[targetGroup][i]
+		if C != null:
+			if C.filter(S):
+				node.disabled = false
+				node.style.fromStatus(C.condition)
 			else:
-				temp2.button.disabled = true
-			if S.target[level] == core.skill.TARGET_SINGLE_NOT_SELF and current == parent.currentChar:
-				temp2.button.disabled = true
-			key += 1
-	show()
-
-
-func buttonPosition(group, i, button, flip):
-	var col = i if i < group.ROW_SIZE else i - group.ROW_SIZE
-	var row = 0 if i < group.ROW_SIZE else 1
-	if flip:
-		row = 1 if row == 0 else 0
-	else:
-		col += 1
-	button.rect_position = Vector2(col * button.rect_size.x, 22 + row * button.rect_size.y)
-
-func connectUISignals(obj):
-	obj.connect("display_info", controls.parent, "showInfo")
-	obj.connect("hide_info", controls.parent, "hideInfo")
-	obj.connect("select", self, "targetSelectSignal")
-	obj.connect("mouseover", self, "onHighlight")
-
-func disconnectUISignals(obj):
-	obj.disconnect("display_info", controls.parent, "showInfo")
-	obj.disconnect("hide_info", controls.parent, "hideInfo")
-	obj.disconnect("select", self, "targetSelectSignal")
-	obj.disconnect("mouseover", self, "onHighlight")
+				node.disabled = true
+				node.style.setTheme('damage')
+			if S.target[lv] == core.skill.TARGET_SINGLE_NOT_SELF and C == parent.currentChar:
+				node.disabled = true
+	if not connect("selection", parent, "getTarget"): show()
 
 func targetSelectSignal(x):
 	hide()
 	var result = null
-	match skill.target[_level]:
-		core.skill.TARGET_SPREAD:
-			var who = null
-			result = [x]
-			for i in buttons:
-				if i.chr == x:
-					who = i
-			if who.next != null:
-				if who.next.chr.filter(skill):
-					result.push_back(who.next.chr)
-			if who.prev != null:
-				if who.prev.chr.filter(skill):
-					result.push_back(who.prev.chr)
+	match skill.target[level]:
 		core.skill.TARGET_ROW:
-			var row = x.row
-			var group = x.group
-			result = group.getRowTargets(row, skill)
+			var row:int = x.row
+			var group   = x.group
+			result      = group.getRowTargets(row, skill)
 		core.skill.TARGET_SINGLE:
-			result = [x]
+			result = [ x ]
 		_:
-			result = [x]
+			result = [ x ]
 	emit_signal("selection", result)
-	hide()
 	clear()
 
-func onHighlight(chr, b):
+func onHighlight(chr, b) -> void:
 	var who = null
-	for i in buttons:
+	for i in buttons[skill.targetGroup]:
 		if i.chr == chr:
 			who = i
-	match(skill.target[_level]):
-		core.skill.TARGET_SPREAD:
-			if who.next != null:
-				if not who.next.button.disabled:
-					who.next.button.style.highlight2(b)
-			if who.prev != null:
-				if not who.prev.button.disabled:
-					who.prev.button.style.highlight2(b)
+	match(skill.target[level]):
+#		core.skill.TARGET_LINE:
+#			if who.next != null:
+#				if not who.next.button.disabled:
+#					who.next.button.style.highlight2(b)
+#			if who.prev != null:
+#				if not who.prev.button.disabled:
+#					who.prev.button.style.highlight2(b)
 		core.skill.TARGET_ROW:
-			for i in rows[who.chr.row]:
-				if not i.button.disabled:
-					i.button.style.highlight(b)
-		core.skill.TARGET_ROW_RANDOM:
-			for i in buttons:
-				if not i.button.disabled:
-					i.button.style.highlight(b)
+			for i in rows[who.chr.side][who.chr.row]:
+				if not i.disabled:
+					i.style.highlight(b)
 
-func clear():
-	for i in buttons:
-		if i != null:
-			disconnectUISignals(i.button)
-			i.button.queue_free()
-	buttons = []
-	rows = [[], []]
-
-
-func _on_Button_pressed():
+func _on_Button_pressed() -> void:
 	hide()
 	clear()
 	emit_signal("selection", null)

@@ -1,6 +1,6 @@
 const FIELD_EFFECT_SIZE = 12
-
-var data:Array   = core.valArray(0, FIELD_EFFECT_SIZE)              #Element field layout
+const FIELD_LAST = FIELD_EFFECT_SIZE - 1
+var data:Array   = core.valArray(0, FIELD_EFFECT_SIZE)              #Element Field layout
 var bonus:Array  = core.newArray(9)                                 #Bonus per element
 var chain:Array  = core.newArray(9)                                 #Amount of chains per element
 var chains:int   = 0                                                #Calculated amount of chains
@@ -100,6 +100,12 @@ func push(elem:int) -> void:
 	data[FIELD_EFFECT_SIZE - 1] = elem
 	update()
 
+func pop() -> int:
+	var tmp:int = data[FIELD_LAST]
+	data[FIELD_LAST] = 0
+	shiftRight()
+	return tmp
+
 func passTurn() -> void:
 	if locked > 0:
 		locked -= 1
@@ -185,7 +191,7 @@ func take(amount:int, elem:int, elem2:int = 0) -> int:
 	#Take amount icons of elem. Replace by elem2 if specified.
 	if locked > 0 or amount <= 0: return 0
 	var taken = 0
-	for i in range(amount):
+	for j in range(amount):
 		for i in frange:
 			if data[i] == elem:
 				data[i] = elem2
@@ -194,6 +200,24 @@ func take(amount:int, elem:int, elem2:int = 0) -> int:
 	data.sort_custom(self.Sorters, "_consume_sort")
 	update()
 	return taken
+
+func shift(amount:int, right:bool = true ) -> void: #Shift all elements right
+	if locked > 0: return
+	for i in range(amount):
+		if right: shiftRight()
+		else    : shiftLeft()
+	update()
+
+func shiftRight() -> void: #Shift all elements to the right
+	var temp:int = data[FIELD_EFFECT_SIZE-1]
+	for i in range(FIELD_EFFECT_SIZE-1, 0, -1):
+		data[i] = data[i - 1]
+	data[0] = temp
+
+func shiftLeft() -> void: #Shift all elements to the left
+	for i in range(FIELD_EFFECT_SIZE-1):
+		data[i] = data[i + 1]
+	data[0] = 0
 
 
 class Sorters:

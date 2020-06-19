@@ -88,7 +88,7 @@ func chooseResult(x):
 			result.target = target
 			emit_signal("selection", result)
 
-func getTarget(x):
+func getTarget(x) -> void:
 	target = x
 
 func _on_Back_pressed():

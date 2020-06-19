@@ -14,9 +14,10 @@ var infoPanel = null
 var currentPanel = self
 
 
-func init(st, info):
+func init(st, info) -> void:
 	state = st
 	infoPanel = info
+	$TargetPanel.prep(info)
 
 func _ready():
 	$TargetPanel.controls = self

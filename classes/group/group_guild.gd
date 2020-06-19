@@ -74,7 +74,11 @@ func giveXP(amount:int) -> void: #Gives <amount> experience to all party members
 
 func giveDGem(G) -> bool: #Add a DGem to inventory.
 	#TODO: Make -> bool, return status in case inventory is full!
-	dragonGems.push_back(G)
+	if typeof(G) == TYPE_ARRAY:
+		var DG:DragonGem = DragonGem.new(G[0], G[1])
+		dragonGems.push_back(DG)
+	elif G is DragonGem:
+		dragonGems.push_back(G)
 	sortDGems()
 	return true
 

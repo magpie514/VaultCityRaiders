@@ -2,6 +2,19 @@ extends "res://classes/library/lib_base.gd"
 var skill = core.skill
 
 var example = {
+	"story" : {
+		"cromwell" : { #Cromwell (Guest version) player class.
+			name = "Creator",
+			description = "A class oriented to focus the powerful abilities of an Originator",
+			statSpread = [ [005,000,000,003,002,004,001], [032,000,006,032,024,052,018] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_LONGSWORD ],
+			skills = [
+				"story/plasfeld",
+			],
+		},
+	},
 	"debug" : {
 		"debug" : {
 			name = "DEBUG",
@@ -42,25 +55,24 @@ var example = {
 		"gdriver" : { #0a0a-DT-KSSG Sarah "Magpie" Miller's story mode base class.
 			name = "G-Driver",
 			description = "A technical class specializing in exploiting enemy actions and status.",
-			statSpread = [ [004,000,000,003,002,003,001], [032,000,006,032,024,040,018] ],
+			statSpread = [ [004,001,000,003,002,003,001], [032,018,006,032,024,040,018] ],
 			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
 			conditionDefs = [ 01, 02, 02, 01, 02, 00, 02, 00, 00, 02],
-			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_POLEARM],
+			weapons = [ core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_POLEARM ],
 			skills = [
 				# Gun skills ##########
-				["debug", "trikshot"],
-				["debug", "focushot"],
-				# Core skills #########
-				["debug", "restshrd"],
-				["story", "gravrefl"],
-				["story", "gmissile"],
+				"debug/trikshot",
+				"debug/focushot",
+				# Unarmed skills ######
+				"debug/restshrd",
+				"story/gravrefl",
+				"story/gmissile",
 				"story/portcutt",
 				"story/gravipre",
 				# Polearm skills ######
 				"story/teleslsh",
 				"story/spirbost",
-				# General skills
-				# Debug
+				# Debug ###############
 				"story/gdominia",
 			],
 		},

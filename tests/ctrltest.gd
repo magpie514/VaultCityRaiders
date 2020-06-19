@@ -92,7 +92,7 @@ func battle():
 			C.UIdisplay.highlight(false)
 			if reply is state.Action:
 				#Player chose a valid action, register it and move to next.
-				C.UIdisplay.setActionText(reply)
+				#C.UIdisplay.setActionText(reply)
 				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
 				islot += 1
 			elif typeof(reply) == TYPE_STRING:

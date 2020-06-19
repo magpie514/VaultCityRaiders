@@ -14,7 +14,7 @@ func init(n:String, color:Color) -> void:
 func _process(delta: float) -> void:
 	count += delta
 	percent_visible = count * 4
-	if count > 1.5:
+	if count > 1.8:
 		count = 0.0
 		set_process(false)
 		emit_signal("done", self)

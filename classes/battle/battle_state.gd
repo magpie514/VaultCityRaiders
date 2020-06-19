@@ -35,17 +35,17 @@ var notifyQueue:Array = [
 
 
 class Action:
-	var user = null          #Pointer to user.
-	var act:int = ACT_SKILL  #Action type.
-	var side:int = 0         #User's group.
-	var slot:int = 0         #User's slot.
-	var spd:int = 0          #Action speed.
-	var level:int = 0        #Action level.
-	var skill                #Pointer to action's skill definition.
-	var skillTid             #TID of skill definition.
-	var target: Array        #List of targets.
-	var override = null      #Pointer to skill override (mostly dragon gems)
-	var cancel:bool = false  #TODO: What?
+	var user        = null       #Pointer to user.
+	var act:int     = ACT_SKILL  #Action type.
+	var side:int    = 0          #User's group.
+	var slot:int    = 0          #User's slot.
+	var spd:int     = 0          #Action speed.
+	var level:int   = 0          #Action level.
+	var target:Array             #List of targets.
+	var override    = null       #Pointer to skill override (mostly dragon gems)
+	var cancel:bool = false      #TODO: What?
+	var skillTid                 #TID of skill definition.
+	var skill                    #Pointer to action's skill library.
 	#Player only.
 	var WP = null            #Pointer to weapon in use.
 	var IT = null            #Pointer to item in use.

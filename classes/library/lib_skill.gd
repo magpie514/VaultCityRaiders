@@ -8,7 +8,6 @@ extends "res://classes/library/lib_base.gd"
 #[ ] TODO: Implement lib_base logic to allow passing "translation dictionaries" so strings can be converted to ints easily.
 ###############################################################################
 var skill = core.skill #Here as a shortcut so I just have to type "skill" for constants.
-const LIBEXT_SKILL_CODE         = "loaderSkillCode"
 const LIBEXT_SKILL_FILTEREX_ARG = "loaderSkillFilterEXArg"
 const LIBEXT_SKILL_MESSAGES     = "loaderMessages"
 const LIBEXT_EFFECT_STATBONUS   = "loaderEffectStatBonus"
@@ -19,6 +18,12 @@ const LIBEXT_FX                 = "loaderFX"
 var example = {
 # Core skills #####################################################################################
 	"core": {
+		"wp_arti" : {
+			name = "Artillery Mastery",
+			description = "Increase damage for artillery-type weapons",
+			category = skill.CAT_FIELD,
+
+		},
 		"defend" : {
 			name = "Defend",
 			description = "",
@@ -89,7 +94,7 @@ var example = {
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			spdMod = [080,100,100,100,100,   100,100,100,100,100],
@@ -140,9 +145,6 @@ var example = {
 			},
 			effectDuration = [002, 003, 003, 003, 004,   004, 004, 004, 004, 005],
 			effectPriority = 3,
-			codeEF = [
-				["fe.push",   000, 033, 033, 033, 033,   033, 033, 033, 033, 033],
-			],
 		},
 		"overblue": {
 			name = "Over Blue",
@@ -167,29 +169,30 @@ var example = {
 
 		"thunswrd": {
 			name = "Thunder Sword",
-			description = "Release a powerful energy beam using all the surrounding energy for heightened damage.",
+			description     = "Powerful electric energy damage.\nChain Finish: Adds Chainx10 bonus damage.",
+			lore = "Release a powerful energy beam using all the surrounding energy for heightened damage.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
-			chargeAnim = true,
-			costOV = 100,
-			category = skill.CAT_OVER,
-			requiresWeapon = core.WPCLASS_ARTILLERY,
-			target = skill.TARGET_SPREAD,
-			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_ELEC,
+			chargeAnim      = true,
+			costOV          = 100,
+			category        = skill.CAT_OVER,
+			requiresWeapon  = core.WPCLASS_ARTILLERY,
+			target          = skill.TARGET_LINE,
+			targetGroup     = skill.TARGET_GROUP_ENEMY,
+			element         = core.stats.ELEMENTS.DMG_ELEC,
 			fieldEffectMult = 2,
-			energyDMG = true,
-			damageStat = core.stats.STAT.ETK,
-			chain = skill.CHAIN_FINISHER,
-			ranged = true,
-			accMod = [099,099,099,099,099,   099,099,099,099,099],
+			energy       = true,
+			damageStat      = core.stats.STAT.ETK,
+			chain           = skill.CHAIN_FINISHER,
+			ranged          = true,
+			accMod = [105,099,099,099,099,   099,099,099,099,099],
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["get_chain"  , skill.OPFLAG_TARGET_SELF],
 				["mul"        , 010,000,000,000,000, 000,000,000,000,000],
-				["dmgbonus"   , 000,000,000,000,000, 000,000,000,000,000, skill.OPFLAG_USE_SVAL],
+				["dmgbonus"   , 000, skill.OPFLAG_USE_SVAL],
 				["attack"     , 150,125,132,132,140, 140,147,147,147,160],
-				["fe.consume" , 006,004,004,004,004, 004,004,004,004,004],
+				["fe.consume" , 006, 0],
 			],
 		},
 		"brknthun": {
@@ -204,15 +207,16 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED, #No elemental defs.
 			fieldEffectMult = 64,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			chain = skill.CHAIN_FINISHER,
 			ranged = true,
 			accMod = [999,999,999,999,999,   999,999,999,999,999],
 			codeMN = [
-				["nomiss"       ,001, 0],
-				["ignore_defs"  ,001, 0],
-				["guardbreak"   ,001, 0],
+				["nomiss"       , 001, 0],
+				["ignore_barriers"  , 001, 0],
+				["ignore_armor"     , 100, 0],
+				["guardbreak"   , 001, 0],
 				["get_chain"    , skill.OPFLAG_TARGET_SELF],
 				["mul"          , 999, 0],
 				["dmgbonus"     , skill.OPFLAG_USE_SVAL],
@@ -222,20 +226,21 @@ var example = {
 		},
 		"freerang": {
 			name = "Free Range",
-			description = "Fire a cluster of seeking missiles with high accuracy.",
+			description = "Accurate attack. Increases damage with proximity.",
 			category = skill.CAT_ATTACK,
-			target = skill.TARGET_SPREAD,
+			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_STRIKE,
-			energyDMG = false,
+			element = core.stats.ELEMENTS.DMG_ELEC,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
-			chain = skill.CHAIN_STARTER,
-			modStat = core.stats.STAT.LUC,
+			chain = skill.CHAIN_FINISHER,
 			ranged = true,
 			accMod = [110,110,110,099,099,   099,099,099,099,099],
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
+				["if_chain>", 003, 0],
+					["dmgbonus.on_range",0x4B2001, 0],
 				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
 			],
 		},
@@ -267,33 +272,35 @@ var example = {
 			accMod =	100,
 			spdMod = 005,
 			AD     =	100,
+			ranged = true,
+			damageStat = core.stats.STAT.ETK,
 			fx = ["effector/jcraw"],
 			codeEF = [
 				["fx.add" , 001, 0],
 				["follow" , 0x1640FF, 0]
 			],
 			codeFL = [
-				["attack", 045, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+				["attack", 045,125,132,132,140, 140,147,147,147,160],
 			],
 			synergy = [ "story/plasfeld" ]
 		},
 		"jrailgun": {
 			name = "Railgun",
-			description = "Fire a cluster of seeking missiles with high accuracy.",
+			description = "Fire energy bolts with high piercing ability.",
 			category = skill.CAT_ATTACK,
 			requiresWeapon = core.WPCLASS_ARTILLERY,
 			target = skill.TARGET_ROW,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ELEC,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
-			chain = skill.CHAIN_STARTER,
-			modStat = core.stats.STAT.LUC,
+			chain = skill.CHAIN_FOLLOW,
 			ranged = true,
 			accMod = [110,110,110,099,099,   099,099,099,099,099],
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
+				["ignore_armor" ,080, 0],
 				["attack"       ,110,125,132,132,140,   140,147,147,147,160],
 			],
 		},
@@ -305,22 +312,21 @@ var example = {
 			fx = [ "effector/jshield" ],
 			codeEF = [
 				["if_ef_bonus>=", 002, skill.OPFLAG_BLOCK_START],
-					["guard"        , 025, 0],
-					["fx.add"       , 001, 0],
+					["barrier"        , 025, 0],
+					["fx.add"         , 001, 0],
 			],
 		},
 		"jhunter": {
 			name = "Hunter",
-			description = "Fires a barrage of target-seeking energy orbs.",
+			description = "Fires a barrage of target-seeking micromissiles.",
 			category = skill.CAT_ATTACK,
 			requiresWeapon = core.WPCLASS_ARTILLERY,
 			target = skill.TARGET_RANDOM1,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ELEC,
-			energyDMG = true,
+			energy = false,
 			damageStat = core.stats.STAT.ETK,
 			chain = skill.CHAIN_FOLLOW,
-			modStat = core.stats.STAT.LUC,
 			ranged = true,
 			accMod = [110,110,110,099,099,   099,099,099,099,099],
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
@@ -350,7 +356,7 @@ var example = {
 			spdMod = 	[150, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			codeMN = [
 				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000, skill.OPFLAG_BLOCK_START],
-					["guard",          010,000,000,000,000,   000,000,000,000,000, skill.OPFLAG_VALUE_PERCENT],
+					["barrier",          010,000,000,000,000,   000,000,000,000,000, skill.OPFLAG_VALUE_PERCENT],
 			],
 			codePO = [
 				["if_ef_bonus>=",  001,000,000,000,000,   000,000,000,000,000],
@@ -390,7 +396,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = false,
+			energy = false,
 			ranged = true,
 			spdMod = 	[075,100,100,100,100, 100,100,100,100,100],
 			initAD =  [095,095,095,095,095, 090,090,090,090,090],
@@ -441,18 +447,16 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			displayElement = [1, 7],
-			energyDMG = true,
+			displayElement = [1, 8],
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
-			accMod = [110,110,110,099,099, 099,099,099,099,099],
+			accMod = 110,
 			spdMod = [080,100,100,100,100, 100,100,100,100,100],
-			AD =     [100,100,100,100,100, 100,100,100,100,100],
+			AD     = 100,
 			codeMN = [
-				["element"    ,008, 0],
-				["attack"     ,025, 0],
-				["element"    ,001, 0],
+				["attack.ex"  ,0x0019810, 0],
 				["energy_dmg" ,000, 0],
 				["attack"     ,045,125,132,132,140, 140,147,147,147,160],
 				["if_race_aspect", 0b011, 0],
@@ -466,7 +470,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -480,12 +484,12 @@ var example = {
 		"gmissile": {
 			name           = "G-Crystal Missile",
 			description    = "Affected targets will be slower and weaker to Ultimate damage. Will explode when the effect ends.",
-			displayElement = [2, 7],
+			displayElement = [2, 8],
 			category       = skill.CAT_ATTACK,
 			target         = skill.TARGET_ROW,
 			targetGroup    = skill.TARGET_GROUP_ENEMY,
 			element        = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG      = true,
+			energy      = true,
 			damageStat     = core.stats.STAT.ETK,
 			ranged         = true,
 			effect         = skill.EFFECT_STATS|skill.EFFECT_ONEND,
@@ -519,23 +523,23 @@ var example = {
 			description = "Discharges the G-Crystal particles used for dimensional scanning as a burst of energy.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup3.tscn" },
 			category = skill.CAT_OVER,
-			costOV = skill.OVER_COST_2,
+			costOV = skill.OVER_COST_3,
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ULTIMATE,
 			fieldEffectMult = 4,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			accMod = 100,
 			AD = 110,
 			codeMN = [
-				["nomiss"     , 001, 0],
-				["ignore_defs", 001, 0],
+				["nomiss"         , 001, 0],
+				["ignore_armor"   , 050, 0],
 				["if_synergy_party", 001, skill.OPFLAG_BLOCK_START|skill.OPFLAG_TARGET_SELF ],
-					["fe.push" , 006,125,132,132,140,  140,147,147,147,160],
+					["fe.push"  , 006, 0],
 					["anim.play", 001, 0],
-					["dmgbonus", 035,125,132,132,140,  140,147,147,147,160, skill.OPFLAG_BLOCK_END],
+					["dmgbonus", 035,125,132,132,140, 140,147,147,147,160, skill.OPFLAG_BLOCK_END],
 				["if_synergy_party", 002, skill.OPFLAG_BLOCK_START|skill.OPFLAG_TARGET_SELF ],
 					["guardbreak", 001, 0],
 					["nocap"     , 001, 0],
@@ -610,7 +614,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_FIRE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -633,7 +637,7 @@ var example = {
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_FIRE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
@@ -664,7 +668,7 @@ var example = {
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_FIRE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			fieldEffectMult = 2,
@@ -704,7 +708,7 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ICE,
 			fieldEffectMult = 2,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -729,7 +733,7 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ICE,
 			fieldEffectMult = 2,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -745,7 +749,7 @@ var example = {
 			codeMN = [
 				["attack"            ,080,125,132,132,140,   140,147,147,147,160],
 			],
-			synergy = [["debug", "dncsword"]],
+			synergy = [ "story/dncsword" ],
 		},
 		"dncsword": {
 			name = "Dancing Sword",
@@ -778,7 +782,7 @@ var example = {
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -799,8 +803,7 @@ var example = {
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
-			energyDMG = true,
-			modStat = core.stats.STAT.LUC,
+			energy = true,
 			ranged = true,
 			spdMod = 080,
 			AD     = 115,
@@ -808,28 +811,60 @@ var example = {
 				["enemy.revive" ,100,125,132,132,140, 140,147,147,147,160],
 			],
 		},
+# King Solarica skills ############################################################################
+		"solapara": {
+			name        = "Solarica Parasite",
+			description = "Strong damage over time effect.",
+			dangerous   = true,
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			energy      = true,
+			ranged      = true,
+			spdMod      = 080,
+			AD          = 100,
+			codeMN      = [
+				#TODO:Check for Solarica Parasite immunity, otherwise set flag to bypass inflict resistance.
+				["dot", 0x102BCF8]
+			],
+		},
+		"terrseed": {
+			name        = "Terror Seed",
+			description = "Attempts to inflict panic and stun every turn. Decreases speed.",
+			dangerous   = true,
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			energy      = true,
+			ranged      = true,
+			spdMod      = 080,
+			AD          = 100,
+			codeMN      = [
+			],
+		},
 	},
 # Story weapon skills #############################################################################
 	"sto_wp": {
 # Jay's ORBITAL Rifle ###############################################################################
 		"sever": {
-			name = "Sever",
-			description = "Fires a laser beam with high accuracy. If it hits, the target receives additional piercing damage.",
-			category = skill.CAT_ATTACK,
-			target = skill.TARGET_SINGLE,
-			targetGroup = skill.TARGET_GROUP_ENEMY,
-			element = core.stats.ELEMENTS.DMG_ELEC,
+			name            = "Sever",
+			description     = "Fires a laser beam with high accuracy. If it hits, the target receives additional piercing damage.",
+			category        = skill.CAT_ATTACK,
+			target          = skill.TARGET_SINGLE,
+			targetGroup     = skill.TARGET_GROUP_ENEMY,
+			element         = core.stats.ELEMENTS.DMG_ELEC,
 			fieldEffectMult = 2,
-			energyDMG = true,
-			damageStat = core.stats.STAT.ETK,
-			modStat = core.stats.STAT.LUC,
-			chain = skill.CHAIN_STARTER_AND_FOLLOW,
-			ranged = true,
-			accMod = [100,099,099,099,099,   099,099,099,099,099],
-			spdMod = [100,100,100,100,100,   100,100,100,100,100],
-			AD =     [105,100,100,100,100,   100,100,100,100,100],
-			codeMN = [
+			energy          = true,
+			damageStat      = core.stats.STAT.ETK,
+			modStat         = core.stats.STAT.LUC,
+			chain           = skill.CHAIN_STARTER_AND_FOLLOW,
+			ranged          = true,
+			accMod          = [100,099,099,099,099,   099,099,099,099,099],
+			spdMod          = [100,100,100,100,100,   100,100,100,100,100],
+			AD              = [105,100,100,100,100,   100,100,100,100,100],
+			codeMN          = [
 				["attack"       ,100,125,132,132,140,   140,147,147,147,160],
+				["attack.ex"    ,0x0019201, 0]
 			],
 		},
 		"orbishld" : {
@@ -865,7 +900,7 @@ var example = {
 			targetGroup     = skill.TARGET_GROUP_ENEMY,
 			element         = core.stats.ELEMENTS.DMG_CUT,
 			fieldEffectMult = 2,
-			energyDMG       = true,
+			energy       = true,
 			damageStat      = core.stats.STAT.ETK,
 			modStat         = core.stats.STAT.LUC,
 			chain           = skill.CHAIN_FOLLOW,
@@ -885,7 +920,7 @@ var example = {
 			targetGroup     = skill.TARGET_GROUP_ENEMY,
 			element         = core.stats.ELEMENTS.DMG_CUT,
 			fieldEffectMult = 2,
-			energyDMG       = true,
+			energy       = true,
 			damageStat      = core.stats.STAT.ETK,
 			modStat         = core.stats.STAT.LUC,
 			chain           = skill.CHAIN_FINISHER,
@@ -906,7 +941,7 @@ var example = {
 			element = core.stats.ELEMENTS.DMG_ELEC,
 			fieldEffectMult = 2,
 			costOV = core.skill.OVER_COST_2,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			chain = skill.CHAIN_FOLLOW,
@@ -916,6 +951,47 @@ var example = {
 			AD =     [105,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["attack"       ,100,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+# Magpie's Stardust ###########################################################
+		"brstfire": {
+			name            = "Burst fire",
+			description     = "Hits multiple times.",
+			category        = skill.CAT_ATTACK,
+			target          = skill.TARGET_SINGLE,
+			targetGroup     = skill.TARGET_GROUP_ENEMY,
+			element         = core.stats.ELEMENTS.DMG_PIERCE,
+			energy          = false,
+			damageStat      = core.stats.STAT.ATK,
+			ranged          = true,
+			accMod          = [090,091,092,093,090, 091,092,093,094,092],
+			spdMod          = [100,100,100,100,100, 100,100,100,100,100],
+			AD              = 100,
+			codeMN          = [
+				["attack"       ,030,032,035,038,030, 030,031,032,035,030],
+				["attack"       ,030,032,035,038,030, 030,031,032,035,030],
+				["attack"       ,030,032,035,038,030, 030,031,032,035,030],
+				["attack"       ,000,000,000,000,030, 032,034,036,038,030],
+				["attack"       ,000,000,000,000,000, 000,000,000,000,030],
+			],
+		},
+		"shckhmmr": {
+			name            = "Shock Hammer",
+			description     = "Electric attack. Damage increased with target proximity.",
+			category        = skill.CAT_ATTACK,
+			target          = skill.TARGET_SINGLE,
+			targetGroup     = skill.TARGET_GROUP_ENEMY,
+			element         = core.stats.ELEMENTS.DMG_ELEC,
+			fieldEffectMult = 2,
+			energy          = true,
+			damageStat      = core.stats.STAT.ETK,
+			ranged          = true,
+			accMod          = 095,
+			spdMod          = [100,100,100,100,100, 100,100,100,100,100],
+			AD              = 125,
+			codeMN          = [
+				["dmgbonus.on_range", 0xFF5510, 0],
+				["attack"       ,010,012,015,018,020, 022,025,028,030,035],
 			],
 		},
 # Shiro's Gaireitou ###########################################################
@@ -1020,51 +1096,52 @@ var example = {
 		"snobulle": {
 			name = "Snow Bullet",
 			description = "Fires bullets etched with magical glyphs that expel the target's heat in a burst, reducing its internal temperature.",
+			ranged = true,
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ICE,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
-			accMod = [090,099,099,099,099,   099,099,099,099,099],
+			accMod = 92,
 			spdMod = [090,100,100,100,100,   100,100,100,100,100],
 			AD =     [110,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["attack"       ,125,125,132,132,140,   140,147,147,147,160],
-				["if_connect"   ,001, 0],
-					["inflict",     0x21, 0],
+				["inflict",     0x211, 0],
 				#TODO: Try to hit back row with a fire energy hit.
 			],
 		},
 		"calmshot": {
 			name = "Calming Shot",
 			description = "A magical shot designed to incapacitate. It will never kill the target.",
+			ranged = true,
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ICE,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
-			accMod = [092,099,099,099,099,   099,099,099,099,099],
+			accMod = 95,
 			spdMod = [075,100,100,100,100,   100,100,100,100,100],
 			AD =     [105,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["nonlethal"    ,001, 0],
-				["attack"       ,999,125,132,132,140,   140,147,147,147,160],
-				["if_connect"   ,001, 0],
-					["inflict"      ,0x21, 0]
+				["attack"       ,999,125,132,132,140, 140,147,147,147,160],
+				["inflict"      ,0x211, 0]
 			],
 		},
 		"valkaccl": {
 			name = "Valkyrie Accel",
 			description = "Manipulates the Akashic Records to hold the enemy still, delivering a devastating, accelerated shot. Might destroy a frozen target.",
+			ranged = true,
 			category = skill.CAT_OVER,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ICE,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
-			accMod = [100,099,099,099,099,   099,099,099,099,099],
+			accMod = 100,
 			spdMod = [100,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
@@ -1126,59 +1203,63 @@ var example = {
 	"gem": {
 		"firewave": {
 			name = "Fire Wave",
-			description = "",
+			description = "Decreases effectiveness of healing on target.",
 			animations = { 'main' : "/nodes/FX/basic_test2.tscn" },
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_FIRE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["heal.mod", -50, 0 ],
+				["attack" , 060,063,065,068,075, 078,080,083,086,090],
 			],
 		},
 		"cryoblst": {
 			name = "Cryoblast",
-			description = "",
+			description = "May inflict cryostasis on the target.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ICE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["attack" , 060,063,065,068,075, 078,080,083,086,090],
+				["inflict", 0,0,0,0,0x211, 0x211,0x211,0x211,0x211,0x221],
 			],
 		},
 		"eleburst": {
 			name = "Electroburst",
-			description = "",
+			description = "May inflict paralysis on the target.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ELEC,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["attack" , 060,063,065,068,075, 078,080,083,086,090],
+				["inflict", 0,0,0,0,0x111, 0x111,0x111,0x111,0x111,0x121],
 			],
 		},
 		"galeblde": {
 			name = "Gale Blade",
-			description = "",
+			description = "May inflict damage over time.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["dot"    , 0x1001230, 0],
+				["attack" , 060,063,065,068,075, 078,080,083,086,090],
 			],
 		},
 		"slash": {
@@ -1188,11 +1269,12 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ATK,
 			ranged = false,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["dot"    , 0x1001230, 0],
+				["attack" , 060,063,065,068,075, 078,080,083,086,090],
 			],
 		},
 		"aquabrst": {
@@ -1202,11 +1284,12 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_STRIKE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["attack"       , 030,033,035,038,045, 048,050,053,056,060],
+				["attack.combo" , 030,033,035,038,045, 048,050,053,056,060],
 			],
 		},
 		"smash": {
@@ -1216,11 +1299,12 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_STRIKE,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ATK,
 			ranged = false,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["attack"       , 030,033,035,038,045, 048,050,053,056,060],
+				["attack.combo" , 030,033,035,038,045, 048,050,053,056,060],
 			],
 		},
 		"gemspear": {
@@ -1230,39 +1314,57 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["ignore_armor", 010,012,012,014,020, 020,022,022,022,025],
+				["attack"      , 060,063,065,068,075, 078,080,083,086,090],
 			],
 		},
 		"perfrate": {
 			name = "Perforate",
-			description = "",
+			description = "Partially ignores armor.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
+			ranged = false,
 			damageStat = core.stats.STAT.ATK,
+			codeMN = [
+				["ignore_armor", 010,012,012,014,020, 020,022,022,022,025],
+				["attack"      , 060,063,065,068,075, 078,080,083,086,090],
+			],
+		},
+		"prism": {
+			name = "Prismatic Light",
+			description = "Strikes with the most effective element.",
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_UNTYPED,
+			energy = true,
+			damageStat = core.stats.STAT.ETK,
 			ranged = false,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				["element", 010, 0],
+				["attack" , 050,056,059,062,065, 068,071,074,077,085],
 			],
 		},
 		"destroy": {
 			name = "Destroy",
-			description = "",
+			description = "Powerful Void element attack. Has a chance to change every element on the field to its own.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
-				["attack", 060, 063, 065, 068, 075,   078, 080, 083, 086, 090],
+				[ "fe.replace2", 050, 0 ],
+				[ "attack", 070,073,075,078,085, 088,090,093,096,110 ],
 			],
 		},
 		"revitlze": {
@@ -1274,7 +1376,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.EDF,
 			ranged = true,
 			codeMN = [
@@ -1289,14 +1391,14 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.EDF,
 			ranged = true,
-			spdMod = [135, 135, 135, 135, 135,   135, 135, 135, 135, 135],
+			spdMod = 135,
 			codeMN = [
-				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025, skill.OPFLAG_VALUE_PERCENT],
-				["guard", 025, 025, 025, 025, 025,   025, 025, 025, 025, 025],
-				["AD",    -15, -15, -15, -15, -15,   -15, -15, -15, -15, -15]
+				["barrier", 025, skill.OPFLAG_VALUE_PERCENT],
+				["barrier", 025,045,065,085,105, 125,145,165,185,225],
+				["AD"   , -05,-06,-07,-08,-10, -11,-12,-13,-14,-16]
 			],
 		},
 		"echo": {
@@ -1306,7 +1408,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			codeMN = [
@@ -1324,7 +1426,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = false,
+			energy = false,
 			ranged = true,
 			accMod = [100, 099, 099, 099, 099,   099, 099, 099, 099, 099],
 			codeMN = [
@@ -1338,7 +1440,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_STRIKE,
-			energyDMG = false,
+			energy = false,
 			ranged = false,
 			codeMN = [
 				["attack", 100, 105, 110, 115, 125,   130, 135, 140, 145, 160],
@@ -1351,7 +1453,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = false,
+			energy = false,
 			ranged = false,
 			codeMN = [
 				["attack", 100, 105, 110, 115, 125,   130, 135, 140, 145, 160],
@@ -1366,7 +1468,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = false,
+			energy = false,
 			ranged = false,
 			codeMN = [
 				["attack"  ,040,105,110,115,125, 130,135,140,145,160],
@@ -1382,7 +1484,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
 			ranged = false,
 			codeMN = [
 				["attack"  ,040,105,110,115,125, 130,135,140,145,160],
@@ -1398,7 +1500,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
 			ranged = false,
 			codeMN = [
 				["attack", 100, 105, 110, 115, 125,   130, 135, 140, 145, 160],
@@ -1411,7 +1513,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
 			ranged = true,
 			codeMN = [
 				["attack", 100, 105, 110, 115, 125,   130, 135, 140, 145, 160],
@@ -1424,7 +1526,7 @@ var example = {
 			target      = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element     = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG   = false,
+			energy   = false,
 			ranged      = true,
 			codeMN = [
 				["fe.el_setdomi", 000, 0],
@@ -1440,7 +1542,7 @@ var example = {
 			target = skill.TARGET_ROW,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1458,7 +1560,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
 			levels = 10,
@@ -1525,7 +1627,7 @@ var example = {
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ATK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1545,7 +1647,7 @@ var example = {
 			fieldEffectMult = 2,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1567,7 +1669,7 @@ var example = {
 			fieldEffectMult = 2,
 			targetGroup = skill.TARGET_GROUP_ALLY,
 			element = core.stats.ELEMENTS.DMG_ELEC,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1639,9 +1741,9 @@ var example = {
 			effectPriority = 1,
 			accMod = [100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			spdMod = [150, 180, 180, 180, 180,   200, 200, 200, 200, 200],
-			AD = [050, 048, 046, 044, 042,   038, 036, 034, 032, 030],
+			AD = [050,048,046,044,042, 038,036,034,032,030],
 			codeMN = [
-				["guard", 012, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAG_VALUE_PERCENT],
+				["barrier", 012,013,016,019,022, 030,032,035,037,040, skill.OPFLAG_VALUE_PERCENT],
 			],
 		},
 		"solidbun": {
@@ -1702,7 +1804,7 @@ var example = {
 			spdMod = [180, 180, 180, 180, 180,   200, 200, 200, 200, 200],
 			AD = [050, 048, 046, 044, 042,   038, 036, 034, 032, 030],
 			codeMN = [
-				["guard", 010, 013, 016, 019, 022,   030, 032, 035, 037, 040, skill.OPFLAG_VALUE_PERCENT],
+				["barrier", 010,013,016,019,022, 030,032,035,037,040, skill.OPFLAG_VALUE_PERCENT],
 			],
 		},
 		"trikshot": {
@@ -1712,7 +1814,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ATK,
 			ranged = true,
 			accMod = [095,099,099,099,099, 099,099,099,099,099],
@@ -1739,7 +1841,7 @@ var example = {
 			target         = skill.TARGET_SINGLE,
 			targetGroup    = skill.TARGET_GROUP_ENEMY,
 			element        = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG      = false,
+			energy      = false,
 			damageStat     = core.stats.STAT.ATK,
 			ranged = true,
 			spdMod = [150,100,100,100,100, 100,100,100,100,100],
@@ -1760,7 +1862,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_PIERCE,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ATK,
 			ranged = true,
 			spdMod = [090,100,100,100,100,   100,100,100,100,100],
@@ -1781,10 +1883,10 @@ var example = {
 			name = "Wide Slash",
 			description = "",
 			category = skill.CAT_ATTACK,
-			target = skill.TARGET_SPREAD,
+			target = skill.TARGET_ROW,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_CUT,
-			energyDMG = false,
+			energy = false,
 			damageStat = core.stats.STAT.ATK,
 			modStat = core.stats.STAT.LUC,
 			ranged = false,
@@ -1798,10 +1900,10 @@ var example = {
 			name = "Fire Burst",
 			description = "",
 			category = skill.CAT_ATTACK,
-			target = skill.TARGET_SPREAD,
+			target = skill.TARGET_ROW,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_FIRE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1818,7 +1920,7 @@ var example = {
 			target = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1883,7 +1985,7 @@ var example = {
 			target = skill.TARGET_ROW,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_ULTIMATE,
-			energyDMG = true,
+			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
@@ -1920,7 +2022,7 @@ func initTemplate():
 		"targetPost"     : { loader = LIBSTD_SKILL_ARRAY },
 		"targetGroup"    : { loader = LIBSTD_INT },
 		"element"        : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0,0,0,0,0,0] },
-		"energyDMG"      : { loader = LIBSTD_BOOL, default = true },
+		"energy"         : { loader = LIBSTD_BOOL, default = true },
 		"damageStat"     : { loader = LIBSTD_INT , default = core.stats.STAT.ATK },
 		"modStat"        : { loader = LIBSTD_INT , default = core.stats.STAT.LUC },
 
@@ -1959,20 +2061,20 @@ func initTemplate():
 		"messages"  : { loader = LIBEXT_SKILL_MESSAGES },
 		"summons"   : { loader = LIBSTD_SUMMONS, default = null},
 
-		"codePR" : { loader = LIBEXT_SKILL_CODE },
-		"codePP" : { loader = LIBEXT_SKILL_CODE },
-		"codeST" : { loader = LIBEXT_SKILL_CODE },
-		"codeMN" : { loader = LIBEXT_SKILL_CODE },
-		"codePO" : { loader = LIBEXT_SKILL_CODE },
-		"codeFL" : { loader = LIBEXT_SKILL_CODE },
-		"codeDN" : { loader = LIBEXT_SKILL_CODE },
-		"codeGD" : { loader = LIBEXT_SKILL_CODE },
-		"codeEF" : { loader = LIBEXT_SKILL_CODE },
-		"codeEP" : { loader = LIBEXT_SKILL_CODE },
-		"codeEE" : { loader = LIBEXT_SKILL_CODE },
-		"codeEA" : { loader = LIBEXT_SKILL_CODE },
-		"codeEH" : { loader = LIBEXT_SKILL_CODE },
-		"codeED" : { loader = LIBEXT_SKILL_CODE },
+		"codePR" : { loader = LIBSTD_SKILL_CODE },
+		"codePP" : { loader = LIBSTD_SKILL_CODE },
+		"codeST" : { loader = LIBSTD_SKILL_CODE },
+		"codeMN" : { loader = LIBSTD_SKILL_CODE },
+		"codePO" : { loader = LIBSTD_SKILL_CODE },
+		"codeFL" : { loader = LIBSTD_SKILL_CODE },
+		"codeDN" : { loader = LIBSTD_SKILL_CODE },
+		"codeGD" : { loader = LIBSTD_SKILL_CODE },
+		"codeEF" : { loader = LIBSTD_SKILL_CODE },
+		"codeEP" : { loader = LIBSTD_SKILL_CODE },
+		"codeEE" : { loader = LIBSTD_SKILL_CODE },
+		"codeEA" : { loader = LIBSTD_SKILL_CODE },
+		"codeEH" : { loader = LIBSTD_SKILL_CODE },
+		"codeED" : { loader = LIBSTD_SKILL_CODE },
 	}
 
 func loadDebug():
@@ -1990,49 +2092,7 @@ func loaderSkillFilterEXArg(val):
 	else:
 		return val
 
-func loaderSkillCode(a): #Loads skill codes.
-	var _template = skill.LINE_TEMPLATE
-	match(typeof(a)): #Check input type
-		TYPE_NIL:
-			#Input is null, this skill isn't meant to have code, so we return null back.
-			return null
-		TYPE_ARRAY:
-			#Input is an array. This is the expected input, so we process it further.
-			var result = core.newArray(a.size())
-			var line = null #Placeholder for the current line.
-			for j in a.size():
-				line = a[j]
-				result[j] = _template.duplicate(true) #Initialize line as a copy of the template, saves the trouble of keeping sync.
-				match(typeof(line)): #Determine line format.
-					TYPE_STRING: #Line is just an instruction, usually a 'get' with default values.
-						result[j][0] = skill.translateOpCode(line)
-					TYPE_ARRAY:  #We have an array, the standard instruction. There are a few variants.
-						match(line.size()):
-							1:  # Instruction only, in case one wants to keep it as array for consistency.
-								result[j][0] = skill.translateOpCode(line[0])
-							2:  # Instruction + flags
-								result[j][0] = skill.translateOpCode(line[0])
-								result[j][11] = int(line[1])
-							3:  # Instruction + single value + flags
-								result[j][0] = skill.translateOpCode(line[0])
-								for i in range(1, 11): result[j][i] = int(line[1])
-								result[j][11] = int(line[2])
-							11: # Instruction + values for 10 levels
-								result[j][0] = skill.translateOpCode(line[0])
-								for i in range(1, 11): result[j][i] = int(line[i])
-							12: # Instruction + values for 10 levels + flags
-								result[j][0] = skill.translateOpCode(line[0])
-								for i in range(1, 11): result[j][i] = int(line[i])
-								result[j][11] = int(line[11])
-							_:  # Unexpected line. Print an error.
-								print("\t[!!][SKILL][loaderSkillCode] Line size is not normal, returning null line.")
-					_: # Unexpected type. Print an error.
-						print("\t[!!][SKILL][loaderSkillCode] Line is neither string or array, returning null line.")
-			return result
-		_:
-			#Input is...something else. Likely user error. Return a line with no effect as a last resort.
-			print("\t[!!][SKILL][loaderSkillCode] Provided skill code is not an array. Please verify. ")
-			return [ _template.duplicate() ]
+
 
 func loaderFX(val) -> Array:
 	match typeof(val):

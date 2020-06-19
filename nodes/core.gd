@@ -108,7 +108,7 @@ enum { #Weapon classes
 	WPCLASS_POLEARM,      # Polearms: Spears, lances, glaives, naginatas, the works.
 	WPCLASS_HAMMER,       # Hammers: Bats, maces, stun batons, staves, general blunt things.
 	WPCLASS_AXE,          # Axes: Hammers with blades. Hatchets, war axes, not a broad category but effective.
-	WPCLASS_HANDGUN,      # Handguns: Pistols, stun guns, revolvers. Portable and lightweight firearms.
+	WPCLASS_HANDGUN,      # Handguns: Pistols, stun guns, revolvers, SMGs. Portable and lightweight firearms.
 	WPCLASS_FIREARM,      # Firearms: Shotguns, rifles, grenade launchers. Bigger caliber guns, like law enforcement tier.
 	WPCLASS_ARTILLERY,    # Artillery: Cannons, missile launchers, howitzers. Powerful weaponry, military tier and above.
 	WPCLASS_SHIELD,       # Shields: Portable defensive devices.
@@ -199,13 +199,13 @@ class _charPanel:
 		"select" : ["5A8457", "FFFFFF", "8A6427", "FFFFFF"],
 		"damage" : ["771A1A", "FFB666", "882A2A", "FFC676"],
 		"status" : ["773477", "75EEFF", "9764A7", "95FEFF"],
-		"stasis" : ["77347788", "75EEFF88", "87448788", "85FEFF88"],
 		"defeat" : ["888888", "AAAAAA", "A8A8A8", "CFCFCF"],
+		"disable": ["88888888", "88AAAAAA", "88888888", "88AAAAAA"],
 	}
-	var style = null 				#StyleBox for the panel.
+	var style     = null 				#StyleBox for the panel.
 	var styleName = ""			#Godot's style path
-	var node = null					#Node to control
-	var theme = "normal"		#Theme key
+	var node      = null					#Node to control
+	var theme     = "normal"		#Theme key
 	func _init(_node, stylepath, stylename):
 		node = _node
 		style = load(stylepath).duplicate()
@@ -301,7 +301,7 @@ class StatClass:
 	const STAT_CAP = 255
 	const MAX_DMG = 32000
 	const STATS = [ 'MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC' ]
-	const GEAR_STATS = [ 'MEP', 'SKL' ]
+	const EXTRA_STATS = [ 'MEP', 'OVR', 'CRI' ]
 	enum STAT { MHP, ATK, DEF, ETK, EDF, AGI, LUC }
 	enum ELEMENTS {
 		DMG_UNTYPED  = 0,	#Cannot be resisted
@@ -383,28 +383,25 @@ class StatClass:
 
 	func create():
 		var result = {}
-		for i in STATS:
-			result[i] = int(000)
+		for i in STATS: result[i] = int(000)
 		result.OFF = createElementData()
 		result.RES = createElementData()
 		return result
 
 	func print(S):
 		var result = ""
-		for i in STATS:
-			result += "%s: %s " % [i, S[i]]
+		for i in STATS: result += "%s: %s " % [i, S[i]]
 		result += printElementData(S.OFF)
 		result += printElementData(S.RES)
 		return result
 
 	func reset(S, elementVal:int = 100) -> void:
-		for i in STATS:
-			S[i] = 0
+		for i in STATS: S[i] = 0
 		resetElementData(S.OFF, elementVal)
 		resetElementData(S.RES, elementVal)
 
-		#Handle special stats from items or such.
-		for i in [ 'MEP', 'WRD', 'DUR' ]:
+		#Handle special stats from equipment and passives.
+		for i in EXTRA_STATS:
 			if i in S:
 				S[i] = 0
 		if 'SKL' in S:
@@ -424,8 +421,7 @@ class StatClass:
 
 	func copy(S, stats):
 		if stats != null:
-			for i in STATS:
-				S[i] = int(stats[i])
+			for i in STATS: S[i] = int(stats[i])
 			copyElementData(S.OFF, stats.OFF)
 			copyElementData(S.RES, stats.RES)
 
@@ -624,6 +620,9 @@ static func normalize(v:int, m:int) -> float: #I was tired of doing the casting 
 
 static func percent(v:int) -> float: #Cast a X% number into something more suitable for multiplications.
 	return float(v) * .01
+
+static func percentMod(x:int, y:int) -> int: #Modify an integer x by y%. Done here to simplify things.
+	return round(x as float * (y as float * .01)) as int
 
 static func clampi(x:int, mi:int, ma:int) -> int: #Equivalent to clamp() but uses ints only.
 	return clamp(x, mi, ma) as int

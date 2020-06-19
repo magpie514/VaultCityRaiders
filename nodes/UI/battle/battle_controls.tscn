@@ -18,14 +18,14 @@
 [ext_resource path="res://resources/fonts/ume-tgo5.ttf" type="DynamicFontData" id=16]
 
 [sub_resource type="StyleBoxFlat" id=1]
-content_margin_left = 10.0
+content_margin_left = 30.0
 bg_color = Color( 0, 0.00784314, 0.45098, 1 )
 border_width_left = 4
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 1, 0.701961, 0, 1 )
-corner_radius_top_left = 10
+corner_radius_top_left = 32
 corner_detail = 1
 anti_aliasing = false
 
@@ -329,10 +329,10 @@ margin_right = 962.0
 
 [node name="TargetPanel" parent="." instance=ExtResource( 10 )]
 visible = false
-margin_left = 562.0
-margin_top = 113.0
-margin_right = 962.0
-margin_bottom = 183.0
+margin_left = 530.0
+margin_top = 129.0
+margin_right = 960.0
+margin_bottom = 239.0
 [connection signal="select" from="Main/WeaponPanel/Weapon1" to="." method="_on_Weapon_pressed" binds= [ 0 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon2" to="." method="_on_Weapon_pressed" binds= [ 1 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon3" to="." method="_on_Weapon_pressed" binds= [ 2 ]]
