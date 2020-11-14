@@ -77,7 +77,7 @@ func battle():
 
 		# Collect player actions ######################################################################
 		while islot < playerChars.size():
-			$Panel/ActionQueue.init(state.actions(), playerActions)
+			$Panel/ActionQueue.init(state.sortPreview(playerActions))
 			C = playerChars[islot]
 			#yield(waitFixed(0.05), "timeout")
 			C.charge(false)

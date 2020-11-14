@@ -5,6 +5,7 @@ enum { #Flags for scripted fights.
 	EVENTFLAGS_NONE =       0b0000,     #Normal operation
 	EVENTFLAGS_INVINCIBLE = 0b0001,     #Character has plot armor and negates most damage.
 	EVENTFLAGS_G0LUF      = 0b0010,     #Character refuses to die like a certain brave old man.
+	EVENTFLAGS_PRIMEBLUE  = 0b0100,     #Character's Over restores existence at the end of the turn. Damage caps automatically removed for this character.
 }
 
 
@@ -259,6 +260,11 @@ func getHealthN(): #Get normalized health as a float from 0 to 1.
 func getHealthPercent(x:int):
 	return round(float(maxHealth()) * core.percent(x)) as int
 
+func getHealPower(x:int) -> int:
+	var power:float = float(x)
+	var EDF         = float(statFinal.EDF) if battle == null else float(battle.stat.EDF)
+	return ceil( ( (((power * EDF * 2) * 0.0021786) + (power * 0.16667)) ) + ( ((EDF * 2 * 0.010599) * sqrt(power)) * 0.1 ) ) as int
+
 func fullHeal() -> void: #Set health to max health.
 	self.HP = maxHealth()
 
@@ -411,6 +417,9 @@ func setAD(x:int, absolute:bool = false) -> void: #Set active defense.
 		UIdisplay.updateAD(battle.AD)
 	#print("[CHAR_BASE] %s AD is now %03d" % [name, battle.AD])
 
+func resetAD() -> void: #Sets AD back to 100 if it's reducing incoming damage.
+	if battle.AD < 100: battle.AD = 100
+
 func defeat() -> void: #Process defeat.
 	condition = skill.CONDITION_DOWN
 	HP = 0 #Set HP to zero in case this was called outside of damage()
@@ -444,9 +453,9 @@ func heal(x:int) -> void:
 	if battle != null:
 		print("[CHAR_BASE][heal] Healing %s (Mod: %s%%)" % [x, battle.healMod])
 		x = round( core.percentMod(x, battle.healMod) ) as int
+		battle.turnHeal += x
 	HP = core.clampi(HP + x, 0, maxHealth())
 	if HP == 0:	defeat()
-	battle.turnHeal += x
 	display.damage(-x)
 
 func overHeal(x, y) -> void:
@@ -519,13 +528,13 @@ func addInflict(x:int) -> void:
 		core.stats.COND_DEFEAT:
 			defeat()
 		core.stats.COND_BLIND:
-			condition2 = condition2 | skill.CONDITION_BLIND
+			condition2 = condition2 | skill.CONDITION2_BLIND
 		core.stats.COND_STUN:
-			condition2 = condition2 | skill.CONDITION_STUN
+			condition2 = condition2 | skill.CONDITION2_STUN
 		core.stats.COND_CURSE:
-			condition2 = condition2 | skill.CONDITION_CURSE
+			condition2 = condition2 | skill.CONDITION2_CURSE
 		core.stats.COND_PANIC:
-			condition2 = condition2 | skill.CONDITION_PANIC
+			condition2 = condition2 | skill.CONDITION2_PANIC
 	battle.conditionDefsMax[x] += 1
 	battle.conditionDefs[x] = battle.conditionDefsMax[x]
 
@@ -758,6 +767,17 @@ func removeEffect(E, holder) -> void:
 
 # Passive combat skills ###########################################################################
 func checkPassives(runEF:bool = false) -> void: pass #[VIRTUAL] Checks passive skills.
+
+func getSkillEffects(type:String) -> Array:
+	var result:Array = []
+	for i in getActiveSkills():
+		var S = i[0]
+		if S[type] != null:
+			result.push_back([S, i[1]])
+	return result
+
+func getActiveSkills() -> Array:
+	return []
 
 func initPassive(S, lv:int = 0, runEF:bool = false) -> void:
 	if S.effectStatBonus != null: calculateEffectStats(S, lv)

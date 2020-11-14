@@ -11,8 +11,8 @@ var ID:int = 0        #Unique ID. Used only for mons.
 
 # OVERRIDES #######################################################################################
 func checkPassives(runEF:bool = false) -> void:
-	#.initPassive(ability[0], ability[1])
-	.initPassive(core.lib.skill.getIndex(['debug','regenera']), 1, runEF)
+	#.initPassive(core.lib.skill.getIndex(['debug','regenera']), 1, runEF)
+	.initPassive(ability[0], ability[1], runEF)
 
 func hasSkill(what):
 	for i in skills:
@@ -20,6 +20,14 @@ func hasSkill(what):
 			return [ core.lib.skill.getIndex(lib.skills[i[0]]), i[1] ]
 	return null
 
+func getActiveSkills() -> Array: #Get all skills, effects and equipment skills.
+	var result:Array = []
+	result.push_back([ability[0], ability[1]])
+	for i in battle.buff       : result.push_back([i[0], i[1]])
+	for i in battle.debuff     : result.push_back([i[0], i[1]])
+	for i in battle.effect     : result.push_back([i[0], i[1]])
+	for i in battle.eventEffect: result.push_back([i[0], i[1]])
+	return result
 
 ###################################################################################################
 
@@ -46,6 +54,7 @@ func initDict(C): #Initialize an enemy from a data dict.
 	self.name   = str(lib.name)
 	energyColor = C.energyColor
 	skills      = lib.skillSetup[0] #TODO: Change from Rank.
+	ability     = [core.lib.skill.getIndex(['debug','regenera']), 1]
 	recalculateStats()
 	fullHeal()
 	print(getTooltip())
@@ -231,35 +240,39 @@ func thinkPattern(F, P, state, aiPattern):
 			print("[ERROR, using %s]" % [S.name])
 
 	#Try to pick a given target.
-	match targetHint:
-		core.lib.enemy.AITARGET_SELF:
-			target = [ self ]
-		core.lib.enemy.AITARGET_SUMMONER:
-			if summoner != null:
-				print("[AITARGET] Summoner found (%s)" % summoner.name)
-				target = [ summoner ] if summoner.filter(S) else pickTarget(S, 1, F, P, state)
-			else:
-				print("[AITARGET] No summoner found, picking normally.")
-				target = pickTarget(S, 1, F, P, state)
-		core.lib.enemy.AITARGET_WEAKEST:
-			var T = group.versus.getWeakestTarget(S)
-			if T != null:
-				print("[AITARGET] Picking weakest (%s)" % T.name)
-				target = [ T ]
-			else:
-				print("[AITARGET] No weakest target found, picking normally.")
-				target = pickTarget(S, 1, F, P, state)
-		core.lib.enemy.AITARGET_ALLY_WEAKEST:
-			var T = group.getWeakestTarget(S)
-			if T != null:
-				print("[AITARGET] Picking weakest ally (%s)" % T.name)
-				target = [ T ]
-			else:
-				print("[AITARGET] No weakest ally target found, picking normally.")
-				target = pickTarget(S, 1, F, P, state)
-		_:
-			print("[AITARGET] Unknown targethint %d, picking randomly." % targetHint)
-			target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
+	#TODO: Oh my god do something to prevent target hints from overriding skill targets entirely.
+	if S.target[1] == core.skill.TARGET_ALL:
+		target = pickTarget(S, 1, F, P, state)
+	else:
+		match targetHint:
+			core.lib.enemy.AITARGET_SELF:
+				target = [ self ]
+			core.lib.enemy.AITARGET_SUMMONER:
+				if summoner != null:
+					print("[AITARGET] Summoner found (%s)" % summoner.name)
+					target = [ summoner ] if summoner.filter(S) else pickTarget(S, 1, F, P, state)
+				else:
+					print("[AITARGET] No summoner found, picking normally.")
+					target = pickTarget(S, 1, F, P, state)
+			core.lib.enemy.AITARGET_WEAKEST:
+				var T = group.versus.getWeakestTarget(S)
+				if T != null:
+					print("[AITARGET] Picking weakest (%s)" % T.name)
+					target = [ T ]
+				else:
+					print("[AITARGET] No weakest target found, picking normally.")
+					target = pickTarget(S, 1, F, P, state)
+			core.lib.enemy.AITARGET_ALLY_WEAKEST:
+				var T = group.getWeakestTarget(S)
+				if T != null:
+					print("[AITARGET] Picking weakest ally (%s)" % T.name)
+					target = [ T ]
+				else:
+					print("[AITARGET] No weakest ally target found, picking normally.")
+					target = pickTarget(S, 1, F, P, state)
+			_:
+				print("[AITARGET] Unknown targethint %d, picking randomly." % targetHint)
+				target = pickTarget(S, 1, F, P, state)                                    #TODO: Set skill level properly.
 	print("[%s] using %s on %s" % [name, S.name, target])
 	if S.chargeAnim[0]: sprite.charge(true)
 	return [ action, 0, target ]

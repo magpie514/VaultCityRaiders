@@ -6,12 +6,12 @@ var example = {
 		"cromwell" : { #Cromwell (Guest version) player class.
 			name = "Creator",
 			description = "A class oriented to focus the powerful abilities of an Originator",
-			statSpread = [ [005,000,000,003,002,004,001], [032,000,006,032,024,052,018] ],
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
 			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
 			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
 			weapons = [ core.WPCLASS_LONGSWORD ],
 			skills = [
-				"story/plasfeld",
+				"story/origilaw",
 			],
 		},
 	},
@@ -37,7 +37,7 @@ var example = {
 			conditionDefs = [ 02, 01, 01, 02, 00, 01, 02, 01, 00, 01],
 			weapons = [core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM, core.WPCLASS_SHIELD, core.WPCLASS_LONGSWORD],
 			skills = [
-				"story/plasfeld",
+				"story/epnfield",
 				"story/jshield",
 				"story/jhunter",
 				"story/jrailgun",
@@ -119,10 +119,13 @@ var example = {
 			conditionDefs = [ 03, 04, 05, 03, 03, 03, 02, 03, 03, 02],
 			skills = [
 				#Define Anna's roles better.
-				["debug", "vampdran"],
-				["story", "overclck"],
-				["story", "lunablaz"],
-				["story", "savaripp"],
+				"debug/vampdran",
+				"story/enrgdrve",
+				"story/bloddrve",
+				"story/overclck",
+				"story/lunablaz",
+				"story/savaripp",
+				"story/timetrap",
 			],
 		},
 		"esper" : {

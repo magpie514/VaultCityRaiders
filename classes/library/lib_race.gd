@@ -66,7 +66,7 @@ var example = {
 			statSpread = [ [060, 015, 015, 015, 010, 010, 005], [520, 150, 165, 120, 090, 110, 085] ],
 			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
 			conditionDefs = [ 04, 05, 05, 04, 02, 05, 99, 05, 03, 04],
-			aspect = core.RACEF_SPI|core.RACEF_MEC,
+			aspect = core.RACEF_MEC,
 			flags = [ core.RACE_MACHINE ],
 		},
 		"choujin" : { #Mostly story mode exclusive. Could probably look into making it a stronger but less versatile version of robots, like you get some initial picks and you get stuck with them.

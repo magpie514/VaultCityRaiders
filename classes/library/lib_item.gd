@@ -84,6 +84,19 @@ var example = {
 				["debug", "healbio"],
 			]
 		},
+		"luopan" : {
+			name = "Luopan",
+			description = "An enchanted luopan, a feng shui compass. Use it to shift the elements in the field: Cut to Fire, Pierce to Elec and Strike to Cold.",
+			category = 0,
+			maxLevel = 10,
+			charge = true,
+			chargeRate = [020,025,025,025,025, 025,025,025,025,025],
+			chargeUse =  [020,025,025,025,025, 025,025,025,025,025],
+			skill = [001,001,001,001,001, 001,001,001,001,001],
+			skills = [
+				"core/elemshft",
+			]
+		},
 		"repair1" : {
 			name = "Frame Repair Kit",
 			description = "Basic nanorepair kit for machines.",

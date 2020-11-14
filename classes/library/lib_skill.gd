@@ -17,6 +17,8 @@ const LIBEXT_FX                 = "loaderFX"
 
 var example = {
 # Core skills #####################################################################################
+	#TODO: Aura reveal, esper class. Activate at the start of battle and buff user.
+	#TODO: Geo Drain, ??? (feng shui?). Drain 2-3? from elemental field, of the dominant type. Uses its element for healing.
 	"core": {
 		"wp_arti" : {
 			name = "Artillery Mastery",
@@ -81,6 +83,20 @@ var example = {
 			AD = 			[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			spdMod = 	[110, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 		},
+		"elemshft": {
+			name           = "Elemental Shift",
+			description    = "Replace all field effect elements: Cut to Fire, Pierce to Elec and Strike to Ice",
+			category       = skill.CAT_SUPPORT,
+			target         = skill.TARGET_SELF,
+			targetGroup    = skill.TARGET_GROUP_ALLY,
+			element        = core.stats.ELEMENTS.DMG_UNTYPED,
+			spdMod         = 050,
+			codeMN = [
+				["fe.replace_ex",   0x14, 0],
+				["fe.replace_ex",   0x25, 0],
+				["fe.replace_ex",   0x36, 0],
+			],
+		},
 	},
 # Story mode skills ###############################################################################
 	"story": {
@@ -97,32 +113,31 @@ var example = {
 			energy = true,
 			damageStat = core.stats.STAT.ETK,
 			ranged = true,
-			spdMod = [080,100,100,100,100,   100,100,100,100,100],
-			AD =     [110,100,100,100,100,   100,100,100,100,100],
+			spdMod = [080,100,100,100,100, 100,100,100,100,100],
+			AD =     [010,100,100,100,100, 100,100,100,100,100],
 			codeMN = [
-				#TODO: Clear field, nomiss.
-				["attack" ,325,125,132,132,140,   140,147,147,147,160],
+				["nomiss"  , 1, 0],
+				["ef.reset", 1, 0],
+				["attack" ,325,125,132,132,140, 140,147,147,147,160],
 			],
 		},
 # Jay's skills ####################################################################################
-		"plasfeld": {
-			name = "EPN Field",
-			description = "Extends an Energy Particle Negation field, charging the field with electricity and may prevent enemies from modifying the field.",
-			category = skill.CAT_SUPPORT,
-			target = skill.TARGET_SELF,
-			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_ELEC,
-			effect = skill.EFFECT_SPECIAL,
-			effectType = skill.EFFTYPE_BUFF,
+		"epnfield": {
+			name           = "EPN Field",
+			description    = "Extends an Energy Particle Negation field, charging the field with electricity and may prevent enemies from modifying the field.",
+			category       = skill.CAT_SUPPORT,
+			target         = skill.TARGET_SELF,
+			targetGroup    = skill.TARGET_GROUP_ALLY,
+			element        = core.stats.ELEMENTS.DMG_ELEC,
+			effect         = skill.EFFECT_SPECIAL,
+			effectType     = skill.EFFTYPE_BUFF,
 			effectIfActive = skill.EFFCOLL_REFRESH,
 			effectDuration = 3,
 			effectPriority = 3,
-			ranged = true,
-			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = [005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = 		[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			ranged         = true,
+			spdMod         = 005,
 			codeEF = [
-				["fe.push",   000, 033, 033, 033, 033,   033, 033, 033, 033, 033],
+				["fe.push",   000, 0],
 			],
 		},
 		"blueshft": {
@@ -160,13 +175,12 @@ var example = {
 			effectPriority = 3,
 			ranged = true,
 			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = 	[005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			spdMod = [005, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			AD = 		[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
 			codeEF = [
 				["fe.push",   000, 033, 033, 033, 033,   033, 033, 033, 033, 033],
 			],
 		},
-
 		"thunswrd": {
 			name = "Thunder Sword",
 			description     = "Powerful electric energy damage.\nChain Finish: Adds Chainx10 bonus damage.",
@@ -213,15 +227,15 @@ var example = {
 			ranged = true,
 			accMod = [999,999,999,999,999,   999,999,999,999,999],
 			codeMN = [
-				["nomiss"       , 001, 0],
-				["ignore_barriers"  , 001, 0],
-				["ignore_armor"     , 100, 0],
-				["guardbreak"   , 001, 0],
-				["get_chain"    , skill.OPFLAG_TARGET_SELF],
-				["mul"          , 999, 0],
-				["dmgbonus"     , skill.OPFLAG_USE_SVAL],
-				["attack"       , 99999, 0],
-				["ef_clear"     , 001, 0],
+				["nomiss"         ,001, 0],
+				["ignore_barriers",001, 0],
+				["ignore_armor"   ,100, 0],
+				["guardbreak"     ,001, 0],
+				["get_chain"      ,skill.OPFLAG_TARGET_SELF],
+				["mul"            ,999, 0],
+				["dmgbonus"       ,skill.OPFLAG_USE_SVAL],
+				["attack"         ,99999, 0],
+				["ef_clear"       ,001, 0],
 			],
 		},
 		"freerang": {
@@ -606,7 +620,50 @@ var example = {
 				["debug", "selfrepr"],
 			],
 		},
+		"codegnst": {
+			name = "Code 「GUNSTAR」",
+			description = "Extremely powerful untyped damage. No defense possible.",
+			lore = "Ultimate brotherly combination attack. Only possible when two souls' Over is fully synchronized, and tied by a singular purpose.",
+			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
+			chargeAnim = true,
+			costOV = 100,
+			category = skill.CAT_OVER,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_UNTYPED, #No elemental defs.
+			fieldEffectMult = 4,
+			energy = true,
+			damageStat = core.stats.STAT.ETK,
+			chain = skill.CHAIN_FINISHER,
+			ranged = true,
+			codeMN = [
+				["nomiss"         ,001, 0],
+				["ignore_barriers",001, 0],
+				["ignore_armor"   ,100, 0],
+				["guardbreak"     ,001, 0],
+				["get_chain"      ,skill.OPFLAG_TARGET_SELF],
+				["dmgbonus"       ,skill.OPFLAG_USE_SVAL],
+				["attack"         ,1800, 0],
+			],
+		},
+
 # Anna's skills ###################################################################################
+		"bloddrve": {
+			name = "Blood Drive",
+			description = "Restores some health when using Cut attacks on BIO targets.",
+			category    = skill.CAT_PASSIVE,
+			codeEA1 = [
+				["heal", 020, skill.OPFLAG_TARGET_SELF],
+			]
+		},
+		"enrgdrve": {
+			name = "Perfect Energy Drive",
+			description = "All attack skills have some life drain.",
+			category    = skill.CAT_PASSIVE,
+			codeEA0 = [
+				["drainlife", 020, skill.OPFLAG_TARGET_SELF],
+			]
+		},
 		"savaripp": {
 			name = "Savage Ripper",
 			description = "Slashes at a single target. If current weapon is out of durability, the slash is much stronger. A last resort.",
@@ -628,6 +685,23 @@ var example = {
 			],
 			codeMN = [
 				["attack", 100, 125, 132, 132, 140,   140, 147, 147, 147, 160],
+			],
+		},
+		"timetrap": {
+			name        = "Time Trap",
+			description = "Target AGI is reduced to zero for this turn, forcing it to act last.",
+			element     = core.stats.ELEMENTS.DMG_UNKNOWN,
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			damageStat  = core.stats.STAT.ETK,
+			energy      = true,
+			ranged      = false,
+			spdMod      = 190,
+			AD          = 100,
+			codeMN      = [
+				["attack"  , 020, 0],
+				["agi_mod" , -1000, 0],
 			],
 		},
 		"overclck": {
@@ -825,7 +899,87 @@ var example = {
 			AD          = 100,
 			codeMN      = [
 				#TODO:Check for Solarica Parasite immunity, otherwise set flag to bypass inflict resistance.
-				["dot", 0x102BCF8]
+				["if_solarica_def", 001, skill.OPFLAG_LOGIC_NOT],
+					["dot", 0x102BCF8]
+			],
+		},
+		"swrdneme": {
+			name        = "Sword of Nemesis",
+			description = "Hits 3 times with strong kinetic cut damage, with the third hit ignoring armor and barriers. Then hits again with energy ultimate damage.",
+			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			damageStat  = core.stats.STAT.ATK,
+			energy      = false,
+			ranged      = false,
+			spdMod      = 090,
+			AD          = 100,
+			codeMN      = [
+				["attack.ex"      , 0x0096100, 0],
+				["attack.ex"      , 0x0096100, 0],
+				["ignore_barrier" , 001, 0],
+				["ignore_armor"   , 100, 0],
+				["attack.ex"      , 0x0096100, 0],
+				["energy_dmg"     , 001, 0],
+				["attack"         , 200, 0],
+			],
+		},
+		"goddevor": {
+			name        = "God Devourer",
+			description = "Causes high damage to barriers, then deals massive Cut and Ultimate damage ignoring barriers.",
+			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			damageStat  = core.stats.STAT.ETK,
+			energy      = true,
+			ranged      = true,
+			spdMod      = 090,
+			AD          = 100,
+			codeMN      = [
+				["guarddamage"    , 200, 0],
+				["ignore_barriers", 1, 0],
+				["drainlife"      , 100, 0],
+				["attack.ex"      , 0x0096100, 0],
+				["attack"         , 200, 0],
+			],
+		},
+		"terrgaze": {
+			name        = "Terror Gaze",
+			description = "Strong ultimate damage that cannot miss. Can incapacitate.",
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
+			energy      = true,
+			damageStat  = core.stats.STAT.ETK,
+			ranged      = true,
+			accMod      = 100,
+			AD          = 110,
+			codeMN = [
+				["nomiss"      , 001, 0],
+				["attack"      , 250,125,132,132,140, 140,147,147,147,160 ],
+				["inflict"     , 0x421, 0],
+			],
+		},
+		"genoray": {
+			name        = "Genocider Ray",
+			description = "Party-wide energy Ultimate damage. Tries to inflict panic and incapacitate.",
+			category    = skill.CAT_ATTACK,
+			target      = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
+			energy      = true,
+			damageStat  = core.stats.STAT.ETK,
+			ranged      = true,
+			accMod      = 100,
+			AD          = 110,
+			codeMN = [
+				["nomiss"      , 001, 0],
+				["attack"      , 200,125,132,132,140, 140,147,147,147,160 ],
+				["inflict"     , 0x810, 0],
+				["inflict"     , 0x410, 0],
 			],
 		},
 		"terrseed": {
@@ -840,6 +994,28 @@ var example = {
 			spdMod      = 080,
 			AD          = 100,
 			codeMN      = [
+			],
+		},
+		"gdomini9": {
+			name = "G-Dominion - Type 9",
+			description = "All of creation ends.",
+			lore = "DATABASE ERROR",
+			dangerous = true,
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			effect = skill.EFFECT_STATS,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_NULLIFY,
+			effectStatBonus = {
+					ATK_MULT = [200,000,000,000,000, 000,000,000,000,000],
+					ETK_MULT = [200,000,000,000,000, 000,000,000,000,000],
+			},
+			effectDuration = 001,
+			effectPriority = 3,
+			codeMN = [
+				["fe.hyper", 001, 0],
 			],
 		},
 	},
@@ -1090,6 +1266,66 @@ var example = {
 			AD =     [105,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				["attack"       ,100,125,132,132,140,   140,147,147,147,160],
+			],
+		},
+# Anna's Hellfanger ###########################################################
+		"hfang000": {
+			name = "Blood Reaver",
+			description = "Cutting strike that partially ignores armor. Attempts to inflict damage over time on BIO targets.",
+			costWP = 3,
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			energy = false,
+			ranged = false,
+			codeMN = [
+				["ignore_armor", 025, 0],
+				["attack"  ,120,125,130,135,150, 155,160,165,170,190],
+				["if_race_aspect", 0b010, 0],
+					["dot"        , 0x1001230, 0]
+			],
+		},
+		"hfang001": {
+			name = "Calamity Blaze",
+			description = "Cut kinetic attack + Fire energy attack, ignoring some armor.",
+			displayElement = [1, 4],
+			costWP = 5,
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			energy = false,
+			ranged = false,
+			codeMN = [
+				["ignore_armor", 015, 0],
+				["attack", 110,115,120,120,130, 135,135,135,135,140],
+				["element", 4, 0],
+				["energy_dmg", 1, 0],
+				["attack", 035,035,035,035,040, 040,042,045,048,060],
+			],
+		},
+		"hfangOVR": {
+			name = "Calamity Blaze",
+			description = "Powerful cut strike that partially ignores armor, followed by a strong fire strike that ignores barriers. FF: If target's DF is under 100, set it to 100.",
+			displayElement = [1, 4],
+			costOV = skill.OVER_COST_3,
+			category = skill.CAT_ATTACK,
+			target = skill.TARGET_SINGLE,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_CUT,
+			energy = false,
+			ranged = false,
+			codeMN = [
+				["ignore_armor", 045, 0],
+				["attack", 110,115,120,120,130, 135,135,135,135,140],
+				["element", 4, 0],
+				["energy_dmg", 1, 0],
+				["ignore_armor", 000, 0],
+				["ignore_barrier", 001, 0],
+				["attack", 110,115,120,120,130, 135,135,135,135,140],
+				["if_ef_bonus>=", 002, 0],
+					["ad.reset", 001, 0],
 			],
 		},
 # Yukiko's Polar Star #########################################################
@@ -1492,7 +1728,6 @@ var example = {
 				["attack"  ,060,105,110,115,125, 130,135,140,145,160],
 			],
 		},
-
 		"stab": {
 			name = "Stab",
 			description = "",
@@ -1578,6 +1813,9 @@ var example = {
 				["if_full_health", skill.OPFLAG_LOGIC_NOT],
 					["heal", 025, 0],
 			],
+			codeEA0 = [
+				["heal", 025, skill.OPFLAG_TARGET_SELF],
+			]
 		},
 		"heal": {
 			name = "Heal",
@@ -2073,6 +2311,10 @@ func initTemplate():
 		"codeEP" : { loader = LIBSTD_SKILL_CODE },
 		"codeEE" : { loader = LIBSTD_SKILL_CODE },
 		"codeEA" : { loader = LIBSTD_SKILL_CODE },
+		"codeEA0": { loader = LIBSTD_SKILL_CODE },
+		"codeEA1": { loader = LIBSTD_SKILL_CODE },
+		"codeES0": { loader = LIBSTD_SKILL_CODE },
+		"codeES1": { loader = LIBSTD_SKILL_CODE },
 		"codeEH" : { loader = LIBSTD_SKILL_CODE },
 		"codeED" : { loader = LIBSTD_SKILL_CODE },
 	}

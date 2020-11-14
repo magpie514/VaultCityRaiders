@@ -39,7 +39,9 @@ class Action:
 	var act:int     = ACT_SKILL  #Action type.
 	var side:int    = 0          #User's group.
 	var slot:int    = 0          #User's slot.
+	var over:bool   = false      #Over action flag.
 	var spd:int     = 0          #Action speed.
+	var spdMod:int  = 0          #Speed mod (to use when resorting the queue after every action)
 	var level:int   = 0          #Action level.
 	var target:Array             #List of targets.
 	var override    = null       #Pointer to skill override (mostly dragon gems)
@@ -52,6 +54,25 @@ class Action:
 
 	func _init(_act:int = ACT_SKILL) -> void:
 		act = _act
+
+	func duplicate() -> Action:
+		var result:Action = Action.new(self.act)
+		result.user     = self.user
+		result.act      = self.act
+		result.side     = self.side
+		result.slot     = self.slot
+		result.over     = self.over
+		result.spd      = self.spd
+		result.spdMod   = self.spdMod
+		result.level    = self.level
+		result.target   = self.target.duplicate(true)
+		result.override = self.override
+		result.cancel   = self.cancel #????
+		result.skillTid = self.skillTid
+		result.skill    = self.skill
+		result.WP       = self.WP
+		result.IT       = self.IT
+		return result
 
 func dprint(text:String) -> void: #TODO: Convert this into a proper debug printer.
 	print(text)
@@ -156,6 +177,17 @@ func popAction() -> Action: #Pop the front of the queue and return it.
 func amount() -> int: #Returns amount of actions in the queue.
 	return actionQueue.size()
 
+func sortPreview(playerActs:Array, overActions:Array = []) -> Array:
+	var result:Array = [] #Store stuff in a temp array to prevent disturbances.
+	for i in actionQueue:
+		result.push_back(i)
+	for i in playerActs:
+		var temp:Action = i[2].duplicate()
+		prepareAction(i[0],i[1],temp)
+		result.push_back(temp)
+	result.sort_custom(self, "sortActionQueue")
+	return result
+
 func sort() -> void: #Sorts the action queue by action speed.
 	actionQueue.sort_custom(self, "sortActionQueue")
 	#Over actions take special priority and are put in front but are also sorted by speed besides that.
@@ -170,8 +202,7 @@ static func sortActionQueueOverPass(a, b): #Sorts actions, Over first.
 func status() -> bool: #Checks if battle should continue or not.
 	return not quit
 
-
-func addAction(side, slot, act:Action) -> void:
+func prepareAction(side:int, slot:int, act:Action) -> void:
 	var user = formations[side].formation[slot]
 	act.user = user
 	act.side = side
@@ -194,8 +225,10 @@ func addAction(side, slot, act:Action) -> void:
 	#Action speed.
 	if act.IT != null and act.act == ACT_ITEM: #Using an item, ignore skill speed.
 		act.spd = user.calcSPD(user.battle.itemSPD)
+		act.spdMod = user.battle.itemSPD
 	else: #Using a skill.
 		act.spd = user.calcSPD(act.skill.spdMod[0])
+		act.spdMod = act.skill.spdMod[0]
 		#act.spd = user.calcSPD(act.skill.spdMod[act.level]) #TODO: Enable this once all level data has been normalized.
 
 	#Set action as last used for the character. Mostly relevant to players to redo actions from the battle menu.
@@ -204,6 +237,9 @@ func addAction(side, slot, act:Action) -> void:
 	# Visual and interface related functions go here.
 	if act.skill.chargeAnim[act.level] != 0: user.charge(true)
 	if act.skill.initAD[act.level] != 100: user.UIdisplay.updateAD(act.skill.initAD[act.level])
+
+func addAction(side:int, slot:int, act:Action) -> void:
+	prepareAction(side, slot, act)
 	pushAction(act)
 
 func updateActions(A) -> void:
@@ -211,6 +247,9 @@ func updateActions(A) -> void:
 	print("[BATTLE_STATE][UPDATEACTIONS] lastAct: %s %s LV%2d" % [lastAct[1].name, lastAct[2].name, lastAct[3]])
 	var tmp = null
 	if amount() > 0:
+		for i in actionQueue:
+			if i.user.canAct(): #Re-sort actions so AGI changes are accounted for.
+				i.spd = i.user.calcSPD(i.spdMod)
 		tmp = actionQueue[0]
 		nextAct = [tmp.side, tmp.user, tmp.skill]
 	else:
@@ -245,9 +284,9 @@ func enemyActions() -> void: #Think enemy actions.
 		var action = i.thinkBattleAction(F, P, self)
 		var result = Action.new(ACT_SKILL)
 		result.skillTid = action[0]
-		result.skill = core.lib.skill.getIndex(action[0])
-		result.level = action[1]
-		result.target = action[2]
+		result.skill    = core.lib.skill.getIndex(action[0])
+		result.level    = action[1]
+		result.target   = action[2]
 		#i.UIdisplay.update()
 		addAction(SIDE_ENEMY, i.slot, result)
 

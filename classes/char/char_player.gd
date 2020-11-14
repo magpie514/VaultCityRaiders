@@ -72,9 +72,12 @@ var equip = core.Inventory.Equip.new()
 var currentWeapon = equip.slot[0]
 var DGem:DragonGemContainer #Equipped dragon gems.
 
-var inventory:Array = []
+var inventory:Array           = []
 var personalInventorySize:int = 2
-var personalInventory:Array = []
+var personalInventory:Array   = []
+
+# Custom player settings ##########################################################################
+var element:int = 0 #Favorite element of choice. Gives a +5% offense and 5% defense for that element.
 
 # Overrides #######################################################################################
 
@@ -83,6 +86,22 @@ func checkPassives(runEF:bool = false) -> void:
 		var S = core.lib.skill.getIndex(classlib.skills[i[0]])
 		if S.category == skill.CAT_PASSIVE:
 			initPassive(S, i[1], runEF)
+
+
+
+func getActiveSkills() -> Array: #Get all skills, effects and equipment skills.
+	var result:Array = []
+	for i in skills:
+		var S = core.lib.skill.getIndex(classlib.skills[i[0]])
+		if S.category == core.skill.CAT_PASSIVE: result.push_back([S, i[1]])
+	for i in extraSkills:
+		var S = core.lib.skill.getIndex(i[0])
+		if S.category == core.skill.CAT_PASSIVE: result.push_back([S, i[1]])
+	for i in battle.buff       : result.push_back([i[0], i[1]])
+	for i in battle.debuff     : result.push_back([i[0], i[1]])
+	for i in battle.effect     : result.push_back([i[0], i[1]])
+	for i in battle.eventEffect: result.push_back([i[0], i[1]])
+	return result
 
 func hasSkill(what):
 	for i in skills:
@@ -203,11 +222,13 @@ func initDict(C):	#Load the character from save data
 	self.personalInventorySize = C.personalInventorySize if 'personalInventorySize' in C else 2
 	if 'personalInventory' in C:
 		for i in C.personalInventory:
-			personalInventory.push_back([int(i[0]), core.tid.fromArray(i[1]), i[2].duplicate(true)])
+			personalInventory.push_back([int(i[0]), core.tid.from(i[1]), i[2].duplicate(true)])
 	initSkillList(C.skills)                    #Init adventurer's skill list.
 	initLinkList(C.links)                      #Init adventurer's links and trust with other guild members.
 	if 'energyColor' in C: energyColor = C.energyColor
 	else                 : energyColor = DEFAULT.energyColor
+	if 'element' in C    : element     = int(C.element)
+	else                 : element     = 0
 	setXP(C.XP)                                #Set level from experience points.
 	recalculateStats()
 	fullHeal()

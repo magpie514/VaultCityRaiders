@@ -130,6 +130,11 @@ func fill(elem:int) -> void:
 	for i in data:
 		i = elem
 
+func fullReset() -> void:
+	for i in data:
+		i = 0
+	update()
+
 func random(t:int) -> void:
 	if locked > 0: return
 	match(t):

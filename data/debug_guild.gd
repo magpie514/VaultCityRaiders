@@ -21,6 +21,7 @@ var data = {
 			XP = 500,
 			portrait = null,
 			energyColor = "#1100FF",
+			element = core.stats.ELEMENTS.DMG_ELEC,
 			equip = [
 				# Weapons
 				{ tid = "story/orbicann", level = 0, uses = 25, extra = null, gem = [ ["core/chaos", 1001], ["core/charge", 1001], ["core/shock", 1001], ["core/reson", 1001], ["core/shock", 1001], ["core/reson", 1000], ["core/shock", 1000], ["core/power", 1000] ] },
@@ -48,6 +49,7 @@ var data = {
 			XP = 500,
 			portrait = null,
 			energyColor = "#0033AA",
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
 			equip = [
 				# Weapons
 				{ tid = "story/bstglaiv", level = 0, uses = 50, extra = null, gem = [ ["core/protect", 900], [["core", "power"], 900], [["core", "protect"], 0], [["core", "rebierth"], 0], [["core", "protect"], 0], [["core", "accel"], 900] ] },
@@ -75,6 +77,7 @@ var data = {
 			XP = 500,
 			portrait = null,
 			energyColor = "#DD0000",
+			element = core.stats.ELEMENTS.DMG_FIRE,
 			equip = [
 				# Weapons
 				{ tid = "story/hellfngr", level = 0, uses = 1, extra = null, gem = [ ["core/speed", 101], ["core/flame", 100], ["core/power", 1], ["core/flame", 100], ["core/power", 1], ["core/flame", 1], ["core/decel", 800],["core/cut", 901] ] },
@@ -89,7 +92,7 @@ var data = {
 				null,
 				null,
 			],
-			skills = [ [0, 1], [1, 1], [2, 1], [3, 1] ],
+			skills = [ [00,1], [01,1], [02,1], [03,1], [04,1], [05,1], [06,1] ],
 			links = [
 				[010, A.LINK_NAKAMA, A.LINK_NONE, A.LINK_NONE],
 				[010, A.LINK_NAKAMA, A.LINK_NONE, A.LINK_NONE],
@@ -103,6 +106,7 @@ var data = {
 			XP = 500,
 			portrait = null,
 			energyColor = "#4477FF",
+			element = core.stats.ELEMENTS.DMG_ICE,
 			equip = [
 				# Weapons
 				{ tid = "story/polrstar", level = 0, uses = 25, extra = null, gem = [ ["core/echo", 200], ["core/power", 900], ["core/life", 901], ["core/power", 901], ["core/life", 901], ["core/rebicold", 901], ["core/life", 901], ["core/atunm", 901] ] },
@@ -137,6 +141,7 @@ var data = {
 			race = "debug/choujin", aclass = "debug/muramasa",
 			XP = 500,
 			portrait = null,
+			element = core.stats.ELEMENTS.DMG_UNKNOWN,
 			equip = [
 				# Weapons
 				{ tid = ["story", "ganrei"], level = 0, uses = 25, extra = null, gem = null },
@@ -163,6 +168,7 @@ var data = {
 			race = "debug/human",	aclass = "debug/rider",
 			XP = 500,
 			portrait = null,
+			element = core.stats.ELEMENTS.DMG_CUT,
 			equip = [
 				# Weapons
 				{ tid = "story/plndevie", level = 0, uses = 25, extra = null, gem = null },
@@ -189,6 +195,7 @@ var data = {
 			race = "debug/origin",	aclass = "story/cromwell",
 			XP = 500,
 			portrait = null,
+			element = core.stats.ELEMENTS.DMG_UNTYPED,
 			equip = [
 				# Weapons
 				null,

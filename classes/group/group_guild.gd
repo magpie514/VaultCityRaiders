@@ -29,7 +29,7 @@ func getDefeated() -> int:
 func init(dict) -> void:
 	formation = core.newArray(MAX_SIZE)
 	name      = str(dict.name)
-	funds     = dict.funds as int
+	funds     = dict.funds as int if ('funds' in dict) else int(0)
 
 	stats     = {
 		wins    = int(dict.stats.wins),
@@ -58,7 +58,8 @@ func init(dict) -> void:
 	for i in range(MAX_SIZE):
 		if formationSlots[i] != null:
 			var A = roster[formationSlots[i]]
-			formation[i] = Adventurer.new(); formation[i].initDict(A) #Initialize party member.
+			formation[i] = Adventurer.new()
+			formation[i].initDict(A) #Initialize party member.
 			formation[i].slot      = i
 			formation[i].row       = 0 if i < ROW_SIZE else 1 #Assign row.
 			formation[i].group     = self #Set group to this one.

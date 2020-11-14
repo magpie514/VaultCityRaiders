@@ -90,12 +90,16 @@ var example = {
 		"hellfngr": {
 			name = "Hellfanger", wclass = core.WPCLASS_LONGSWORD,
 			description = "Anna's custom sword. It's basically a chainsaw shaped like a sword, spinning at logic-defying speed thanks to Anna's own power.'",
-			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
-			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
-			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
-			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
-			skill = [ ["debug", "fireslsh"], ["debug", "wideslsh"] ],
-			over = ["debug", "debug"]
+			ATK         = [010,012,014,016,020, 022,024,026,028,030],
+			ETK         = [005,007,009,009,012, 015,017,019,019,020],
+			weight      = [001,001,001,001,001, 001,001,001,001,000],
+			durability  = [032,034,037,042,050, 053,056,059,062,070],
+			skill       = [ "sto_wp/hfang000", "sto_wp/hfang001" ],
+			over        = "sto_wp/hfangOVR",
+			codeWPA1    = [
+				["if_element", 001, 0],
+					["heal", 020, 0]
+			]
 		},
 		"deviclaw": {
 			name = "Raven's Claw", wclass = core.WPCLASS_ARTILLERY,
