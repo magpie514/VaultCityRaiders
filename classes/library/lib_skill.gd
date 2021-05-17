@@ -930,7 +930,7 @@ var example = {
 		"swrdneme": {
 			name        = "Sword of Nemesis",
 			description = "Hits 3 times with strong kinetic cut damage, with the third hit ignoring armor and barriers. Then hits again with energy ultimate damage.",
-			lore        = "The Sword of Nemesis, one of Solarica's holy treasures, was once a blade to protect the weak, opposing war itself. Now, wielded by the King, it's just a weapon of destruction, unable to resist its grim fate.",
+			lore        = "The Parasite Blade「Nemesis」, one of Solarica's holy treasures, was once a blade to protect the weak, opposing war itself. Now, wielded by the King, it's just a weapon of destruction, unable to resist its grim fate.",
 			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_SINGLE,
