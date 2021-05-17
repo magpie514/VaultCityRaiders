@@ -333,6 +333,7 @@ margin_left = 530.0
 margin_top = 129.0
 margin_right = 960.0
 margin_bottom = 239.0
+
 [connection signal="select" from="Main/WeaponPanel/Weapon1" to="." method="_on_Weapon_pressed" binds= [ 0 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon2" to="." method="_on_Weapon_pressed" binds= [ 1 ]]
 [connection signal="select" from="Main/WeaponPanel/Weapon3" to="." method="_on_Weapon_pressed" binds= [ 2 ]]

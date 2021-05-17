@@ -1,0 +1,1008 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ANIM_SPEEDS	tests/SkillController.gd	/^const ANIM_SPEEDS = [2.5, 2.0, 1.0, 0.5]$/;"	c
+ARCLASS_TRANSLATE	classes/inventory/item.gd	/^const ARCLASS_TRANSLATE = {$/;"	c
+ARMORPARTS	classes/inventory/item.gd	/^const ARMORPARTS = {$/;"	c
+ARMORPARTS_TRANSLATE	classes/inventory/item.gd	/^const ARMORPARTS_TRANSLATE = {$/;"	c
+ARMOR_SLOT	classes/char/char_player.gd	/^const ARMOR_SLOT =  [4]$/;"	c
+ARMOR_SLOT	classes/inventory/item.gd	/^	const ARMOR_SLOT =   [ 4 ]$/;"	c
+Adventurer	classes/group/group_guild.gd	/^const Adventurer = preload("res:\/\/classes\/char\/char_player.gd")$/;"	c
+BACK_ROW	classes/group/group_base.gd	/^const BACK_ROW  = 1                            #The back row. Wow.$/;"	c
+BATTLE_SPEED_MULTIPLIER	tests/ctrltest.gd	/^const BATTLE_SPEED_MULTIPLIER = [0.15, 0.5, 1.0, 2.0]$/;"	c
+BLACK	nodes/UI/bar_complex.gd	/^const BLACK = Color(0,0,0)$/;"	c
+BODY_STATS	classes/inventory/item.gd	/^	const BODY_STATS   = [ 'MHP','MEP','ATK','DEF','ETK','EDF','AGI','LUC','OVR','CRI' ]$/;"	c
+BinMap	nodes/UI/BinMap.cs	/^public class BinMap: Control {$/;"	c
+CHAIN_CONT	classes/skill/skill.gd	/^const CHAIN_CONT = [ CHAIN_STARTER_AND_FOLLOW, CHAIN_FOLLOW  ]$/;"	c
+CHAIN_INIT	classes/skill/skill.gd	/^const CHAIN_INIT = [ CHAIN_STARTER_AND_FOLLOW, CHAIN_STARTER ]$/;"	c
+CODEBLOCKS_ONHIT	classes/skill/skill.gd	/^const CODEBLOCKS_ONHIT = [CODE_MN, CODE_FL]$/;"	c
+CONDITIONDEFS_DEFAULT	nodes/core.gd	/^const CONDITIONDEFS_DEFAULT = [ 02, 04, 04, 03, 02, 02, 02, 03, 02, 02]$/;"	c
+CONDITION_CONV	nodes/core.gd	/^	const CONDITION_CONV = {$/;"	c
+Consumable	classes/group/group_guild.gd	/^const Consumable = Inventory.Consumable$/;"	c
+DEFAULT	classes/char/char_player.gd	/^const DEFAULT = { energyColor = "#4466FF" }$/;"	c
+DELAYS	tests/ctrltest.gd	/^const DELAYS = [0.15, 0.5, 1.0, 2.0]$/;"	c
+DragonGem	classes/char/char_player.gd	/^const DragonGem = preload("res:\/\/classes\/inventory\/item.gd").DragonGem$/;"	c
+DragonGem	classes/group/group_guild.gd	/^const DragonGem  = Inventory.DragonGem$/;"	c
+DragonGemContainer	classes/char/char_player.gd	/^const DragonGemContainer = preload("res:\/\/classes\/inventory\/item.gd").DragonGemContainer$/;"	c
+ELEMENT_CONV	nodes/core.gd	/^	const ELEMENT_CONV = [$/;"	c
+ELEMENT_DATA	nodes/core.gd	/^	const ELEMENT_DATA = [$/;"	c
+ELEMENT_MOD_TABLE	nodes/core.gd	/^	const ELEMENT_MOD_TABLE = [$/;"	c
+EXP_TABLE	classes/char/char_player.gd	/^const EXP_TABLE = {$/;"	c
+EXP_TABLE	classes/inventory/item.gd	/^	const EXP_TABLE = [$/;"	c
+EXTRA_STATS	nodes/core.gd	/^	const EXTRA_STATS = [ 'MEP', 'OVR', 'CRI' ]$/;"	c
+ElementField	classes/battle/battle_state.gd	/^const ElementField = preload("res:\/\/classes\/battle\/field_effects.gd")$/;"	c
+Enemy	nodes/core.gd	/^const Enemy     = preload("res:\/\/classes\/char\/char_enemy.gd")$/;"	c
+FIELD_EFFECT_SIZE	classes/battle/battle_state.gd	/^const FIELD_EFFECT_SIZE = 12$/;"	c
+FIELD_EFFECT_SIZE	classes/battle/field_effects.gd	/^const FIELD_EFFECT_SIZE = 12$/;"	c
+FIELD_LAST	classes/battle/field_effects.gd	/^const FIELD_LAST = FIELD_EFFECT_SIZE - 1$/;"	c
+FRONT_ROW	classes/group/group_base.gd	/^const FRONT_ROW = 0                            #The front row.$/;"	c
+GEAR_SLOT	classes/char/char_player.gd	/^const GEAR_SLOT =   [5, 6, 7]$/;"	c
+GEAR_SLOT	classes/inventory/item.gd	/^	const GEAR_SLOT =    [ 5, 6, 7 ]$/;"	c
+GEM_SLOTS	classes/inventory/item.gd	/^	const GEM_SLOTS = 9$/;"	c
+INIT_SLOTS	classes/inventory/item.gd	/^	const INIT_SLOTS = 30$/;"	c
+Inventory	classes/group/group_guild.gd	/^const Inventory  = preload("res:\/\/classes\/inventory\/item.gd")$/;"	c
+Inventory	nodes/core.gd	/^const Inventory = preload("res:\/\/classes\/inventory\/item.gd")$/;"	c
+Item	classes/group/group_guild.gd	/^const Item       = Inventory.Item$/;"	c
+LIBEXT_AIPATTERN	classes/library/lib_enemy.gd	/^const LIBEXT_AIPATTERN   = "loaderAIPattern"$/;"	c
+LIBEXT_ANIM	classes/library/lib_skill.gd	/^const LIBEXT_ANIM               = "loaderAnim"$/;"	c
+LIBEXT_ARCLASS	classes/library/lib_armor.gd	/^const LIBEXT_ARCLASS = "loaderArClass"$/;"	c
+LIBEXT_ARMOR_STATS	classes/library/lib_armor.gd	/^const LIBEXT_ARMOR_STATS = "loaderArmorStats"$/;"	c
+LIBEXT_BODYBONUS	classes/library/lib_gem.gd	/^const LIBEXT_BODYBONUS = "loaderBodyBonus"$/;"	c
+LIBEXT_BONUS_STATS	classes/library/lib_armor.gd	/^const LIBEXT_BONUS_STATS = "loaderBonusStats"$/;"	c
+LIBEXT_DEFAULT_PARTS	classes/library/lib_armor.gd	/^const LIBEXT_DEFAULT_PARTS = "loaderDefaultParts"$/;"	c
+LIBEXT_EFFECT_STATBONUS	classes/library/lib_skill.gd	/^const LIBEXT_EFFECT_STATBONUS   = "loaderEffectStatBonus"$/;"	c
+LIBEXT_ENEMY_SKILL	classes/library/lib_enemy.gd	/^const LIBEXT_ENEMY_SKILL = "loaderEnemySkills"$/;"	c
+LIBEXT_FORMATION	classes/library/lib_group_enemy.gd	/^const LIBEXT_FORMATION = "loaderFormation"$/;"	c
+LIBEXT_FX	classes/library/lib_skill.gd	/^const LIBEXT_FX                 = "loaderFX"$/;"	c
+LIBEXT_PARTS	classes/library/lib_armor.gd	/^const LIBEXT_PARTS = "loaderParts"$/;"	c
+LIBEXT_PARTSTAT_ARRAY	classes/library/lib_armorparts.gd	/^const LIBEXT_PARTSTAT_ARRAY = "loaderPartStatArray"$/;"	c
+LIBEXT_SKILL_FILTEREX_ARG	classes/library/lib_skill.gd	/^const LIBEXT_SKILL_FILTEREX_ARG = "loaderSkillFilterEXArg"$/;"	c
+LIBEXT_SKILL_LINK	classes/library/lib_skill.gd	/^const LIBEXT_SKILL_LINK         = "loaderSkillLink"$/;"	c
+LIBEXT_SKILL_LIST	classes/library/lib_weapon.gd	/^const LIBEXT_SKILL_LIST = "loaderSkillList"$/;"	c
+LIBEXT_SKILL_MESSAGES	classes/library/lib_skill.gd	/^const LIBEXT_SKILL_MESSAGES     = "loaderMessages"$/;"	c
+LIBEXT_SKILL_MODIFIER	classes/library/lib_gem.gd	/^const LIBEXT_SKILL_MODIFIER = "loaderSkillModifier"$/;"	c
+LIBEXT_SKILL_SETUP	classes/library/lib_enemy.gd	/^const LIBEXT_SKILL_SETUP = "loaderSkillSetup"$/;"	c
+LIBEXT_TID	classes/library/lib_gem.gd	/^const LIBEXT_TID = "loaderTID2" #Able to return null$/;"	c
+LIBEXT_WEAPONBONUS	classes/library/lib_gem.gd	/^const LIBEXT_WEAPONBONUS = "loaderWeaponBonus"$/;"	c
+LIBSTD_BOOL	classes/library/lib_base.gd	/^const LIBSTD_BOOL          = "loaderBool"$/;"	c
+LIBSTD_CONDITIONDEFS	classes/library/lib_base.gd	/^const LIBSTD_CONDITIONDEFS = "loaderConditionDefs"$/;"	c
+LIBSTD_ELEMENTDATA	classes/library/lib_base.gd	/^const LIBSTD_ELEMENTDATA   = "loaderElementData"$/;"	c
+LIBSTD_FLOAT	classes/library/lib_base.gd	/^const LIBSTD_FLOAT         = "loaderFloat"$/;"	c
+LIBSTD_INT	classes/library/lib_base.gd	/^const LIBSTD_INT           = "loaderInt"$/;"	c
+LIBSTD_SKILL_ARRAY	classes/library/lib_base.gd	/^const LIBSTD_SKILL_ARRAY   = "loaderSkillArray"$/;"	c
+LIBSTD_SKILL_CODE	classes/library/lib_base.gd	/^const LIBSTD_SKILL_CODE    = "loaderSkillCode"$/;"	c
+LIBSTD_SKILL_LIST	classes/library/lib_base.gd	/^const LIBSTD_SKILL_LIST    = "loaderSkillList"$/;"	c
+LIBSTD_STATBONUS	classes/library/lib_base.gd	/^const LIBSTD_STATBONUS     = "loaderStatBonus"$/;"	c
+LIBSTD_STATSPREAD	classes/library/lib_base.gd	/^const LIBSTD_STATSPREAD    = "loaderStatSpread"$/;"	c
+LIBSTD_STRING	classes/library/lib_base.gd	/^const LIBSTD_STRING        = "loaderString"$/;"	c
+LIBSTD_SUMMONS	classes/library/lib_base.gd	/^const LIBSTD_SUMMONS       = "loaderSummons"$/;"	c
+LIBSTD_TID	classes/library/lib_base.gd	/^const LIBSTD_TID           = "loaderTID"$/;"	c
+LIBSTD_TID_ARRAY	classes/library/lib_base.gd	/^const LIBSTD_TID_ARRAY     = "loaderTIDArray"$/;"	c
+LIBSTD_TID_OR_NULL	classes/library/lib_base.gd	/^const LIBSTD_TID_OR_NULL   = "loaderTIDorNull"$/;"	c
+LIBSTD_VARIABLEARRAY	classes/library/lib_base.gd	/^const LIBSTD_VARIABLEARRAY = "loaderVariableArray"$/;"	c
+LVALModAdd	classes/skill/skill.gd	/^func LVALModAdd(line:Array, mod:int) -> void: #Modifies all LVALs in a code line by addition.$/;"	f
+LVALModPercent	classes/skill/skill.gd	/^func LVALModPercent(line:Array, mod:int) -> void: #Modifies all LVALs in a code line by a percentage.$/;"	f
+LookAtMePanel	nodes/UI/char_display.gd	/^onready var LookAtMePanel = get_node("EffectHook\/LookAtMePanel")$/;"	o
+MAX_CHARGE	classes/inventory/item.gd	/^	const MAX_CHARGE = 3000$/;"	c
+MAX_DMG	classes/char/char_base.gd	/^const MAX_DMG       = 32000$/;"	c
+MAX_DMG	nodes/core.gd	/^	const MAX_DMG = 32000$/;"	c
+MAX_DMG_NOCAP	classes/char/char_base.gd	/^const MAX_DMG_NOCAP = 9223372036854775807$/;"	c
+MAX_DUR	classes/inventory/item.gd	/^	const MAX_DUR = 99$/;"	c
+MAX_LEVEL	classes/skill/skill.gd	/^const MAX_LEVEL    = 10  #Max amount of levels for skills.$/;"	c
+MAX_LINES	tests/Label.gd	/^const MAX_LINES = 25$/;"	c
+MAX_SIZE	classes/group/group_base.gd	/^const MAX_SIZE  = ROW_SIZE * 2                 #Max size of standard group (mons not included)$/;"	c
+MAX_SIZE	classes/library/lib_group_enemy.gd	/^const MAX_SIZE = ROW_SIZE * 2$/;"	c
+MON_ROW	classes/group/group_base.gd	/^const MON_ROW   = 2                            #The front row that is really the summoned monster row.$/;"	c
+MON_STATS	classes/inventory/item.gd	/^	const MON_STATS    = [ 'MHP','MEP','ATK','DEF','ETK','EDF','AGI','LUC' ]$/;"	c
+PARTY_SIZE	nodes/UI/guild_display.gd	/^const PARTY_SIZE       = 6$/;"	c
+Player	nodes/core.gd	/^const Player    = preload("res:\/\/classes\/char\/char_player.gd")$/;"	c
+ROW_ITER	classes/group/group_base.gd	/^const ROW_ITER  = [ [0,1,2],[3,4,5] ]  #Iterators for each row. For convenience. Order is front, back, mon.$/;"	c
+ROW_SIZE	classes/group/group_base.gd	/^const ROW_SIZE  = 3                            #Amount of members in every row.$/;"	c
+ROW_SIZE	classes/library/lib_group_enemy.gd	/^const ROW_SIZE = 3$/;"	c
+SKILLSETUP_ERROR	classes/library/lib_enemy.gd	/^const SKILLSETUP_ERROR   = [ [ [0,1], [1,1], [2,1], [3,1] ] ]$/;"	c
+SKILL_FAILED	classes/skill/skill.gd	/^const SKILL_FAILED = -2$/;"	c
+SKILL_MISSED	classes/skill/skill.gd	/^const SKILL_MISSED = -1  #TODO: Review these.$/;"	c
+STATS	nodes/core.gd	/^	const STATS = [ 'MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC' ]$/;"	c
+STAT_CAP	nodes/core.gd	/^	const STAT_CAP = 255$/;"	c
+SpriteH	classes/battle/display_manager.gd	/^const SpriteH = preload("res:\/\/nodes\/UI\/battle\/enemy_sprite_simple.tscn")$/;"	c
+TOTAL_SLOTS	classes/inventory/item.gd	/^	const TOTAL_SLOTS = 8$/;"	c
+VEPARTS	classes/inventory/item.gd	/^const VEPARTS = {$/;"	c
+WEAPON_SLOT	classes/char/char_player.gd	/^const WEAPON_SLOT = [0, 1, 2, 3]$/;"	c
+WEAPON_SLOT	classes/inventory/item.gd	/^	const WEAPON_SLOT =  [ 0, 1, 2, 3 ]$/;"	c
+WEAPON_STATS	classes/inventory/item.gd	/^	const WEAPON_STATS = [ 'WRD','DUR','ATK','DEF','ETK','EDF','AGI','LUC','OVR','CRI' ]$/;"	c
+_Draw	nodes/UI/BinMap.cs	/^	public override void _Draw() {$/;"	m	class:BinMap
+_Ready	nodes/UI/BinMap.cs	/^	public override void _Ready() {$/;"	m	class:BinMap
+_bar	nodes/UI/battle/enemyg_display.gd	/^var _bar = preload("res:\/\/nodes\/UI\/battle\/enemy_display.tscn")$/;"	p
+_draw	nodes/UI/bar.gd	/^func _draw():$/;"	f
+_draw	nodes/UI/bar_complex.gd	/^func _draw() -> void:$/;"	f
+_draw	nodes/UI/bar_multi.gd	/^func _draw():$/;"	f
+_draw	nodes/UI/bar_segmented_flex.gd	/^func _draw():$/;"	f
+_draw	nodes/UI/battle/ConditionBar.gd	/^func _draw() -> void:$/;"	f
+_draw	nodes/UI/group_position.tres.gd	/^func _draw():$/;"	f
+_init	classes/automata/automata.gd	/^	func _init() -> void:$/;"	f
+_init	classes/automata/automata.gd	/^	func _init(w:int, h:int) -> void:$/;"	f
+_init	classes/battle/battle_state.gd	/^	func _init(_act:int = ACT_SKILL) -> void:$/;"	f
+_init	classes/battle/battle_state.gd	/^func _init() -> void:$/;"	f
+_init	classes/battle/display_manager.gd	/^func _init(guild, eform, BG) -> void:$/;"	f
+_init	classes/battle/field_effects.gd	/^func _init() -> void:$/;"	f
+_init	classes/inventory/item.gd	/^	func _init() -> void:$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(IN:Array):$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(_slot:int, _type:int = ITEM_NONE, _tid = ["debug, debug"], _data = null, _container = null):$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(_tid = null, data = DEFAULT) -> void:$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(_tid = null, data = DEFAULT):$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(_tid = null, stat1:int = DEFAULT.data[0], stat2:int = DEFAULT.data[1]) -> void:$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(loc:int, data = null) -> void:$/;"	f
+_init	classes/inventory/item.gd	/^	func _init(type, xp):$/;"	f
+_init	classes/skill/skill.gd	/^	func _init(S:Dictionary, lv:int, user, target) -> void:$/;"	f
+_init	nodes/UI/battle/item_display.gd	/^func _init() -> void:$/;"	f
+_init	nodes/UI/battle/skill_display.gd	/^func _init() -> void:$/;"	f
+_init	nodes/UI/skill.gd	/^func _init() -> void:$/;"	f
+_init	nodes/core.gd	/^	func _init(_node, stylepath, stylename):$/;"	f
+_init	nodes/core.gd	/^	func _init(val:int = 0) -> void:$/;"	f
+_on_Accept_pressed	nodes/UI/menu_over.gd	/^func _on_Accept_pressed() -> void:$/;"	f
+_on_AnimationPlayer_animation_finished	nodes/FX/basic.gd	/^func _on_AnimationPlayer_animation_finished(x):$/;"	f
+_on_AnimationPlayer_animation_finished	nodes/UI/battle/enemy_sprite_simple.gd	/^func _on_AnimationPlayer_animation_finished(anim_name:String) -> void:$/;"	f
+_on_Back_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Back_pressed() -> void:$/;"	f
+_on_Back_pressed	nodes/UI/menu_item.gd	/^func _on_Back_pressed():$/;"	f
+_on_Back_pressed	nodes/UI/menu_over.gd	/^func _on_Back_pressed() -> void:$/;"	f
+_on_Back_pressed	nodes/UI/menu_skill.gd	/^func _on_Back_pressed():$/;"	f
+_on_Back_pressed	nodes/UI/menu_weapon.gd	/^func _on_Back_pressed():$/;"	f
+_on_BattleControls_finished	tests/ctrltest.gd	/^func _on_BattleControls_finished(a): #Pick result from player input.$/;"	f
+_on_Button2_pressed	tests/dmgnum.gd	/^func _on_Button2_pressed():$/;"	f
+_on_Button3_pressed	tests/dmgnum.gd	/^func _on_Button3_pressed():$/;"	f
+_on_Button4_pressed	tests/dmgnum.gd	/^func _on_Button4_pressed() -> void:$/;"	f
+_on_Button5_pressed	tests/debug_menu.gd	/^func _on_Button5_pressed():$/;"	f
+_on_Button6_pressed	tests/debug_menu.gd	/^func _on_Button6_pressed():$/;"	f
+_on_Button_mouse_entered	nodes/UI/char_display.gd	/^func _on_Button_mouse_entered() -> void:$/;"	f
+_on_Button_mouse_entered	nodes/UI/item.gd	/^func _on_Button_mouse_entered() -> void:$/;"	f
+_on_Button_mouse_entered	nodes/UI/skill.gd	/^func _on_Button_mouse_entered() -> void:$/;"	f
+_on_Button_mouse_entered	nodes/UI/target_button.gd	/^func _on_Button_mouse_entered() -> void:$/;"	f
+_on_Button_mouse_exited	nodes/UI/char_display.gd	/^func _on_Button_mouse_exited() -> void:$/;"	f
+_on_Button_mouse_exited	nodes/UI/item.gd	/^func _on_Button_mouse_exited() -> void:$/;"	f
+_on_Button_mouse_exited	nodes/UI/skill.gd	/^func _on_Button_mouse_exited() -> void:$/;"	f
+_on_Button_mouse_exited	nodes/UI/target_button.gd	/^func _on_Button_mouse_exited():$/;"	f
+_on_Button_pressed	nodes/UI/battle/target_panel.gd	/^func _on_Button_pressed() -> void:$/;"	f
+_on_Button_pressed	nodes/UI/target_button.gd	/^func _on_Button_pressed() -> void:$/;"	f
+_on_Button_pressed	nodes/UI/weapon.gd	/^func _on_Button_pressed() -> void:$/;"	f
+_on_Button_pressed	tests/ctrltest.gd	/^func _on_Button_pressed() -> void: #PASS HOUR debug button.$/;"	f
+_on_Button_pressed	tests/debug_menu.gd	/^func _on_Button_pressed():$/;"	f
+_on_Button_pressed	tests/dmgnum.gd	/^func _on_Button_pressed():$/;"	f
+_on_Cancel_pressed	nodes/UI/menu_over.gd	/^func _on_Cancel_pressed() -> void:$/;"	f
+_on_CharDisplay_mouse_entered	nodes/UI/char_display.gd	/^func _on_CharDisplay_mouse_entered() -> void:$/;"	f
+_on_CharDisplay_mouse_exited	nodes/UI/char_display.gd	/^func _on_CharDisplay_mouse_exited() -> void:$/;"	f
+_on_CloseFEPanel_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_CloseFEPanel_pressed() -> void:$/;"	f
+_on_DGemCancel_pressed	tests/debug_menu.gd	/^func _on_DGemCancel_pressed() -> void:$/;"	f
+_on_DGemRemove_pressed	tests/debug_menu.gd	/^func _on_DGemRemove_pressed(WP, slot) -> void:$/;"	f
+_on_DGem_Cancel_pressed	tests/debug_menu.gd	/^func _on_DGem_Cancel_pressed() -> void:$/;"	f
+_on_DGem_pressed	tests/debug_menu.gd	/^func _on_DGem_pressed() -> void:$/;"	f
+_on_DGem_select	tests/debug_menu.gd	/^func _on_DGem_select(slot:int, WP) -> void:$/;"	f
+_on_DGem_selected	tests/debug_menu.gd	/^func _on_DGem_selected(G, index, WP, slot) -> void:$/;"	f
+_on_Defend_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Defend_pressed() -> void:$/;"	f
+_on_ELVSlider_value_changed	tests/debug_menu.gd	/^func _on_ELVSlider_value_changed(value: float) -> void:$/;"	f
+_on_EnemyDisplay_mouse_entered	nodes/UI/battle/enemy_display.gd	/^func _on_EnemyDisplay_mouse_entered():$/;"	f
+_on_EnemyDisplay_mouse_exited	nodes/UI/battle/enemy_display.gd	/^func _on_EnemyDisplay_mouse_exited():$/;"	f
+_on_FEDebug_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_FEDebug_pressed() -> void:$/;"	f
+_on_FXTimer_timeout	tests/SkillController.gd	/^func _on_FXTimer_timeout():$/;"	f
+_on_GetDGem_pressed	tests/debug_menu.gd	/^func _on_GetDGem_pressed() -> void:$/;"	f
+_on_GetItem_pressed	tests/debug_menu.gd	/^func _on_GetItem_pressed() -> void:$/;"	f
+_on_HSlider_value_changed	tests/level_stat_test.gd	/^func _on_HSlider_value_changed(value):$/;"	f
+_on_Heal_pressed	tests/debug_menu.gd	/^func _on_Heal_pressed():$/;"	f
+_on_ItemMenu_selection	nodes/UI/battle/battle_controls.gd	/^func _on_ItemMenu_selection(x) -> void:$/;"	f
+_on_Item_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Item_pressed() -> void:$/;"	f
+_on_LoadDebugParty_pressed	tests/debug_menu.gd	/^func _on_LoadDebugParty_pressed() -> void:$/;"	f
+_on_Macro_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Macro_pressed() -> void:$/;"	f
+_on_OverMenu_selection	nodes/UI/battle/battle_controls.gd	/^func _on_OverMenu_selection(x) -> void:$/;"	f
+_on_Over_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Over_pressed() -> void:$/;"	f
+_on_QuitButton_pressed	tests/ctrltest.gd	/^func _on_QuitButton_pressed(): #Quit button.$/;"	f
+_on_RankSlider_value_changed	tests/debug_menu.gd	/^func _on_RankSlider_value_changed(value: float) -> void:$/;"	f
+_on_RemoveAll_pressed	tests/debug_dgem.gd	/^func _on_RemoveAll_pressed() -> void:$/;"	f
+_on_Repeat_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Repeat_pressed() -> void:$/;"	f
+_on_Run_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Run_pressed() -> void: #TODO: Run.$/;"	f
+_on_SHIFT_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_SHIFT_pressed() -> void:$/;"	f
+_on_SKIP_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_SKIP_pressed() -> void:$/;"	f
+_on_SkillMenu_selection	nodes/UI/battle/battle_controls.gd	/^func _on_SkillMenu_selection(x) -> void:$/;"	f
+_on_Skill_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Skill_pressed() -> void:$/;"	f
+_on_Slot_pressed	tests/debug_dgem.gd	/^func _on_Slot_pressed(slot: int) -> void:$/;"	f
+_on_Speed_pressed	tests/ctrltest.gd	/^func _on_Speed_pressed(x:int) -> void: #Speed control debug buttons.$/;"	f
+_on_Switch_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Switch_pressed() -> void:$/;"	f
+_on_TEST00_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_TEST00_pressed() -> void:$/;"	f
+_on_TEST01_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_TEST01_pressed() -> void:$/;"	f
+_on_TEST02_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_TEST02_pressed() -> void:$/;"	f
+_on_TEST03_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_TEST03_pressed() -> void:$/;"	f
+_on_TEST04_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_TEST04_pressed() -> void:$/;"	f
+_on_TEST05_pressed	nodes/UI/battle/FieldEffect.gd	/^func _on_TEST05_pressed() -> void:$/;"	f
+_on_WeaponMenu_selection	nodes/UI/battle/battle_controls.gd	/^func _on_WeaponMenu_selection(x) -> void:$/;"	f
+_on_Weapon_pressed	nodes/UI/battle/battle_controls.gd	/^func _on_Weapon_pressed(slot:int) -> void:$/;"	f
+_on_dgem_selected	tests/debug_menu.gd	/^func _on_dgem_selected(G) -> void:$/;"	f
+_on_done	nodes/UI/battle/message_display.gd	/^func _on_done(what:Control) -> void:$/;"	f
+_on_item_selected	tests/debug_menu.gd	/^func _on_item_selected(I) -> void:$/;"	f
+_process	nodes/UI/bar_complex.gd	/^func _process(delta:float) -> void:$/;"	f
+_process	nodes/UI/battle/battle_controls.gd	/^func _process(delta: float) -> void: #Just a quick hack for now. Do this with signals.$/;"	f
+_process	nodes/UI/battle/enemy_display.gd	/^func _process(delta:float) -> void:$/;"	f
+_process	nodes/UI/battle/enemy_sprite_simple.gd	/^func _process(delta:float) -> void:$/;"	f
+_process	nodes/UI/battle/misc_message.gd	/^func _process(delta: float) -> void:$/;"	f
+_process	nodes/UI/char_display.gd	/^func _process(delta):$/;"	f
+_process	nodes/UI/damage_numbers.gd	/^func _process(delta:float) -> void:$/;"	f
+_process	nodes/UI/dgem_small.gd	/^func _process(delta: float) -> void:$/;"	f
+_process	nodes/UI/weapon.gd	/^func _process(delta: float) -> void:$/;"	f
+_ready	nodes/UI/bar_complex.gd	/^func _ready() -> void:$/;"	f
+_ready	nodes/UI/battle/FieldEffect.gd	/^func _ready() -> void:$/;"	f
+_ready	nodes/UI/battle/WeaponPanel.gd	/^func _ready():$/;"	f
+_ready	nodes/UI/battle/battle_controls.gd	/^func _ready():$/;"	f
+_ready	nodes/UI/battle/enemy_info_display.gd	/^func _ready():$/;"	f
+_ready	nodes/UI/battle/info_display.gd	/^func _ready():$/;"	f
+_ready	nodes/UI/battle/over_skill_2.gd	/^func _ready() -> void:$/;"	f
+_ready	nodes/UI/battle/player_display.gd	/^func _ready():$/;"	f
+_ready	nodes/UI/battle/skill_display.gd	/^func _ready():$/;"	f
+_ready	nodes/UI/char_display.gd	/^func _ready() -> void:$/;"	f
+_ready	nodes/UI/filter.gd	/^func _ready():$/;"	f
+_ready	nodes/core.gd	/^func _ready() -> void:$/;"	f
+_ready	tests/InfoDisplay.gd	/^func _ready():$/;"	f
+_ready	tests/Label.gd	/^func _ready():$/;"	f
+_ready	tests/bgtest_01.gd	/^func _ready() -> void:$/;"	f
+_ready	tests/ctrltest.gd	/^func _ready():$/;"	f
+_ready	tests/debug_menu.gd	/^func _ready():$/;"	f
+_ready	tests/debug_partydisplay.gd	/^func _ready():$/;"	f
+_ready	tests/level_stat_test.gd	/^func _ready():$/;"	f
+_ready	tools/skilledit.gd	/^func _ready():$/;"	f
+_to_string	classes/automata/automata.gd	/^	func _to_string() -> String:$/;"	f
+act	nodes/UI/battle/enemy_sprite_simple.gd	/^func act() -> void:$/;"	f
+actionFinish	tests/SkillController.gd	/^func actionFinish() -> void:$/;"	f
+action_finished	tests/SkillController.gd	/^signal action_finished$/;"	s
+actions	classes/battle/battle_state.gd	/^func actions() -> Array: #Returns a total list of actions without popping them.$/;"	f
+activeCount	classes/group/group_base.gd	/^func activeCount() -> int: #Count active (able) number of members.$/;"	f
+activeMembers	classes/group/group_base.gd	/^func activeMembers() -> Array:$/;"	f
+add	nodes/UI/battle/message_display.gd	/^func add(msg:String, col:Color) -> void:$/;"	f
+addAction	classes/battle/battle_state.gd	/^func addAction(side:int, slot:int, act:Action) -> void:$/;"	f
+addButton	nodes/UI/menu_over.gd	/^func addButton(button, data:Array) -> void:$/;"	f
+addButton	nodes/UI/menu_skill.gd	/^func addButton(button, data:Array):$/;"	f
+addButton	nodes/UI/menu_weapon.gd	/^func addButton(button, data:Array):$/;"	f
+addDamageEffect	classes/char/char_base.gd	/^func addDamageEffect(user, S, damage:int, duration:int, element:int) -> void: #Add the damage over time effect.$/;"	f
+addEffect	classes/char/char_base.gd	/^func addEffect(S, lv:int, user) -> void:$/;"	f
+addEffect	classes/skill/skill.gd	/^func addEffect(S, level:int, user, target, state):$/;"	f
+addEffector	classes/battle/display_manager.gd	/^func addEffector(C, fx:String) -> void:$/;"	f
+addEntry	nodes/UI/battle/action_queue.gd	/^func addEntry(A, pos:int) -> void:$/;"	f
+addEventListener	classes/battle/battle_state.gd	/^func addEventListener(event:int, listener) -> void: #Add character to listen to give event type.$/;"	f
+addEventListener	classes/char/char_base.gd	/^	func addEventListener(event_type:int, S:Dictionary, lv:int) -> void:$/;"	f
+addHitSpark	classes/battle/display_manager.gd	/^func addHitSpark(S, lv:int, anchor:Position2D) -> void:$/;"	f
+addInflict	classes/char/char_base.gd	/^func addInflict(x:int) -> void:$/;"	f
+addInflict	classes/char/char_player.gd	/^func addInflict(x:int) -> void:$/;"	f
+addMember	classes/group/group_enemy.gd	/^func addMember(data, slot:int, lvbonus:int = 0) -> void:$/;"	f
+addModifiers	classes/inventory/item.gd	/^	func addModifiers(M):$/;"	f
+addMsg	nodes/UI/battle/message_display.gd	/^func addMsg() -> Node:$/;"	f
+addSeparator	nodes/UI/menu_weapon.gd	/^func addSeparator(text:String):$/;"	f
+addSkill	nodes/UI/menu_over.gd	/^func addSkill(TID, level) -> void:$/;"	f
+add_line	tests/Label.gd	/^func add_line(text):$/;"	f
+amount	classes/battle/battle_state.gd	/^func amount() -> int: #Returns amount of actions in the queue.$/;"	f
+anim_done	nodes/FX/basic.gd	/^signal anim_done$/;"	s
+applyBattleStatMultipliers	classes/char/char_base.gd	/^func applyBattleStatMultipliers() -> void:$/;"	f
+armortypes	classes/inventory/item.gd	/^const armortypes = {$/;"	c
+attach	classes/inventory/item.gd	/^	func attach(G:DragonGem, sl:int):$/;"	f
+attachGem	classes/inventory/item.gd	/^	func attachGem(gem: DragonGem, sl : int) -> void:$/;"	f
+autoEffect	classes/char/char_base.gd	/^func autoEffect(_tid:Array) -> void:$/;"	f
+barrierDamage	classes/skill/skill.gd	/^func barrierDamage(S, user, target, state, value:int, flags:int) -> void:$/;"	f
+battle	tests/ctrltest.gd	/^func battle():$/;"	f
+battleTurnUpdate	nodes/UI/battle/enemyg_display.gd	/^func battleTurnUpdate():$/;"	f
+battleTurnUpdate	nodes/UI/guild_display.gd	/^func battleTurnUpdate(): #Reset stuff at the start of a turn$/;"	f
+battle_finished	tests/ctrltest.gd	/^signal battle_finished$/;"	s
+begin	nodes/UI/battle/enemy_sprite_simple.gd	/^func begin() -> void:$/;"	f
+bg	nodes/UI/BinMap.cs	/^	[Export] Color bg = new Color("#000000");$/;"	f	class:BinMap	file:
+bgcolor	nodes/UI/bar_complex.gd	/^export(Color) var bgcolor:Color  = Color("77101022")$/;"	e
+bgcolor	nodes/UI/bar_multi.gd	/^export(Color) var bgcolor = "55000000"$/;"	e
+bgcolor	nodes/UI/bar_segmented_flex.gd	/^export(Color) var bgcolor = "55000000"$/;"	e
+bgcolor	nodes/UI/group_position.tres.gd	/^export(Color) var bgcolor       = "55000000"$/;"	e
+blinks	nodes/UI/dgem_small.gd	/^const blinks = [1, 3, 8, 14, 21, 30, 41, 53, 66, 81]$/;"	c
+border	nodes/UI/bar_segmented_flex.gd	/^export(Color) var border : Color = "004444"$/;"	e
+buttonWidth	nodes/UI/menu_item.gd	/^onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8$/;"	o
+buttonWidth	nodes/UI/menu_over.gd	/^onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8$/;"	o
+buttonWidth	nodes/UI/menu_skill.gd	/^onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8$/;"	o
+buttonWidth	nodes/UI/menu_weapon.gd	/^onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8$/;"	o
+buttons	nodes/UI/battle/target_panel.gd	/^onready var buttons:Array = [$/;"	o
+calcSPD	classes/char/char_base.gd	/^func calcSPD(spd:int) -> int:$/;"	f
+calcStats	classes/inventory/item.gd	/^	func calcStats():$/;"	f
+calculate	classes/battle/field_effects.gd	/^func calculate(x:float, elem:int = 0, mult:float = 1.0) -> float:$/;"	f
+calculateBaseDamage	classes/skill/skill.gd	/^func calculateBaseDamage(a, b, args) -> float:$/;"	f
+calculateCrit	classes/skill/skill.gd	/^func calculateCrit(aLUC, bLUC, mods:int, bonus:int = 0) -> bool:$/;"	f
+calculateDamageEffects	classes/char/char_base.gd	/^func calculateDamageEffects() -> int: #Gets an estimate of how much damage the character is going to receive at the end of the turn.$/;"	f
+calculateEffectStats	classes/char/char_base.gd	/^func calculateEffectStats(S, lv:int) -> void: # Apply stat changes from an active skill effect.$/;"	f
+calculateRangedDamage	classes/skill/skill.gd	/^func calculateRangedDamage(ranged:bool, user, target) -> float:$/;"	f
+calculateStatBonuses	classes/inventory/item.gd	/^	func calculateStatBonuses():$/;"	f
+calculateTarget	classes/skill/skill.gd	/^func calculateTarget(S, level:int, user, _targets) -> Array:$/;"	f
+calculateTurnOverGains	classes/char/char_player.gd	/^func calculateTurnOverGains() -> int:$/;"	f
+calculateTurnOverLink	classes/char/char_player.gd	/^func calculateTurnOverLink(who) -> int:$/;"	f
+canAct	classes/char/char_base.gd	/^func canAct() -> bool: #Checks if char can perform a regular action.$/;"	f
+canCounter	classes/char/char_base.gd	/^func canCounter(target, element:int, data:Array): #Checks if char is able to perform a counter skill.$/;"	f
+canCounterAttack	classes/inventory/item.gd	/^	func canCounterAttack(elem = 0, personal:Array = []) -> Array:#Checks if any item can counter the incoming attack.$/;"	f
+canCounterEvent	classes/inventory/item.gd	/^	func canCounterEvent(type:int = 0, personal:Array = []) -> Array:$/;"	f
+canFollow	classes/char/char_base.gd	/^func canFollow(S:Dictionary, lv:int, target) -> bool: #Checks if char can do a followup action like a combo.$/;"	f
+canHit	classes/skill/skill.gd	/^func canHit(S, level:int, user, target, state, crit = false) -> bool:$/;"	f
+canOver	classes/char/char_base.gd	/^func canOver() -> bool: #Checks if char can perform Over actions.$/;"	f
+canRepeat	nodes/UI/battle/battle_controls.gd	/^func canRepeat(act) -> bool:$/;"	f
+canReuseConsumable	classes/inventory/item.gd	/^	func canReuseConsumable(IT:Item)-> bool:$/;"	f
+canRevive	classes/group/group_enemy.gd	/^func canRevive() -> bool:$/;"	f
+canSkill	classes/char/char_base.gd	/^func canSkill() -> bool: #Check if char can perform a skill.$/;"	f
+canSummon	classes/group/group_enemy.gd	/^func canSummon() -> bool:$/;"	f
+changeScene	nodes/core.gd	/^func changeScene(path):$/;"	f
+changeScene2	nodes/core.gd	/^func changeScene2(path):$/;"	f
+charge	classes/char/char_base.gd	/^func charge(x:bool = false) -> void:$/;"	f
+charge	nodes/UI/battle/enemy_sprite_simple.gd	/^func charge(ok:bool = false) -> void:$/;"	f
+chargeEmitter	nodes/UI/battle/enemy_sprite_simple.gd	/^onready var chargeEmitter:Node  = $SpriteHook\/Charge$/;"	o
+charge_color	nodes/UI/bar_segmented_flex.gd	/^export(Color) var charge_color : Color = "f57715"$/;"	e
+checkActionExecution	classes/battle/battle_state.gd	/^func checkActionExecution(user, target) -> bool: #Check if an action can be performed before getting to details.$/;"	f
+checkDrawRate	classes/skill/skill.gd	/^func checkDrawRate(user, target, S):$/;"	f
+checkDrawRateRow	classes/skill/skill.gd	/^func checkDrawRateRow(user, targets, S):$/;"	f
+checkEffectRefresh	classes/char/char_base.gd	/^func checkEffectRefresh(list:Array, E):$/;"	f
+checkEffects	classes/char/char_base.gd	/^func checkEffects(A, runEF = false) -> void:$/;"	f
+checkFollow	classes/battle/battle_state.gd	/^func checkFollow(F, last:bool) -> void:$/;"	f
+checkForAction	classes/battle/battle_state.gd	/^func checkForAction(tid) -> bool:$/;"	f
+checkHit	classes/skill/skill.gd	/^func checkHit(a, b, sACC:int = 95, dodge:int = 0, blind:bool = false) -> bool:$/;"	f
+checkInflict	classes/char/char_base.gd	/^func checkInflict() -> bool: #Check if target has a negative condition.$/;"	f
+checkParalysis	classes/char/char_base.gd	/^func checkParalysis() -> bool:$/;"	f
+checkPassives	classes/char/char_base.gd	/^func checkPassives(runEF:bool = false) -> void: pass #[VIRTUAL] Checks passive skills.$/;"	f
+checkPassives	classes/char/char_enemy.gd	/^func checkPassives(runEF:bool = false) -> void:$/;"	f
+checkPassives	classes/char/char_player.gd	/^func checkPassives(runEF:bool = false) -> void:$/;"	f
+checkPriorityActions	classes/battle/battle_state.gd	/^func checkPriorityActions() -> void:$/;"	f
+checkProtect	classes/char/char_base.gd	/^func checkProtect(S) -> Array:$/;"	f
+checkRaceType	classes/char/char_base.gd	/^func checkRaceType(type) -> bool:$/;"	f
+checkRaceType	classes/char/char_enemy.gd	/^func checkRaceType(type) -> bool:$/;"	f
+checkRaceType	classes/char/char_player.gd	/^func checkRaceType(type:int) -> bool:$/;"	f
+checkResolution	classes/battle/battle_state.gd	/^func checkResolution() -> void:$/;"	f
+checkResolution	tests/ctrltest.gd	/^func checkResolution():$/;"	f
+chooseResult	nodes/UI/menu_item.gd	/^func chooseResult(x):$/;"	f
+chooseResult	nodes/UI/menu_skill.gd	/^func chooseResult(TID, level): #[TID skill, int level]$/;"	f
+chooseResult	nodes/UI/menu_weapon.gd	/^func chooseResult(x, WP, skillOverride=null): #[TID skill, int level]$/;"	f
+clampHealth	classes/char/char_base.gd	/^func clampHealth() -> void:$/;"	f
+clampStats	classes/inventory/item.gd	/^	func clampStats() -> void:$/;"	f
+clear	nodes/UI/battle/WeaponPanel.gd	/^func clear():$/;"	f
+clear	nodes/UI/battle/target_panel.gd	/^func clear() -> void:$/;"	f
+clear	nodes/UI/menu_item.gd	/^func clear():$/;"	f
+clear	nodes/UI/menu_over.gd	/^func clear() -> void:$/;"	f
+clear	nodes/UI/menu_skill.gd	/^func clear() -> void:$/;"	f
+clear	nodes/UI/menu_weapon.gd	/^func clear():$/;"	f
+clearEffectors	nodes/UI/battle/enemy_sprite_simple.gd	/^func clearEffectors() -> void:$/;"	f
+clipElementData	nodes/core.gd	/^	func clipElementData(E:Array) -> void:$/;"	f
+clipStats	nodes/core.gd	/^	func clipStats(S) -> void:$/;"	f
+closeAll	nodes/UI/battle/battle_controls.gd	/^func closeAll() -> void:$/;"	f
+collectPriorityActions	classes/battle/battle_state.gd	/^func collectPriorityActions(act, temp) -> void:$/;"	f
+color	nodes/UI/bar.gd	/^export var color = Color(1.0, 1.0, 1.0, 1.0)$/;"	e
+color	nodes/UI/bar_segmented_flex.gd	/^export(Color) var color : Color = "00BBBB"$/;"	e
+color	nodes/UI/group_position.tres.gd	/^export(Color) var color:Color   = "00BBBB"$/;"	e
+color2	nodes/UI/bar_complex.gd	/^export(Color) var color2:Color   = Color("AE00FF")$/;"	e
+color3	nodes/UI/bar_complex.gd	/^export(Color) var color3:Color   = Color("AA4BB3F5")$/;"	e
+colorACC	nodes/UI/battle/skill_display.gd	/^func colorACC(n : int) -> String:$/;"	f
+colorAD	nodes/UI/battle/skill_display.gd	/^func colorAD(n : int) -> String:$/;"	f
+colorEF1	nodes/UI/battle/skill_display.gd	/^func colorEF1(n:int) -> String:$/;"	f
+colorName	classes/battle/battle_state.gd	/^func colorName(user) -> String:$/;"	f
+colorSPD	nodes/UI/battle/skill_display.gd	/^func colorSPD(n : int) -> String:$/;"	f
+color_name	classes/battle/battle_state.gd	/^func color_name(user) -> String:$/;"	f
+colors	nodes/UI/battle/skill_display.gd	/^const colors = [ "000000","880000","FF0000","FF8800","FFFF00","88FF88","00FFFF","88FFFF","FFFFFF" ]$/;"	c
+compare	nodes/core.gd	/^	func compare(tid1, tid2) -> bool: #Compare two TIDs.$/;"	f
+condDisplay	nodes/UI/battle/enemy_sprite_simple.gd	/^onready var condDisplay:Node    = $SpriteHook\/Position2D\/ConditionDisplay$/;"	o
+conditionDefApply	nodes/core.gd	/^	func conditionDefApply(stats, mod:String, val:int) -> void:$/;"	f
+conditionDefReset	nodes/core.gd	/^	func conditionDefReset(a:Array) -> void:$/;"	f
+conditionDefStringValidate	nodes/core.gd	/^	func conditionDefStringValidate(st:String) -> bool:$/;"	f
+connectUISignals	nodes/UI/guild_display.gd	/^func connectUISignals(obj) -> void:$/;"	f
+consume	classes/battle/field_effects.gd	/^func consume(elem:int, elem2:int = 0) -> void: #Remove all elem. Replace by elem2 if specified.$/;"	f
+container	nodes/UI/menu_over.gd	/^onready var container = $ScrollContainer\/VBoxContainer$/;"	o
+container	nodes/UI/menu_skill.gd	/^onready var container = $ScrollContainer\/VBoxContainer$/;"	o
+container	nodes/UI/menu_weapon.gd	/^onready var container = $ScrollContainer\/VBoxContainer$/;"	o
+copy	nodes/core.gd	/^	func copy(S, stats):$/;"	f
+copy	nodes/core.gd	/^	func copy(tid) -> PoolStringArray: #Makes a copy of a TID.$/;"	f
+copyElementData	nodes/core.gd	/^	func copyElementData(E, data):$/;"	f
+copyIntegerArray	classes/library/lib_base.gd	/^func copyIntegerArray(a:Array) -> Array:$/;"	f
+countEffects	classes/group/group_base.gd	/^func countEffects(S) -> int: #Count instances of the specific skill effect.$/;"	f
+countRowTargets	classes/group/group_base.gd	/^func countRowTargets(row:int, S) -> int: #Count possible targets in row.$/;"	f
+create	nodes/core.gd	/^	func create():$/;"	f
+create	nodes/core.gd	/^	func create(a, b) -> PoolStringArray: #Create a new TID array from two strings.$/;"	f
+createBattleStats	classes/char/char_base.gd	/^func createBattleStats() -> BattleStats:$/;"	f
+createButton	nodes/UI/menu_item.gd	/^func createButton(item, amount):$/;"	f
+createCondDefsArray	nodes/core.gd	/^	func createCondDefsArray() -> Array: #Creates an array for condition defenses.$/;"	f
+createDisplay	nodes/UI/battle/enemyg_display.gd	/^func createDisplay(slot:int):$/;"	f
+createElementData	nodes/core.gd	/^	func createElementData() -> Dictionary:$/;"	f
+cureAll	classes/char/char_base.gd	/^func cureAll() -> void:$/;"	f
+cureType	classes/char/char_base.gd	/^func cureType(what:int) -> void:$/;"	f
+current	nodes/core.gd	/^	func current() -> int:$/;"	f
+cursor	nodes/UI/BinMap.cs	/^	private Vector2 cursor = new Vector2(0,0);$/;"	f	class:BinMap	file:
+custom_iter	classes/automata/automata.gd	/^	const custom_iter:Array = [0, 2, 4, 6] #Even though this automaton uses moore neighborhoods, it's faster to just check up\/down\/left\/right.$/;"	c
+damage	classes/char/char_base.gd	/^func damage(x:int, crit:bool = false, resist:int = 0, nonlethal:bool = false) -> Array:$/;"	f
+damage	nodes/UI/battle/enemy_display.gd	/^func damage():$/;"	f
+damage	nodes/UI/battle/enemy_sprite_simple.gd	/^func damage() -> void:$/;"	f
+damage	nodes/UI/char_display.gd	/^func damage() -> void:$/;"	f
+damageBarriers	classes/char/char_base.gd	/^func damageBarriers(x:int, info = null) -> int:$/;"	f
+damageBonusOnRange	classes/skill/skill.gd	/^func damageBonusOnRange(user, target, value:int) -> int:$/;"	f
+damageEffects	classes/char/char_base.gd	/^func damageEffects() -> void:$/;"	f
+damagePreventionPass	classes/char/char_base.gd	/^func damagePreventionPass(S, user, elem:int = 0, crit:bool = false) -> bool: #Check if a hit can be prevented.$/;"	f
+damagePreventionPass	classes/char/char_player.gd	/^func damagePreventionPass(S, user, elem:int = 0, crit:bool=false) -> bool:$/;"	f
+damageProtectionPass	classes/char/char_base.gd	/^func damageProtectionPass(x:int, info, ignoreDefs = false) -> int: # Modify damage according to defenses and deplete said defenses if applicable.$/;"	f
+damageRaw	classes/skill/skill.gd	/^func damageRaw(S, level, user, target, state, value:int, flags:int = 0, bonus:bool = false) -> void:$/;"	f
+damageResistModifier	classes/char/char_base.gd	/^func damageResistModifier(x:float, _type:int, energy:bool) -> Array:$/;"	f
+damageShake	nodes/UI/battle/enemy_sprite_simple.gd	/^func damageShake() -> void:$/;"	f
+data	classes/automata/automata.gd	/^	const data = {$/;"	c
+decode_base52	nodes/core.gd	/^const decode_base52 = {$/;"	c
+defeat	classes/char/char_base.gd	/^func defeat() -> void: #Process defeat.$/;"	f
+defeat	classes/char/char_enemy.gd	/^func defeat() -> void:$/;"	f
+defeat	classes/char/char_player.gd	/^func defeat() -> void:$/;"	f
+defeat	classes/group/group_enemy.gd	/^func defeat(slot:int, C) -> void: #Do stuff when the enemy is down.$/;"	f
+defeat	nodes/UI/battle/enemy_sprite_simple.gd	/^func defeat() -> void:$/;"	f
+defeatMessage	classes/char/char_base.gd	/^func defeatMessage() -> String:$/;"	f
+defeatMessage	classes/char/char_enemy.gd	/^func defeatMessage() -> String:$/;"	f
+defend	classes/char/char_base.gd	/^func defend() -> void:$/;"	f
+defend	classes/char/char_player.gd	/^func defend() -> void:$/;"	f
+detach	classes/inventory/item.gd	/^	func detach(sl:int):$/;"	f
+detachGem	classes/inventory/item.gd	/^	func detachGem(sl:int):$/;"	f
+disconnectUISignals	nodes/UI/guild_display.gd	/^func disconnectUISignals(obj) -> void:$/;"	f
+display_info	nodes/UI/battle/enemy_display.gd	/^signal display_info(x)$/;"	s
+display_info	nodes/UI/char_display.gd	/^signal display_info(x)$/;"	s
+display_info	nodes/UI/item.gd	/^signal display_info(x)$/;"	s
+display_info	nodes/UI/skill.gd	/^signal display_info(x)$/;"	s
+display_info	nodes/UI/target_button.gd	/^signal display_info(x)$/;"	s
+dmgColor	nodes/UI/damage_numbers.gd	/^const dmgColor  = ["FF8A42","FC383B","FFDB4A"]$/;"	c
+dodgeAttack	classes/char/char_base.gd	/^func dodgeAttack(user) -> void:$/;"	f
+done	nodes/FX/basic.gd	/^func done():$/;"	f
+done	nodes/UI/battle/misc_message.gd	/^signal done$/;"	s
+done	nodes/UI/damage_numbers.gd	/^signal done$/;"	s
+dprint	classes/battle/battle_state.gd	/^func dprint(text:String) -> void: #TODO: Convert this into a proper debug printer.$/;"	f
+draw_bar	nodes/UI/battle/ConditionBar.gd	/^func draw_bar(rect:Rect2, col:Color) -> void:$/;"	f
+duplicate	classes/battle/battle_state.gd	/^	func duplicate() -> Action:$/;"	f
+duplicate	classes/skill/skill.gd	/^	func duplicate() -> SkillState:$/;"	f
+echo	classes/battle/battle_state.gd	/^func echo(txt) -> void: #Sends a message to the action log.$/;"	f
+echo	tests/SkillController.gd	/^func echo(val):$/;"	f
+echo	tests/ctrltest.gd	/^func echo(text):$/;"	f
+echoArray	classes/battle/battle_state.gd	/^func echoArray(a) -> void: #Prints all the contents of an array.$/;"	f
+effectCheck	classes/skill/skill.gd	/^func effectCheck(S, level:int, user, target, state) -> bool:$/;"	f
+effectHook	nodes/UI/battle/enemy_sprite_simple.gd	/^onready var effectHook:Node     = $EffectHook$/;"	o
+effectHook	nodes/UI/char_display.gd	/^onready var effectHook = get_node("EffectHook")$/;"	o
+effectorHolder	nodes/UI/battle/enemy_sprite_simple.gd	/^onready var effectorHolder:Node = $EffectHook\/EffectorHolder$/;"	o
+element_set	classes/skill/skill.gd	/^	func element_set(val:int, target = null) -> void:$/;"	f
+elementalModApply	nodes/core.gd	/^	func elementalModApply(stats, mod:String, val:int) -> void:$/;"	f
+elementalModStringConvert	nodes/core.gd	/^	func elementalModStringConvert(st:String) -> PoolStringArray:$/;"	f
+elementalModStringValidate	nodes/core.gd	/^	func elementalModStringValidate(st:String) -> bool:$/;"	f
+emptySlot	classes/group/group_base.gd	/^func emptySlot() -> bool:$/;"	f
+encode_base52	nodes/core.gd	/^const encode_base52 = [$/;"	c
+endBattleTurn	classes/char/char_base.gd	/^func endBattleTurn(defer) -> void:$/;"	f
+endBattleTurn	classes/char/char_player.gd	/^func endBattleTurn(defer):$/;"	f
+endBattleTurn	classes/group/group_base.gd	/^func endBattleTurn() -> void: #Executed at the end of a turn.$/;"	f
+endTurn	classes/battle/battle_state.gd	/^func endTurn():$/;"	f
+enemy	classes/group/group_enemy.gd	/^var enemy = preload("res:\/\/classes\/char\/char_enemy.gd")$/;"	p
+enemyActions	classes/battle/battle_state.gd	/^func enemyActions() -> void: #Think enemy actions.$/;"	f
+exit	nodes/UI/battle/battle_controls.gd	/^func exit(val) -> void:$/;"	f
+f	classes/group/group_guild.gd	/^	var f = preload("res:\/\/data\/debug_guild.gd").new()$/;"	p
+factory	classes/skill/skill.gd	/^func factory(Sp:Dictionary, mods:Array, level:int) -> void:$/;"	f
+factory2	classes/skill/skill.gd	/^func factory2(Sp, mods, level): #Sp is a pointer to skill copy$/;"	f
+factoryLine	classes/skill/skill.gd	/^func factoryLine(opcode:int, val:int, flags:int = 0, tag:String = '') -> Array:$/;"	f
+fg	nodes/UI/BinMap.cs	/^	[Export] Color fg = new Color("#FFFFFF");$/;"	f	class:BinMap	file:
+fieldMod	classes/battle/field_effects.gd	/^func fieldMod(elem:int, mult:float) -> float:$/;"	f
+fill	classes/battle/field_effects.gd	/^func fill(elem:int) -> void:$/;"	f
+fillChance	classes/battle/field_effects.gd	/^func fillChance(elem:int, chance:int) -> void: #Fill all slots with elem, but with a chance for every slot.$/;"	f
+filter	classes/char/char_base.gd	/^func filter(S:Dictionary) -> bool: #Checks if character meets the conditions to be targeted.$/;"	f
+filter	classes/char/char_enemy.gd	/^func filter(S:Dictionary) -> bool:$/;"	f
+finalizeDamage	classes/char/char_base.gd	/^func finalizeDamage(x, info, ignoreDefs:bool = false, nocap:bool = false) -> int:$/;"	f
+find	classes/inventory/item.gd	/^	func find(lib = null, levelFilter:int = 1, type:int = 0, tid = null) -> Array:$/;"	f
+findEffects	classes/char/char_base.gd	/^func findEffects(S) -> bool:$/;"	f
+findEffects	classes/group/group_base.gd	/^func findEffects(S) -> bool: #Find if the party has a specific skill effect.$/;"	f
+findOpCode	classes/skill/skill.gd	/^func findOpCode(code:Array, opcode:int) -> int:$/;"	f
+findSummonSlot	classes/group/group_enemy.gd	/^func findSummonSlot(SU) -> int:$/;"	f
+finish	nodes/UI/menu_item.gd	/^func finish():$/;"	f
+finish	nodes/UI/menu_over.gd	/^func finish() -> void:$/;"	f
+finish	nodes/UI/menu_skill.gd	/^func finish() -> void:$/;"	f
+finish	nodes/UI/menu_weapon.gd	/^func finish():$/;"	f
+finish	tests/SkillController.gd	/^func finish() -> void:$/;"	f
+finishFollows	tests/SkillController.gd	/^func finishFollows() -> void:$/;"	f
+finishNotification	tests/SkillController.gd	/^func finishNotification() -> void:$/;"	f
+finishNotifications	tests/SkillController.gd	/^func finishNotifications() -> void:$/;"	f
+finishSpecial	tests/SkillController.gd	/^func finishSpecial() -> void:$/;"	f
+finished	nodes/UI/battle/battle_controls.gd	/^signal finished$/;"	s
+flaggedSet	classes/skill/skill.gd	/^func flaggedSet(sourceValue:int, value:int, flags:int) -> int:$/;"	f
+from	nodes/core.gd	/^	func from(a) -> PoolStringArray: #Create a TID from an unknown definition.$/;"	f
+fromArray	nodes/core.gd	/^	func fromArray(a) -> PoolStringArray: #Create a TID using an array in the format ["section", "item"]$/;"	f
+fromStatus	nodes/core.gd	/^	func fromStatus(st):$/;"	f
+fromString	nodes/core.gd	/^	func fromString(st) -> PoolStringArray: #Create a TID using a string in the format "section\/item"$/;"	f
+fullHeal	classes/char/char_base.gd	/^func fullHeal() -> void: #Set health to max health.$/;"	f
+fullRecharge	classes/inventory/item.gd	/^	func fullRecharge() -> void:$/;"	f
+fullRepair	classes/char/char_player.gd	/^func fullRepair(all:bool=true) -> void:$/;"	f
+fullRepair	classes/inventory/item.gd	/^	func fullRepair() -> void:$/;"	f
+fullRepair	classes/inventory/item.gd	/^	func fullRepair(all:bool) -> void:$/;"	f
+fullReset	classes/battle/field_effects.gd	/^func fullReset() -> void:$/;"	f
+fx_finished	tests/SkillController.gd	/^signal fx_finished$/;"	s
+gainEXP	classes/inventory/item.gd	/^	func gainEXP(val:int):$/;"	f
+getActiveSkills	classes/char/char_base.gd	/^func getActiveSkills() -> Array:$/;"	f
+getActiveSkills	classes/char/char_enemy.gd	/^func getActiveSkills() -> Array: #Get all skills, effects and equipment skills.$/;"	f
+getActiveSkills	classes/char/char_player.gd	/^func getActiveSkills() -> Array: #Get all skills, effects and equipment skills.$/;"	f
+getAllTargets	classes/group/group_base.gd	/^func getAllTargets(S) -> Array:$/;"	f
+getAllTargetsNotSelf	classes/group/group_base.gd	/^func getAllTargetsNotSelf(S, who) -> Array:$/;"	f
+getAnchorNode	classes/battle/display_manager.gd	/^func getAnchorNode(C, slot:int) -> Node:$/;"	f
+getBattleDelay	tests/ctrltest.gd	/^func getBattleDelay(x):$/;"	f
+getBonus	classes/battle/field_effects.gd	/^func getBonus(elem:int, side:int = 0) -> float:$/;"	f
+getBonuses	classes/inventory/item.gd	/^	func getBonuses(tmpSkill:Array, tmpStats:Dictionary) -> void:$/;"	f
+getColor	nodes/UI/damage_numbers.gd	/^func getColor(dmg:int, resist:int = 0) -> String:$/;"	f
+getData	classes/library/lib_base.gd	/^func getData() -> Array:$/;"	f
+getDefeated	classes/group/group_base.gd	/^func getDefeated() -> int: return 0 #Get number of defeated group members.$/;"	f
+getDefeated	classes/group/group_enemy.gd	/^func getDefeated() -> int:	return defeated.size()$/;"	f
+getDefeated	classes/group/group_guild.gd	/^func getDefeated() -> int:$/;"	f
+getElementKey	nodes/core.gd	/^	func getElementKey(element) -> String:$/;"	f
+getEmptySlots	classes/group/group_base.gd	/^func getEmptySlots(row:int = -1) -> Array:$/;"	f
+getEquipSpeedMod	classes/char/char_base.gd	/^func getEquipSpeedMod():$/;"	f
+getEquipSpeedMod	classes/char/char_player.gd	/^func getEquipSpeedMod() -> int:$/;"	f
+getFormationSlot	classes/group/group_guild.gd	/^func getFormationSlot(n): #Get member in a given slot.$/;"	f
+getFreeSlot	classes/inventory/item.gd	/^	func getFreeSlot() -> int:$/;"	f
+getHealPower	classes/char/char_base.gd	/^func getHealPower(x:int) -> int:$/;"	f
+getHealthN	classes/char/char_base.gd	/^func getHealthN(): #Get normalized health as a float from 0 to 1.$/;"	f
+getHealthPercent	classes/char/char_base.gd	/^func getHealthPercent(x:int):$/;"	f
+getHealthiestTarget	classes/group/group_base.gd	/^func getHealthiestTarget(S):$/;"	f
+getIndex	classes/library/lib_base.gd	/^func getIndex(id:Array):$/;"	f
+getOtherRowTargets	classes/group/group_base.gd	/^func getOtherRowTargets(row, S): #Get targets in the other row.$/;"	f
+getOverN	classes/char/char_base.gd	/^func getOverN() -> float:$/;"	f
+getRandomRowTarget	classes/group/group_base.gd	/^func getRandomRowTarget(row, S) -> Array:$/;"	f
+getRandomTarget	classes/group/group_base.gd	/^func getRandomTarget(S) -> Array:$/;"	f
+getRow	classes/group/group_base.gd	/^func getRow(row:int) -> Array: #Get all members in the given row.$/;"	f
+getRowIter	classes/group/group_base.gd	/^func getRowIter(row) -> Array: #Get iterator for a row.$/;"	f
+getRowTargets	classes/group/group_base.gd	/^func getRowTargets(row:int, S) -> Array: #Get all targets in the given row$/;"	f
+getRowTargetsNotSelf	classes/group/group_base.gd	/^func getRowTargetsNotSelf(row, S, user): #Get targets in row except self.$/;"	f
+getSkill	classes/inventory/item.gd	/^	func getSkill():$/;"	f
+getSkillEffects	classes/char/char_base.gd	/^func getSkillEffects(type:String) -> Array:$/;"	f
+getSkillPtr	nodes/core.gd	/^func getSkillPtr(TID):$/;"	f
+getSkillTID	classes/char/char_player.gd	/^func getSkillTID(t):$/;"	f
+getSpreadTargets	classes/group/group_base.gd	/^func getSpreadTargets(row:int, S, slot:int) -> Array: #Get all subtargets around a given target and its row.$/;"	f
+getStatSpread	classes/library/lib_class.gd	/^func getStatSpread(id):$/;"	f
+getStatSpread	classes/library/lib_enemy.gd	/^func getStatSpread(id):$/;"	f
+getStatSpread	classes/library/lib_item.gd	/^func getStatSpread(id):$/;"	f
+getStatSpread	classes/library/lib_race.gd	/^func getStatSpread(id):$/;"	f
+getStats	classes/inventory/item.gd	/^	func getStats(type:int, D:Dictionary) -> void:$/;"	f
+getStrongestElementalResist	classes/char/char_base.gd	/^func getStrongestElementalResist() -> int:$/;"	f
+getSummoned	classes/group/group_enemy.gd	/^func getSummoned(C) -> Array:$/;"	f
+getTarget	nodes/UI/menu_item.gd	/^func getTarget(x) -> void:$/;"	f
+getTarget	nodes/UI/menu_over.gd	/^func getTarget(x):$/;"	f
+getTarget	nodes/UI/menu_skill.gd	/^func getTarget(x):$/;"	f
+getTarget	nodes/UI/menu_weapon.gd	/^func getTarget(x):$/;"	f
+getTooltip	classes/char/char_enemy.gd	/^func getTooltip():$/;"	f
+getTooltip	classes/char/char_player.gd	/^func getTooltip() -> String:$/;"	f
+getUnicodeIcon	classes/inventory/item.gd	/^	func getUnicodeIcon():$/;"	f
+getWeakestElementalResist	classes/char/char_base.gd	/^func getWeakestElementalResist() -> int:$/;"	f
+getWeakestTarget	classes/group/group_base.gd	/^func getWeakestTarget(S):$/;"	f
+getWeaponSpeedMod	classes/inventory/item.gd	/^	func getWeaponSpeedMod(weapon) -> int:$/;"	f
+giveConsumable	classes/inventory/item.gd	/^	func giveConsumable(I):$/;"	f
+giveDGem	classes/group/group_guild.gd	/^func giveDGem(G) -> bool: #Add a DGem to inventory.$/;"	f
+giveItem	classes/group/group_guild.gd	/^func giveItem(I) -> bool:$/;"	f
+giveXP	classes/char/char_player.gd	/^func giveXP(val:int) -> void: #Increases party member's experience by val.$/;"	f
+giveXP	classes/group/group_guild.gd	/^func giveXP(amount:int) -> void: #Gives <amount> experience to all party members in formation.$/;"	f
+gradient	nodes/UI/bar_complex.gd	/^export(Gradient) var gradient:Gradient$/;"	e
+grid	nodes/UI/battle/enemyg_display.gd	/^onready var grid:Array = [ $F0, $F1, $F2, $B0, $B1, $B2 ]$/;"	o
+guard	nodes/UI/bar_complex.gd	/^export(bool)  var guard:bool     = false$/;"	e
+hasCodePR	classes/skill/skill.gd	/^func hasCodePR(S) -> bool:$/;"	f
+hasSkill	classes/char/char_base.gd	/^func hasSkill(what): pass #VIRTUAL$/;"	f
+hasSkill	classes/char/char_enemy.gd	/^func hasSkill(what):$/;"	f
+hasSkill	classes/char/char_player.gd	/^func hasSkill(what):$/;"	f
+heal	classes/char/char_base.gd	/^func heal(x:int) -> void:$/;"	f
+healAll	classes/group/group_guild.gd	/^func healAll() -> void: #Heals all party members.$/;"	f
+healColor	nodes/UI/damage_numbers.gd	/^const healColor = "44FF94" #TODO: Get this stuff from a theme file$/;"	c
+healing	classes/skill/skill.gd	/^func healing(S, power:int, user, target, state:SkillState, flags:int = 0) -> void:$/;"	f
+healingRaw	classes/skill/skill.gd	/^func healingRaw(S, power:int, user, target, state:SkillState, flags:int = 0) -> void:$/;"	f
+height	nodes/UI/BinMap.cs	/^	private int height = 1;$/;"	f	class:BinMap	file:
+hg	nodes/UI/BinMap.cs	/^	[Export] Color hg = new Color("#00FF00");$/;"	f	class:BinMap	file:
+hideInfo	tests/ctrltest.gd	/^func hideInfo(): #Hide the info panel.$/;"	f
+hide_all	nodes/UI/battle/info_display.gd	/^func hide_all():$/;"	f
+hide_elements	nodes/UI/battle/skill_display.gd	/^func hide_elements() -> void:$/;"	f
+hide_info	nodes/UI/battle/enemy_display.gd	/^signal hide_info$/;"	s
+hide_info	nodes/UI/char_display.gd	/^signal hide_info$/;"	s
+hide_info	nodes/UI/item.gd	/^signal hide_info$/;"	s
+hide_info	nodes/UI/skill.gd	/^signal hide_info$/;"	s
+hide_info	nodes/UI/target_button.gd	/^signal hide_info$/;"	s
+highlight	nodes/UI/battle/enemy_display.gd	/^func highlight(x):$/;"	f
+highlight	nodes/UI/char_display.gd	/^func highlight(b) -> void: #Highlights this character to show it's acting or choosing actions.$/;"	f
+highlight	nodes/core.gd	/^	func highlight(b):$/;"	f
+highlight2	nodes/core.gd	/^	func highlight2(b): #Gross hack for spread and line selects$/;"	f
+hilight	nodes/UI/group_position.tres.gd	/^export(Color) var hilight:Color = "f57715"$/;"	e
+icons	nodes/UI/dgem_small.gd	/^const icons = [$/;"	c
+init	classes/battle/battle_state.gd	/^func init(player, enemy, ui_node) -> void: #Actual initialization of the battle queue.$/;"	f
+init	classes/battle/field_effects.gd	/^func init(t = null) -> void:$/;"	f
+init	classes/group/group_enemy.gd	/^func init(tid, lvbonus:int = 0) -> void:$/;"	f
+init	classes/group/group_guild.gd	/^func init(dict) -> void:$/;"	f
+init	nodes/UI/BinMap.cs	/^	public void init(int w, int h) {$/;"	m	class:BinMap
+init	nodes/UI/bar_multi.gd	/^func init(vals, cols):$/;"	f
+init	nodes/UI/bar_segmented_flex.gd	/^func init(val:int, val2:float, segs:int) -> void:$/;"	f
+init	nodes/UI/battle/ConditionBar.gd	/^func init(_value, _max):$/;"	f
+init	nodes/UI/battle/WeaponPanel.gd	/^func init(C):$/;"	f
+init	nodes/UI/battle/action_queue.gd	/^func init(Q:Array, P:Array = []) -> void: #Q:Action Queue, array of extra actions.$/;"	f
+init	nodes/UI/battle/battle_controls.gd	/^func init(st, info) -> void:$/;"	f
+init	nodes/UI/battle/enemy_display.gd	/^func init(c) -> void:$/;"	f
+init	nodes/UI/battle/enemy_sprite_simple.gd	/^func init(spr, C, slot) -> void:$/;"	f
+init	nodes/UI/battle/enemyg_display.gd	/^func init(_group) -> void:$/;"	f
+init	nodes/UI/battle/info_display.gd	/^func init(_parent):$/;"	f
+init	nodes/UI/battle/item_display.gd	/^func init(_S, level) -> void:$/;"	f
+init	nodes/UI/battle/misc_message.gd	/^func init(n:String, color:Color) -> void:$/;"	f
+init	nodes/UI/battle/over_skill_2.gd	/^func init(skill) -> void:$/;"	f
+init	nodes/UI/battle/skill_display.gd	/^func init(_S, level) -> void:$/;"	f
+init	nodes/UI/battle/target_panel.gd	/^func init(S, parent, lv:int, override = null) -> void:$/;"	f
+init	nodes/UI/char_display.gd	/^func init(C):$/;"	f
+init	nodes/UI/damage_numbers.gd	/^func init(dmg:int, crit:bool = false, resist:int = 0, record:String = '') -> void:$/;"	f
+init	nodes/UI/dgem_small.gd	/^func init(DG):$/;"	f
+init	nodes/UI/group_position.tres.gd	/^func init(val:int, side:int) -> void:$/;"	f
+init	nodes/UI/guild_display.gd	/^func init() -> void:$/;"	f
+init	nodes/UI/item.gd	/^func init(_I, _level):$/;"	f
+init	nodes/UI/menu_item.gd	/^func init(C):$/;"	f
+init	nodes/UI/menu_over.gd	/^func init(C):$/;"	f
+init	nodes/UI/menu_skill.gd	/^func init(C):$/;"	f
+init	nodes/UI/menu_weapon.gd	/^func init(C, slot):$/;"	f
+init	nodes/UI/skill.gd	/^func init(_S, _level, costs = COST_NONE, gem:bool = false):$/;"	f
+init	nodes/UI/target_button.gd	/^func init(C, key = '') -> void:$/;"	f
+init	nodes/UI/weapon.gd	/^func init(WP, key):$/;"	f
+init	nodes/core.gd	/^	func init(data) -> void:$/;"	f
+init	tests/battlebg.gd	/^func init(group): #TODO: Use this later, properly.$/;"	f
+init	tests/debug_dgem.gd	/^func init(WP) -> void:$/;"	f
+init	tests/debug_partydisplay.gd	/^func init(group, parent):$/;"	f
+initAction	classes/battle/battle_state.gd	/^func initAction(act) -> void:$/;"	f
+initBattle	classes/char/char_base.gd	/^func initBattle() -> void:$/;"	f
+initBattle	classes/char/char_player.gd	/^func initBattle() -> void:$/;"	f
+initBattle	classes/group/group_base.gd	/^func initBattle() -> void: #Executed at the start of a battle.$/;"	f
+initBattle	nodes/core.gd	/^func initBattle(form, elv:int = 0, music = "res:\/\/resources\/music\/EOIV_Storm.ogg"):$/;"	f
+initBattleTurn	classes/char/char_base.gd	/^func initBattleTurn() -> void:$/;"	f
+initBattleTurn	classes/group/group_base.gd	/^func initBattleTurn() -> void: #Executed at the start of a turn.$/;"	f
+initBattleTurn	classes/group/group_enemy.gd	/^func initBattleTurn() -> void:$/;"	f
+initDict	classes/char/char_enemy.gd	/^func initDict(C): #Initialize an enemy from a data dict.$/;"	f
+initDict	classes/char/char_player.gd	/^func initDict(C):	#Load the character from save data$/;"	f
+initEffect	classes/char/char_base.gd	/^func initEffect(E, runEF:bool = false) -> void:$/;"	f
+initEntry	classes/library/lib_base.gd	/^func initEntry(entry):$/;"	f
+initGameState	nodes/core.gd	/^func initGameState(_seed):$/;"	f
+initGearSlot	classes/inventory/item.gd	/^	func initGearSlot() -> Dictionary:$/;"	f
+initGuild	nodes/core.gd	/^func initGuild(file):$/;"	f
+initJson	classes/char/char_player.gd	/^func initJson(json):$/;"	f
+initLibs	nodes/core.gd	/^func initLibs() -> void:$/;"	f
+initLinkList	classes/char/char_player.gd	/^func initLinkList(ln) -> void:$/;"	f
+initMember	classes/group/group_enemy.gd	/^func initMember(d, lvbonus:int = 0):$/;"	f
+initPassive	classes/char/char_base.gd	/^func initPassive(S, lv:int = 0, runEF:bool = false) -> void:$/;"	f
+initPersonal	classes/inventory/item.gd	/^	func initPersonal(IN:Array, C) -> Array:$/;"	f
+initSkillInfo	classes/skill/skill.gd	/^func initSkillInfo() -> Dictionary:$/;"	f
+initSkillList	classes/char/char_player.gd	/^func initSkillList(sk) -> void:$/;"	f
+initSkillState	classes/skill/skill.gd	/^func initSkillState(S, level:int, user, target) -> SkillState:$/;"	f
+initSprite	classes/battle/display_manager.gd	/^func initSprite(C, slot:int) -> void:$/;"	f
+initTemplate	classes/library/lib_armor.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_armorparts.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_base.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_class.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_enemy.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_gem.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_group_enemy.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_item.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_race.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_skill.gd	/^func initTemplate():$/;"	f
+initTemplate	classes/library/lib_weapon.gd	/^func initTemplate():$/;"	f
+initWeaponSlot	classes/inventory/item.gd	/^	func initWeaponSlot() -> Weapon: #Is this used?$/;"	f
+isAble	classes/char/char_base.gd	/^func isAble() -> bool: #Checks if character is active.$/;"	f
+isFullHealth	classes/char/char_base.gd	/^func isFullHealth() -> bool:$/;"	f
+isNight	nodes/core.gd	/^	func isNight() -> bool:$/;"	f
+iter_neighbor_moore	classes/automata/automata.gd	/^	const iter_neighbor_moore = [ #Moore neighborhood. Checks 8 surrounding cells.$/;"	c
+iter_neighbor_von_neumann	classes/automata/automata.gd	/^	const iter_neighbor_von_neumann = [  #Von Neumann neighborhood. Checks 4 surrounding cells.$/;"	c
+loadArmor	classes/inventory/item.gd	/^	func loadArmor(data) -> void:$/;"	f
+loadDebug	classes/group/group_enemy.gd	/^func loadDebug() -> void:$/;"	f
+loadDebug	classes/group/group_guild.gd	/^func loadDebug() -> void: #Load debug "save file".$/;"	f
+loadDebug	classes/library/lib_armor.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_armorparts.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_class.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_enemy.gd	/^func loadDebug() -> void:$/;"	f
+loadDebug	classes/library/lib_gem.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_group_enemy.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_item.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_race.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_skill.gd	/^func loadDebug():$/;"	f
+loadDebug	classes/library/lib_weapon.gd	/^func loadDebug():$/;"	f
+loadDict	classes/library/lib_base.gd	/^func loadDict(dict):$/;"	f
+loadGD	classes/library/lib_base.gd	/^func loadGD(file):$/;"	f
+loadGear	classes/inventory/item.gd	/^	func loadGear(data) -> void:$/;"	f
+loadJson	classes/group/group_guild.gd	/^func loadJson(json): #Process a JSON file with guild data here. A save file basically.$/;"	f
+loadJson	classes/library/lib_base.gd	/^func loadJson(json):$/;"	f
+loadKey	classes/library/lib_base.gd	/^func loadKey(loader, val):$/;"	f
+loadWeapons	classes/inventory/item.gd	/^	func loadWeapons(data) -> void:$/;"	f
+loaderAIPattern	classes/library/lib_enemy.gd	/^func loaderAIPattern(dict):$/;"	f
+loaderAnim	classes/library/lib_skill.gd	/^func loaderAnim(val): #Loads animations.$/;"	f
+loaderArClass	classes/library/lib_armor.gd	/^func loaderArClass(val):$/;"	f
+loaderArmorStats	classes/library/lib_armor.gd	/^func loaderArmorStats(val) -> Array:$/;"	f
+loaderBodyBonus	classes/library/lib_gem.gd	/^func loaderBodyBonus(val):$/;"	f
+loaderBonusStats	classes/library/lib_armor.gd	/^func loaderBonusStats(val):$/;"	f
+loaderBool	classes/library/lib_base.gd	/^func loaderBool(val):$/;"	f
+loaderConditionDefs	classes/library/lib_base.gd	/^func loaderConditionDefs(val) -> Array:$/;"	f
+loaderDefaultParts	classes/library/lib_armor.gd	/^func loaderDefaultParts(val):$/;"	f
+loaderEffectStatBonus	classes/library/lib_skill.gd	/^func loaderEffectStatBonus(dict): #Loads effect stat modifiers.$/;"	f
+loaderElementData	classes/library/lib_base.gd	/^func loaderElementData(val) -> Array:$/;"	f
+loaderEnemySkills	classes/library/lib_enemy.gd	/^func loaderEnemySkills(val) -> Array:$/;"	f
+loaderFX	classes/library/lib_skill.gd	/^func loaderFX(val) -> Array:$/;"	f
+loaderFloat	classes/library/lib_base.gd	/^func loaderFloat(val) -> float:$/;"	f
+loaderFormation	classes/library/lib_group_enemy.gd	/^func loaderFormation(val):$/;"	f
+loaderInt	classes/library/lib_base.gd	/^func loaderInt(val) -> int:$/;"	f
+loaderMessages	classes/library/lib_skill.gd	/^func loaderMessages(val): #Loads skill messages.$/;"	f
+loaderPartStatArray	classes/library/lib_armorparts.gd	/^func loaderPartStatArray(val) -> Array:$/;"	f
+loaderParts	classes/library/lib_armor.gd	/^func loaderParts(val):$/;"	f
+loaderSkillArray	classes/library/lib_base.gd	/^func loaderSkillArray(val) -> Array:$/;"	f
+loaderSkillCode	classes/library/lib_base.gd	/^func loaderSkillCode(a): #Loads skill codes.$/;"	f
+loaderSkillFilterEXArg	classes/library/lib_skill.gd	/^func loaderSkillFilterEXArg(val):$/;"	f
+loaderSkillLink	classes/library/lib_skill.gd	/^func loaderSkillLink(val): #Loads linked skills.$/;"	f
+loaderSkillList	classes/library/lib_base.gd	/^func loaderSkillList(val) -> Array:$/;"	f
+loaderSkillList	classes/library/lib_weapon.gd	/^func loaderSkillList(val):$/;"	f
+loaderSkillModifier	classes/library/lib_gem.gd	/^func loaderSkillModifier(val) -> Array:$/;"	f
+loaderSkillSetup	classes/library/lib_enemy.gd	/^func loaderSkillSetup(val) -> Array:$/;"	f
+loaderStatBonus	classes/library/lib_base.gd	/^func loaderStatBonus(val) -> Dictionary:$/;"	f
+loaderStatSpread	classes/library/lib_base.gd	/^func loaderStatSpread(val):$/;"	f
+loaderString	classes/library/lib_base.gd	/^func loaderString(val) -> String:$/;"	f
+loaderSummons	classes/library/lib_base.gd	/^func loaderSummons(val):$/;"	f
+loaderTID	classes/library/lib_base.gd	/^func loaderTID(val):$/;"	f
+loaderTID2	classes/library/lib_gem.gd	/^func loaderTID2(val):$/;"	f
+loaderTIDArray	classes/library/lib_base.gd	/^func loaderTIDArray(val):$/;"	f
+loaderTIDorNull	classes/library/lib_base.gd	/^func loaderTIDorNull(val):$/;"	f
+loaderVariableArray	classes/library/lib_base.gd	/^func loaderVariableArray(val) -> Array:$/;"	f
+loaderWeaponBonus	classes/library/lib_gem.gd	/^func loaderWeaponBonus(val):$/;"	f
+lock	classes/battle/field_effects.gd	/^func lock(n:int) -> void:$/;"	f
+logHitRecord	classes/battle/battle_state.gd	/^func logHitRecord(user, target, state) -> void:$/;"	f
+magicNumberDecode	classes/skill/skill.gd	/^func magicNumberDecode(code:int, value:int) -> Dictionary:$/;"	f
+magicNumberEncode	classes/skill/skill.gd	/^func magicNumberEncode(code:int, values:Array) -> int:$/;"	f
+magicNumberEncodeDict	classes/skill/skill.gd	/^func magicNumberEncodeDict(code:int, X:Dictionary) -> int:$/;"	f
+map	nodes/UI/BinMap.cs	/^	private byte[,] map;$/;"	f	class:BinMap	file:
+maxHealth	classes/char/char_base.gd	/^func maxHealth() -> int:$/;"	f
+message	nodes/UI/battle/enemy_display.gd	/^func message(msg, color) -> void:$/;"	f
+mouseover	nodes/UI/target_button.gd	/^signal mouseover(x, y)$/;"	s
+msg	classes/skill/skill.gd	/^func msg(text) -> void:$/;"	f
+msgColors	classes/battle/battle_state.gd	/^const msgColors = {$/;"	c
+msgNode	nodes/UI/battle/message_display.gd	/^const msgNode = preload("res:\/\/nodes\/UI\/battle\/misc_message.tscn")$/;"	c
+name	classes/library/lib_class.gd	/^func name(id):$/;"	f
+name	classes/library/lib_enemy.gd	/^func name(id) -> String:$/;"	f
+name	classes/library/lib_gem.gd	/^func name(id):$/;"	f
+name	classes/library/lib_group_enemy.gd	/^func name(id):$/;"	f
+name	classes/library/lib_item.gd	/^func name(id):$/;"	f
+name	classes/library/lib_race.gd	/^func name(id):$/;"	f
+name	classes/library/lib_skill.gd	/^func name(id):$/;"	f
+name	classes/library/lib_weapon.gd	/^func name(id) -> String:$/;"	f
+newDamageEffect	classes/char/char_base.gd	/^func newDamageEffect(S, dmg:int, duration:int, element:int, user) -> Array:$/;"	f
+newEffect	classes/char/char_base.gd	/^func newEffect(S, lv:int, user) -> Array:$/;"	f
+next	nodes/core.gd	/^	func next() -> int:$/;"	f
+notifyEvents	classes/battle/battle_state.gd	/^func notifyEvents() -> void:$/;"	f
+notify_all_finished	tests/SkillController.gd	/^signal notify_all_finished$/;"	s
+notify_finished	tests/SkillController.gd	/^signal notify_finished$/;"	s
+onHighlight	nodes/UI/battle/target_panel.gd	/^func onHighlight(chr, b) -> void:$/;"	f
+onSummonerDefeat	classes/char/char_enemy.gd	/^func onSummonerDefeat():$/;"	f
+on_anim_done	tests/SkillController.gd	/^func on_anim_done():$/;"	f
+on_char_pressed	tests/debug_menu.gd	/^func on_char_pressed(ch) -> void:$/;"	f
+on_hour_pass	classes/group/group_guild.gd	/^func on_hour_pass() -> void: #Hook for time passing.$/;"	f
+onhit_finished	tests/SkillController.gd	/^signal onhit_finished$/;"	s
+opCode	classes/skill/skill.gd	/^const opCode = {$/;"	c
+opCodesPowerable	classes/skill/skill.gd	/^const opCodesPowerable = [$/;"	c
+openMenu	tests/debug_dgem.gd	/^signal openMenu$/;"	s
+optimize	classes/battle/field_effects.gd	/^func optimize() -> void: #Simply sorts all elements. This makes repeats form a chain.$/;"	f
+outline	nodes/UI/bar_segmented_flex.gd	/^export(Color) var outline : Color = "008888"$/;"	e
+outline	nodes/UI/group_position.tres.gd	/^export(Color) var outline:Color = "008888"$/;"	e
+overHeal	classes/char/char_base.gd	/^func overHeal(x, y) -> void:$/;"	f
+parseAIPattern	classes/library/lib_enemy.gd	/^func parseAIPattern(line) -> Array:$/;"	f
+parseAISkill	classes/library/lib_enemy.gd	/^func parseAISkill(S, defaultTarget = AITARGET_RANDOM) -> Array:$/;"	f
+parseSubTemplate	classes/library/lib_base.gd	/^func parseSubTemplate(sub:Dictionary, dict:Dictionary):$/;"	f
+parseTemplate	classes/library/lib_base.gd	/^func parseTemplate(dict:Dictionary) -> Dictionary:$/;"	f
+partialRepair	classes/char/char_player.gd	/^func partialRepair(val:int, all:bool=true) -> void:$/;"	f
+partialRepair	classes/inventory/item.gd	/^	func partialRepair(val:int) -> void:$/;"	f
+partialRepair	classes/inventory/item.gd	/^	func partialRepair(val:int, all:bool) -> void:$/;"	f
+partsTemplate	classes/library/lib_armor.gd	/^func partsTemplate():$/;"	f
+partySize	classes/group/group_guild.gd	/^func partySize() -> int: #Get party size (1-6 ideally)$/;"	f
+partyStatus	classes/group/group_guild.gd	/^func partyStatus() -> Array:$/;"	f
+passTime	nodes/core.gd	/^	func passTime(amount:int = 1): #Pass one or more "time units".$/;"	f
+passTurn	classes/battle/battle_state.gd	/^func passTurn(): #Advances the turn counter and makes groups update its members.$/;"	f
+passTurn	classes/battle/field_effects.gd	/^func passTurn() -> void:$/;"	f
+periodOfDay	nodes/core.gd	/^	func periodOfDay() -> int:$/;"	f
+pickSkill	classes/char/char_enemy.gd	/^func pickSkill():$/;"	f
+pickTarget	classes/char/char_enemy.gd	/^func pickTarget(S, level, F, P, state):$/;"	f
+pix_size	nodes/UI/BinMap.cs	/^	private Vector2 pix_size;$/;"	f	class:BinMap	file:
+placeholder_1	classes/battle/display_manager.gd	/^const placeholder_1 = 'res:\/\/resources\/images\/test.png'$/;"	c
+play	nodes/FX/basic.gd	/^func play(spd):$/;"	f
+playMainAnim	classes/battle/display_manager.gd	/^func playMainAnim(S, lv:int, anchor:Position2D) -> void:$/;"	f
+playMusic	nodes/core.gd	/^func playMusic(path): #Plays music file at path in default audio stream player.$/;"	f
+player	nodes/UI/battle/enemy_sprite_simple.gd	/^onready var player:Node         = $AnimationPlayer$/;"	o
+poly	nodes/UI/bar_segmented_flex.gd	/^func poly(sum:float, t:float) -> PoolVector2Array:$/;"	f
+pop	classes/battle/field_effects.gd	/^func pop() -> int:$/;"	f
+popAction	classes/battle/battle_state.gd	/^func popAction() -> Action: #Pop the front of the queue and return it.$/;"	f
+pos	nodes/FX/basic.gd	/^func pos(x):$/;"	f
+prep	nodes/UI/battle/target_panel.gd	/^func prep(parent) -> void: #Connect info signals to parent.$/;"	f
+prepareAction	classes/battle/battle_state.gd	/^func prepareAction(side:int, slot:int, act:Action) -> void:$/;"	f
+prepareActionQueue	classes/battle/battle_state.gd	/^func prepareActionQueue() -> void:$/;"	f
+print	nodes/core.gd	/^	func print(S):$/;"	f
+printCode	classes/skill/skill.gd	/^func printCode(S, level, code = CODE_MN) -> String:$/;"	f
+printData	classes/library/lib_base.gd	/^func printData():$/;"	f
+printData	classes/library/lib_class.gd	/^func printData():$/;"	f
+printData	classes/library/lib_item.gd	/^func printData():$/;"	f
+printData	classes/library/lib_race.gd	/^func printData():$/;"	f
+printElementData	nodes/core.gd	/^	func printElementData(E) -> String:$/;"	f
+printGem	classes/inventory/item.gd	/^	func printGem() -> String:$/;"	f
+printGems	classes/inventory/item.gd	/^	func printGems() -> String:$/;"	f
+printQueue	classes/battle/battle_state.gd	/^func printQueue() -> void:$/;"	f
+printQueuePanel	classes/battle/battle_state.gd	/^func printQueuePanel():$/;"	f
+printQueueTargets	classes/battle/battle_state.gd	/^func printQueueTargets(a):$/;"	f
+printSkillMsg	classes/skill/skill.gd	/^func printSkillMsg(S, user, target, value) -> bool:$/;"	f
+process	classes/skill/skill.gd	/^func process(S, level:int, user, targets, WP = null, IT = null, skipAnim:bool = false):$/;"	f
+processCombatSkill	classes/skill/skill.gd	/^func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipAnim:bool = false):$/;"	f
+processDamage	classes/skill/skill.gd	/^func processDamage(S, level:int, user, target, state, value:int, flags:int) -> void:$/;"	f
+processDamageEX	classes/skill/skill.gd	/^func processDamageEX(S:Dictionary, level:int, user, target, state:SkillState, value:int, flags:int) -> void:$/;"	f
+processDamageEffect	classes/char/char_base.gd	/^func processDamageEffect(DE) -> bool:$/;"	f
+processDamageRaw	classes/skill/skill.gd	/^func processDamageRaw(S, user, target, value, percent) -> int:                 #Cause raw damage to target.$/;"	f
+processED	classes/skill/skill.gd	/^func processED(S, level:int, user, target) -> void:$/;"	f
+processFL	classes/skill/skill.gd	/^func processFL(S, level:int, user, target, data, type) -> void:$/;"	f
+processSkillCode	classes/skill/skill.gd	/^func processSkillCode(S, level:int, user, target, codeblock:int, control = core.battle.skillControl.start(), _state = null, info = null, WP = null):$/;"	f
+processSkillCode2	classes/skill/skill.gd	/^func processSkillCode2(S, level:int, user, target, _code, state:SkillState, control):$/;"	f
+push	classes/battle/field_effects.gd	/^func push(elem:int) -> void:$/;"	f
+pushAction	classes/battle/battle_state.gd	/^func pushAction(act:Action) -> void: #Push an action into the queue.$/;"	f
+pushMulti	classes/battle/field_effects.gd	/^func pushMulti(elem:int, times:int) -> void:$/;"	f
+queueEvent	classes/battle/battle_state.gd	/^func queueEvent(event:int, target) -> void:$/;"	f
+quit	nodes/core.gd	/^func quit(): #Quits the game.$/;"	f
+racetypes	nodes/core.gd	/^const racetypes = {$/;"	c
+random	classes/battle/field_effects.gd	/^func random(t:int) -> void:$/;"	f
+recalculateStats	classes/char/char_base.gd	/^func recalculateStats():$/;"	f
+recalculateStats	classes/char/char_enemy.gd	/^func recalculateStats() -> void:$/;"	f
+recalculateStats	classes/char/char_player.gd	/^func recalculateStats() -> void:$/;"	f
+recalculateStats	classes/inventory/item.gd	/^	func recalculateStats() -> void:$/;"	f
+recalculateStats	classes/inventory/item.gd	/^	func recalculateStats(lv:int) -> void:$/;"	f
+recharge	classes/inventory/item.gd	/^	func recharge() -> void:$/;"	f
+rechargeFull	classes/inventory/item.gd	/^	func rechargeFull() -> void:$/;"	f
+refresh	nodes/UI/battle/message_display.gd	/^func refresh() -> void:$/;"	f
+refresh	nodes/UI/battle/target_panel.gd	/^func refresh() -> void:$/;"	f
+refreshEffect	classes/char/char_base.gd	/^func refreshEffect(E:Array, data:Array, holder:Array) -> void:$/;"	f
+refreshRow	classes/char/char_base.gd	/^func refreshRow() -> void: #Updates the value of current row based on position.$/;"	f
+reinforce	classes/char/char_base.gd	/^func reinforce(what:int) -> void:$/;"	f
+reinforceAll	classes/char/char_base.gd	/^func reinforceAll() -> void:$/;"	f
+reinforceComplex	classes/char/char_base.gd	/^func reinforceComplex(value:int) -> void:$/;"	f
+reinforceOnDefend	classes/char/char_base.gd	/^func reinforceOnDefend(value:int = 1) -> void:$/;"	f
+removeEffect	classes/char/char_base.gd	/^func removeEffect(E, holder) -> void:$/;"	f
+replace	classes/battle/field_effects.gd	/^func replace(elem1:int, elem2:int) -> void: #Replace all instances of elem1 for elem2.$/;"	f
+replaceChance	classes/battle/field_effects.gd	/^func replaceChance(elem1:int, elem2:int, chance:int) -> void: #Replace all elem1 for elem2 with a random chance every slot.$/;"	f
+replaceChance2	classes/battle/field_effects.gd	/^func replaceChance2(elem:int, chance:int) -> void: #Wait this is the same as fillchange what?$/;"	f
+reportEvent	classes/char/char_base.gd	/^func reportEvent(event_type:int, target) -> void:$/;"	f
+reset	nodes/core.gd	/^	func reset(S, elementVal:int = 100) -> void:$/;"	f
+resetAD	classes/char/char_base.gd	/^func resetAD() -> void: #Sets AD back to 100 if it's reducing incoming damage.$/;"	f
+resetActionQueue	classes/battle/battle_state.gd	/^func resetActionQueue() -> void: #Resets the action queue.$/;"	f
+resetBattleStatMultipliers	classes/char/char_base.gd	/^func resetBattleStatMultipliers() -> void:$/;"	f
+resetCounter	classes/char/char_base.gd	/^	func resetCounter() -> void:$/;"	f
+resetDamageCount	nodes/UI/char_display.gd	/^func resetDamageCount():$/;"	f
+resetElementData	nodes/core.gd	/^	func resetElementData(E, val:int = 100) -> void:$/;"	f
+resetEventListeners	classes/battle/battle_state.gd	/^func resetEventListeners() -> void: #Reset listener arrays.$/;"	f
+resetEventListeners	classes/char/char_base.gd	/^	func resetEventListeners() -> void:$/;"	f
+resetEventQueue	classes/battle/battle_state.gd	/^func resetEventQueue() -> void: #Reset event queue arrays.$/;"	f
+resetParry	classes/char/char_base.gd	/^	func resetParry() -> void:$/;"	f
+resize	nodes/UI/battle/enemy_display.gd	/^func resize(v):$/;"	f
+restoreAll	classes/group/group_guild.gd	/^func restoreAll() -> void: #Heals all party members, restores all weapon durability.$/;"	f
+returnConsumable	classes/inventory/item.gd	/^	func returnConsumable(I):$/;"	f
+revive	classes/char/char_base.gd	/^func revive(x:int) -> void:$/;"	f
+revive	classes/char/char_player.gd	/^func revive(x:int) -> void:$/;"	f
+revive	classes/group/group_enemy.gd	/^func revive(x:int) -> void:$/;"	f
+revive	nodes/UI/battle/enemyg_display.gd	/^func revive(C, slot:int) -> void:$/;"	f
+rosterSize	classes/group/group_guild.gd	/^func rosterSize() -> int: #Get roster size.$/;"	f
+rows	nodes/UI/battle/target_panel.gd	/^onready var rows:Array = [$/;"	o
+rules	classes/automata/automata.gd	/^	func rules(map, x:int, y:int) -> int: #Wireworld_RGB automaton rules.$/;"	f
+rules	classes/automata/automata.gd	/^	func rules(map, x:int, y:int) -> int:$/;"	f
+runExtraCode	classes/skill/skill.gd	/^func runExtraCode(S, level:int, user, code_key, target = null):$/;"	f
+runSkillCode	classes/skill/skill.gd	/^func runSkillCode(S, level:int, state:SkillState, code:Array, user, target) -> void:$/;"	f
+s_if	classes/skill/skill.gd	/^func s_if(cond:bool = false, flags:int = 0) -> bool: #Wrapper to be able to easily negate logic expressions with a logic not flag.$/;"	f
+save	classes/inventory/item.gd	/^	func save() -> Array:$/;"	f
+save	classes/inventory/item.gd	/^	func save() -> Dictionary: #Return dict for saving.$/;"	f
+save	classes/inventory/item.gd	/^	func save() -> Dictionary:$/;"	f
+save	nodes/core.gd	/^	func save()	-> Dictionary: #Get data structured for savefile.$/;"	f
+secondary	nodes/UI/bar_complex.gd	/^export(bool)  var secondary:bool = false$/;"	e
+segments	nodes/UI/bar_segmented_flex.gd	/^export(int) var segments : int = 10 setget set_segments$/;"	e
+select	nodes/UI/target_button.gd	/^signal select(x)$/;"	s
+select	nodes/UI/weapon.gd	/^signal select$/;"	s
+selectPostTargets	classes/skill/skill.gd	/^func selectPostTargets(S, level:int, user, group):$/;"	f
+selectTargetAuto	classes/skill/skill.gd	/^func selectTargetAuto(S, level:int, user, state):$/;"	f
+selection	nodes/UI/battle/target_panel.gd	/^signal selection(x)$/;"	s
+selection	nodes/UI/menu_item.gd	/^signal selection(x)$/;"	s
+selection	nodes/UI/menu_over.gd	/^signal selection(x)$/;"	s
+selection	nodes/UI/menu_skill.gd	/^signal selection(x)$/;"	s
+selection	nodes/UI/menu_weapon.gd	/^signal selection(x)$/;"	s
+set	nodes/UI/BinMap.cs	/^	public void set(int x, int y, byte val) {$/;"	m	class:BinMap
+setAD	classes/char/char_base.gd	/^func setAD(x:int, absolute:bool = false) -> void: #Set active defense.$/;"	f
+setActionText	nodes/UI/char_display.gd	/^func setActionText(act):$/;"	f
+setBonus	classes/inventory/item.gd	/^	func setBonus(val:int) -> void: #Clamp value for upgrade level$/;"	f
+setCharClass	classes/char/char_player.gd	/^func setCharClass(t) -> void:$/;"	f
+setCharRace	classes/char/char_player.gd	/^func setCharRace(t) -> void:$/;"	f
+setColors	nodes/core.gd	/^	func setColors(c1, c2):$/;"	f
+setCurrent	nodes/UI/weapon.gd	/^func setCurrent(val: bool) -> void:$/;"	f
+setElementDataFromArray	nodes/core.gd	/^	func setElementDataFromArray(E, a):$/;"	f
+setExtraLabels	nodes/UI/damage_numbers.gd	/^func setExtraLabels(crit:bool = false, overkill:bool = false, fullblock:bool = false) -> void:$/;"	f
+setFromArray	nodes/core.gd	/^	func setFromArray(S, aStat, aOFF, aRES, aRESscan):$/;"	f
+setFromSpread	nodes/core.gd	/^	func setFromSpread(S, spread, level):$/;"	f
+setGuard	classes/char/char_base.gd	/^func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:$/;"	f
+setHyper	classes/battle/field_effects.gd	/^func setHyper(side:int) -> void:$/;"	f
+setInitAD	classes/char/char_base.gd	/^func setInitAD(S:Dictionary, lv:int) -> void: #Sets Active Defense before battle resolution.$/;"	f
+setLevel	classes/char/char_player.gd	/^func setLevel() -> bool: #Calculate current level based on EXP.$/;"	f
+setLevel	classes/inventory/item.gd	/^	func setLevel(val:int) -> void:$/;"	f
+setLevelByEXP	classes/inventory/item.gd	/^	func setLevelByEXP() -> bool:$/;"	f
+setOver	classes/char/char_base.gd	/^func setOver(x:int, absolute:bool = false) -> void:$/;"	f
+setPartStats	classes/inventory/item.gd	/^	func setPartStats(_parts) -> void: #Add part bonuses into _stats$/;"	f
+setTemp	nodes/core.gd	/^	func setTemp(th):$/;"	f
+setTheme	nodes/core.gd	/^	func setTheme(th):$/;"	f
+setWeapon	classes/char/char_player.gd	/^func setWeapon(WP) -> void: #Sets current weapon.$/;"	f
+setXP	classes/char/char_player.gd	/^func setXP(val:int) -> void: #Silently set level from experience. Used at initialization.$/;"	f
+set_over	classes/char/char_base.gd	/^	func set_over(x:int) -> void:$/;"	f
+set_segments	nodes/UI/bar_segmented_flex.gd	/^func set_segments(x:int) -> void:$/;"	f
+set_value	nodes/UI/bar.gd	/^func set_value(v):$/;"	f
+set_value	nodes/UI/bar_complex.gd	/^func set_value(v:float) -> void:$/;"	f
+set_value	nodes/UI/bar_segmented_flex.gd	/^func set_value(x:int) -> void:$/;"	f
+set_value2	nodes/UI/bar_complex.gd	/^func set_value2(v:float) -> void:$/;"	f
+set_value2	nodes/UI/bar_segmented_flex.gd	/^func set_value2(x:float) -> void:$/;"	f
+setup	nodes/UI/battle/battle_controls.gd	/^func setup(C, place:int, node) -> void:$/;"	f
+setupSkillCode	classes/skill/skill.gd	/^func setupSkillCode(S, level:int, user, target, _code, control, state):#TODO: unify all these functions.$/;"	f
+shift	classes/battle/field_effects.gd	/^func shift(amount:int, right:bool = true ) -> void: #Shift all elements right$/;"	f
+shiftLeft	classes/battle/field_effects.gd	/^func shiftLeft() -> void: #Shift all elements to the left$/;"	f
+shiftRight	classes/battle/field_effects.gd	/^func shiftRight() -> void: #Shift all elements to the right$/;"	f
+showChar	nodes/UI/battle/enemy_info_display.gd	/^func showChar(c):$/;"	f
+showChar	nodes/UI/battle/player_display.gd	/^func showChar(c):$/;"	f
+showChar	tests/InfoDisplay.gd	/^func showChar(c):$/;"	f
+showEnemy	nodes/UI/battle/info_display.gd	/^func showEnemy(C):$/;"	f
+showInfo	tests/ctrltest.gd	/^func showInfo(what, type, level = 0): #Show the info panel.$/;"	f
+showPlayer	nodes/UI/battle/info_display.gd	/^func showPlayer(C):$/;"	f
+showSkill	nodes/UI/battle/info_display.gd	/^func showSkill(S, level):$/;"	f
+skill	nodes/UI/battle/battle_controls.gd	/^onready var skill = core.skill$/;"	o
+skill_finished	tests/SkillController.gd	/^signal skill_finished$/;"	s
+skill_special_finished	tests/SkillController.gd	/^signal skill_special_finished$/;"	s
+soft_reset	classes/automata/automata.gd	/^	func soft_reset(map, x:int, y:int) -> int: #Turn all to NULL.$/;"	f
+sort	classes/battle/battle_state.gd	/^func sort() -> void: #Sorts the action queue by action speed.$/;"	f
+sortDGems	classes/group/group_guild.gd	/^func sortDGems() -> void: #Sort DGem inventory.$/;"	f
+sortPreview	classes/battle/battle_state.gd	/^func sortPreview(playerActs:Array, overActions:Array = []) -> Array:$/;"	f
+sprite	nodes/UI/battle/enemy_sprite_simple.gd	/^onready var sprite:Node         = $SpriteHook\/Sprite$/;"	o
+start	tests/SkillController.gd	/^func start():$/;"	f
+startAnim	tests/SkillController.gd	/^func startAnim(S, level:int, x, display:Position2D) -> void:$/;"	f
+status	classes/battle/battle_state.gd	/^func status() -> bool: #Checks if battle should continue or not.$/;"	f
+stop	nodes/UI/battle/enemy_display.gd	/^func stop() -> void:$/;"	f
+stopMusic	nodes/core.gd	/^func stopMusic():$/;"	f
+string	nodes/core.gd	/^	func string(tid) -> String: #Prints a TID as a string in the format "section\/item"$/;"	f
+subControlNode	tests/SkillController.gd	/^var subControlNode = preload("res:\/\/nodes\/SkillControlSub.tscn")$/;"	p
+sum	nodes/core.gd	/^	func sum(S, stats):$/;"	f
+sumElementData	nodes/core.gd	/^	func sumElementData(E, data):$/;"	f
+sumElementDataInto	nodes/core.gd	/^	func sumElementDataInto(E, data1, data2):$/;"	f
+sumInto	nodes/core.gd	/^	func sumInto(S, stats1, stats2):$/;"	f
+summon	classes/group/group_enemy.gd	/^func summon(user, slot:int, SU) -> void:$/;"	f
+swapMembers	classes/group/group_base.gd	/^func swapMembers(slot1, slot2) -> void: #Swap two member slots.$/;"	f
+take	classes/battle/field_effects.gd	/^func take(amount:int, elem:int, elem2:int = 0) -> int:$/;"	f
+takeConsumable	classes/inventory/item.gd	/^	func takeConsumable(I):$/;"	f
+targetSelectSignal	nodes/UI/battle/target_panel.gd	/^func targetSelectSignal(x):$/;"	f
+thinkBattleAction	classes/char/char_enemy.gd	/^func thinkBattleAction(F, P, state):$/;"	f
+thinkPattern	classes/char/char_enemy.gd	/^func thinkPattern(F, P, state, aiPattern):$/;"	f
+thinkRandom	classes/char/char_enemy.gd	/^func thinkRandom(F, P, state) -> Array:$/;"	f
+timeout	tests/SkillController.gd	/^signal timeout$/;"	s
+translateOpCode	classes/skill/skill.gd	/^func translateOpCode(o:String) -> int:$/;"	f
+tryDamageEffect	classes/char/char_base.gd	/^func tryDamageEffect(user, S, val:int) -> void: #Attempt to inflict a damage over time effect.$/;"	f
+tryInflict	classes/char/char_base.gd	/^func tryInflict(user, value:int, crit:int, hit:bool = true) -> void:$/;"	f
+tryInflict2	classes/char/char_base.gd	/^func tryInflict2(user, cond:int, powr:int, crit:int) -> int: #Returns 0 if immune. 1 if gauge is decreased, 2 if success.$/;"	f
+trySummon	classes/group/group_enemy.gd	/^func trySummon(user, x: int, override = null, level = -1) -> Array:$/;"	f
+turn_reset	classes/char/char_base.gd	/^	func turn_reset() -> void: #Standard reset when a new battle turn begins.$/;"	f
+tween	nodes/UI/bar_complex.gd	/^onready var tween:Tween = $Tween$/;"	o
+tween	nodes/UI/battle/enemy_display.gd	/^onready var tween:Tween = $Tween$/;"	o
+unlock	classes/battle/field_effects.gd	/^func unlock() -> void:$/;"	f
+update	classes/battle/field_effects.gd	/^func update() -> void:$/;"	f
+update	nodes/UI/battle/enemy_display.gd	/^func update():$/;"	f
+update	nodes/UI/battle/enemyg_display.gd	/^func update():$/;"	f
+update	nodes/UI/char_display.gd	/^func update() -> void:$/;"	f
+update	nodes/UI/guild_display.gd	/^func update() -> void:$/;"	f
+update	tests/Label.gd	/^func update():$/;"	f
+updateAD	nodes/UI/battle/enemy_display.gd	/^func updateAD(x:int) -> void:$/;"	f
+updateAD	nodes/UI/char_display.gd	/^func updateAD(x:int) -> void: #Update Active Defense display.$/;"	f
+updateActions	classes/battle/battle_state.gd	/^func updateActions(A) -> void:$/;"	f
+updateBattleStats	classes/char/char_base.gd	/^func updateBattleStats() -> void:$/;"	f
+updateChain	classes/char/char_base.gd	/^func updateChain(mode:int) -> void:$/;"	f
+updateCharges	classes/inventory/item.gd	/^	func updateCharges() -> void:$/;"	f
+updateCounters	classes/inventory/item.gd	/^	func updateCounters() -> void:$/;"	f
+updateDEbar	nodes/UI/battle/enemy_display.gd	/^func updateDEbar(x:int) -> void: #Update Damage Effect display.$/;"	f
+updateDEbar	nodes/UI/char_display.gd	/^func updateDEbar(x:int) -> void: #Update Damage Effect display.$/;"	f
+updateDisplay	nodes/UI/battle/FieldEffect.gd	/^func updateDisplay(FE:Object) -> void:$/;"	f
+updateEffects	classes/char/char_base.gd	/^func updateEffects(holder, defer) -> Array:$/;"	f
+updateFollows	classes/char/char_base.gd	/^func updateFollows() -> void: #Updates followup actions..$/;"	f
+updateFormation	classes/group/group_enemy.gd	/^func updateFormation():$/;"	f
+updateList	nodes/UI/menu_over.gd	/^func updateList() -> void:$/;"	f
+updateValue	nodes/UI/group_position.tres.gd	/^func updateValue(x:int) -> void:$/;"	f
+useBattleSkill	classes/char/char_base.gd	/^func useBattleSkill(act:int, S, lv:int, targets, WP = null, IT = null, skipAnim:bool = false) -> void:$/;"	f
+validateArray	nodes/core.gd	/^	func validateArray(tid) -> bool: #Validate a TID array.$/;"	f
+validateInflict	classes/char/char_base.gd	/^func validateInflict(val:int) -> bool:$/;"	f
+validateString	nodes/core.gd	/^	func validateString(tid:String) -> bool: #Validate a TID string.$/;"	f
+value	nodes/UI/bar.gd	/^export var value = float(1.0) setget set_value$/;"	e
+value	nodes/UI/bar_complex.gd	/^export(float) var value:float    = 1.0 setget set_value$/;"	e
+value	nodes/UI/bar_segmented_flex.gd	/^export(int) var value :int = 5 setget set_value$/;"	e
+value	nodes/UI/group_position.tres.gd	/^export(int)   var value:int     = 0 setget updateValue$/;"	e
+value2	nodes/UI/bar_complex.gd	/^export(float) var value2:float   = 0.0 setget set_value2$/;"	e
+value2	nodes/UI/bar_segmented_flex.gd	/^export var value2 : float = 0.5 setget set_value2$/;"	e
+wait	tests/SkillController.gd	/^func wait(x):$/;"	f
+wait	tests/ctrltest.gd	/^func wait(time, absolute = false): #Wait some time (affected by battle speed)$/;"	f
+waitFixed	tests/ctrltest.gd	/^func waitFixed(time): #Wait some time (not affected by battle speed)$/;"	f
+weapontypes	nodes/core.gd	/^const weapontypes = {$/;"	c
+width	nodes/UI/BinMap.cs	/^	private int width  = 1;$/;"	f	class:BinMap	file:

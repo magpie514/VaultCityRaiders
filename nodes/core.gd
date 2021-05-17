@@ -731,7 +731,7 @@ func _ready() -> void:
 	scene    = root.get_child(root.get_child_count() - 1)
 
 
-func initBattle(form, elv:int = 0, music = "res://resources/music/EOIV_Storm.ogg"):
+func initBattle(form, elv:int = 0, music = "res://resources/music/情動カタルシス.mp3"):
 	var formation = load("res://classes/group/group_enemy.gd").new()
 	formation.init(form, elv)
 	battle.enemy = formation

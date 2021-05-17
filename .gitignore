@@ -1,7 +1,7 @@
 .import
 .vscode
-resources/music
 ._wr_
 .tags
 .tags1
 .mono
+justfile

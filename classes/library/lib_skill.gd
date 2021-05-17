@@ -106,7 +106,7 @@ var example = {
 			description = "Powerful untyped attack that cannot miss. Resets elemental field.",
 			lore = "Imposes a new Law into the Akashic Records, forming a large mass of energy in an impossibly small space. The resulting violent radiation can leave whole planets barren if not directed properly.",
 			dangerous = true,
-			category = skill.CAT_OVER,
+			category = skill.CAT_ATTACK,
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element = core.stats.ELEMENTS.DMG_UNTYPED,
@@ -121,10 +121,31 @@ var example = {
 				["attack" ,325,125,132,132,140, 140,147,147,147,160],
 			],
 		},
+		'terranig': {
+			#TODO: [ ] This attack name is perhaps the longest. Make sure to redesign the interface so it can fit when redoing that.
+			name = "Creation of Heaven and Earth", #天地創造
+			description = "Overwhelming attack. Removes positive status effects, might seal the targets.",
+			lore = "The true power of an Originator. By gathering the Primordial Chaos and bending it to their will, they can generate a Big Bang, able to generate a new reality.",
+			dangerous = true,
+			category = skill.CAT_OVER,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_UNTYPED,
+			energy = true,
+			damageStat = core.stats.STAT.ETK,
+			ranged = true,
+			spdMod = [050,100,100,100,100, 100,100,100,100,100],
+			AD =     [001,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["nomiss"  , 1, 0],
+				["ef.reset", 1, 0],
+				["attack" ,325,125,132,132,140, 140,147,147,147,160],
+			],
+		},
 # Jay's skills ####################################################################################
 		"epnfield": {
 			name           = "EPN Field",
-			description    = "Extends an Energy Particle Negation field, charging the field with electricity and may prevent enemies from modifying the field.",
+			description    = "Extends an Energy Particle Negation field, charging the field with electricity. May prevent enemies from modifying the field.",
 			category       = skill.CAT_SUPPORT,
 			target         = skill.TARGET_SELF,
 			targetGroup    = skill.TARGET_GROUP_ALLY,
@@ -141,7 +162,7 @@ var example = {
 			],
 		},
 		"blueshft": {
-			name = "Blueshift",
+			name = "Blueshift", #ブルーシフト
 			description = "Force-feeds a powerful burst of Over into a generator, causing it to exceed its limitations. This reaction completely negates conventional physics.",
 			category = skill.CAT_OVER,
 			target = skill.TARGET_SELF,
@@ -162,7 +183,7 @@ var example = {
 			effectPriority = 3,
 		},
 		"overblue": {
-			name = "Over Blue",
+			name = "Over Blue", #オヴァーブルー
 			description = "Completely overloads a generator with Over. The ensuing reaction shatters all reason, and all resulting energy will bend to the user's will.",
 			category = skill.CAT_OVER,
 			target = skill.TARGET_SELF,
@@ -182,9 +203,9 @@ var example = {
 			],
 		},
 		"thunswrd": {
-			name = "Thunder Sword",
+			name = "Thunder Sword", #サンダー・ソード
 			description     = "Powerful electric energy damage.\nChain Finish: Adds Chainx10 bonus damage.",
-			lore = "Release a powerful energy beam using all the surrounding energy for heightened damage.",
+			lore            = "By draining energy from the surrounding area, this attack unleashes a powerful energy beam.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
 			chargeAnim      = true,
 			costOV          = 100,
@@ -210,8 +231,9 @@ var example = {
 			],
 		},
 		"brknthun": {
-			name = "Broken Thunder",
-			description = "So...this the true form of Over energy...",
+			name = "Broken Thunder", #ブロークン・サンダー
+			description = "Improved version of Thunder Sword. Extremely powerful attack fueled entirely by Over energy.",
+			lore = "So...this the Over's true form...",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
 			chargeAnim = true,
 			costOV = 100,
@@ -272,7 +294,7 @@ var example = {
 			linkSkill = [ "story/jcraw" ]
 		},
 		"jcraw": {
-			name = "CRAW",
+			name = "CRAW", #ＣＲＡＷ
 			description = "Every attack is followed by an electric energy attack",
 			lore = "Capacitive Remote Assault Weapons. Small attack satellites Jay can control remotely to enhance his firepower.",
 			category = skill.CAT_SUPPORT,
@@ -533,7 +555,7 @@ var example = {
 			],
 		},
 		"gatebrkr": {
-			name = "Gate Breaker",
+			name = "Gate Breaker", #ゲート・ブレイカー
 			description = "Discharges the G-Crystal particles used for dimensional scanning as a burst of energy.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup3.tscn" },
 			category = skill.CAT_OVER,
@@ -584,8 +606,9 @@ var example = {
 			],
 		},
 		"codexalt": {
-			name = "Code 「EXALT」",
-			description = "Releases limiters on the Hollow Engine, allowing temporary access to its full output. The engine will overheat if it's not disabled before long.",
+			name = "Code 「EXALT」", #コード「ＥＸＡＬＴ」
+			description = "Increases AGI, ATK, ETK, Evasion, resistance to KIN and EN attacks, and Ultimate damage. Will overheat if used for too long.",
+			lore = "Releases limiters on the Hollow Engine, allowing temporary access to its full output. Unfortunately, the strain will overheat the engine.",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -621,7 +644,7 @@ var example = {
 			],
 		},
 		"codegnst": {
-			name = "Code 「GUNSTAR」",
+			name = "Code 「GUNSTAR」", #コード「ＧＵＮＳＴＡＲ」
 			description = "Extremely powerful untyped damage. No defense possible.",
 			lore = "Ultimate brotherly combination attack. Only possible when two souls' Over is fully synchronized, and tied by a singular purpose.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
@@ -889,6 +912,7 @@ var example = {
 		"solapara": {
 			name        = "Solarica Parasite",
 			description = "Strong damage over time effect.",
+			lore        = "Not much is known about the horrifying Solarica Parasite, as any sample, alive or dead, can contaminate whole planets and become part of them.",
 			dangerous   = true,
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_SINGLE,
@@ -906,6 +930,7 @@ var example = {
 		"swrdneme": {
 			name        = "Sword of Nemesis",
 			description = "Hits 3 times with strong kinetic cut damage, with the third hit ignoring armor and barriers. Then hits again with energy ultimate damage.",
+			lore        = "The Sword of Nemesis, one of Solarica's holy treasures, was once a blade to protect the weak, opposing war itself. Now, wielded by the King, it's just a weapon of destruction, unable to resist its grim fate.",
 			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_SINGLE,
@@ -928,6 +953,7 @@ var example = {
 		"goddevor": {
 			name        = "God Devourer",
 			description = "Causes high damage to barriers, then deals massive Cut and Ultimate damage ignoring barriers.",
+			lore        = "King Solarica's ability to consume the power of his victims was a great asset to his plans.",
 			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_SINGLE,
@@ -948,6 +974,7 @@ var example = {
 		"terrgaze": {
 			name        = "Terror Gaze",
 			description = "Strong ultimate damage that cannot miss. Can incapacitate.",
+			lore        = "King Solarica's status as the King of Nightmares isn't an empty title.",
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_SINGLE,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -966,6 +993,7 @@ var example = {
 		"genoray": {
 			name        = "Genocider Ray",
 			description = "Party-wide energy Ultimate damage. Tries to inflict panic and incapacitate.",
+			lore        = "The Solarica Parasite's ability to alternate between a solid form and a wave form allows them extreme precision to kill or infect. The genocide of the Kingdom of Solarica was quick and efficient, as no shelter was able to stop the Parasite's relentless attack.",
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -985,6 +1013,7 @@ var example = {
 		"terrseed": {
 			name        = "Terror Seed",
 			description = "Attempts to inflict panic and stun every turn. Decreases speed.",
+			lore        = "Having achieved apotheosis as the God of Terror, King Solarica can cause this emotion at will.",
 			dangerous   = true,
 			category    = skill.CAT_ATTACK,
 			target      = skill.TARGET_ALL,
@@ -999,7 +1028,7 @@ var example = {
 		"gdomini9": {
 			name = "G-Dominion - Type 9",
 			description = "All of creation ends.",
-			lore = "DATABASE ERROR",
+			lore = "ERROR",
 			dangerous = true,
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
@@ -1368,7 +1397,7 @@ var example = {
 			],
 		},
 		"valkaccl": {
-			name = "Valkyrie Accel",
+			name = "Hamaya", #破魔矢
 			description = "Manipulates the Akashic Records to hold the enemy still, delivering a devastating, accelerated shot. Might destroy a frozen target.",
 			ranged = true,
 			category = skill.CAT_OVER,
@@ -1382,6 +1411,7 @@ var example = {
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
 				#TODO: Check for cryo condition. If true, attempt instant defeat.
+				#TODO: Add an "evil" flag to certain enemies. Check for it and deal extra damage.
 				["attack"       ,999,125,132,132,140,   140,147,147,147,160],
 			],
 		},

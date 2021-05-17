@@ -12,6 +12,7 @@ var example = {
 			weapons = [ core.WPCLASS_LONGSWORD ],
 			skills = [
 				"story/origilaw",
+				"story/terranig",
 			],
 		},
 	},

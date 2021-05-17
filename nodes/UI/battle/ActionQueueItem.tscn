@@ -51,7 +51,6 @@ margin_top = 2.0
 rect_scale = Vector2( 1, 0.96 )
 bgcolor = Color( 0, 0, 0, 0.333333 )
 hilight = Color( 0.0823529, 0.447059, 0.960784, 1 )
-value = 0
 
 [node name="Warning" parent="." instance=ExtResource( 3 )]
 position = Vector2( 220, 11 )

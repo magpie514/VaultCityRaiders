@@ -243,6 +243,7 @@ text = "SLOW"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="pressed" from="Panel/Time/Button" to="." method="_on_Button_pressed"]
 [connection signal="finished" from="Panel/BattleControls" to="." method="_on_BattleControls_finished"]
 [connection signal="pressed" from="QuitButton" to="." method="_on_QuitButton_pressed"]

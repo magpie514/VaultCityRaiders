@@ -155,6 +155,16 @@ var example = {
 			skill = [ "sto_wp/solbull", "sto_wp/solbeam"],
 			over = "sto_wp/heliosph",
 		},
+		"nemesis": {
+			name = "Parasite Blade 「Nemesis」", wclass = core.WPCLASS_LONGSWORD,
+			description = "The formidable weapon of the God of Terror. This blade can separate matter at the sub-atomic level, causing split surfaces to look crystaline. It's less effective against those protected from the Solarica Parasite.",
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [009, 009, 009, 009, 005, 005, 005, 005, 004, 003],
+			durability = [12, 14, 14, 16, 18, 18, 20, 22, 22, 24],
+			skill = [ "sto_wp/solbull", "sto_wp/solbeam"],
+			over = "sto_wp/heliosph",
+		},
 	}
 }
 

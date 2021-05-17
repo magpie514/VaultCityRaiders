@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/情動カタルシス.mp3-32984b23ba6995df9fb08ea18d547842.mp3str"
+
+[deps]
+
+source_file="res://resources/music/情動カタルシス.mp3"
+dest_files=[ "res://.import/情動カタルシス.mp3-32984b23ba6995df9fb08ea18d547842.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

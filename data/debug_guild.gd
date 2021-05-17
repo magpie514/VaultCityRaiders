@@ -44,7 +44,7 @@ var data = {
 				[080, A.LINK_RIVAL, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-		{ name = "Magpie",
+		{ name = "Sarah",
 			race = "debug/choujin",	aclass = "debug/gdriver",
 			XP = 500,
 			portrait = null,
@@ -209,7 +209,7 @@ var data = {
 				null,
 				null,
 			],
-			skills = [ [0,1], ],
+			skills = [ [0,1], [1,1] ],
 			links = [
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],
 				[000, A.LINK_NONE, A.LINK_NONE, A.LINK_NONE],

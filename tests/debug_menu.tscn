@@ -640,6 +640,7 @@ margin_top = 20.0
 margin_right = 460.0
 margin_bottom = 40.0
 text = "Cancel"
+
 [connection signal="pressed" from="Panel/Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="Panel/Button5" to="." method="_on_Button5_pressed"]
 [connection signal="pressed" from="Panel/Button6" to="." method="_on_Button6_pressed"]

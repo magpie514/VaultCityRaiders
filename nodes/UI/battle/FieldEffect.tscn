@@ -438,6 +438,7 @@ visible = false
 position = Vector2( 155, 25.5 )
 scale = Vector2( 0.41774, 0.165584 )
 texture = ExtResource( 6 )
+
 [connection signal="pressed" from="FEDebug" to="." method="_on_FEDebug_pressed"]
 [connection signal="pressed" from="FEPanel/TEST00" to="." method="_on_TEST00_pressed"]
 [connection signal="pressed" from="FEPanel/TEST01" to="." method="_on_TEST01_pressed"]

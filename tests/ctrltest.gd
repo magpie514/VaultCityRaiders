@@ -51,7 +51,7 @@ func battle():
 	var C = null
 	var playerChars = null
 	$Panel/BattleControls.hide()
-	#core.playMusic("res://resources/music/EOIV_Storm.ogg")
+	core.playMusic(core.battle.music)
 	while state.status():
 		# Turn initialization #########################################################################
 		$Panel/CurrentAction.hide()
