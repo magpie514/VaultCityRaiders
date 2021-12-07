@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Trick_style.mp3-437bd46c8e00db23fbe5bedc46c9ba60.mp3str"
+
+[deps]
+
+source_file="res://resources/music/Trick_style.mp3"
+dest_files=[ "res://.import/Trick_style.mp3-437bd46c8e00db23fbe5bedc46c9ba60.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

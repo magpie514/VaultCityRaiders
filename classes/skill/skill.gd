@@ -1321,13 +1321,13 @@ func processDamage(S, level:int, user, target, state, value:int, flags:int) -> v
 		target.dodgeAttack(user)
 		state.lastHit = false #Last hit didn't connect, so ensure if_connect fails after this.
 
-func processDamageRaw(S, user, target, value, percent) -> int:                 #Cause raw damage to target.
+func processDamageRaw(S, user, target, value, percent) -> int: #Cause raw damage to target.
 	var dmg:int = 0
 	if percent:
 		dmg = int(float(target.maxHealth()) * (float(value) * 0.01))
 	else:
 		dmg = value
-	if dmg > 0:                                                                   #TODO: Add damage messages, add a flag to bypass resistances.
+	if dmg > 0: #TODO: Add damage messages, add a flag to bypass resistances.
 		target.damage(dmg)
 	return dmg
 

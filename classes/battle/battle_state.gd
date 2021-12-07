@@ -220,7 +220,7 @@ func prepareAction(side:int, slot:int, act:Action) -> void:
 			act.target = [ user ]
 
 	if act.override != null: #Something, usually a dragon gem, is overriding the regular skill pointer.
-		print("[BATTLE STATE][addAction] Using override %s" % act.override)
+		print("[BATTLE STATE][prepareAction] Using skill override %s" % act.override)
 
 	#Action speed.
 	if act.IT != null and act.act == ACT_ITEM: #Using an item, ignore skill speed.
@@ -303,6 +303,7 @@ func checkActionExecution(user, target) -> bool: #Check if an action can be perf
 
 func initAction(act) -> void:
 	yield(core.battle.control.wait(0.001), "timeout")
+
 	var skip_animations:bool = (act.act == ACT_DEFEND)
 	if checkActionExecution(act.user, act.target):
 		if act.target.empty():

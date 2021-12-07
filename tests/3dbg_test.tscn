@@ -137,7 +137,9 @@ texture = ExtResource( 3 )
 code = "shader_type spatial;
 render_mode depth_draw_alpha_prepass, specular_disabled;
 
-uniform sampler2D tex_frg_2 : hint_albedo;uniform sampler2D tex_frg_3;
+uniform sampler2D tex_frg_2 : hint_albedo;
+uniform sampler2D tex_frg_3;
+
 
 
 void vertex() {
@@ -147,18 +149,14 @@ void vertex() {
 
 void fragment() {
 // Texture:2
-	vec3 n_out2p0;
-	float n_out2p1;
-	vec4 tex_frg_2_read = texture( tex_frg_2 , UV.xy );
-	n_out2p0 = tex_frg_2_read.rgb;
-	n_out2p1 = tex_frg_2_read.a;
+	vec4 tex_frg_2_read = texture(tex_frg_2, UV.xy);
+	vec3 n_out2p0 = tex_frg_2_read.rgb;
+	float n_out2p1 = tex_frg_2_read.a;
 
 // Texture:3
-	vec3 n_out3p0;
-	float n_out3p1;
-	vec4 tex_frg_3_read = texture( tex_frg_3 , UV.xy );
-	n_out3p0 = tex_frg_3_read.rgb;
-	n_out3p1 = tex_frg_3_read.a;
+	vec4 tex_frg_3_read = texture(tex_frg_3, UV.xy);
+	vec3 n_out3p0 = tex_frg_3_read.rgb;
+	float n_out3p1 = tex_frg_3_read.a;
 
 // Output:0
 	ALBEDO = n_out2p0;

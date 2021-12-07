@@ -158,7 +158,7 @@ func battle():
 					print("Skipping action, battle is over.")
 		state.endTurn()
 		#yield($SkillController, "skill_special_finished")
-		yield(wait(0.2, true), "timeout")
+		yield(wait(0.5, true), "timeout")
 		print("Checking if state changed...")
 		if checkResolution(): return
 		print("Actual end of turn")

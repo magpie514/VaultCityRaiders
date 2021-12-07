@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/カナリアスキップ.mp3-42bfec365ff97969c895cb4ba35ff82a.mp3str"
+
+[deps]
+
+source_file="res://resources/music/カナリアスキップ.mp3"
+dest_files=[ "res://.import/カナリアスキップ.mp3-42bfec365ff97969c895cb4ba35ff82a.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

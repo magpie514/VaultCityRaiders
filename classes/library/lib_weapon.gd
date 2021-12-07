@@ -36,7 +36,17 @@ var example = {
 	"story" : {
 		"orbicann": {
 			name = "ORBITAL Cannon", wclass = core.WPCLASS_ARTILLERY,
-			description = "Jay's personal energy weapon. Despite having a shield, it's very lightweight. It also has a foldable barrel extension for focused shots.'",
+			description = "Jay's personal energy weapon. Despite having a shield, it's very lightweight. It has a foldable barrel extension for focused shots.'",
+			ATK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			ETK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
+			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
+			skill = [ "sto_wp/sever", "sto_wp/orbishld" ],
+			over = "story/thunswrd",
+		},
+		"rsgnblue": {
+			name = "Rising Blue Lightning", wclass = core.WPCLASS_ARTILLERY,
+			description = "",
 			ATK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			ETK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
@@ -54,9 +64,19 @@ var example = {
 			skill = [ "sto_wp/dualshrs", "sto_wp/thoukniv" ],
 			over = ["sto_wp", "lighflam"]
 		},
+		"moonlite": {
+			name = "LS-EPSILON-MOONLIGHT", wclass = core.WPCLASS_LONGSWORD,
+			description = "Legendary energy blade belonging to a distant dimension.",
+			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
+			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
+			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
+			durability = [32, 34, 37, 42, 50, 53, 56, 59, 62, 70],
+			skill = [ "sto_wp/dualshrs", "sto_wp/thoukniv" ],
+			over = ["sto_wp", "lighflam"]
+		},
 		"soldrifl": {
 			name = "MTM-GA23 Solid Rifle", wclass = core.WPCLASS_FIREARM,
-			description = "Magpie's custom sniper rail accelerator, created by herself. It fires solid metal rails containing a G-crystal spike at high velocities.'",
+			description = "Magpie's custom sniper rail accelerator, created by himself. It fires solid metal rails containing a G-crystal spike at high velocities.'",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],
 			weight = [008, 008, 008, 008, 007, 007, 007, 007, 007, 006],
@@ -66,17 +86,17 @@ var example = {
 		},
 		"bstglaiv": {
 			name        = "MTM-GA12 Boost Glaive", wclass = core.WPCLASS_POLEARM,
-			description = "Magpie's custom glaive, created by herself. It's a glaive equipped with rocket boosters, G-crystals and shotgun shells, and is reinforced by graviton reflow.",
+			description = "Magpie's custom glaive, created by himself. It's a glaive equipped with rocket boosters, G-crystals and shotgun shells, and is reinforced by graviton reflow.",
 			ATK         = [010,012,014,016,020, 022,024,026,028,032],
 			ETK         = [008,011,012,015,016, 020,022,023,025,030],
 			weight      = [001,001,001,001,001, 001,001,001,001,000],
 			durability  = [032,034,037,042,050, 053,056,059,062,070],
 			skill       = [ "debug/shckstab", "story/gemshrap" ],
-			over        = "debug/debug"
+			over        = "sto_wp/dimslash"
 		},
 		"stardust": {
 			name        = "MTM-GA01 Stardust", wclass = core.WPCLASS_HANDGUN,
-			description = "Magpie's custom carbine, a heavily modified version of her SWAT-issued sidearm. What it lacks on power, it compensates with high speed.",
+			description = "Magpie's custom carbine, a heavily modified version of his SWAT-issued sidearm. What it lacks on power, it compensates with high speed.",
 			ATK         = [010,012,014,016,020, 022,024,026,028,030],
 			ETK         = [005,007,009,009,012, 015,017,019,019,020],
 			weight      = [001,001,001,001,001, 001,001,001,001,000],
@@ -86,6 +106,16 @@ var example = {
 			codeWPA1    = [
 				["attack", 010,014,020,026,035, 041,049,055,062,070],
 			]
+		},
+		"gwing": {
+			name        = "G-WING", wclass = core.WPCLASS_ONBOARD,
+			description = "Magpie's builtin cannons. A pair of large graviton accelerators that double as his wings.",
+			ATK         = [010,012,014,016,020, 022,024,026,028,030],
+			ETK         = [025,027,029,029,032, 035,037,039,039,050],
+			weight      = [001,001,001,001,001, 001,001,001,001,000],
+			durability  = [032,034,037,042,050, 053,056,059,062,070],
+			skill       = [ "sto_wp/brstfire", "sto_wp/shckhmmr" ],
+			over        = "debug/debug",
 		},
 		"hellfngr": {
 			name = "Hellfanger", wclass = core.WPCLASS_LONGSWORD,
@@ -102,7 +132,7 @@ var example = {
 			]
 		},
 		"deviclaw": {
-			name = "Raven's Claw", wclass = core.WPCLASS_ARTILLERY,
+			name = "Devil's Claw", wclass = core.WPCLASS_ARTILLERY,
 			description = "Custom made for Anna's strength, designed to be used against enemies of large size. A monstrous antitank cannon with a reinforced barrel equipped with foldable blades, allowing it to slash like a scythe at close quarters.'",
 			ATK = [010, 012, 014, 016, 020, 022, 024, 026, 028, 032],
 			ETK = [005, 007, 009, 009, 012, 015, 017, 019, 019, 022],

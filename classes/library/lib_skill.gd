@@ -1,11 +1,12 @@
 extends "res://classes/library/lib_base.gd"
 ###############################################################################
 #[>] TODO: Modifier to healraw to use bonus healing power
-#[ ] TODO: Modifier to allow attacks to bypass guard/barrier
+#[v] TODO: Modifier to allow attacks to bypass guard/barrier
 #[v] TODO: Chase attack setup.
 #[>] TODO: Elodie's Pleine-de-vie skills.
 #[ ] TODO: Replace skill constants with strings, replace them on load.
 #[ ] TODO: Implement lib_base logic to allow passing "translation dictionaries" so strings can be converted to ints easily.
+#[ ] TODO: Allow library entries to inherit from other entries.
 ###############################################################################
 var skill = core.skill #Here as a shortcut so I just have to type "skill" for constants.
 const LIBEXT_SKILL_FILTEREX_ARG = "loaderSkillFilterEXArg"
@@ -16,7 +17,7 @@ const LIBEXT_ANIM               = "loaderAnim"
 const LIBEXT_FX                 = "loaderFX"
 
 var example = {
-# Core skills #####################################################################################
+### Core skills #####################################################################################
 	#TODO: Aura reveal, esper class. Activate at the start of battle and buff user.
 	#TODO: Geo Drain, ??? (feng shui?). Drain 2-3? from elemental field, of the dominant type. Uses its element for healing.
 	"core": {
@@ -98,7 +99,7 @@ var example = {
 			],
 		},
 	},
-# Story mode skills ###############################################################################
+## Story mode skills ###############################################################################
 	"story": {
 # Cromwell's skills ###############################################################################
 		'origilaw': {
@@ -303,7 +304,7 @@ var example = {
 			effect = skill.EFFECT_SPECIAL,
 			effectType = skill.EFFTYPE_BUFF,
 			effectIfActive = skill.EFFCOLL_ADD,
-			effectDuration = 3,
+			effectDuration = 4,
 			effectPriority = 3,
 			accMod =	100,
 			spdMod = 005,
@@ -364,7 +365,7 @@ var example = {
 			damageStat = core.stats.STAT.ETK,
 			chain = skill.CHAIN_FOLLOW,
 			ranged = true,
-			accMod = [110,110,110,099,099,   099,099,099,099,099],
+			accMod = [200,110,110,099,099,   099,099,099,099,099],
 			spdMod = [085,100,100,100,100,   100,100,100,100,100],
 			AD =     [095,100,100,100,100,   100,100,100,100,100],
 			codeMN = [
@@ -375,6 +376,7 @@ var example = {
 		"gravrefl": {
 			name           = "Graviton Reflow",
 			description    = "Increase a row's EDF and energy resistance.",
+			lore           = "Forces a stream of gravitons to be deployed in an area. Using the strange properties of the G-Crystal, this can shield those affected.",
 			category       = skill.CAT_SUPPORT,
 			target         = skill.TARGET_ROW,
 			targetGroup    = skill.TARGET_GROUP_ALLY,
@@ -402,6 +404,7 @@ var example = {
 		"gemshrap": {
 			name = "Shard Driver",
 			description = "While active, every cut attack will follow with an additional pierce.",
+			lore        = "Forces a graviton overflow on four G-Crystals, shattering them and launching shards with the power of a shotgun.",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -556,7 +559,8 @@ var example = {
 		},
 		"gatebrkr": {
 			name = "Gate Breaker", #ゲート・ブレイカー
-			description = "Discharges the G-Crystal particles used for dimensional scanning as a burst of energy.",
+			description = "A powerful Ultimate damage attack. Certain conditions will raise its power.",
+			lore        = "Magpie's most reliable attack skill. By overcharging her Dimension Eye, a minuscule rupture in space can be created. The resulting energy is released in an instant, damaging a much larger area.",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup3.tscn" },
 			category = skill.CAT_OVER,
 			costOV = skill.OVER_COST_3,
@@ -587,7 +591,7 @@ var example = {
 		"gdominia": {
 			name = "G-Dominion - Type A",
 			description = "The enemy is unable to act for the next turn. Your next turn has everything in your favor.",
-			lore = "The true power of the G-Crystal and the A-Series trump card. Creates an isolated dimension that the user can manipulate at will, using the G-Crystal as a controller. A technique of ultimate devastation.",
+			lore = "G-Crystal's true power and the A-Series trump card. Creates an isolated dimension that the user can manipulate at will, using the G-Crystal as a controller. Originally intended to populate hostile dimensions, it can be used as a technique of ultimate devastation.",
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
@@ -643,10 +647,33 @@ var example = {
 				["debug", "selfrepr"],
 			],
 		},
+		"codeblgn": {
+			name = "Code 「BLADE GUNNER」", #コード「ＢＬＡＤＥ　ＧＵＮＮＥＲ」
+			description = "Brotherly combination attack.",
+			lore = "Jay and Magpie's combined forces, attacking as one.",
+			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
+			chargeAnim = true,
+			costOV = 100,
+			category = skill.CAT_OVER,
+			target = skill.TARGET_ALL,
+			targetGroup = skill.TARGET_GROUP_ENEMY,
+			element = core.stats.ELEMENTS.DMG_UNTYPED, #No elemental defs.
+			fieldEffectMult = 4,
+			energy = true,
+			damageStat = core.stats.STAT.ETK,
+			chain = skill.CHAIN_FINISHER,
+			ranged = true,
+			codeMN = [
+				["ignore_barriers",001, 0],
+				["ignore_armor"   ,100, 0],
+				["guardbreak"     ,001, 0],
+				["attack"         ,1800, 0],
+			],
+		},
 		"codegnst": {
 			name = "Code 「GUNSTAR」", #コード「ＧＵＮＳＴＡＲ」
-			description = "Extremely powerful untyped damage. No defense possible.",
-			lore = "Ultimate brotherly combination attack. Only possible when two souls' Over is fully synchronized, and tied by a singular purpose.",
+			description = "The power to defend all",
+			lore = "Everything",
 			animations = { 'main' : "/nodes/FX/basic_charge.tscn", 'startup' : "/nodes/FX/basic_startup.tscn" },
 			chargeAnim = true,
 			costOV = 100,
@@ -669,7 +696,6 @@ var example = {
 				["attack"         ,1800, 0],
 			],
 		},
-
 # Anna's skills ###################################################################################
 		"bloddrve": {
 			name = "Blood Drive",
@@ -891,7 +917,7 @@ var example = {
 			],
 		},
 	},
-# Enemy exclusive skills ##########################################################################
+## Enemy exclusive skills ##########################################################################
 	"enemy": {
 		"repair": {
 			name = "Minion Repair",
@@ -908,9 +934,65 @@ var example = {
 				["enemy.revive" ,100,125,132,132,140, 140,147,147,147,160],
 			],
 		},
+# Fantôme's skills #############################################################################
+		"gdomini7": {
+			name = "G-Dominion - Type 7",
+			description = "The enemy is unable to act for the next turn. Your next turn has everything in your favor.",
+			lore = "A hidden ace to right a wrong of fate.",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_NULLIFY,
+			effectStatBonus = {
+					ATK_MULT = [200,000,000,000,000, 000,000,000,000,000],
+					ETK_MULT = [200,000,000,000,000, 000,000,000,000,000],
+			},
+			effectDuration = 001,
+			effectPriority = 3,
+			codeMN = [
+				["fe.hyper", 001, 0],
+			],
+		},
+# Millennium's skills #############################################################################
+		"gdomini0": {
+			name = "G-Dominion - Type 0",
+			description = "The enemy is unable to act for the next turn. Your next turn has everything in your favor.",
+			lore = "Professor Millenium's ability to manipulate space was beyond mortal comprehension. He probably understood it better than the Originators themselves.",
+			category = skill.CAT_SUPPORT,
+			target = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			element = core.stats.ELEMENTS.DMG_ULTIMATE,
+			effect = skill.EFFECT_STATS|skill.EFFECT_ONEND,
+			effectType = skill.EFFTYPE_BUFF,
+			effectIfActive = skill.EFFCOLL_NULLIFY,
+			effectStatBonus = {
+					ATK_MULT = [200,000,000,000,000, 000,000,000,000,000],
+					ETK_MULT = [200,000,000,000,000, 000,000,000,000,000],
+			},
+			effectDuration = 001,
+			effectPriority = 3,
+			codeMN = [
+				["fe.hyper", 001, 0],
+			],
+		},
 # King Solarica skills ############################################################################
+		"abtebarr": {
+			name        = "Absolute Terror Barrier", #絶対恐怖バリアー
+			description = "Unbreakable barrier that negates most damage.",
+			lore        = "It is unknown how the King of Solarica managed to acquire this barrier, the only thing we know is that it's fueled by the very concept of terror, present in the souls of all sentient beings. The barrier uses that unlimited energy to bend time and space, negating any damage instantly.",
+			dangerous   = true,
+			category    = skill.CAT_PASSIVE,
+			target      = skill.TARGET_SELF,
+			targetGroup = skill.TARGET_GROUP_ALLY,
+			codeEF      = [
+				["ad", 001, 0],
+			],
+		},
 		"solapara": {
-			name        = "Solarica Parasite",
+			name        = "Solarica Parasite", #ソラリカ・パラサイト
 			description = "Strong damage over time effect.",
 			lore        = "Not much is known about the horrifying Solarica Parasite, as any sample, alive or dead, can contaminate whole planets and become part of them.",
 			dangerous   = true,
@@ -991,7 +1073,7 @@ var example = {
 			],
 		},
 		"genoray": {
-			name        = "Genocider Ray",
+			name        = "Genocider Ray", #ジェノサイダー・レイ
 			description = "Party-wide energy Ultimate damage. Tries to inflict panic and incapacitate.",
 			lore        = "The Solarica Parasite's ability to alternate between a solid form and a wave form allows them extreme precision to kill or infect. The genocide of the Kingdom of Solarica was quick and efficient, as no shelter was able to stop the Parasite's relentless attack.",
 			category    = skill.CAT_ATTACK,
@@ -1011,7 +1093,7 @@ var example = {
 			],
 		},
 		"terrseed": {
-			name        = "Terror Seed",
+			name        = "Terror Seed", #恐怖の種
 			description = "Attempts to inflict panic and stun every turn. Decreases speed.",
 			lore        = "Having achieved apotheosis as the God of Terror, King Solarica can cause this emotion at will.",
 			dangerous   = true,
@@ -1028,7 +1110,7 @@ var example = {
 		"gdomini9": {
 			name = "G-Dominion - Type 9",
 			description = "All of creation ends.",
-			lore = "ERROR",
+			lore = "BE ATTITUDE FOR GAINS",
 			dangerous = true,
 			category = skill.CAT_SUPPORT,
 			target = skill.TARGET_SELF,
@@ -1048,12 +1130,13 @@ var example = {
 			],
 		},
 	},
-# Story weapon skills #############################################################################
+## Story weapon skills #############################################################################
 	"sto_wp": {
 # Jay's ORBITAL Rifle ###############################################################################
 		"sever": {
 			name            = "Sever",
 			description     = "Fires a laser beam with high accuracy. If it hits, the target receives additional piercing damage.",
+			lore            = "",
 			category        = skill.CAT_ATTACK,
 			target          = skill.TARGET_SINGLE,
 			targetGroup     = skill.TARGET_GROUP_ENEMY,
@@ -1075,6 +1158,7 @@ var example = {
 		"orbishld" : {
 			name           = "ORBITAL Shield",
 			description    = "Protects a party member with a powerful shield.",
+			lore           = "Jay Hunter was an interesting person. He'll deny it, but just a look at his weapon said everything about what mattered to him. Protecting others was a part of him.",
 			category       = skill.CAT_SUPPORT,
 			target         = skill.TARGET_SINGLE_NOT_SELF,
 			targetGroup    = skill.TARGET_GROUP_ALLY,
@@ -1095,6 +1179,27 @@ var example = {
 				["attack"       , 060,013,016,019,022,  030,032,035,037,040],
 			],
 			synergy = [ "story/plasfeld" ],
+		},
+# Jay's LS-EPSILON-MOONLIGHT ##################################################
+		"burstcut": {
+			name            = "Burst Cut",
+			description     = "Powerful attack that targets an enemy row.",
+			category        = skill.CAT_ATTACK,
+			target          = skill.TARGET_ROW,
+			targetGroup     = skill.TARGET_GROUP_ENEMY,
+			element         = core.stats.ELEMENTS.DMG_CUT,
+			fieldEffectMult = 2,
+			energy       = true,
+			damageStat      = core.stats.STAT.ETK,
+			modStat         = core.stats.STAT.LUC,
+			chain           = skill.CHAIN_FINISHER,
+			ranged          = false,
+			accMod          = [100,099,099,099,099,   099,099,099,099,099],
+			spdMod          = [100,100,100,100,100,   100,100,100,100,100],
+			AD              = [100,100,100,100,100,   100,100,100,100,100],
+			codeMN = [
+				["attack"       ,100,125,132,132,140,   140,147,147,147,160],
+			],
 		},
 # Jay/Fomalhaut's Fomalhaut Blade #############################################
 		"dualshrs": {
@@ -1139,7 +1244,7 @@ var example = {
 		},
 		"lighflam": {
 			name = "Lightning Flamberge",
-			description = "Extends the beam of the FOMALHAUT Blade to a massive size, then slashes at everything in sight.",
+			description = "Powerful slashing attack.",
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_ALL,
 			targetGroup = skill.TARGET_GROUP_ENEMY,
@@ -1198,6 +1303,82 @@ var example = {
 				["dmgbonus.on_range", 0xFF5510, 0],
 				["attack"       ,010,012,015,018,020, 022,025,028,030,035],
 			],
+		},
+# Magpie's Boost Glaive ########################################################
+		"dimslash": {
+			name           = "Dimension Slash",
+			description    = "Powerful single-target slash. Ignores multiple defenses.",
+			category       = skill.CAT_OVER,
+			requiresWeapon = core.WPCLASS_POLEARM,
+			target         = skill.TARGET_SINGLE,
+			targetGroup    = skill.TARGET_GROUP_ENEMY,
+			element        = core.stats.ELEMENTS.DMG_CUT,
+			ranged         = true,
+			accMod         = 105,
+			spdMod         = [115,100,100,100,100, 100,100,100,100,100],
+			initAD         = [095,095,095,095,095, 090,090,090,090,090],
+			AD             = [105,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["attack"       ,	115,000,000,000,000,  000,000,000,000,000],
+			],
+			synergy = ["debug/dncsword"]
+		},
+# Magpie's G-WING ##############################################################
+		"gwing01": {
+			name           = "G-DISRUPT",
+			description    = "Powerful Ultimate attack. Ignores barriers, cannot miss.",
+			category       = skill.CAT_ATTACK,
+			requiresWeapon = core.WPCLASS_ONBOARD,
+			target         = skill.TARGET_SINGLE,
+			targetGroup    = skill.TARGET_GROUP_ENEMY,
+			element        = core.stats.ELEMENTS.DMG_ULTIMATE,
+			ranged         = true,
+			accMod         = 105,
+			spdMod         = [115,100,100,100,100, 100,100,100,100,100],
+			initAD         = [095,095,095,095,095, 090,090,090,090,090],
+			AD             = [105,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["nomiss"],
+				["attack"       ,	115,000,000,000,000,  000,000,000,000,000],
+			],
+			synergy = ["debug/dncsword"]
+		},
+		"gwing02": {
+			name           = "Crystal Blade",
+			description    = "Powerful single-target slash. Ignores multiple defenses.",
+			category       = skill.CAT_ATTACK,
+			requiresWeapon = core.WPCLASS_ONBOARD,
+			target         = skill.TARGET_SINGLE,
+			targetGroup    = skill.TARGET_GROUP_ENEMY,
+			element        = core.stats.ELEMENTS.DMG_ULTIMATE,
+			ranged         = true,
+			accMod         = 105,
+			spdMod         = [115,100,100,100,100, 100,100,100,100,100],
+			initAD         = [095,095,095,095,095, 090,090,090,090,090],
+			AD             = [105,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["attack"       ,	115,000,000,000,000,  000,000,000,000,000],
+			],
+			synergy = ["debug/dncsword"]
+		},
+		"gwingov": {
+			name           = "G-END",
+			description    = "Single-target barrage of Ultimate damage. Destroys barriers.",
+			lore           = "A relentless barrage of G-DISRUPT shots, supercharged with Over energy.",
+			category       = skill.CAT_OVER,
+			requiresWeapon = core.WPCLASS_ONBOARD,
+			target         = skill.TARGET_SINGLE,
+			targetGroup    = skill.TARGET_GROUP_ENEMY,
+			element        = core.stats.ELEMENTS.DMG_ULTIMATE,
+			ranged         = true,
+			accMod         = 105,
+			spdMod         = [115,100,100,100,100, 100,100,100,100,100],
+			initAD         = [095,095,095,095,095, 090,090,090,090,090],
+			AD             = [105,100,100,100,100, 100,100,100,100,100],
+			codeMN = [
+				["attack"       ,	115,000,000,000,000,  000,000,000,000,000],
+			],
+			synergy = ["debug/dncsword"]
 		},
 # Shiro's Gaireitou ###########################################################
 		"ganrei": {
@@ -1379,7 +1560,8 @@ var example = {
 		},
 		"calmshot": {
 			name = "Calming Shot",
-			description = "A magical shot designed to incapacitate. It will never kill the target.",
+			description = "A magical ice shot designed to incapacitate. It will never kill a target.",
+			lore        = "How can she fight so fiercely, yet hold such a minuscule killing intent...?",
 			ranged = true,
 			category = skill.CAT_ATTACK,
 			target = skill.TARGET_SINGLE,

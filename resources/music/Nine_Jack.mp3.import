@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Nine_Jack.mp3-ec7ceeddfabeeea3a72aa6c19ad0154a.mp3str"
+
+[deps]
+
+source_file="res://resources/music/Nine_Jack.mp3"
+dest_files=[ "res://.import/Nine_Jack.mp3-ec7ceeddfabeeea3a72aa6c19ad0154a.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

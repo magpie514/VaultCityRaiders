@@ -61,7 +61,7 @@ enum { #General race types
 	RACE_SPIRIT,     #A spiritual being such as a ghost, youkai or similar.
 	RACE_ELEMENTAL,  #A specialized form of spirit born from the forces of the universe.
 	RACE_GIANT,      #A creature of extremely large size. Used as a modifier.
-	RACE_ANGEL,      #A divine being or beast, usually servants to the ghosts.
+	RACE_ANGEL,      #A divine being or beast, usually servants to the gods.
 	RACE_DEMON,      #A usually malevolent lifeform created by evil desires.
 	RACE_DRAGON,     #A powerful being attuned to the primal chaos, usually winged reptiles.
 	RACE_FAIRY,      #A powerful being attuned to natural forces.
@@ -69,7 +69,7 @@ enum { #General race types
 	RACE_BEAST,      #A primal being of varying characteristics. Usually non-sapient.
 	RACE_GOD,        #A powerful being born from the power of faith.
 	RACE_ELDRITCH,   #An alien lifeform directly born from primal chaos. Wildcards.
-	RACE_ORIGINATOR, #Only for Tiamat and Cromwell. The most powerful beings with the power to create lifeforms.
+	RACE_ORIGINATOR, #Only for Tiamat and Cromwell. The most powerful beings with the power to create universes.
 }
 
 #TODO: Write some sort of function to check if all lists like this have a proper match.

@@ -24,7 +24,7 @@ var data = {
 			element = core.stats.ELEMENTS.DMG_ELEC,
 			equip = [
 				# Weapons
-				{ tid = "story/orbicann", level = 0, uses = 25, extra = null, gem = [ ["core/chaos", 1001], ["core/charge", 1001], ["core/shock", 1001], ["core/reson", 1001], ["core/shock", 1001], ["core/reson", 1000], ["core/shock", 1000], ["core/power", 1000] ] },
+				{ tid = "story/rsgnblue", level = 0, uses = 25, extra = null, gem = [ ["core/chaos", 1001], ["core/charge", 1001], ["core/shock", 1001], ["core/reson", 1001], ["core/shock", 1001], ["core/reson", 1000], ["core/shock", 1000], ["core/power", 1000] ] },
 				{ tid = "story/fomablad", level = 0, uses = 25, extra = null, gem = [ ["core/shock", 1001], ["core/reson", 1001] ] },
 				null,
 				null,
@@ -44,7 +44,7 @@ var data = {
 				[080, A.LINK_RIVAL, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-		{ name = "Sarah",
+		{ name = "Magpie",
 			race = "debug/choujin",	aclass = "debug/gdriver",
 			XP = 500,
 			portrait = null,

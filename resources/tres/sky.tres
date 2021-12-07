@@ -2,9 +2,10 @@
 
 [resource]
 sky_top_color = Color( 0.105882, 0.027451, 0.227451, 1 )
-sky_horizon_color = Color( 0.866667, 0.847059, 0.635294, 1 )
+sky_horizon_color = Color( 0.00392157, 0, 0.0156863, 1 )
+ground_horizon_color = Color( 0.184314, 0.0352941, 0.301961, 1 )
 ground_curve = 0.0606287
-sun_color = Color( 0, 0, 0.0588235, 1 )
+sun_color = Color( 0.360784, 0.121569, 0.054902, 1 )
 sun_latitude = 4.14
 sun_angle_max = 50.68
 sun_curve = 0.136604

@@ -15,6 +15,88 @@ var example = {
 				"story/terranig",
 			],
 		},
+		"tiamat" : { #Tiamat (Guest version) player class.
+			name = "Creator",
+			description = "A class oriented to focus the powerful abilities of an Originator",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_FIST ],
+			skills = [
+				"story/origilaw",
+			],
+		},
+		"fantome0" : { #Fantôme player class.
+			name = "Phantom Thief",
+			description = "A true trickster with mysterious abilities and great support.",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_POLEARM ],
+			skills = [
+			],
+		},
+		"fantome1" : { #0A07-DT-PHANTOM player class.
+			name = "G-Knight",
+			description = "A brutal melee class with some field manipulation abilities.",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_LONGSWORD ],
+			skills = [
+				"debug/gatebrkr",
+				"story/gdomini0",
+			],
+		},
+
+		"ash0" : { #Ash (guest version) player class.
+			name = "Lone Striker",
+			description = "A well-balanced attack class.",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_FIREARM ],
+			skills = [
+			],
+		},
+		"milenium" : { #Professor Millennium (Arthur Bristol Miller) player class.
+			name = "G-Crusher",
+			description = "A class combining hidden knowledge of time and space with brutal melee combat.",
+			lore        = "Professor Millennium's contributions to science were only matched by his cold, calculated and extremely brutal combat abilities.",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_FIST ],
+			skills = [
+				"story/gravrefl",
+				"story/gmissile",
+				"debug/gatebrkr",
+				"story/gdomini0",
+			],
+		},
+		"dachief" : { #Chief John Redgrave's player class.
+			name = "DGPD Chief",
+			description = "A gunner class oriented to high consistent damage.",
+			lore        = "He was already known for his ability to win impossible battles before he was pushed beyond mortal limits.",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM ],
+			skills = [
+			],
+		},
+		"fmalhaut" : { #Nathan "FOMALHAUT" Lancer's player class.
+			name = "Stardiver",
+			description = "A balanced attack class suited for the front line.",
+			lore        = "Dedicated SWAT training polished to a fine art was the base of Fomalhaut's solid career.",
+			statSpread = [ [005,004,002,004,002,004,005], [048,050,020,050,020,048,032] ],
+			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
+			conditionDefs = [ 99, 01, 99, 99, 99, 01, 02, 99, 99, 03],
+			weapons = [ core.WPCLASS_ARTILLERY, core.WPCLASS_FIREARM ],
+			skills = [
+			],
+		},
+
 	},
 	"debug" : {
 		"debug" : {
@@ -30,7 +112,7 @@ var example = {
 				["debug", "debugi2"],
 			],
 		},
-		"ofight" : { #Jay Hawking's story mode base class.
+		"ofight" : { #Jay Hunter's story mode base class.
 			name = "Orbital Fighter",
 			description = "A class specializing in fast and strong energy skills and chains.",
 			statSpread = [ [005,000,000,003,002,004,001], [032,000,006,032,024,052,018] ],
@@ -53,7 +135,7 @@ var example = {
 				"debug/gatebrkr",
 			],
 		},
-		"gdriver" : { #0a0a-DT-KSSG Sarah "Magpie" Miller's story mode base class.
+		"gdriver" : { #0a0a-DT-KSSG Jake "Magpie" Miller's story mode base class.
 			name = "G-Driver",
 			description = "A technical class specializing in exploiting enemy actions and status.",
 			statSpread = [ [004,001,000,003,002,003,001], [032,018,006,032,024,040,018] ],
