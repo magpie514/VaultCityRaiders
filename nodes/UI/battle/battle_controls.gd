@@ -70,7 +70,7 @@ func setup(C, place:int, node) -> void:
 		$Main/Repeat.text = str("Repeat %s" % RS.name)
 
 func _process(delta: float) -> void: #Just a quick hack for now. Do this with signals.
-	if $Main.visible and currentPanel == self:
+	if false:#if $Main.visible and currentPanel == self:
 		if Input.is_key_pressed(KEY_1):
 			_on_Weapon_pressed(0)
 		elif Input.is_key_pressed(KEY_2):

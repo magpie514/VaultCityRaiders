@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://nodes/FX/basic.gd" type="Script" id=1]
+[ext_resource path="res://nodes/FX/FX.gd" type="Script" id=1]
 
 [sub_resource type="Animation" id=1]
 resource_name = "New Anim"
@@ -24,9 +24,12 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 1.5 ),
-"transitions": PoolRealArray( 1 ),
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 1, 1 ),
 "values": [ {
+"args": [  ],
+"method": "focus"
+}, {
 "args": [  ],
 "method": "done"
 } ]
@@ -58,7 +61,7 @@ curve = SubResource( 3 )
 [sub_resource type="ParticlesMaterial" id=5]
 trail_divisor = 8
 emission_shape = 2
-emission_box_extents = Vector3( 120, 1, 1 )
+emission_box_extents = Vector3( 1, 1, 1 )
 flag_disable_z = true
 spread = 180.0
 flatness = 1.0
@@ -84,4 +87,5 @@ material = SubResource( 2 )
 amount = 255
 fract_delta = false
 process_material = SubResource( 5 )
+
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

@@ -66,11 +66,10 @@ enum { #What to do in case of effect collision (same effect active on target)
 enum {
 	# Primaries: Only one can be active at once. Last overrides current.
 	CONDITION_GREEN     = 0,  #All good.
-	CONDITION_DOWN      = 5,  #Target is incapacitated, but not dead, can still be brought back to action. Resistance to this status is used for insta-kills.
+	CONDITION_DOWN      = 4,  #Target is incapacitated, but not dead, can still be brought back to action. Resistance to this status is used for insta-kills.
 	CONDITION_PARALYSIS = 1,  #Target is paralyzed and has a 50% chance of being unable to execute normal actions. Over actions ignore this.
-	CONDITION_NARCOSIS  = 2,  #Target is in an artifical stupor and won't be able to execute normal or Over actions, but receiving hits will randomly cancel it.
-	CONDITION_CRYO      = 3,  #Target is frozen and unable to execute normal or Over actions, and weaker to kinetic damage. Fire does extra damage but unfreezes early.
-	CONDITION_SEAL      = 4,  #Target is sealed in an energy field and unable to execute normal or Over actions, and weaker to energy damage, but more resistant of kinetic damage.
+	CONDITION_CRYO      = 2,  #Target is frozen and unable to execute normal or Over actions, and weaker to kinetic damage. Fire does extra damage but unfreezes early.
+	CONDITION_SEAL      = 3,  #Target is sealed in an energy field and unable to execute normal or Over actions, and weaker to energy damage, but more resistant of kinetic damage.
 }
 
 enum {
@@ -207,16 +206,20 @@ enum { #Skill function codes.
 	OPCODE_ATTACK_COMBO               , #Same as OPCODE_ATTACK but only triggers if the previous hit connected.
 	# Complex attack #############################################################
 	# Data is provided via a hexadecimal value with format 0xAAAABCDE
+	# A: 0000-FFFF: Power% of the attack.
+	# B: 0-9: Element of the attack.
+	# C: 0-1: 0 = Kinetic, 1 = Energy.
+	# D: 0-1: Only triggers if the previous hit connected if 1.
 	OPCODE_ATTACK_EX                  , #Use attack data.
 	OPCODE_DEFEND                     , #Standard defense function. TODO: Define defense role's further.
 	# Condition infliction #####################################################
 	# Data is provided via a hexadecimal value with format 0xABC
 	# A: 0-C: Condition to inflict
-	# 	0: Do nothing  5: Blindness
+	# 0: Do nothing  5: Blindness
 	#	1: Paralysis   6: Stun
 	#	2: Cryostasis  7: Curse
 	#	3: Seal        8: Panic
-	#  4: Defeat      9: Disable Arms
+	# 4: Defeat      9: Disable Arms
 	# B: 0-F: Infliction power
 	# C: 0-1: Only try to apply if last attack connected.
 	OPCODE_INFLICT_EX                 , #Use inflict data.
@@ -697,6 +700,11 @@ var opcodeInfo = {
 		desc = "Does nothing.",
 		expl = "ERROR",
 	},
+	OPCODE_ATTACK_EX: {
+		name = "AttackEX", flags = OPFLAG_NONE, cat = "combat",
+		desc = "Complex attack function.",
+		expl = "hits for %s damage. Element: %s, Energy: %s, Combo hit: %s."
+	},
 	OPCODE_ATTACK: {
 		name = "Attack", flags = OPFLAG_NONE, cat = "combat",
 		desc = "Standard attack function, tries to inflict for each hit, if capable.",
@@ -894,6 +902,17 @@ enum { #DGem skill mod codes
 	DGEM_LIFEDRAIN    , #Life drain flag
 	DGEM_EXP_BONUS    , #EXP bonus on target
 }
+
+class HitRecord:
+	# Record of all combat damage dealt by a skill
+	var dmg:int #Raw damage to deal
+	var crit:bool #Critical hit
+	var overkill:bool #Overkill hit
+	var weakness:int  #0: Normal hit, 1: Weak hit, 2: Strong hit
+	var guardBreak:bool #Guard Break
+	var barrierFullBlock:bool #True if all damage has been negated.
+	var dmgPercent:float #Raw damage in % of max health
+	var defeat:bool #True if hit defeats target.
 
 class SkillState:
 	# Core attack stats #########################
@@ -1268,6 +1287,7 @@ func processDamage(S, level:int, user, target, state, value:int, flags:int) -> v
 	var args:Dictionary
 	var temp:Array
 	state.lastHit = false
+	print("[34m") #Color debug output.
 	print("\tDAMAGE: <%s> %05d + %05d = %05d power + %05d raw damage" % ["NRG" if state.energy else "KIN", value, state.dmgBonus, state.dmgBonus + value, state.dmgRawBonus])
 	crit = calculateCrit(a.LUC, b.LUC, state.critMod, user.battle.critBonus) #Check if this individual attack crits beforehand.
 	if crit:
@@ -1309,6 +1329,10 @@ func processDamage(S, level:int, user, target, state, value:int, flags:int) -> v
 		if state.drainLife > 0: #Drain life effects
 			print("\tLife drain: %s%%" % state.drainLife)
 			user.heal( int(dmg * core.percent(state.drainLife)) )
+		if user.condition2 & CONDITION2_CURSE:
+			var curse:int = int(dmg / 2)
+			print("\t%s is cursed! Knockback damage: %s" % [user.name, curse])
+			user.damage(curse)
 
 		#Set hit information with the following parameters:
 		#[0]: Final damage [1]: Critical [2]: Overkill [3]: Weak/Strong [4]: Specials [5]: Damage% [6]: Defeat
@@ -1320,6 +1344,7 @@ func processDamage(S, level:int, user, target, state, value:int, flags:int) -> v
 	else: #Attack missed.
 		target.dodgeAttack(user)
 		state.lastHit = false #Last hit didn't connect, so ensure if_connect fails after this.
+	print("[0m") #Color debug output.
 
 func processDamageRaw(S, user, target, value, percent) -> int: #Cause raw damage to target.
 	var dmg:int = 0
@@ -1462,6 +1487,11 @@ func addEffect(S, level:int, user, target, state):
 
 
 # SKILL PROCESSING ################################################################################
+func initSkillState(S, level:int, user, target) -> SkillState:
+	return SkillState.new(S, level, user, target)
+
+func initSkillInfo() -> Dictionary:
+	return { anyHit = false, postTargetGroup = 0 }
 
 func process(S, level:int, user, targets, WP = null, IT = null, skipAnim:bool = false):
 	print("\n[SKILL][process] ### %s's action: %s ############################################\n" % [user.name, S.name])
@@ -1474,18 +1504,15 @@ func process(S, level:int, user, targets, WP = null, IT = null, skipAnim:bool = 
 	print("[SKILL][process] ##################################################################\n")
 	#return SKILL_FAILED
 
-func initSkillState(S, level:int, user, target) -> SkillState:
-	return SkillState.new(S, level, user, target)
-
-func initSkillInfo() -> Dictionary:
-	return { anyHit = false, postTargetGroup = 0 }
-
 func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipAnim:bool = false):
+	#TODO: Remove any "realtime" elements, return success/fail/miss events. Additionally, return animation events and damage.
+	#TODO: Count skill uses per character. For statistics. Count gem skills separately.
 	var controlNode = core.battle.skillControl
 	var temp        = null
 	var tempTarget  = null
 	var control     = null
 	var state:SkillState
+	print("[35m") #Color debug output.
 	user.charge(false) #Stop charging FX now.
 	if IT != null: #Using an item, override some things.
 		#TODO: Put item bonuses somewhere here.
@@ -1508,7 +1535,7 @@ func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipA
 		tempTarget = j
 		if tempTarget.filter(S): #Target is valid.
 			if not skipAnim:
-				core.battle.displayManager.addHitSpark(S, level, tempTarget.sprite.effectHook)
+				pass #core.battle.displayManager.addHitSpark(S, level, tempTarget.sprite.effectHook)
 			control = controlNode.start()
 			processSkillCode(S, level, user, tempTarget, CODE_MN, control, state, info, WP)
 	# Post-main setup ##########################################################
@@ -1532,6 +1559,7 @@ func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipA
 			#Add effect as a percentage for each group.
 			core.battle.control.state.field.push(core.battle.control.state.lastElement)
 	user.updateChain(S.chain) 	#TODO: Get info about last action to see if it hit or not
+	print("[0m") #Color debug output.
 	controlNode.finish()
 
 func runExtraCode(S, level:int, user, code_key, target = null):
@@ -2192,7 +2220,7 @@ func runSkillCode(S, level:int, state:SkillState, code:Array, user, target) -> v
 # Actions ######################################################################
 					OPCODE_PRINTMSG:
 						print(">PRINT MESSAGE: %s" % value)
-						printSkillMsg(S, user, target, value)
+						var waitFlag = printSkillMsg(S, user, target, value)
 					OPCODE_LINKSKILL:
 						print(">LINK TO SKILL: %s" % value)
 #						if value > 0:

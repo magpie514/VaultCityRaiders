@@ -12,7 +12,7 @@ enum { #Flags for scripted fights.
 # Basic stats ##################################################################
 var name:String      = ""   #Character's given name.
 var level:int        = 0	 #EXP level
-var condition:int    = 0    #Condition (Primary)
+var condition:int    = 0   #Condition (Primary)
 var condition2:int   = 0	 #Condition (Secondary) #TODO: Move to battle stats.
 
 var HP:int           = 0    #Character's vital (HP)
@@ -518,7 +518,7 @@ func cureType(what:int) -> void:
 			pass #TODO: Reset disables.
 
 func addInflict(x:int) -> void:
-	match x:
+	match x + 1: #+1 to counter the discrepancy between paralysis being condition 1 and its place in the array being 0.
 		core.stats.COND_PARALYSIS:
 			condition = skill.CONDITION_PARALYSIS
 		core.stats.COND_CRYO:
@@ -545,7 +545,7 @@ func checkInflict() -> bool: #Check if target has a negative condition.
 func tryInflict2(user, cond:int, powr:int, crit:int) -> int: #Returns 0 if immune. 1 if gauge is decreased, 2 if success.
 	if condition != skill.CONDITION_DOWN and validateInflict(cond):
 		if battle.conditionDefsMax[cond] > 20: return 0 #Immunity
-		if powr > 20: return 2 #Win
+		if powr > 20: return 2 #Overwhelm and success.
 		var critf:float = (10 + crit) as float * .01
 		var comp:float  = ( ((user.battle.stat.LUC * 3) as float + 76.5) / ((battle.stat.LUC * 3) as float + 76.5) ) * 10
 		var rate:float  = 0
@@ -577,27 +577,27 @@ func tryInflict(user, value:int, crit:int, hit:bool = true) -> void:
 			display.message("Resisted!", "FF00FF")
 			return
 		1:
-			display.condition([cond, -powr], battle.conditionDefs[cond], battle.conditionDefsMax[cond])
+			display.condition([cond+1, -powr], battle.conditionDefs[cond], battle.conditionDefsMax[cond])
 		2:
-			display.message(core.stats.CONDITION_DATA[cond].name, "FF00FF")
+			display.message(core.stats.CONDITION_DATA[cond+1].name, "FF00FF")
 			addInflict(cond)
 		3:
-			display.message("Critical Inflict!", "FF00FF")
-			display.message(core.stats.CONDITION_DATA[cond].name, "FF00FF")
+			display.message("Critical Inflict! %s" % core.stats.CONDITION_DATA[cond+1].name, "FF00FF")
 			addInflict(cond)
 
 func validateInflict(val:int) -> bool:
 	var ok:bool = false
 	match val:
-		core.stats.COND_PARALYSIS: ok = true
-		core.stats.COND_CRYO:      ok = true
-		core.stats.COND_SEAL:      ok = true
-		core.stats.COND_DEFEAT:    ok = true
-		core.stats.COND_BLIND:     ok = true
-		core.stats.COND_STUN:      ok = true
-		core.stats.COND_CURSE:     ok = true
-		core.stats.COND_PANIC:     ok = true
-		core.stats.COND_DAMAGE:    ok = true
+		core.stats.COND_PARALYSIS   : ok = true
+		core.stats.COND_CRYO        : ok = true
+		core.stats.COND_SEAL        : ok = true
+		core.stats.COND_DEFEAT      : ok = true
+		core.stats.COND_BLIND       : ok = true
+		core.stats.COND_STUN        : ok = true
+		core.stats.COND_CURSE       : ok = true
+		core.stats.COND_PANIC       : ok = true
+		core.stats.COND_DISABLE_ARMS: ok = true
+		core.stats.COND_DAMAGE      : ok = true
 	return ok
 
 
@@ -833,11 +833,11 @@ func tryDamageEffect(user, S, val:int) -> void: #Attempt to inflict a damage ove
 	var dur:int = core.clampi((val & 0x00000F0) >>  4, 0, 15   )
 	var ele:int = core.clampi((val & 0x000000F)      , 0, 10   )
 	print("[CHAR_BASE][tryDamageEffect] ", pwr, dmg, dur, ele)
-	match tryInflict2(user, core.stats.COND_DAMAGE, pwr, 5):
+	match tryInflict2(user, core.stats.COND_DAMAGE-1, pwr, 5):
 		0:
 			display.message("Immunity.", "333333")
 			return
-		1: display.condition([core.stats.COND_DAMAGE, -pwr], battle.conditionDefs[core.stats.COND_DAMAGE], battle.conditionDefsMax[core.stats.COND_DAMAGE])
+		1: display.condition([core.stats.COND_DAMAGE, -pwr], battle.conditionDefs[core.stats.COND_DAMAGE-1], battle.conditionDefsMax[core.stats.COND_DAMAGE-1])
 		2:
 			addDamageEffect(user, S, dmg, dur, ele); display.message("Critical Inflict!", "FF00FF")
 		3:
@@ -950,8 +950,9 @@ func setInitAD(S:Dictionary, lv:int) -> void: #Sets Active Defense before battle
 	setAD(S.initAD[lv], true)
 	print("[SKILL][setInitAD] Active Defense set to %d" % battle.AD)
 
-func useBattleSkill(act:int, S, lv:int, targets, WP = null, IT = null, skipAnim:bool = false) -> void:
+func useBattleSkill(act:int, S, lv:int, targets, WP = null, IT = null, skipAnim:bool = false) -> Array:
 	core.skill.process(S, lv, self, targets, WP, IT, skipAnim)
+	return []
 
 func checkRaceType(type) -> bool:
 	return false

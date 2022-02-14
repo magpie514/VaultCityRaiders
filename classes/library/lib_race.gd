@@ -51,15 +51,6 @@ var example = {
 			aspect = core.RACEF_BIO|core.RACEF_SPI,
 			race = [ core.RACE_HUMAN, core.RACE_UNDEAD ],
 		},
-		"skeleton" : { #There you go, I hope you are happy.
-			name = "Skeleton",
-			description = "Was once human, then died, then got back, all boney. But with a constant smile.",
-			statSpread = [ [048, 013, 012, 013, 011, 012, 005], [500, 135, 130, 135, 100, 125, 035] ],
-			#                PAR CRY SEA DWN BLI STU CUR PAN ARM DMG
-			conditionDefs = [ 05, 05, 02, 99, 04, 05, 05, 04, 02, 05],
-			aspect = core.RACEF_BIO|core.RACEF_SPI,
-			race = [ core.RACE_HUMAN, core.RACE_UNDEAD ],
-		},
 		"robot" : {
 			name = "Robot",
 			description = "A race created by humans. They AI and physical capabilities are highly variable, but their potential is tied to their equipment.",

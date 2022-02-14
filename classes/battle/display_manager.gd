@@ -1,4 +1,4 @@
-const SpriteH = preload("res://nodes/UI/battle/enemy_sprite_simple.tscn")
+const SpriteH = preload("res://nodes/Battle/sprite_simple.tscn")
 const placeholder_1 = 'res://resources/images/test.png'
 
 var skill           = core.skill
@@ -18,7 +18,7 @@ func _init(guild, eform, BG) -> void:
 			initSprite(C, slot)
 
 func initSprite(C, slot:int) -> void:
-	var spr:String = C.lib.spriteFile if C is core.Enemy else placeholder_1
+	var spr:String = C.lib.spriteFile if C is core.Enemy else C.spriteFile
 	var node:Node  = getAnchorNode(C, slot)
 	if node != null:
 		var sprite:Node = SpriteH.instance()
@@ -30,9 +30,13 @@ func initSprite(C, slot:int) -> void:
 		sprite.init(spr, C, slot)
 
 func addHitSpark(S, lv:int, anchor:Position2D) -> void:
+	return
 	var temp = S.animations['onhit'] if 'onhit' in S.animations else "res://nodes/FX/basic.tscn"
+	temp = "res://nodes/FX/basic.tscn"
 	var anim = load(temp).instance()
 	anchor.add_child(anim)
+	anim.cam.global_position = core.battle.background.cam.global_position
+
 	if S.animFlags[lv] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
 		anim.modulate = core.stats.ELEMENT_DATA[S.element[lv]].color
 		print("[DISPLAY_MANAGER][addHitSpark] Setting color from element! %s" % str(anim.modulate))
@@ -42,8 +46,11 @@ func addHitSpark(S, lv:int, anchor:Position2D) -> void:
 
 func playMainAnim(S, lv:int, anchor:Position2D) -> void:
 	var temp = S.animations['startup'] if 'startup' in S.animations else "res://nodes/FX/basic.tscn"
+	temp = "res://nodes/FX/basic.tscn"
 	var anim = load(temp).instance()
 	anchor.add_child(anim)
+	anim.cam.global_position = core.battle.background.cam.global_position
+
 	if S.animFlags[lv] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
 		anim.modulate = core.stats.ELEMENT_DATA[S.element[lv]].color
 		print("[DISPLAY_MANAGER][addHitSpark] Setting color from element! %s" % str(anim.modulate))
@@ -65,11 +72,12 @@ func addEffector(C, fx:String) -> void:
 
 
 func getAnchorNode(C, slot:int) -> Node:
+	return core.battle.background.getCharAnchor(0 if C is core.Player else 1, slot)
 	# Get location node placed in the background scene.
-	var t:int         = slot + 1
-	var prefix:String = "F" if t < 4 else "B"
-	t = t if t < 4 else (t - 3)
-	var side:String      = 'Player' if C is core.Player else 'Enemy'
-	var nodeName:String  = str("%s/%s%s" % [side, prefix, t])
-	var node:Node        = core.battle.background.get_node(nodeName)
-	return node
+	# var t:int         = slot + 1
+	# var prefix:String = "F" if t < 4 else "B"
+	# t = t if t < 4 else (t - 3)
+	# var side:String      = 'Player' if C is core.Player else 'Enemy'
+	# var nodeName:String  = str("%s/%s%s" % [side, prefix, t])
+	# var node:Node        = core.battle.background.get_node(nodeName)
+	#return node

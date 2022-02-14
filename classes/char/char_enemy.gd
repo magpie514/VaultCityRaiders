@@ -1,7 +1,7 @@
 extends "res://classes/char/char_base.gd"
 
 var tid = null
-var lib = null
+var lib = null #Link to data library containing static enemy attributes.
 
 var ability:Array = core.newArray(2) #Passive skill. [TID, level]
 var XPMultiplier:float = 1.0

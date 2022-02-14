@@ -1,0 +1,9 @@
+{
+	"atlas": "res://resources/images/Char/Yukiko/Yukiko.png",
+	"scale": [0.66, 0.66],
+	"IDLE"  : [120,74,159,236],
+	"ACTION": [120,74,159,236],
+	"BEGIN" : [120,74,159,236],
+	"CHARGE": [120,74,159,236],
+	"GUARD" : [120,74,159,236]
+}

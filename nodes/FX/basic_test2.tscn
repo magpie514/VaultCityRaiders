@@ -2,7 +2,7 @@
 
 [ext_resource path="res://resources/icons/luminous.svg" type="Texture" id=1]
 [ext_resource path="res://resources/icons/pierce.svg" type="Texture" id=2]
-[ext_resource path="res://nodes/FX/basic.gd" type="Script" id=3]
+[ext_resource path="res://nodes/FX/FX.gd" type="Script" id=3]
 [ext_resource path="res://resources/icons/void.svg" type="Texture" id=4]
 
 [sub_resource type="Animation" id=1]

@@ -5,17 +5,16 @@
 [ext_resource path="res://resources/tres/fonts/std_font_xl.tres" type="DynamicFont" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.0156863, 0, 0.341176, 0.501961 )
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-corner_radius_top_left = 10
+bg_color = Color( 0.054902, 0.0588235, 0.419608, 0.627451 )
+border_width_top = 5
+border_width_bottom = 5
+border_blend = true
 corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="GDScript" id=2]
-script/source = "extends Panel
+script/source = "#Current action user+name display.
+extends Panel
 var textures:Array = core.newArray(9)
 onready var origPos:Vector2 = self.get_position()
 var timer:int = 0
@@ -45,7 +44,7 @@ func init(A) -> void: #A:Action
 		$Label2/Element0.texture = textures[S.element[A.level]]
 		$Label2/Element0.self_modulate = core.stats.ELEMENT_DATA[S.element[A.level]].color
 		$Label2/Element0.show()
-	$Label.text = A.user.name
+	$Label.text  = A.user.name
 	$Label2.text = S.name
 	timer = 6
 	set_process(true)
@@ -54,7 +53,7 @@ func _process(delta: float) -> void:
 	if timer > 0:
 		timer -= 1
 		modulate.a = float(timer) / 6.0
-		rect_position = origPos + Vector2(lerp(.0, rect_size.x, float(timer) / 6.0), .0)
+		rect_position = origPos - Vector2(.0, lerp(.0, rect_size.y, float(timer) / 6.0))
 		if timer == 0:
 			set_process(false)
 			rect_position = origPos
@@ -63,8 +62,9 @@ func _process(delta: float) -> void:
 "
 
 [node name="CurrentAction" type="Panel"]
-margin_right = 290.0
+margin_right = 960.0
 margin_bottom = 50.0
+mouse_filter = 2
 custom_styles/panel = SubResource( 1 )
 script = SubResource( 2 )
 __meta__ = {
@@ -72,9 +72,8 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="."]
-margin_left = 10.0
 margin_top = 2.0
-margin_right = 236.0
+margin_right = 960.0
 margin_bottom = 20.0
 custom_fonts/font = ExtResource( 1 )
 text = "CHARACTER NAME"
@@ -86,11 +85,11 @@ __meta__ = {
 
 [node name="Label2" type="Label" parent="."]
 margin_top = 23.0
-margin_right = 284.0
+margin_right = 960.0
 margin_bottom = 45.0
 custom_fonts/font = ExtResource( 3 )
 text = "SKILL NAME"
-align = 2
+align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false

@@ -298,6 +298,7 @@ class _tid: #TID (Thing ID) helper class.
 		return true if (tid1[0] == tid2[0] and tid1[1] == tid2[1]) else false
 
 class StatClass:
+	#TODO: This should be moved elsewhere.
 	const STAT_CAP = 255
 	const MAX_DMG = 32000
 	const STATS = [ 'MHP', 'ATK', 'DEF', 'ETK', 'EDF', 'AGI', 'LUC' ]
@@ -317,19 +318,21 @@ class StatClass:
 		DMG_ENERGY   , #Supertype for all energy damage
 	}
 	enum { #Condition defense table
-		COND_PARALYSIS    = 00,
-		COND_CRYO         = 01,
-		COND_SEAL         = 02,
-		COND_DEFEAT       = 03,
-		COND_BLIND        = 04,
-		COND_STUN         = 05,
-		COND_CURSE        = 06,
-		COND_PANIC        = 07,
-		COND_DISABLE_ARMS = 08,
-		COND_DAMAGE       = 09
+		COND_NONE         = 00,
+		COND_PARALYSIS    = 01,
+		COND_CRYO         = 02,
+		COND_SEAL         = 03,
+		COND_DEFEAT       = 04,
+		COND_BLIND        = 05,
+		COND_STUN         = 06,
+		COND_CURSE        = 07,
+		COND_PANIC        = 08,
+		COND_DISABLE_ARMS = 09,
+		COND_DAMAGE       = 10
 	}
-	var CONDITION_DATA = {
-		COND_PARALYSIS    : { name = "Paralisis"    , desc = "paralized"    , color = "FFFF00", short = 'PAR'},
+	var CONDITION_DATA = { #NOTE: Keep an eye on anything using this array, as condition data arrays have paralysis as 0.
+		COND_NONE         : { name = "Green"        , desc = ""             , color = "FFFFFF", short = ''   },
+		COND_PARALYSIS    : { name = "Paralysis"    , desc = "paralyzed"    , color = "FFFF00", short = 'PAR'},
 		COND_CRYO         : { name = "Cryostasis"   , desc = "frozen"       , color = "3388FF", short = 'CRY'},
 		COND_SEAL         : { name = "Seal"         , desc = "sealed"       , color = "118822", short = 'SEA'},
 		COND_DEFEAT       : { name = "Incapacitated", desc = "incapacitated", color = "FF0000", short = 'DWN'},
@@ -370,15 +373,15 @@ class StatClass:
 		'ALL_CUT', 'ALL_PIE', 'ALL_STK', 'ALL_FIR', 'ALL_ICE', 'ALL_ELE', 'ALL_UNK', 'ALL_ULT', 'ALL_KIN', 'ALL_ENE',
 	]
 	const ELEMENT_DATA = [
-		{name = "untyped", color = "CCCCCC", icon = "res://resources/icons/untyped.svg"},
-		{name = "cut", color = "72E36E", icon = "res://resources/icons/cut.svg"},
-		{name = "pierce", color = "E26EE3", icon = "res://resources/icons/pierce.svg"},
-		{name = "strike", color = "6EA4E3", icon = "res://resources/icons/bash.svg"},
-		{name = "fire", color = "E36E6E", icon = "res://resources/icons/fire.svg"},
-		{name = "ice", color = "6ED8E3", icon = "res://resources/icons/ice.svg"},
-		{name = "elec", color = "E2E36E", icon = "res://resources/icons/elec.svg"},
-		{name = "unknown", color = "EEEECC", icon = "res://resources/icons/luminous.svg"},
-		{name = "ultimate", color = "080016", icon = "res://resources/icons/void.svg"},
+		{name = "untyped" , color = "CCCCCC", icon = "res://resources/icons/untyped.svg"} ,
+		{name = "cut"     , color = "72E36E", icon = "res://resources/icons/cut.svg"}     ,
+		{name = "pierce"  , color = "E26EE3", icon = "res://resources/icons/pierce.svg"}  ,
+		{name = "strike"  , color = "6EA4E3", icon = "res://resources/icons/bash.svg"}    ,
+		{name = "fire"    , color = "E36E6E", icon = "res://resources/icons/fire.svg"}    ,
+		{name = "ice"     , color = "6ED8E3", icon = "res://resources/icons/ice.svg"}     ,
+		{name = "elec"    , color = "E2E36E", icon = "res://resources/icons/elec.svg"}    ,
+		{name = "unknown" , color = "EEEECC", icon = "res://resources/icons/luminous.svg"},
+		{name = "ultimate", color = "4400D2", icon = "res://resources/icons/void.svg"}    ,
 	]
 
 	func create():
@@ -503,7 +506,7 @@ class StatClass:
 	func conditionDefApply(stats, mod:String, val:int) -> void:
 		if conditionDefStringValidate(mod):
 			var what:int = CONDITION_CONV[mod]
-			stats.CON[what] += val
+			stats.CON[what-1] += val
 
 	func getElementKey(element) -> String:
 		var e:int = 0 if element < 0 else element
@@ -550,6 +553,30 @@ class StatClass:
 #
 
 # Helper functions ############################################################
+enum {
+	ANSI_BLACK = 30, ANSI_RED = 31 ,ANSI_GREEN = 32 , ANSI_YELLOW = 33, ANSI_BLUE = 34,  ANSI_PINK = 35,  ANSI_CYAN = 36,  ANSI_GRAY = 37,
+	ANSI_BLACK2 = 90,ANSI_RED2 = 91,ANSI_GREEN2 = 92, ANSI_YELLOW2 = 93, ANSI_BLUE2 = 94, ANSI_PINK2 = 95, ANSI_CYAN2 = 96, ANSI_GRAY2 = 97
+}
+static func aprint(s, col:int = ANSI_YELLOW2):
+	print("[%sm%s[0m" % [col, str(s)])
+
+static func loadJSON(path:String, fallback:String) -> Dictionary:
+	var f:File            = File.new()
+	var result:Dictionary = {}
+	if not f.file_exists(path):
+		aprint("[!!][loadJSON] File %s not found, trying fallback %s." % path, ANSI_RED)
+		path = fallback
+		if not f.file_exists(path):
+			aprint("[!!][loadJSON] Fallback %s not found, this should not happen. Expect a crash." % path, ANSI_RED2)
+	aprint("[loadJSON] Loading JSON: %s" % path, ANSI_CYAN2)
+	if f.open(path, File.READ) == OK:
+		var data = f.get_as_text()
+		if not validate_json(data):
+			#TODO: Do something useful if it fails. Provide a fallback dictionary?
+			result = parse_json(data)
+
+	return result
+
 static func newArray(size:int) -> Array: #Creates and returns an array with the given size.
 	var a:Array = []
 	a.resize(size)

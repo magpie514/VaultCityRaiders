@@ -11,7 +11,8 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 0.560784, 0.862745, 0.74902, 1 )
-corner_radius_bottom_left = 5
+corner_radius_top_left = 4
+corner_radius_bottom_right = 26
 corner_detail = 1
 anti_aliasing = false
 
@@ -22,7 +23,8 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_bottom_left = 5
+corner_radius_top_left = 4
+corner_radius_bottom_right = 26
 corner_detail = 1
 anti_aliasing = false
 
@@ -33,7 +35,8 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 0.559784, 0.849055, 0.863281, 1 )
-corner_radius_bottom_left = 5
+corner_radius_top_left = 4
+corner_radius_bottom_right = 26
 corner_detail = 1
 anti_aliasing = false
 
@@ -44,7 +47,8 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 0.686275, 0.352941, 0.352941, 1 )
-corner_radius_bottom_left = 5
+corner_radius_top_left = 4
+corner_radius_bottom_right = 26
 corner_detail = 1
 anti_aliasing = false
 
@@ -55,8 +59,8 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 1, 0.698039, 0, 1 )
-corner_radius_top_right = 26
-corner_radius_bottom_left = 5
+corner_radius_top_left = 4
+corner_radius_bottom_right = 26
 corner_detail = 1
 anti_aliasing = false
 
@@ -95,7 +99,7 @@ margin_left = 320.0
 margin_right = 350.0
 margin_bottom = 26.0
 text = "XX"
-align = 1
+align = 2
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -127,5 +131,6 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="mouse_entered" from="Button" to="." method="_on_Button_mouse_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_Button_mouse_exited"]

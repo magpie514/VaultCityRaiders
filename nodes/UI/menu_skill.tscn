@@ -108,8 +108,9 @@ margin_left = 2.0
 margin_top = 36.0
 margin_right = 32.0
 margin_bottom = 56.0
-custom_fonts/font = SubResource( 3 )
 custom_colors/font_outline_modulate = Color( 0, 0.184314, 0.372549, 1 )
+custom_fonts/font = SubResource( 3 )
 text = "EP"
 valign = 1
+
 [connection signal="pressed" from="Back" to="." method="_on_Back_pressed"]

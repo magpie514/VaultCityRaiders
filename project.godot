@@ -43,7 +43,6 @@ window/stretch/aspect="keep"
 
 [gui]
 
-theme/use_hidpi=true
 theme/custom_font="res://resources/tres/fonts/std_font.tres"
 
 [importer_defaults]
@@ -53,17 +52,18 @@ texture={
 "compress/hdr_mode": 0,
 "compress/lossy_quality": 0.7,
 "compress/mode": 0,
-"compress/normal_map": 0,
-"detect_3d": true,
-"flags/anisotropic": false,
+"compress/normal_map": 2,
+"detect_3d": false,
+"flags/anisotropic": true,
 "flags/filter": false,
-"flags/mipmaps": false,
+"flags/mipmaps": true,
 "flags/repeat": 0,
-"flags/srgb": 1,
+"flags/srgb": 0,
 "process/HDR_as_SRGB": false,
 "process/fix_alpha_border": true,
 "process/invert_color": false,
-"process/premult_alpha": false,
+"process/normal_map_invert_y": false,
+"process/premult_alpha": true,
 "size_limit": 0,
 "stream": false,
 "svg/scale": 1.0
@@ -159,14 +159,8 @@ file_logging/enable_file_logging=true
 quality/intended_usage/framebuffer_allocation=1
 quality/intended_usage/framebuffer_allocation.mobile=1
 2d/snapping/use_gpu_pixel_snap=true
-quality/directional_shadow/size=1024
-quality/shadow_atlas/size=1024
-quality/shadow_atlas/quadrant_2_subdiv=0
-quality/shadow_atlas/quadrant_3_subdiv=0
 quality/reflections/texture_array_reflections=false
 quality/reflections/high_quality_ggx=false
-quality/filters/anisotropic_filter_level=2
-quality/filters/use_nearest_mipmap_filter=true
 quality/subsurface_scattering/quality=0
 environment/default_environment="res://default_env.tres"
 quality/2d/use_pixel_snap=true

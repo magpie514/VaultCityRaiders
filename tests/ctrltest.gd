@@ -22,18 +22,19 @@ func _ready():
 	core.battle.control      = self
 	core.battle.skillControl = $SkillController
 	core.battle.background   = $Panel/ViewportContainer/Viewport/BattleView
+	core.battle.cam          = $Panel/ViewportContainer/Viewport/BattleView/Main/BattleCamera
 	core.battle.UI           = $Panel/UIDisplay
 	core.battle.displayManager = preload("res://classes/battle/display_manager.gd").new(testguild, testmform, core.battle.background)
 	state.init(testguild, testmform, self)
-	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/FXHook
+	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/Main/FXHook
 	$Panel/BattleControls.init(state, self)
 	$Panel/BattleControls.hide()
 	$Panel/WinPanel.hide() #Hide the VICTORY panel if I forget it.
-
 	$Panel/UIDisplay.connectUISignals(self)
 	$Panel/InfoDisplay.init(self)
 	echo("[color=#EEEE77]%s[/color] appeared!" % testmform.name)
 	$Panel/ViewportContainer/Viewport/BattleView.init(testmform)
+	yield(wait(2.0), "timeout")
 	battle()
 	yield(self, "battle_finished")
 	print("We are done here!")
@@ -59,6 +60,8 @@ func battle():
 		$Panel/FieldEffect.updateDisplay(state.field)
 		#Show battle log and hide large action text.
 		$Panel/BattleLog.show()
+		#TODO: Wait for background intro to complete if it exists here.
+		core.battle.cam.zoom = Vector2(1.0,1.0)
 
 		#From now on it's the new turn.
 		state.passTurn()
@@ -79,6 +82,8 @@ func battle():
 		while islot < playerChars.size():
 			$Panel/ActionQueue.init(state.sortPreview(playerActions))
 			C = playerChars[islot]
+			core.battle.cam.focusAnchor(C.sprite)
+			core.battle.background.setCursor(C.sprite)
 			#yield(waitFixed(0.05), "timeout")
 			C.charge(false)
 			C.UIdisplay.highlight(true)
@@ -130,10 +135,10 @@ func battle():
 	#First check if any actions have a priority setup.
 		state.checkPriorityActions()
 		#yield($SkillController, "skill_special_finished")
-
+		core.battle.cam.zoom = Vector2(1.0,1.0)
 	#Now run everything else.
 		while state.amount() > 0:
-			A = state.popAction()
+			A = state.popAction() #Pick topmost action (by speed) and remove it from the list.
 			$Panel/CurrentAction.show()
 			$Panel/CurrentAction.init(A)
 			$Panel/ActionQueue.init(state.actions())
@@ -142,14 +147,17 @@ func battle():
 					#Play ACTION animation.
 					A.user.UIdisplay.highlight(true)
 					if A.act != state.ACT_DEFEND:
+						core.battle.cam.focusAnchor(A.user.sprite.effectHook)
+						#TODO: Pass target anchor node for camera.
+						#TODO: Play animation after running the action and getting result.
 						A.user.sprite.act()
 						yield(A.user.sprite.player, "animation_finished")
 					state.initAction(A)
-					yield($SkillController, "action_finished")
+					yield($SkillController, "action_finished") #TODO: Review the necessity of this.
 					#yield(state.initAction(A), "completed")
 					state.updateActions(A)
 					state.sort()
-					if A.act != state.ACT_DEFEND: yield(wait(1.0), "timeout")
+					if A.act != state.ACT_DEFEND: yield(wait(0.85, true), "timeout")
 					$Panel/UIDisplay.update()
 					$Panel/FieldEffect.updateDisplay(state.field)
 					A.user.UIdisplay.highlight(false)
@@ -158,13 +166,13 @@ func battle():
 					print("Skipping action, battle is over.")
 		state.endTurn()
 		#yield($SkillController, "skill_special_finished")
-		yield(wait(0.5, true), "timeout")
+		yield(waitFixed(0.85), "timeout")
 		print("Checking if state changed...")
 		if checkResolution(): return
 		print("Actual end of turn")
 
 # Support functions ###########################################################
-func getBattleDelay(x):
+func getBattleDelay(x) -> float:
 	return float(x) * (BATTLE_SPEED_MULTIPLIER[battleSpeed])
 
 func echo(text):

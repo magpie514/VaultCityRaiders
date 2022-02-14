@@ -303,11 +303,21 @@ text = "Loses"
 valign = 1
 
 [node name="Heal" type="Button" parent="Panel2"]
-margin_left = 10.0
-margin_top = 170.0
-margin_right = 460.0
-margin_bottom = 195.0
+margin_left = 12.0
+margin_top = 193.0
+margin_right = 462.0
+margin_bottom = 218.0
 text = "Rest party"
+
+[node name="Organize" type="Button" parent="Panel2"]
+margin_left = 12.0
+margin_top = 165.0
+margin_right = 462.0
+margin_bottom = 190.0
+text = "Organize party"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ELVLabel" type="Label" parent="Panel2"]
 margin_left = 10.0
@@ -371,9 +381,9 @@ margin_bottom = 165.0
 
 [node name="GetDGem" type="Button" parent="Panel2"]
 margin_left = 10.0
-margin_top = 200.0
+margin_top = 225.0
 margin_right = 230.0
-margin_bottom = 225.0
+margin_bottom = 250.0
 text = "Get Dragon Gem"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -381,9 +391,9 @@ __meta__ = {
 
 [node name="GetItem" type="Button" parent="Panel2"]
 margin_left = 240.0
-margin_top = 200.0
+margin_top = 225.0
 margin_right = 460.0
-margin_bottom = 225.0
+margin_bottom = 250.0
 text = "Get Item"
 
 [node name="Panel3" type="Panel" parent="."]
@@ -409,9 +419,7 @@ text = "Seed"
 align = 1
 valign = 1
 
-[node name="Panel4" type="Panel" parent="." groups=[
-"CharMenus",
-]]
+[node name="Panel4" type="Panel" parent="." groups=["CharMenus"]]
 margin_left = 490.0
 margin_top = 390.0
 margin_right = 960.0
@@ -468,9 +476,7 @@ margin_top = 230.0
 margin_right = 460.0
 margin_bottom = 255.0
 
-[node name="Panel5" type="Panel" parent="." groups=[
-"CharMenus",
-]]
+[node name="Panel5" type="Panel" parent="." groups=["CharMenus"]]
 margin_left = 490.0
 margin_top = 390.0
 margin_right = 960.0
@@ -510,9 +516,7 @@ margin_right = 120.0
 margin_bottom = 265.0
 text = "Cancel"
 
-[node name="Panel6" type="Panel" parent="." groups=[
-"CharMenus",
-]]
+[node name="Panel6" type="Panel" parent="." groups=["CharMenus"]]
 visible = false
 margin_left = 490.0
 margin_top = 390.0
@@ -564,9 +568,7 @@ margin_right = 460.0
 margin_bottom = 95.0
 text = "Reset"
 
-[node name="Panel7" type="Panel" parent="." groups=[
-"CharMenus",
-]]
+[node name="Panel7" type="Panel" parent="." groups=["CharMenus"]]
 visible = false
 margin_left = 490.0
 margin_top = 390.0
@@ -603,9 +605,7 @@ margin_right = 460.0
 margin_bottom = 40.0
 text = "Cancel"
 
-[node name="Panel8" type="Panel" parent="." groups=[
-"CharMenus",
-]]
+[node name="Panel8" type="Panel" parent="." groups=["CharMenus"]]
 margin_left = 490.0
 margin_top = 390.0
 margin_right = 960.0
@@ -646,6 +646,7 @@ text = "Cancel"
 [connection signal="pressed" from="Panel/Button6" to="." method="_on_Button6_pressed"]
 [connection signal="pressed" from="Panel/LoadDebugParty" to="." method="_on_LoadDebugParty_pressed"]
 [connection signal="pressed" from="Panel2/Heal" to="." method="_on_Heal_pressed"]
+[connection signal="pressed" from="Panel2/Organize" to="." method="_on_Organize_pressed"]
 [connection signal="value_changed" from="Panel2/ELVSlider" to="." method="_on_ELVSlider_value_changed"]
 [connection signal="value_changed" from="Panel2/RankSlider" to="." method="_on_RankSlider_value_changed"]
 [connection signal="pressed" from="Panel2/GetDGem" to="." method="_on_GetDGem_pressed"]

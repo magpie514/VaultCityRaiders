@@ -16,8 +16,8 @@ func _draw() -> void:
 		draw_bar(Rect2(Vector2(0,0), rect_size), "#77888888")
 		return
 	for i in range(20):
-		if i <= value: C = "#AAFFFFFF"
-		elif i <= Max: C = "#AA888888"
+		if i < value: C = "#AAFFFFFF"
+		elif i < Max: C = "#AA888888"
 		else         : C = "#22888888"
 		draw_bar(Rect2(size * i, 0, size, rect_size.y), C)
 

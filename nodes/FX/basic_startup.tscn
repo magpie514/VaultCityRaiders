@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=2]
 
-[ext_resource path="res://nodes/FX/basic.gd" type="Script" id=1]
+[ext_resource path="res://nodes/FX/FX.gd" type="Script" id=1]
 [ext_resource path="res://resources/icons/dgem_round.svg" type="Texture" id=2]
 [ext_resource path="res://resources/icons/elec.svg" type="Texture" id=3]
 

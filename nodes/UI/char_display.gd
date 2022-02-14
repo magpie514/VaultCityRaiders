@@ -19,20 +19,25 @@ var style = core._charPanel.new(self, "res://resources/tres/char_display.tres", 
 func damage() -> void:
 	update()
 
-func init(C):
+func init(C) -> void:
 	chr = C
 	$Action.hide()
+	$AD.show(); $Status.show(); $Name.show(); $ComplexBar.show()
 	shakeTimer = 0
 	resetDamageCount()
 	update()
 
+func _ready() -> void:
+	$AD.hide(); $Status.hide(); $Name.hide(); $ComplexBar.hide()
+	shakeTimer = 0
+	origPosition = rect_position
+	set_process(true)
+
 func _process(delta):
 	if blink > 0 or blink == -1:
 		style.setTemp("damage" if OS.get_ticks_msec() % 2 else _theme)
-		if blink > 0:
-			blink -= 1
-		if blink == 0:
-			style.setTemp(_theme)
+		if blink > 0  : blink -= 1
+		if blink == 0 : style.setTemp(_theme)
 
 func resetDamageCount():
 	lastVital = chr.HP
@@ -127,11 +132,6 @@ func update() -> void:
 		$Name.text          = chr.name
 		$ComplexBar/HP.text = str("%03d" % vital)
 		$ComplexBar.value   = vitalN
-
-func _ready() -> void:
-	shakeTimer = 0
-	origPosition = rect_position
-	set_process(true)
 
 func _on_Button_mouse_entered() -> void:
 	highlight(true)

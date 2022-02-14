@@ -59,15 +59,19 @@ func wait(x):
 	$FXTimer.start()
 	return self
 
-func startAnim(S, level:int, x, display:Position2D) -> void:
+func startAnim(S, level:int, x, display:Position2D, userDisplay:Position2D) -> void:
 	var temp = S.animations[x] if x in S.animations else "res://nodes/FX/basic.tscn"
+	temp = "res://nodes/FX/basic.tscn"
 	anim = load(temp).instance()
 	display.add_child(anim)
+	anim.connect("anim_done", self, "on_anim_done")
+	anim.target.global_position   = display.global_position
+	anim.user.global_position     = userDisplay.global_position
+	anim.cam.global_position      = anim.user.global_position
 	if S.animFlags[level] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
 		anim.modulate = core.stats.ELEMENT_DATA[S.element[level]].color
 		print("[SKILLCONTROLLER] Setting color from element! %s" % str(anim.modulate))
 	#anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
-	anim.connect("anim_done", self, "on_anim_done")
 	anim.play(ANIM_SPEEDS[speed])
 
 func _on_FXTimer_timeout():

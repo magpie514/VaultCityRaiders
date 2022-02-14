@@ -119,3 +119,7 @@ func _on_GetDGem_pressed() -> void:
 
 func _on_DGem_Cancel_pressed() -> void:
 	$Panel5.close(self)
+
+
+func _on_Organize_pressed() -> void:
+	pass # Replace with function body.

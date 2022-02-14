@@ -1,0 +1,9 @@
+{
+	"atlas": "res://resources/images/Char/Anna/Anna.png",
+	"scale": 0.74,
+	"IDLE"  : [170,111,208,260],
+	"ACTION": [170,111,208,260],
+	"BEGIN" : [170,111,208,260],
+	"CHARGE": [170,111,208,260],
+	"GUARD" : [170,111,208,260]
+}

@@ -8,20 +8,20 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Panel
 var _style = load(\"res://resources/tres/action_queue_item-stylebox.tres\")
-var style = null
+var style  = null
 
 func init(A, pos) -> void: #A:Action
 	style = _style.duplicate()
 	set(\"custom_styles/panel\", style)
 	$Label.text = str(\"%s\" % [A.user.name])
-	$Position.value = A.user.slot
 	if A.user is core.Player:
 		style.bg_color = \"55000088\"
 		$Warning.visible = false
 	elif A.user is core.Enemy:
 		style.bg_color = \"55880000\"
 		$Warning.visible = A.skill.dangerous
-
+		$Position.flip   = true
+	$Position.value = A.user.slot
 "
 
 [node name="ActionQueueItem" type="Panel"]

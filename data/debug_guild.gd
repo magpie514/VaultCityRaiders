@@ -12,11 +12,11 @@ var data = {
 		IDcounter = 67,
 	},
 	formationSlots = [
-		0, 2, 4, #Front
-		1, 6, 3, #Back
+		0, 4, 2, #Front
+		null, 1, 3, #Back
 	],
 	roster = [
-		{ name = "Jay",
+		{ name = "Jay", spriteFile = "res://resources/images/Char/Jay/Jay.json",
 			race = "debug/choujin",	aclass = "debug/ofight",
 			XP = 500,
 			portrait = null,
@@ -44,7 +44,7 @@ var data = {
 				[080, A.LINK_RIVAL, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-		{ name = "Magpie",
+		{ name = "Magpie", spriteFile = "res://resources/images/Char/Magpie/Magpie.json",
 			race = "debug/choujin",	aclass = "debug/gdriver",
 			XP = 500,
 			portrait = null,
@@ -72,7 +72,7 @@ var data = {
 				[060, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-		{ name = "Anna",
+		{ name = "Anna", spriteFile = "res://resources/images/Char/Anna/Anna.json",
 			race = "debug/vampire", aclass = "debug/incinera",
 			XP = 500,
 			portrait = null,
@@ -101,7 +101,7 @@ var data = {
 				[010, A.LINK_NAKAMA, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-		{ name = "Yukiko",
+		{ name = "Yukiko", spriteFile = "res://resources/images/Char/Yukiko/Yukiko.json",
 			race = "debug/choujin", aclass = "debug/akashic",
 			XP = 500,
 			portrait = null,
@@ -137,7 +137,7 @@ var data = {
 				[020, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],
 			],
 		},
-		{ name = "Shiro",
+		{ name = "Shiro", spriteFile = "res://resources/images/Char/Shiro/Shiro.json",
 			race = "debug/choujin", aclass = "debug/muramasa",
 			XP = 500,
 			portrait = null,
@@ -155,7 +155,7 @@ var data = {
 				null,
 				null,
 			],
-			skills = [ [0, 1], [1, 1], [2, 1], [3, 1] ],
+			skills = [ [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1] ],
 			links = [
 				[100, A.LINK_RIVAL, A.LINK_NONE, A.LINK_NONE],
 				[070, A.LINK_FRIEND, A.LINK_NONE, A.LINK_NONE],
@@ -229,6 +229,8 @@ var data = {
 		[1, "core/lifeshrd", { level = 1 }],
 		[1, "debug/grenade", { level = 1 }],
 		[1, "core/defshrd",  { level = 1 }],
+		[1, "core/blaklotu", { level = 1 }],
+		[1, "core/blaklotu", { level = 1 }],
 		[1, "core/blaklotu", { level = 1 }],
 		[1, "core/blaklotu", { level = 1 }],
 		[1, "core/erthward", { level = 1, charge = 0}],

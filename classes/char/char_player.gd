@@ -57,6 +57,7 @@ enum {
 var guildIndex:int  #reference to character's position in the guild list.
 var classlib = null  #pointer to class index.
 var racelib  = null  #pointer to race index.
+var spriteFile:String = "" #Sprite file.
 
 var EP:int             = 0    #Energy Points. To use non-weapon skills.
 var XP:int             = 0    #Experience points.
@@ -207,11 +208,13 @@ func initSkillList(sk) -> void:
 	for i in sk:
 		skills.push_back([ int(i[0]), int(i[1]) - 1 ]) #skill TID, level
 
-func initDict(C):	#Load the character from save data
+func initDict(C) -> void:	#Load the character from save data
 	side = 0
 	self.DGem = DragonGemContainer.new(0)
 	self.name = str(C.name)                    #Init adventurer's name
 	print("[CHAR][initDict] Initializing %s" % [name])
+	self.spriteFile = str(C.spriteFile) if 'spriteFile' in C else "res://resources/images/Char/debug.json"
+	print("[CHAR][initDict] Sprite file %s" % [spriteFile])
 	setCharRace(C.race)                        #Init adventurer's race and set pointer to it for easy reference.
 	setCharClass(C.aclass)                     #Init adventurer's class and set pointer.
 	equip.loadWeapons(C.equip)                 #Init adventurer's weapons.    (Slots 0-3)

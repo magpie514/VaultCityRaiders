@@ -1,13 +1,13 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=12 format=2]
 
-[ext_resource path="res://nodes/UI/battle/enemy_sprite_simple.gd" type="Script" id=1]
-[ext_resource path="res://resources/images/test.png" type="Texture" id=2]
-[ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=3]
-[ext_resource path="res://resources/images/test_BM.png" type="Texture" id=4]
-[ext_resource path="res://nodes/UI/battle/ConditionDisplay.tscn" type="PackedScene" id=5]
+[ext_resource path="res://classes/FX/glowerObject.gd" type="Script" id=1]
+[ext_resource path="res://nodes/UI/battle/ConditionDisplay.tscn" type="PackedScene" id=2]
+[ext_resource path="res://resources/images/Char/Jay/Jay.png" type="Texture" id=3]
+[ext_resource path="res://nodes/UI/battle/Charge.tscn" type="PackedScene" id=5]
+[ext_resource path="res://nodes/Battle/sprite_simple.gd" type="Script" id=6]
 
 [sub_resource type="Animation" id=1]
-length = 0.351434
+length = 0.8
 tracks/0/type = "value"
 tracks/0/path = NodePath("SpriteHook/Sprite:modulate")
 tracks/0/interp = 1
@@ -19,18 +19,6 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 0, 1, 1, 1 ),
 "update": 1,
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 100, 100, 100, 1 ), Color( 1, 1, 1, 1 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("SpriteHook/Sprite:flip_h")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = false
-tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.299154 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false ]
 }
 
 [sub_resource type="Animation" id=2]
@@ -90,50 +78,10 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 100, 100, 100, 1 ), Color( 2, 1, 1, 1 ), Color( 0, 0, 100, 1 ), Color( 0, 0, 0, 0 ) ]
 }
 
-[sub_resource type="Shader" id=6]
-code = "shader_type canvas_item;
-render_mode blend_add;
-
-uniform float radius = 16.0;
-
-void fragment() {
-	vec2 ps = TEXTURE_PIXEL_SIZE;
-	vec4 col = vec4(0);
-	float f = 1.0;
-	for(f = 0.0; f < 16.0; f+=1.0){
-		col += texture(TEXTURE, UV + vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
-		col += texture(TEXTURE, UV - vec2(f, 0.0) * ps) * ((16.0-f) / 16.0);
-	}
-	COLOR = col / 7.0;
-}
-"
-
-[sub_resource type="ShaderMaterial" id=7]
-shader = SubResource( 6 )
-shader_param/radius = 5.0
-
-[sub_resource type="GDScript" id=8]
-script/source = "tool
-extends Sprite
-
-var nextVal:float    = randf()
-var count:float      = randf()
-var currentVal:float = randf()
-
-func _ready() -> void:
-	set_process(true)
-
-func _process(delta: float) -> void:
-	count += 0.1
-	if count > 1.0:
-		count = 0
-		currentVal = nextVal
-		nextVal = randf()
-	modulate.a = lerp(currentVal, nextVal, count)
-"
+[sub_resource type="ShaderMaterial" id=6]
 
 [node name="SpriteSimple" type="Node2D"]
-script = ExtResource( 1 )
+script = ExtResource( 6 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/ACTION = SubResource( 1 )
@@ -145,22 +93,27 @@ anims/DEFEAT = SubResource( 5 )
 [node name="SpriteHook" type="Position2D" parent="."]
 
 [node name="Sprite" type="Sprite" parent="SpriteHook"]
-position = Vector2( 0, -120 )
-texture = ExtResource( 2 )
+position = Vector2( 0, -100 )
+texture = ExtResource( 3 )
+region_enabled = true
+region_rect = Rect2( 448, 177, 253, 205 )
 
 [node name="Glows" type="Sprite" parent="SpriteHook/Sprite"]
-modulate = Color( 1, 1, 1, 0.196893 )
-material = SubResource( 7 )
-texture = ExtResource( 4 )
-script = SubResource( 8 )
+modulate = Color( 1, 1, 1, 0.8 )
+material = SubResource( 6 )
+position = Vector2( -24, -15.4 )
+texture = ExtResource( 3 )
+region_enabled = true
+region_rect = Rect2( 250.9, 185.6, 192.5, 174.7 )
+script = ExtResource( 1 )
 
-[node name="Charge" parent="SpriteHook" instance=ExtResource( 3 )]
+[node name="Charge" parent="SpriteHook" instance=ExtResource( 5 )]
 position = Vector2( 0, -100 )
 
 [node name="Position2D" type="Position2D" parent="SpriteHook"]
 z_index = 20
 
-[node name="ConditionDisplay" parent="SpriteHook/Position2D" instance=ExtResource( 5 )]
+[node name="ConditionDisplay" parent="SpriteHook/Position2D" instance=ExtResource( 2 )]
 margin_left = -80.0
 margin_right = -80.0
 

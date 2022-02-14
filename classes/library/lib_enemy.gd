@@ -34,7 +34,6 @@ var example = {
 	"story" : {
 		"lunablaz": {
 			name = "Flame From Beyond",
-			spriteFile = "res://resources/images/flame_from_beyond.png",
 			description = "An anomaly of time, burning with heat from times unknown.",
 			statSpread = [
 				[0045, 001, 038, 012, 015, 011, 005],
@@ -138,7 +137,6 @@ var example = {
 		},
 		"compiler": {
 			name = "Compiler",
-			spriteFile = "res://resources/images/compiler.png",
 			description = "Combat testing drone. A glorified moving turret. Vanilla scented.",
 			statSpread = [
 				[0015, 001, 008, 012, 008, 011, 005],
@@ -192,7 +190,7 @@ var example = {
 func initTemplate():
 	return {
 		"name"         : { loader = LIBSTD_STRING },                      #Enemy name
-		"spriteFile"   : { loader = LIBSTD_STRING, default = "res://resources/images/test.png"},
+		"spriteFile"   : { loader = LIBSTD_STRING, default = "res://resources/images/Char/debug.json"},
 		"energyColor"  : { loader = LIBSTD_STRING, default = "#AAFFFF" }, #Energy effect color.
 		"summons"      : { loader = LIBSTD_SUMMONS },                     #Summoner (or reinforcement) data.
 		"monster"      : { loader = LIBSTD_BOOL, default = false },       #If the enemy is a monster that can be captured/tamed.

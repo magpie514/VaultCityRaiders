@@ -12,9 +12,10 @@ corner_detail = 1
 anti_aliasing = false
 
 [sub_resource type="GDScript" id=2]
-script/source = "extends Panel
+script/source = "#Condition gauge display.
+extends Panel
 
-func init(cond:int, val:int, _max:int):
+func init(cond:int, val:int, _max:int) -> void:
 	$Control.init(val, _max)
 	self_modulate = core.stats.CONDITION_DATA[cond].color
 	$Label.text   = core.stats.CONDITION_DATA[cond].short

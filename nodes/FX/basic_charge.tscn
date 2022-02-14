@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://nodes/FX/basic.gd" type="Script" id=1]
+[ext_resource path="res://nodes/FX/FX.gd" type="Script" id=1]
 
 [sub_resource type="Animation" id=1]
 resource_name = "New Anim"

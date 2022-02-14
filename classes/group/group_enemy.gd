@@ -1,8 +1,8 @@
 extends "res://classes/group/group_base.gd"
-var enemy = preload("res://classes/char/char_enemy.gd")
-var display = null
-var defeated = []
-var lib = null
+var enemy                 = preload("res://classes/char/char_enemy.gd")
+var display               = null
+var defeated              = []
+var lib                   = null
 var summonRestriction:int = 1
 
 # Virtual overrides ###############################################################################

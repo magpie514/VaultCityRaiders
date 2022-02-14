@@ -10,5 +10,5 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 color = Color( 0.006, 0, 0.04, 0.803922 )
-outline = Color( 0.960784, 0.466667, 0.0823529, 1 )
-hilight = Color( 0.0823529, 0.858824, 0.960784, 1 )
+outline = Color( 0.529412, 0.529412, 0.529412, 0.517647 )
+hilight = Color( 0.572549, 1, 0.709804, 1 )

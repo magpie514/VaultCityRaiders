@@ -189,6 +189,8 @@ var example = {
 				["debug", "defdown"],
 				["debug", "barricad"],
 				["debug", "solidbun"],
+				"story/raijin",
+				"story/wanyuudo",
 				"sto_wp/shiro000",
 				["debug", "decoy"],
 			],

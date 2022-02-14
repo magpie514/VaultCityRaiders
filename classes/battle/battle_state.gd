@@ -301,10 +301,16 @@ func checkActionExecution(user, target) -> bool: #Check if an action can be perf
 		return true
 	return false
 
+
+const SKILL_OK = 0
+const SKILL_FAIL = 1
+const SKILL_MISS = 2
+
 func initAction(act) -> void:
 	yield(core.battle.control.wait(0.001), "timeout")
-
+#TODO: Collect events and display animations based on those events.
 	var skip_animations:bool = (act.act == ACT_DEFEND)
+	var result:Array
 	if checkActionExecution(act.user, act.target):
 		if act.target.empty():
 			print("[SKILL][PROCESS][!] No targets specified, trying to autotarget.")
@@ -314,14 +320,18 @@ func initAction(act) -> void:
 			print("[SKILL][PROCESS][!] No targets found.")
 		if not skip_animations:
 			if 'startup' in act.skill.animations:
-				core.battle.skillControl.startAnim(act.skill, act.level, 'startup', core.battle.bg_fx)
-				yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
+				#core.battle.skillControl.startAnim(act.skill, act.level, 'startup', core.battle.bg_fx)
+				#yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
 				print("[BATTLE_STATE][initAction] Startup animation finished")
-			if 'main' in act.skill.animations and targets.size() == 1:
-				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targets[0].sprite.effectHook)
+			if 'main' in act.skill.animations:
+				var targetNode = targets[0].sprite.effectHook
+				if targets.size() > 1:
+					targetNode = core.battle.background.multitargets[targets[0].side][0]
+				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targetNode, act.user.sprite.effectHook)
 				yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
 				print("[BATTLE_STATE][initAction] Main animation finished")
-		act.user.useBattleSkill(act.act, act.skill, act.level, act.target, act.WP, act.IT, skip_animations)
+		act.user.charge(false) #Stop charging effects.
+		result = act.user.useBattleSkill(act.act, act.skill, act.level, act.target, act.WP, act.IT, skip_animations)
 		#yield(core.battle.skillControl, "skill_finished")
 		# Process post-skill actions.
 		if onhit.size() > 0:

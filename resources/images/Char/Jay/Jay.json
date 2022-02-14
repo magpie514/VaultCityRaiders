@@ -1,0 +1,8 @@
+{
+	"atlas": "res://resources/images/Char/Jay/Jay.png",
+	"IDLE"  : [448,177,253,205], "IDLE_GLOWS" : [264, 185, 166, 174, -25, -17, 0.7, "FFFFFF"],
+	"ACTION": [448,177,253,205],
+	"BEGIN" : [448,177,253,205],
+	"CHARGE": [448,177,253,205],
+	"GUARD" : [448,177,253,205]
+}

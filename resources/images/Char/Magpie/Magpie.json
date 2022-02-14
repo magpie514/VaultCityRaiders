@@ -1,0 +1,8 @@
+{
+	"atlas": "res://resources/images/Char/Magpie/Magpie.png",
+	"IDLE"  : [39,46,146,151],
+	"ACTION": [39,46,146,151],
+	"BEGIN" : [39,46,146,151],
+	"CHARGE": [39,46,146,151],
+	"GUARD" : [39,46,146,151]
+}
