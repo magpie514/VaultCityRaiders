@@ -41,7 +41,7 @@ var ELEMENT_CONV = {
 	core.stats.ELEMENTS.DMG_ICE      : COUNTER_DMG_COLD,
 	core.stats.ELEMENTS.DMG_ELEC     : COUNTER_DMG_ELEC,
 
-	8                                : COUNTER_DMG_UNKNOWN, #Placeholder for what will become element 7.
+	core.stats.ELEMENTS.DMG_UNKNOWN  : COUNTER_DMG_UNKNOWN,
 	core.stats.ELEMENTS.DMG_ULTIMATE : COUNTER_DMG_ULTIMATE,
 }
 

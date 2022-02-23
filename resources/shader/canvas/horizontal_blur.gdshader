@@ -11,5 +11,5 @@ void fragment() {
 		col += texture(TEXTURE, UV + vec2(f, 0.0) * ps) * ((radius-f) / radius);
 		col += texture(TEXTURE, UV - vec2(f, 0.0) * ps) * ((radius-f) / radius);
 	}
-	COLOR = col / 7.0;
+	COLOR = col / 1.2;
 }

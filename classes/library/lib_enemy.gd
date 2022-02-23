@@ -83,7 +83,7 @@ var example = {
 				flags = 0,
 				loopFrom = 1,
 			},
-			skills     = [ "debug/alertstc", "debug/defdown", "enemy/genoray", "core/defend" ],
+			skills     = [ "debug/alertstc", "debug/defdown", "debug/shoot", "core/defend" ],
 			skillSetup = [ [ [0,1], [1,1], [2,1], [3,1] ], [ [0,2], [1,3], [2,2], [3,4] ] ],
 		}, "debug1": {
 			name = "Solid Debugger",

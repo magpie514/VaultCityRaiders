@@ -24,9 +24,10 @@ func _ready():
 	core.battle.background   = $Panel/ViewportContainer/Viewport/BattleView
 	core.battle.cam          = $Panel/ViewportContainer/Viewport/BattleView/Main/BattleCamera
 	core.battle.UI           = $Panel/UIDisplay
+	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/Main/FXHook
 	core.battle.displayManager = preload("res://classes/battle/display_manager.gd").new(testguild, testmform, core.battle.background)
 	state.init(testguild, testmform, self)
-	core.battle.bg_fx = $Panel/ViewportContainer/Viewport/BattleView/Main/FXHook
+	core.battle.displayManager.init()
 	$Panel/BattleControls.init(state, self)
 	$Panel/BattleControls.hide()
 	$Panel/WinPanel.hide() #Hide the VICTORY panel if I forget it.
@@ -39,7 +40,7 @@ func _ready():
 	yield(self, "battle_finished")
 	print("We are done here!")
 	core.stopMusic()
-	yield(wait(24.0), "timeout")
+	yield(wait(3.0, true), "timeout")
 	$Panel/UIDisplay.disconnectUISignals(self)
 	print("Done")
 	core.world.passTime(1)
@@ -148,7 +149,6 @@ func battle():
 					A.user.UIdisplay.highlight(true)
 					if A.act != state.ACT_DEFEND:
 						core.battle.cam.focusAnchor(A.user.sprite.effectHook)
-						#TODO: Pass target anchor node for camera.
 						#TODO: Play animation after running the action and getting result.
 						A.user.sprite.act()
 						yield(A.user.sprite.player, "animation_finished")
@@ -164,9 +164,9 @@ func battle():
 					if checkResolution(): return
 				else:
 					print("Skipping action, battle is over.")
-		state.endTurn()
 		#yield($SkillController, "skill_special_finished")
 		yield(waitFixed(0.85), "timeout")
+		state.endTurn()
 		print("Checking if state changed...")
 		if checkResolution(): return
 		print("Actual end of turn")

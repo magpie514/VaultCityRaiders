@@ -28,7 +28,7 @@ func showChar(c):
 	$ConditionPanel.init(c)
 
 	$Elements.init(c.battle.stat)
-
+	$Label.text = "healthiness score:\n%s" % c.healthiness()
 	var line = null
 	if c.battle.buff != null:
 		for i in range(3):

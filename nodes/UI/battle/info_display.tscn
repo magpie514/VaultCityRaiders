@@ -26,3 +26,5 @@ visible = false
 
 [node name="ItemDisplay" parent="." instance=ExtResource( 5 )]
 visible = false
+
+[connection signal="gui_input" from="." to="." method="_on_InfoDisplay_gui_input"]

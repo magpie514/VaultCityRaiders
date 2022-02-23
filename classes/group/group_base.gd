@@ -11,6 +11,7 @@ const ROW_ITER  = [ [0,1,2],[3,4,5] ]  #Iterators for each row. For convenience.
 
 enum {
 	EVENT_ON_DEFEAT = 0, #Triggered when any character is defeated on the field.
+	EVENT_ON_HEAL   = 1, #Triggered when any character is healed on the field.
 }
 
 var name:String           = ""   #Name of the group.
@@ -209,11 +210,11 @@ func countEffects(S) -> int: #Count instances of the specific skill effect.
 ###################################################################################################
 
 # Sorter functions ################################################################################
-static func _sort_Weakest(a, b):
-	if a.HP > b.HP: return 0
+static func _sort_Weakest(a, b): #Sort characters by healthiness level.
+	if a.healthiness() > b.healthiness(): return 0
 	return 1
 
-static func _sort_Healthiest(a, b):
-	if a.HP < b.HP: return 0
+static func _sort_Healthiest(a, b): #Sort characters by healthiness level.
+	if a.healthiness() < b.healthiness(): return 0
 	return 1
 ###################################################################################################

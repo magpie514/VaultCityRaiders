@@ -1,5 +1,6 @@
 {
 	"atlas": "res://resources/images/core.png",
+	"scale": 0.5,
 	"IDLE"  : [315,16,317,460],
 	"ACTION": [315,16,317,460],
 	"BEGIN" : [315,16,317,460],

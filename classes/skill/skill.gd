@@ -383,7 +383,6 @@ enum { #Skill function codes.
 	OPCODE_LINKSKILL                  , #Uses a provided skill TID with the same level as cast.
 	OPCODE_PLAYANIM                   , #Plays a given animation. Use 0 to play no animation, 1 to play default animation.
 	OPCODE_FX_EFFECTOR_ADD            , #If X > 0, adds an effector (an object that attaches to the character sprite) defined in the "fx" array.
-	OPCODE_WAIT                       , #Wait for X/100 miliseconds.
 	OPCODE_POST                       , #Run post code for PR, MN or EF. x = 0 disables it. x = 1 targets the user's group. x = 2 targets the opposing group.
 	OPCODE_SYNERGY_REMOVE             , #Removes a synergy if x > 0.
 	# Effect controls ############################################################
@@ -627,7 +626,6 @@ const opCode = {
 	"linkskill"             : OPCODE_LINKSKILL,
 	"anim.play"             : OPCODE_PLAYANIM,
 	"fx.add"                : OPCODE_FX_EFFECTOR_ADD,
-	"wait"                  : OPCODE_WAIT,
 	"post"                  : OPCODE_POST,
 
 	"stop"                  : OPCODE_STOP,
@@ -1512,7 +1510,6 @@ func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipA
 	var tempTarget  = null
 	var control     = null
 	var state:SkillState
-	print("[35m") #Color debug output.
 	user.charge(false) #Stop charging FX now.
 	if IT != null: #Using an item, override some things.
 		#TODO: Put item bonuses somewhere here.
@@ -1559,7 +1556,6 @@ func processCombatSkill(S, level:int, user, targets, WP = null, IT = null, skipA
 			#Add effect as a percentage for each group.
 			core.battle.control.state.field.push(core.battle.control.state.lastElement)
 	user.updateChain(S.chain) 	#TODO: Get info about last action to see if it hit or not
-	print("[0m") #Color debug output.
 	controlNode.finish()
 
 func runExtraCode(S, level:int, user, code_key, target = null):
@@ -1606,7 +1602,7 @@ func processFL(S, level:int, user, target, data, type) -> void:
 				user.name, S.name,
 				(" [color=#888888](next %03d%%)[/color]" % data[0]) if data[1] > 0 else ""
 				])
-	core.battle.skillControl.startAnim(S, level, 'onfollow', target.sprite.effectHook)
+	#core.battle.skillControl.startAnim(S, level, 'onfollow', target.sprite.effectHook)
 	processSkillCode(S, level, user, target, CODE_FL)
 	print("[%s] CodeFL finished" % S.name)
 
@@ -2239,10 +2235,7 @@ func runSkillCode(S, level:int, state:SkillState, code:Array, user, target) -> v
 						print(">ADD FX EFFECTOR: ", value)
 						if value > 0 and S.fx:
 							if value - 1 < S.fx.size():
-								core.battle.displayManager.addEffector(variableTarget, S.fx[value-1])
-					OPCODE_WAIT:
-						print(">WAIT: %s" % value)
-#						yield(controlNode.wait(float(value) * 0.01), "timeout")
+								core.battle.displayManager.addEffector(variableTarget, S.fx[value-1], S, 0)
 					OPCODE_POST:
 						print(">POST ACTION CONTROL: %s" % value)
 						match(value):

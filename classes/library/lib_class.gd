@@ -191,7 +191,7 @@ var example = {
 				["debug", "solidbun"],
 				"story/raijin",
 				"story/wanyuudo",
-				"sto_wp/shiro000",
+				"story/screams",
 				["debug", "decoy"],
 			],
 		},

@@ -4,7 +4,7 @@
 [ext_resource path="res://nodes/UI/battle/CharDisplay.tscn" type="PackedScene" id=2]
 [ext_resource path="res://tests/CameraDebug.gd" type="Script" id=3]
 [ext_resource path="res://resources/images/core.png" type="Texture" id=4]
-[ext_resource path="res://resources/images/blank.png" type="Texture" id=5]
+[ext_resource path="res://tests/bgtest_01.tscn" type="PackedScene" id=5]
 
 [node name="BattleView" type="Node2D"]
 z_index = -10
@@ -13,28 +13,19 @@ script = ExtResource( 1 )
 [node name="BG" type="Node2D" parent="."]
 z_index = -20
 
-[node name="Behind" type="CanvasLayer" parent="."]
-layer = 0
-
-[node name="Underlay" type="Sprite" parent="Behind"]
-modulate = Color( 0, 0, 0, 0 )
-position = Vector2( 960, 720 )
-scale = Vector2( 960, 720 )
-z_index = 999
-z_as_relative = false
-texture = ExtResource( 5 )
+[node name="Root" parent="BG" instance=ExtResource( 5 )]
 
 [node name="Main" type="CanvasLayer" parent="."]
 follow_viewport_enable = true
 
 [node name="Enemy" type="Position2D" parent="Main"]
-position = Vector2( 768, 720 )
+position = Vector2( 1050, 740 )
 
 [node name="GroupFX" type="Position2D" parent="Main/Enemy"]
 position = Vector2( -206, 142 )
 
 [node name="B1" type="Position2D" parent="Main/Enemy"]
-position = Vector2( -288, 113 )
+position = Vector2( -238, 103 )
 z_index = -2
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/B1"]
@@ -43,7 +34,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Enemy/B1/Position2D" instance=ExtResource( 2 )]
 
 [node name="B2" type="Position2D" parent="Main/Enemy"]
-position = Vector2( -338, 191 )
+position = Vector2( -348, 201 )
 z_index = -2
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/B2"]
@@ -52,7 +43,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Enemy/B2/Position2D" instance=ExtResource( 2 )]
 
 [node name="B3" type="Position2D" parent="Main/Enemy"]
-position = Vector2( -388, 269 )
+position = Vector2( -458, 309 )
 z_index = -2
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/B3"]
@@ -61,7 +52,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Enemy/B3/Position2D" instance=ExtResource( 2 )]
 
 [node name="F1" type="Position2D" parent="Main/Enemy"]
-position = Vector2( -96, 113 )
+position = Vector2( -48, 130 )
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/F1"]
 z_index = 20
@@ -69,7 +60,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Enemy/F1/Position2D" instance=ExtResource( 2 )]
 
 [node name="F2" type="Position2D" parent="Main/Enemy"]
-position = Vector2( -146, 191 )
+position = Vector2( -138, 230 )
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/F2"]
 z_index = 20
@@ -77,7 +68,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Enemy/F2/Position2D" instance=ExtResource( 2 )]
 
 [node name="F3" type="Position2D" parent="Main/Enemy"]
-position = Vector2( -196, 269 )
+position = Vector2( -238, 340 )
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/F3"]
 z_index = 20
@@ -85,7 +76,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Enemy/F3/Position2D" instance=ExtResource( 2 )]
 
 [node name="Player" type="Position2D" parent="Main"]
-position = Vector2( 1154, 720 )
+position = Vector2( 2236, 740 )
 
 [node name="GroupFX" type="Position2D" parent="Main/Player"]
 position = Vector2( 178, 142 )
@@ -101,7 +92,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Player/B1/Position2D" instance=ExtResource( 2 )]
 
 [node name="B2" type="Position2D" parent="Main/Player"]
-position = Vector2( 328, 201 )
+position = Vector2( 346, 201 )
 z_index = 5
 
 [node name="Position2D" type="Position2D" parent="Main/Player/B2"]
@@ -119,7 +110,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Player/B3/Position2D" instance=ExtResource( 2 )]
 
 [node name="F1" type="Position2D" parent="Main/Player"]
-position = Vector2( 46, 103 )
+position = Vector2( 46, 130 )
 
 [node name="Position2D" type="Position2D" parent="Main/Player/F1"]
 z_index = 20
@@ -127,7 +118,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Player/F1/Position2D" instance=ExtResource( 2 )]
 
 [node name="F2" type="Position2D" parent="Main/Player"]
-position = Vector2( 136, 201 )
+position = Vector2( 136, 228 )
 z_index = 5
 
 [node name="Position2D" type="Position2D" parent="Main/Player/F2"]
@@ -136,7 +127,7 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Player/F2/Position2D" instance=ExtResource( 2 )]
 
 [node name="F3" type="Position2D" parent="Main/Player"]
-position = Vector2( 238, 309 )
+position = Vector2( 238, 340 )
 z_index = 10
 
 [node name="Position2D" type="Position2D" parent="Main/Player/F3"]
@@ -145,39 +136,31 @@ z_index = 20
 [node name="CharDisplay" parent="Main/Player/F3/Position2D" instance=ExtResource( 2 )]
 
 [node name="BattleCamera" type="Camera2D" parent="Main"]
-position = Vector2( 966, 720 )
+position = Vector2( 1650, 320 )
 rotating = true
 current = true
-zoom = Vector2( 1.5, 1.5 )
+limit_left = 0
+limit_top = -600
+limit_right = 3300
+limit_bottom = 1300
 limit_smoothed = true
 editor_draw_limits = true
+editor_draw_drag_margin = true
 script = ExtResource( 3 )
 
 [node name="FXHook" type="Position2D" parent="Main"]
-position = Vector2( 966, 720 )
+position = Vector2( 1650, 710 )
 __meta__ = {
-"_gizmo_extents_": 250.0
+"_gizmo_extents_": 600.0
 }
-
-[node name="ParallaxBackground" type="ParallaxBackground" parent="Main"]
 
 [node name="Cursor" type="Sprite" parent="Main"]
 visible = false
 show_behind_parent = true
+position = Vector2( 960, 720 )
 z_as_relative = false
 texture = ExtResource( 4 )
 offset = Vector2( 0, 9 )
 region_enabled = true
 region_rect = Rect2( 19, 49, 213, 55 )
 region_filter_clip = true
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 2
-
-[node name="Overlay" type="Sprite" parent="CanvasLayer"]
-visible = false
-position = Vector2( 960, 720 )
-scale = Vector2( 960, 720 )
-z_index = 999
-z_as_relative = false
-texture = ExtResource( 5 )

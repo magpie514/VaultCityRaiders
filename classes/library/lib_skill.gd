@@ -721,7 +721,7 @@ var example = {
 			],
 		},
 		"raijin": {
-			name = "Raijinzan",
+			name = "Raijingeki",
 			description = "Long-range electrified slash",
 			category = skill.CAT_ATTACK,
 			requiresWeapon = core.WPCLASS_LONGSWORD,
@@ -740,6 +740,17 @@ var example = {
 				["attack.ex"  ,0x0019810, 0],
 				["energy_dmg" ,000, 0],
 				["attack"     ,090,125,132,132,140, 140,147,147,147,160],
+			],
+		},
+		"screams": {
+			name = "Screams of the deceased", #故人の悲鳴
+			description = "Improves ATK when defeating enemies.",
+			category = skill.CAT_PASSIVE,
+			element = core.stats.ELEMENTS.DMG_UNKNOWN,
+			effector = "effector/shimei",
+			codeGD = [
+				["anim.play", 1, 0],
+				["heal", 25, skill.OPFLAG_TARGET_SELF]
 			],
 		},
 # Anna's skills ###################################################################################
@@ -1127,6 +1138,7 @@ var example = {
 			targetGroup = skill.TARGET_GROUP_ENEMY,
 			element     = core.stats.ELEMENTS.DMG_ULTIMATE,
 			energy      = true,
+			chargeAnim  = true,
 			damageStat  = core.stats.STAT.ETK,
 			ranged      = true,
 			accMod      = 100,
@@ -1479,16 +1491,6 @@ var example = {
 				["dmgbonus",       100,125,132,132,140,   140,147,147,147,160],
 				["energy_dmg",     001,001,132,132,140,   140,147,147,147,160],
 				["attack"        , 080,125,132,132,140,   140,147,147,147,160],
-			],
-		},
-		"shiro000": {
-			name = "Might Of The Fallen",
-			description = "Improves ATK when defeating enemies.",
-			category = skill.CAT_PASSIVE,
-			element = core.stats.ELEMENTS.DMG_UNKNOWN,
-			codeGD = [
-				["anim.play", 1, 0],
-				["heal", 25, skill.OPFLAG_TARGET_SELF]
 			],
 		},
 		"jigenzan": {
@@ -2540,6 +2542,7 @@ func initTemplate():
 		"animations"      : { loader = LIBEXT_ANIM, default = { 'main': "/nodes/FX/basic.tscn" } },
 		"animFlags"       : { loader = LIBSTD_SKILL_ARRAY, default = [0,0,0,0,0, 0,0,0,0,0]},
 		"fx"              : { loader = LIBEXT_FX, default = [] },
+		"effector"        : { loader = LIBSTD_STRING, default = '' },
 
 		"filter"    : { loader = LIBSTD_INT        , default = core.skill.FILTER_ALIVE },
 		"ranged"    : { loader = LIBSTD_SKILL_ARRAY, default = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
@@ -2557,10 +2560,11 @@ func initTemplate():
 		"messages"  : { loader = LIBEXT_SKILL_MESSAGES },
 		"summons"   : { loader = LIBSTD_SUMMONS, default = null},
 
+		#Skill codes
 		"codePR" : { loader = LIBSTD_SKILL_CODE },
 		"codePP" : { loader = LIBSTD_SKILL_CODE },
-		"codeST" : { loader = LIBSTD_SKILL_CODE },
-		"codeMN" : { loader = LIBSTD_SKILL_CODE },
+		"codeST" : { loader = LIBSTD_SKILL_CODE }, #Turn startup code.
+		"codeMN" : { loader = LIBSTD_SKILL_CODE }, #Main skill code.
 		"codePO" : { loader = LIBSTD_SKILL_CODE },
 		"codeFL" : { loader = LIBSTD_SKILL_CODE },
 		"codeDN" : { loader = LIBSTD_SKILL_CODE },
@@ -2592,9 +2596,7 @@ func loaderSkillFilterEXArg(val):
 	else:
 		return val
 
-
-
-func loaderFX(val) -> Array:
+func loaderFX(val) -> Array: #Loads skill effectors.
 	match typeof(val):
 		TYPE_NIL:
 			return []

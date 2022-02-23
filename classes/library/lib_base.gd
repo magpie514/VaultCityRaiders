@@ -45,6 +45,7 @@ func loadDict(dict):
 		data[key] = {}
 		for key2 in dict[key]:
 			data[key][key2] = initEntry(dict[key][key2])
+			data[key][key2].self_tid = "%s/%s" % [key, key2]
 
 func copyIntegerArray(a:Array) -> Array:
 	var size:int     = a.size()

@@ -1,8 +1,6 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://resources/images/test.png" type="Texture" id=1]
 [ext_resource path="res://resources/tres/sky.tres" type="ProceduralSky" id=2]
-[ext_resource path="res://resources/images/test_BM.png" type="Texture" id=3]
 
 [sub_resource type="Environment" id=1]
 background_mode = 2
@@ -126,69 +124,14 @@ tracks/2/keys = {
 "values": [ Vector3( -9.00111, 3.32932, 0 ), Vector3( 8.34805, 3.32932, 0 ) ]
 }
 
-[sub_resource type="VisualShaderNodeTexture" id=8]
-texture_type = 1
-
-[sub_resource type="VisualShaderNodeTexture" id=9]
-output_port_for_preview = 0
-texture = ExtResource( 3 )
-
-[sub_resource type="VisualShader" id=10]
-code = "shader_type spatial;
-render_mode depth_draw_alpha_prepass, specular_disabled;
-
-uniform sampler2D tex_frg_2 : hint_albedo;
-uniform sampler2D tex_frg_3;
-
-
-
-void vertex() {
-// Output:0
-
-}
-
-void fragment() {
-// Texture:2
-	vec4 tex_frg_2_read = texture(tex_frg_2, UV.xy);
-	vec3 n_out2p0 = tex_frg_2_read.rgb;
-	float n_out2p1 = tex_frg_2_read.a;
-
-// Texture:3
-	vec4 tex_frg_3_read = texture(tex_frg_3, UV.xy);
-	vec3 n_out3p0 = tex_frg_3_read.rgb;
-	float n_out3p1 = tex_frg_3_read.a;
-
-// Output:0
-	ALBEDO = n_out2p0;
-	ALPHA = n_out2p1;
-	EMISSION = n_out3p0;
-
-}
-
-void light() {
-// Output:0
-
-}
-"
-graph_offset = Vector2( -19.04, 147.92 )
-modes/depth_draw = 3
-modes/specular = 4
-nodes/fragment/2/node = SubResource( 8 )
-nodes/fragment/2/position = Vector2( -160, 200 )
-nodes/fragment/3/node = SubResource( 9 )
-nodes/fragment/3/position = Vector2( 60, 200 )
-nodes/fragment/connections = PoolIntArray( 2, 1, 0, 1, 2, 0, 0, 0, 3, 0, 0, 5 )
-
-[sub_resource type="ShaderMaterial" id=11]
-shader = SubResource( 10 )
-
 [node name="Background" type="Spatial"]
+visible = false
 
 [node name="Main_Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.999258, -0.0385164, 0, 0.0385164, 0.999258, 0, 0.36064, 6.1617 )
+transform = Transform( 0.983885, 0.017448, -0.177949, 0, 0.995227, 0.0975829, 0.178802, -0.0960104, 0.979189, -0.1, 1.4, 7.2 )
 keep_aspect = 0
 environment = SubResource( 1 )
-fov = 80.5
+fov = 90.0
 
 [node name="Plane" type="MeshInstance" parent="."]
 transform = Transform( 3.8908, 0, 0, 0, -1.44561e-07, -3.30718, 0, 3.8908, -1.70072e-07, 0, 2.98305, 2 )
@@ -216,54 +159,9 @@ autoplay = "New Anim"
 
 [node name="DirectionalLight" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.99889, 0.32932, 1 )
-visible = false
 light_color = Color( 0.235294, 0.235294, 0.341176, 1 )
 shadow_enabled = true
 omni_attenuation = 2.07053
-
-[node name="B1" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.66783, 0.323446, 0.405353 )
-
-[node name="B6" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.66783, 0.323446, 2.06093 )
-
-[node name="B7" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28237, 0.323446, 2.06093 )
-
-[node name="B8" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.022763, 0.323446, 2.06093 )
-
-[node name="B9" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.43365, 0.323446, 2.06093 )
-
-[node name="B10" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.05834, 0.323446, 2.06093 )
-
-[node name="B2" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28237, 0.323446, 0.405353 )
-
-[node name="B3" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.022764, 0.323446, 0.405353 )
-
-[node name="Sprite3D" type="Sprite3D" parent="B3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.3, -0.344423 )
-material_override = SubResource( 11 )
-shaded = true
-alpha_cut = 2
-texture = ExtResource( 1 )
-
-[node name="Sprite3D2" type="Sprite3D" parent="B3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.999999, 0.3, -0.344423 )
-material_override = SubResource( 11 )
-shaded = true
-alpha_cut = 2
-texture = ExtResource( 1 )
-
-[node name="B4" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.43365, 0.323446, 0.405353 )
-
-[node name="B5" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9292, 0.323446, 0.405353 )
 
 [node name="SpotLight" type="SpotLight" parent="."]
 transform = Transform( -1, 1.27676e-15, -9.68575e-08, -8.88178e-16, 1, 2.23517e-08, 9.68575e-08, 2.23517e-08, -1, 0, 1, -16 )

@@ -4,6 +4,7 @@
 
 [sub_resource type="CanvasItemMaterial" id=1]
 blend_mode = 1
+light_mode = 1
 
 [sub_resource type="Gradient" id=2]
 offsets = PoolRealArray( 0, 0.372414, 1 )
@@ -14,36 +15,39 @@ gradient = SubResource( 2 )
 width = 32
 
 [sub_resource type="Curve" id=4]
-_data = [ Vector2( 0, 1 ), 0.0, -0.853557, 0, 0, Vector2( 1, 0 ), -1.4436, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 1 ), 0.0, -1.15855, 0, 0, Vector2( 1, 0.247264 ), 0.646552, 0.0, 0, 0 ]
 
 [sub_resource type="CurveTexture" id=5]
 curve = SubResource( 4 )
 
 [sub_resource type="ParticlesMaterial" id=6]
-trail_divisor = 10
+trail_divisor = 25
 trail_size_modifier = SubResource( 5 )
 trail_color_modifier = SubResource( 3 )
 emission_shape = 1
-emission_sphere_radius = 80.0
+emission_sphere_radius = 100.0
 flag_align_y = true
 flag_disable_z = true
+spread = 0.0
 gravity = Vector3( 0, 0, 0 )
-orbit_velocity = 0.0
+initial_velocity = 1000.0
+orbit_velocity = -1000.0
 orbit_velocity_random = 0.0
-linear_accel = -80.0
 radial_accel = -100.0
-scale = 3.0
-scale_random = 1.0
+damping = 3.0
+damping_random = 1.0
+scale = 2.5
+scale_random = 0.95
+color = Color( 0, 0.431373, 1, 1 )
 hue_variation = -0.03
 hue_variation_random = 1.0
 
 [node name="Charge" type="Particles2D"]
 material = SubResource( 1 )
 z_index = 1
-emitting = false
-amount = 64
+amount = 330
 lifetime = 2.0
 speed_scale = 2.0
-fract_delta = false
+draw_order = 1
 process_material = SubResource( 6 )
 texture = ExtResource( 1 )

@@ -641,6 +641,19 @@ margin_right = 460.0
 margin_bottom = 40.0
 text = "Cancel"
 
+[node name="TODO" type="Label" parent="."]
+margin_left = 20.0
+margin_top = 295.0
+margin_right = 457.0
+margin_bottom = 390.0
+text = "TODO:
+Change time scale to turns instead of hours. It's in core. (WIP)
+"
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="pressed" from="Panel/Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="Panel/Button5" to="." method="_on_Button5_pressed"]
 [connection signal="pressed" from="Panel/Button6" to="." method="_on_Button6_pressed"]

@@ -9,6 +9,8 @@ func _init(guild, eform, BG) -> void:
 	groups[0] = guild
 	groups[1] = eform
 	background = BG
+
+func init() -> void:
 	for slot in range(6):
 		if groups[1].formation[slot] != null:
 			var C = groups[1].formation[slot]
@@ -31,34 +33,11 @@ func initSprite(C, slot:int) -> void:
 
 func addHitSpark(S, lv:int, anchor:Position2D) -> void:
 	return
-	var temp = S.animations['onhit'] if 'onhit' in S.animations else "res://nodes/FX/basic.tscn"
-	temp = "res://nodes/FX/basic.tscn"
-	var anim = load(temp).instance()
-	anchor.add_child(anim)
-	anim.cam.global_position = core.battle.background.cam.global_position
-
-	if S.animFlags[lv] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
-		anim.modulate = core.stats.ELEMENT_DATA[S.element[lv]].color
-		print("[DISPLAY_MANAGER][addHitSpark] Setting color from element! %s" % str(anim.modulate))
-	#anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
-	#anim.connect("anim_done", self, "on_anim_done")
-	anim.play(1.0)
 
 func playMainAnim(S, lv:int, anchor:Position2D) -> void:
-	var temp = S.animations['startup'] if 'startup' in S.animations else "res://nodes/FX/basic.tscn"
-	temp = "res://nodes/FX/basic.tscn"
-	var anim = load(temp).instance()
-	anchor.add_child(anim)
-	anim.cam.global_position = core.battle.background.cam.global_position
+	return
 
-	if S.animFlags[lv] & core.skill.ANIMFLAGS_COLOR_FROM_ELEMENT:
-		anim.modulate = core.stats.ELEMENT_DATA[S.element[lv]].color
-		print("[DISPLAY_MANAGER][addHitSpark] Setting color from element! %s" % str(anim.modulate))
-	#anim.pos(display.get_global_rect().position + (display.get_global_rect().size / 2))
-	#anim.connect("anim_done", self, "on_anim_done")
-	anim.play(1.0)
-
-func addEffector(C, fx:String) -> void:
+func addEffector(C, fx:String, lib:Dictionary, del_type:int = 0) -> void:
 	var temp:String = str("res://nodes/FX/%s.tscn" % fx)
 	print("[DISPLAY_MANAGER][addEffector] Trying to find file %s (input:%s)" % [temp, fx])
 	var f:File = File.new()
@@ -66,6 +45,7 @@ func addEffector(C, fx:String) -> void:
 		print("[DISPLAY_MANAGER][addEffector] Adding effector %s to %s(%s)" % [temp, C.name, C.slot])
 		var scene = load(temp)
 		var node:Node = scene.instance()
+		node.init(C, lib, del_type)
 		C.sprite.effectorHolder.add_child(node)
 	else:
 		print("[DISPLAY_MANAGER][addEffector] File %s not found." % temp)

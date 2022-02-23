@@ -169,8 +169,8 @@ class WorldClass:
 		print("[WORLD][passTime] Passing %d time units (%d)." % [amount, time])
 		var newhour = int(float(time) / 30)
 		print("[WORLD][passTime] %d hours pass." % (newhour-oldhour))
-		for i in range(newhour - oldhour):
-			core.guild.on_hour_pass()
+		for i in range(amount):
+			core.guild.passTime()
 		while time >= 720:
 			day += 1
 			print("[WORLD][passTime] Day passed. Current day is %d" % day)

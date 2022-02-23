@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://classes/FX/afterimage.gd" type="Script" id=1]
+
+[sub_resource type="Gradient" id=1]
+resource_local_to_scene = true
+colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[node name="Afterimage" type="Sprite"]
+show_behind_parent = true
+script = ExtResource( 1 )
+grad = SubResource( 1 )

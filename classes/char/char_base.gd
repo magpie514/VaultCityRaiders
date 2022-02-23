@@ -130,6 +130,9 @@ class BattleStats:
 		self.overAction.clear()
 		self.resetEventListeners()
 
+	func healthiness() -> int: #Rough calc to determine overall sturdiness of a character.
+		return barrier + block + (dodge * 10) + (forceDodge * 20) + (999 if adamant else 0) + (25 if defending else 0) + AD + (stat.DEF * 2) + (stat.EDF * 2) + (stat.LUC)
+
 	func resetEventListeners() -> void:
 		for i in event_listener: i.clear()
 
@@ -167,6 +170,9 @@ func checkParalysis() -> bool:
 
 func clampHealth() -> void:
 	HP = core.clampi(HP, 0, maxHealth())
+
+func healthiness() -> int:
+	return HP + battle.healthiness()
 
 func setGuard(x:int, elem:int = 0, flags:int = 0, elemMult:float = 1.0) -> void:
 	var temp:float

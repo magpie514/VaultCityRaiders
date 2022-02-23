@@ -3,11 +3,11 @@ extends "res://classes/char/char_base.gd"
 var tid = null
 var lib = null #Link to data library containing static enemy attributes.
 
-var ability:Array = core.newArray(2) #Passive skill. [TID, level]
+var ability:Array      = core.newArray(2) #Passive skill. [TID, level]
 var XPMultiplier:float = 1.0
-var summoner = null
-var armed:bool = true #If the enemy is supposed to be wielding weapons or not.
-var ID:int = 0        #Unique ID. Used only for mons.
+var summoner           = null
+var armed:bool         = true #If the enemy is supposed to be wielding weapons or not.
+var ID:int             = 0    #Unique ID. Only really used for mons.
 
 # OVERRIDES #######################################################################################
 func checkPassives(runEF:bool = false) -> void:

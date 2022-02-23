@@ -148,5 +148,5 @@ func restoreAll() -> void: #Heals all party members, restores all weapon durabil
 			i.fullHeal()
 			if i is core.Player: i.equip.fullRepair(true)
 
-func on_hour_pass() -> void: #Hook for time passing.
+func passTime() -> void: #Hook for time passing.
 	inventory.updateCharges()

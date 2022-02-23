@@ -2,9 +2,8 @@
 extends Node2D
 
 onready var cam:Node      = $Main/BattleCamera   #Contains scene camera.
-onready var overlay:Node  = $CanvasLayer/Overlay #Contains "flash" sprite node, this should fit the screen's size and used to create fades or flashes.
-onready var underlay:Node = $Behind/Underlay     #Like the overlay, but it goes between the background and the characters. To blacken the background or so.
 onready var cursor:Node   = $Main/Cursor         #Constains the cursor displayed under the player character that is currently selecting an action.
+onready var fxHook:Node2D = $Main/FXHook
 
 var formation:Array    #Stores the nodes for all of the character's positions in each side.
 var multitargets:Array #Stores targets for multitarget skills.
@@ -24,7 +23,7 @@ func _ready() -> void:
 		[$Main/Player/GroupFX],
 		[$Main/Enemy/GroupFX ]
 	]
-	cam.focusAnchor($Main/FXHook)
+	cam.focusAnchor(fxHook)
 
 func getCharAnchor(side:int, slot:int) -> Node:
 	return formation[side][slot]

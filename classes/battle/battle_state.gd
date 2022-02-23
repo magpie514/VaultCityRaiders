@@ -13,6 +13,7 @@ enum { RESULT_ONGOING, RESULT_VICTORY, RESULT_DEFEAT, RESULT_GUILD_ESCAPE, RESUL
 enum { #Global event notification subsystem.
 	NOTIFY_ON_DEFEAT = 0, #Characters in this list get notified when any character is defeated and run any codeGD in their effects and passives.
 }
+enum { SKILL_OK = 0, SKILL_FAIL = 1, SKILL_MISS = 2 }
 
 var turn:int         = 0                  #Current turn for this battle. Influences AI.
 var quit:bool        = false              #If battle should continue or not.
@@ -27,8 +28,8 @@ var lastAct          = []                 #Last action?
 var nextAct          = []                 #Next action?
 var EXP:int          = 0                  #Accumulated EXP reward for the encounter.
 var notifyListeners:Array = [             #Report to these characters when notifications happen. See event notification enum for array details.
-	 [], #NOTIFY_ON_DEFEAT: Characters here request to be informed of defeats. Run their codeGD skill codes if able.
-	 ]
+	[], #NOTIFY_ON_DEFEAT: Characters here request to be informed of defeats. Run their codeGD skill codes if able.
+]
 var notifyQueue:Array = [
 	[], #NOTIFY_ON_DEFEAT: List of on_defeat events to notify.
 ]
@@ -250,6 +251,7 @@ func updateActions(A) -> void:
 		for i in actionQueue:
 			if i.user.canAct(): #Re-sort actions so AGI changes are accounted for.
 				i.spd = i.user.calcSPD(i.spdMod)
+				#TODO: Update turn display
 		tmp = actionQueue[0]
 		nextAct = [tmp.side, tmp.user, tmp.skill]
 	else:
@@ -301,11 +303,6 @@ func checkActionExecution(user, target) -> bool: #Check if an action can be perf
 		return true
 	return false
 
-
-const SKILL_OK = 0
-const SKILL_FAIL = 1
-const SKILL_MISS = 2
-
 func initAction(act) -> void:
 	yield(core.battle.control.wait(0.001), "timeout")
 #TODO: Collect events and display animations based on those events.
@@ -324,10 +321,10 @@ func initAction(act) -> void:
 				#yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
 				print("[BATTLE_STATE][initAction] Startup animation finished")
 			if 'main' in act.skill.animations:
-				var targetNode = targets[0].sprite.effectHook
+				var targetNode = targets[0].sprite
 				if targets.size() > 1:
 					targetNode = core.battle.background.multitargets[targets[0].side][0]
-				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targetNode, act.user.sprite.effectHook)
+				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targetNode, act.user.sprite, true if act.user is core.Enemy else false)
 				yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
 				print("[BATTLE_STATE][initAction] Main animation finished")
 		act.user.charge(false) #Stop charging effects.

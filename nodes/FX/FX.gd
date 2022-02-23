@@ -1,98 +1,92 @@
+#Animation control node
+# Groups:
+# speed_control: Add to any elements that can change speed. Particle emitters, animated sprites, etc.
+# color_control: Add to any elements that can be given an user's custom color.
 extends Node2D
 signal anim_done
 
-export(int, 'None', 'User', 'Target')  var focus:int        = 0 setget setFocus
-export(int, 'None', 'Skill', 'Global') var switchCamera:int = 0 setget setCamera
-export(float) var globalCameraShake:float = 0.0
-export(float) var localCameraShake:float  = 0.0
-export(bool)  var showOverlay1:bool = false setget setShowOverlay1
-export(bool)  var showOverlay2:bool = false setget setShowOverlay2
-export(Color) var overlay1 = Color(0.0, 0.0, 0.0, 0.0) setget setOverlay1
-export(Color) var overlay2 = Color(0.0, 0.0, 0.0, 0.0) setget setOverlay2
-export(Color) var underlay = Color(0.0, 0.0, 0.0, 0.0) setget setUnderlay
+const DRAMATIC_SLOWDOWN = 0.05
+#export(bool)  var showOverlay:bool = false setget setShowOverlay
+export(bool) var slowdown:bool = false setget setSlowdown
 
-onready var user:Position2D     = $DummyUser
-onready var target:Position2D   = $DummyTarget
-onready var cam:Camera2D        = $Camera2D
-onready var camDummy:Position2D = $CameraDummy
-onready var localOverlay:Sprite = $Overlay/Overlay
-onready var speedControl:Array  = get_tree().get_nodes_in_group("speed_control") #Nodes that require speed adjustments.
+onready var puppetUser:Position2D   = $PuppetUser
+onready var puppetTarget:Position2D = $PuppetTarget
+onready var cam:Camera2D            = $Camera2D
+onready var puppetCam:Position2D    = $PuppetCamera
+onready var localOverlay:Sprite     = $Overlay/Overlay
+onready var player:AnimationPlayer  = $AnimationPlayer
 
-var state:Array = [0,0] #Status for background overlay and underlay to restore at exit.
+var initialized:bool = false
+var user   = null
+var target = null
+var initSpeed:float = 1.0
 
 func _ready() -> void:
-	pass
+	set_process(false)
 
 func _process(delta: float) -> void:
-	var origin:Vector2 = Vector2(0,0)
-	match focus:
-		1: origin = user.global_position
-		2: origin = target.global_position
+	pass
 
-	cam.global_position = camDummy.position + origin
-	if localCameraShake > 0.1:
-		cam.offset = Vector2(randf() * localCameraShake, randf() * localCameraShake)
+func init(user_:Node2D, target_:Node2D, mirror:bool = false) -> void:
+	initialized = true
+	var anim:Animation = player.get_animation('ACTION')
+	var track:int = 0
+	var pos:Vector2
+	user   = user_
+	target = target_
+	#Initialize puppet nodes.
+	puppetUser.init(user)
+	puppetTarget.init(target)
+	puppetCam.init(core.battle.cam)
+	$Overlay/FakeUser.init(user.sprite)
+	$Overlay/FakeTarget.init(target.sprite)
+	if mirror: scale.x = -1.0
+	#global_position = target.global_position
+	#puppetTarget.position      = to_local(target.sprite.global_position)
+	#puppetUser.position        = to_local(user.sprite.global_position)
+
+	#cam.global_position       = user.global_position
+
+	#If a change in position is detected, add keys at the start and at the end of the track.
+	#NOTE: Change to something else? Like a detection of capture and position?
+#	track = anim.find_track("PuppetUser:position")
+#	if track != -1:
+#		pos = to_local(user.global_position)
+#		for i in range(anim.track_get_key_count(track)):
+#			var tmp = anim.track_get_key_value(track, i)
+#			core.aprint(anim.track_get_key_value(track, i), core.ANSI_YELLOW)
+#		anim.track_insert_key(track, 0.0, pos)
+#		anim.track_insert_key(track, anim.get_length(), pos)
+
 
 func play(spd:float, mirror:bool = false) -> void:
+	initSpeed = spd
+	set_process(true)
+	set_speed(spd)
+	player.play("ACTION")
+
+func set_speed(spd:float = 1.0) -> void:
+	var val:float = initSpeed * spd
 	var n = get_tree().get_nodes_in_group("speed_control")
-	state[0] = core.battle.background.overlay.modulate
-	state[1] = core.battle.background.underlay.modulate
-	if mirror: scale.x = -1.0
-	$AnimationPlayer.playback_speed = spd
-	$Particles2D.speed_scale        = spd
-	$AnimationPlayer.play("ACTION")
+	for i in n:
+		match i.get_class():
+			'Particles2D'    : i.speed_scale    = val
+			'AnimationPlayer': i.playback_speed = val
 
-func done() -> void:
-	emit_signal("anim_done")
-
-func pos(x) -> void:
-	global_position = x
-
-func setGlobalCameraShake(x:float) -> void:
-	globalCameraShake = x
-	core.battle.cam.shake = globalCameraShake
-
-func setFocus(on:int) -> void:
-	focus = on
-	match focus:
-		0: return
-		1: core.battle.cam.focusAnchor(user, true)
-		2: core.battle.cam.focusAnchor(target)
-
-func setCamera(on:int) -> void:
-	if not cam: return
-	switchCamera = on
-	match switchCamera:
-		0: return
-		1:
-			cam.global_position = core.battle.cam.global_position
-			cam.current = true
-		2: core.battle.cam.current = true
-
-func setOverlay1(to:Color) -> void:
-	overlay1 = to
-	core.battle.background.overlay.modulate = overlay1
-
-func setUnderlay(to:Color) -> void:
-	underlay = to
-	core.battle.background.underlay.modulate = underlay
-
-func setOverlay2(to:Color) -> void:
-	overlay2 = to
-	localOverlay.modulate = overlay2
-
-func setShowOverlay1(x:bool) -> void:
-	showOverlay1 = x
-	core.battle.background.overlay.visible = showOverlay1
-
-func setShowOverlay2(x:bool) -> void:
-	showOverlay2 = x
-	localOverlay.visible = showOverlay2
-
-func _on_AnimationPlayer_animation_finished(x) -> void:
+func _on_animation_finished(x) -> void:
 	#Restore state of layer effects.
-	core.battle.background.overlay.modulate  = state[0]
-	core.battle.background.underlay.modulate = state[1]
-	core.battle.background.overlay.hide()
+	set_process(false)
+	puppetCam.set_process(false)
+	puppetUser.set_process(false)
+	puppetTarget.set_process(false)
+	#Reset user/target positions.
+	user.global_position   = user.get_parent().global_position
+	target.global_position = target.get_parent().global_position
 	emit_signal("anim_done")
 	queue_free()
+
+func setSlowdown(x:bool) -> void:
+	slowdown = x
+	if initialized:
+		if x: set_speed(DRAMATIC_SLOWDOWN)
+		else: set_speed(initSpeed)

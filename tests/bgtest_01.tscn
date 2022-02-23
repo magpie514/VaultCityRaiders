@@ -1,13 +1,13 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://tests/bgtest_01.gd" type="Script" id=1]
-[ext_resource path="res://tests/3dbg_test.tscn" type="PackedScene" id=2]
+[ext_resource path="res://resources/images/blank.png" type="Texture" id=3]
 
 [sub_resource type="Animation" id=4]
 length = 10.0
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("CanvasLayer/Sprite7:self_modulate")
+tracks/0/path = NodePath("Overlay/Overlay:self_modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -33,30 +33,14 @@ width = 680
 [node name="Root" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="Sprite" type="Sprite" parent="."]
-centered = false
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "New Anim"
 "anims/New Anim" = SubResource( 4 )
 
-[node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 2000, 1440 )
-handle_input_locally = false
-render_target_v_flip = true
-render_target_clear_mode = 1
-gui_disable_input = true
-shadow_atlas_quad_0 = 0
-shadow_atlas_quad_1 = 0
-shadow_atlas_quad_2 = 0
-shadow_atlas_quad_3 = 0
+[node name="Overlay" type="CanvasLayer" parent="."]
+layer = 2
 
-[node name="Background" parent="Viewport" instance=ExtResource( 2 )]
-visible = false
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Sprite7" type="Sprite" parent="CanvasLayer"]
+[node name="Overlay" type="Sprite" parent="Overlay"]
 self_modulate = Color( 1, 1, 1, 0.470588 )
 material = SubResource( 1 )
 position = Vector2( 0.0604193, 722.732 )
@@ -65,3 +49,45 @@ scale = Vector2( 1.05957, 957.238 )
 z_index = 1
 texture = SubResource( 3 )
 centered = false
+
+[node name="Control" type="Control" parent="."]
+margin_top = -600.0
+margin_right = 3300.0
+margin_bottom = 1300.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="Sky" type="Sprite" parent="ParallaxBackground"]
+modulate = Color( 0.0823529, 0.360784, 0.482353, 1 )
+position = Vector2( 3300, 800 )
+scale = Vector2( 3300, 1400 )
+texture = ExtResource( 3 )
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 1, 0.9 )
+
+[node name="Sky" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+modulate = Color( 0.721569, 0.847059, 0.901961, 0.215686 )
+position = Vector2( 3300, 800 )
+scale = Vector2( 3300, 400 )
+texture = ExtResource( 3 )
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Floor" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
+modulate = Color( 0.231373, 0.231373, 0.231373, 1 )
+position = Vector2( 3300, 1300 )
+scale = Vector2( 3300, 530 )
+texture = ExtResource( 3 )
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 1, 1.1 )
+
+[node name="Floor" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
+modulate = Color( 0.266667, 0.266667, 0.266667, 1 )
+position = Vector2( 3300, 1400 )
+scale = Vector2( 3300, 300 )
+texture = ExtResource( 3 )

@@ -3,13 +3,12 @@
 [ext_resource path="res://nodes/UI/bar_segmented_flex.gd" type="Script" id=1]
 
 [node name="BarSegmentedF" type="Control"]
-margin_right = 40.0
+margin_right = 50.0
 margin_bottom = 20.0
 mouse_filter = 2
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-segments = 3
-value = 0
-value2 = 0.8
+value = 1
+value2 = 0.0
