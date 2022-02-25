@@ -45,6 +45,16 @@ var example = {
 				["defend",   001,000,000,000,000, 000,000,000,000,000],
 			],
 		},
+		"defup2": {
+			inherits = "core/defup",
+			name = "DEF up 2",
+			description = "Raises defense, maybe.",
+		},
+		"megadefup2": {
+			inherits = "core/defuppppp",
+			name = "DEF up MAX",
+			description = "Raises defense???",
+		},
 		"defup": {
 			name = "DEF up",
 			description = "Raises defense.",
@@ -2585,6 +2595,7 @@ func loadDebug():
 	print("[SKILL][loadDebug] Loading core skills.")
 	loadDict(example)
 	print("[SKILL][loadDebug] Core skills loaded.")
+	printData()
 
 func name(id):
 	var entry = getIndex(id)

@@ -1,4 +1,8 @@
-var data = {}
+#Data library base class.
+#This is a helper to generate dictionaries with proper typing, organization, JSON loading and all the things.
+
+
+var data:Dictionary = {}
 var template = initTemplate()
 
 const LIBSTD_BOOL          = "loaderBool"
@@ -18,14 +22,14 @@ const LIBSTD_SKILL_LIST    = "loaderSkillList"
 const LIBSTD_SUMMONS       = "loaderSummons"
 const LIBSTD_SKILL_CODE    = "loaderSkillCode"
 
-func initTemplate():
+func initTemplate(): #VIRTUAL: Returns the working template dictionary.
 	return null
 
-func initEntry(entry):
+func initEntry(entry, base:Dictionary = {}):
 	if template != null:
-		return parseTemplate(entry)
+		return parseTemplate(entry, base)
 	else:
-		print("[EE] CRITICAL: No datalib template defined. This is gonna explode.")
+		core.aprint("[EE] CRITICAL: No datalib template defined. This could explode.", core.ANSI_RED2)
 		return null
 
 func loadJson(json):
@@ -40,12 +44,83 @@ func loadGD(file):
 		print(dat)
 		return dat
 
-func loadDict(dict):
+func loadDict(dict) -> void: #Starts the loading of a library entry.
+	var second_pass:Array = []
 	for key in dict:
 		data[key] = {}
-		for key2 in dict[key]:
-			data[key][key2] = initEntry(dict[key][key2])
-			data[key][key2].self_tid = "%s/%s" % [key, key2]
+		for key2 in dict[key]: #At this point we are checking for keys in the x/y format.
+			if 'inherits' in dict[key][key2]:
+				var tmp_tid = core.tid.from(dict[key][key2].inherits)
+				core.aprint("INHERITS: %s" % tmp_tid, core.ANSI_PINK2)
+				if tmp_tid[0] in data and tmp_tid[1] in data[tmp_tid[0]]: #Ideal situation, the thing we want to inherit from is already defined.
+					core.aprint("%s found. Using as base." % tmp_tid, core.ANSI_PINK2)
+					data[key][key2] = initEntry(dict[key][key2], data[tmp_tid[0]][tmp_tid[1]])
+					data[key][key2].self_tid = "%s/%s" % [key, key2] #Add a key with its own TID.
+				else: #Not so ideal, the entry hasn't been defined yet. We need a second pass.
+					core.aprint("%s not found. Adding %s to second pass." % [tmp_tid, [key, key2]], core.ANSI_PINK2)
+					second_pass.append([key, key2])
+					data[key][key2] = {} #Add empty so we can see if an entry is meant to exist or not.
+			else:
+				data[key][key2] = initEntry(dict[key][key2])
+				data[key][key2].self_tid = "%s/%s" % [key, key2] #Add a key with its own TID.
+	if second_pass.size() > 0: #See if we have pending entries.
+		core.aprint("%s entries pending." % second_pass.size(), core.ANSI_PINK2)
+		var tries:int = 0
+		var remaining:Array = []
+		for i in second_pass: #Verify if the inheritances exist or not.
+			var tmp_tid = core.tid.from(dict[i[0]][i[1]].inherits)
+			core.aprint("%s inherits from: %s" % [i,tmp_tid], core.ANSI_PINK2)
+			if tmp_tid[0] in data and tmp_tid[1] in data[tmp_tid[0]]: #The parent entry to inherit exists, we continue with it.
+				core.aprint("%s inherits from a valid TID, continuing." % [i], core.ANSI_PINK2)
+				remaining.append([i[0], i[1]])
+			else: #The parent entry doesn't exist. Mistake or typo, what can one do with this?
+				core.aprint("%s inherits from an invalid TID, dropping. Adding entry with defaults for sanity." % [i], core.ANSI_RED2)
+				data[i[0]][i[1]] = initEntry(dict[i[0]][i[1]], initEntry({})) #Modify a dummy entry with defaults. It won't work as intended but it'll have all the variables.
+				data[i[0]][i[1]].self_tid = "%s/%s" % [i[0],i[1]] #Add a key with its own TID.
+
+		while remaining.size() > 0 and tries < 20: #Final step. Now we got to load things until we run out of things to load.
+			core.aprint("%s valid entries pending." % remaining.size(), core.ANSI_PINK2)
+			var temp:Array = remaining.duplicate()
+			remaining.clear()
+			for i in temp:
+				var tmp_tid = core.tid.from(dict[i[0]][i[1]].inherits)
+				if tmp_tid[0] in data and tmp_tid[1] in data[tmp_tid[0]]:
+					if data[tmp_tid[0]][tmp_tid[1]].empty(): #This means the entry has been defined but not loaded, keep trying.
+						core.aprint("%s not found. Trying again." % tmp_tid, core.ANSI_PINK2)
+						remaining.append(i)
+					else: #The entry is defined and loaded, we can load this.
+						core.aprint("%s found. Using as base." % tmp_tid, core.ANSI_PINK2)
+						data[i[0]][i[1]] = initEntry(dict[i[0]][i[1]], data[tmp_tid[0]][tmp_tid[1]])
+						data[i[0]][i[1]].self_tid = "%s/%s" % [i[0],i[1]] #Add a key with its own TID.
+			tries += 1 #Just in case, we'll give up after a bunch of tries.
+
+
+func parseTemplate(dict:Dictionary, base:Dictionary = {}) -> Dictionary:
+	return parseSubTemplate(template, dict, base)
+
+func parseSubTemplate(sub:Dictionary, dict:Dictionary, base:Dictionary = {}) -> Dictionary:
+	#TODO:Add a way to define a way to crop numeric values to a given range.
+	var result:Dictionary = base.duplicate(true)
+	if not base.empty():
+		core.aprint("Inheriting from %s:" % base.name, core.ANSI_PINK2)
+		for key in dict:
+			if key != 'inherits':
+				core.aprint("- Overwriting key [%s]: <%s> => <%s>" % [key, base[key], dict[key]], core.ANSI_PINK2)
+				result[key] = loadKey(sub[key].loader, dict[key])
+		return result
+	for key in sub:
+		if key in dict:
+			result[key] = loadKey(sub[key].loader, dict[key])
+		else:
+			if 'default' in sub[key]:
+				result[key] = loadKey(sub[key].loader, sub[key].default)
+			else:
+				result[key] = loadKey(sub[key].loader, null)
+	return result
+
+func loadKey(loader, val):
+	var result = call(loader, val)
+	return result
 
 func copyIntegerArray(a:Array) -> Array:
 	var size:int     = a.size()
@@ -67,10 +142,10 @@ func getIndex(id:Array):
 	print("[!!] Given library TID [%s/%s] not found. Attempting to return failsafe." % [id[0], id[1]])
 	return data["debug"]["debug"]
 
-func printData():
+func printData() -> void:
 	for key in data:
 		for key2 in data[key]:
-			print("[%s/%s]: %s" % [key, key2, data[key][key2]])
+			core.aprint("[%s/%s]: %s" % [key, key2, data[key][key2]])
 
 func getData() -> Array:
 	var result:Array = []
@@ -79,25 +154,7 @@ func getData() -> Array:
 			result.push_back([key, key2])
 	return result
 
-func loadKey(loader, val):
-	var result = call(loader, val)
-	return result
 
-func parseTemplate(dict:Dictionary) -> Dictionary:
-	return parseSubTemplate(template, dict)
-
-func parseSubTemplate(sub:Dictionary, dict:Dictionary):
-	#TODO:Add a way to define a way to crop numeric values to a given range.
-	var result:Dictionary = {}
-	for key in sub:
-		if key in dict:
-			result[key] = loadKey(sub[key].loader, dict[key])
-		else:
-			if 'default' in sub[key]:
-				result[key] = loadKey(sub[key].loader, sub[key].default)
-			else:
-				result[key] = loadKey(sub[key].loader, null)
-	return result
 
 # Standard loaders #############################################################
 
@@ -136,7 +193,7 @@ func loaderVariableArray(val) -> Array:
 		return result
 
 
-func loaderStatSpread(val):
+func loaderStatSpread(val) -> Array:
 	if val == null:
 		return [
 		#  HP   ATK  DEF  ETK  EDF  AGI  LUC
@@ -150,11 +207,11 @@ func loaderStatSpread(val):
 func loaderElementData(val) -> Array:
 	if val == null:
 		return [
-		#  CUT  PIE  BLU   FIR  ICE  ELE   ULT  KIN  NRG
-			[100, 100, 100,  100, 100, 100,  100, 100, 100]
+		#  CUT  PIE  BLU   FIR  ICE  ELE  UNK  ULT  KIN  NRG
+			[100, 100, 100,  100, 100, 100, 100, 100, 100, 100]
 		]
 	else:
-		var result = copyIntegerArray(val)
+		var result:Array = copyIntegerArray(val)
 		result.push_front(int(000)) #DMG_UNTYPED entry.
 		return result
 
@@ -295,7 +352,7 @@ func loaderConditionDefs(val) -> Array:
 			else:      #If not just take the default values.
 				result[i] = core.CONDITIONDEFS_DEFAULT[i]
 	else:
-		print("[LIB_BASE][loaderConditionDefs] Condition Defenses: ", val)
+		#print("[LIB_BASE][loaderConditionDefs] Condition Defenses: ", val)
 		for i in range(val.size()):
 			result[i] = int(val[i])
 	return result

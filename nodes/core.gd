@@ -294,6 +294,9 @@ class _tid: #TID (Thing ID) helper class.
 		var result:String = "%s/%s" % [tid[0], tid[1]]
 		return result
 
+	func _to_string() -> String:
+		return string(self)
+
 	func compare(tid1, tid2) -> bool: #Compare two TIDs.
 		return true if (tid1[0] == tid2[0] and tid1[1] == tid2[1]) else false
 
@@ -557,7 +560,7 @@ enum {
 	ANSI_BLACK = 30, ANSI_RED = 31 ,ANSI_GREEN = 32 , ANSI_YELLOW = 33, ANSI_BLUE = 34,  ANSI_PINK = 35,  ANSI_CYAN = 36,  ANSI_GRAY = 37,
 	ANSI_BLACK2 = 90,ANSI_RED2 = 91,ANSI_GREEN2 = 92, ANSI_YELLOW2 = 93, ANSI_BLUE2 = 94, ANSI_PINK2 = 95, ANSI_CYAN2 = 96, ANSI_GRAY2 = 97
 }
-static func aprint(s, col:int = ANSI_YELLOW2):
+static func aprint(s, col:int = ANSI_GRAY) -> void: #Print ANSI codes for debug. Only good way to parse the debug logs...
 	print("[%sm%s[0m" % [col, str(s)])
 
 static func loadJSON(path:String, fallback:String) -> Dictionary:
