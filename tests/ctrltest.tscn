@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=1]
 [ext_resource path="res://tests/ctrltest.gd" type="Script" id=2]
 [ext_resource path="res://nodes/UI/battle/battle_controls.tscn" type="PackedScene" id=3]
+[ext_resource path="res://nodes/UI/battle/boss_data.tscn" type="PackedScene" id=4]
 [ext_resource path="res://nodes/UI/battle/info_display.tscn" type="PackedScene" id=5]
 [ext_resource path="res://resources/tres/fonts/squared_huge.tres" type="DynamicFont" id=6]
 [ext_resource path="res://nodes/UI/battle/UIdisplay.tscn" type="PackedScene" id=7]
@@ -13,29 +14,6 @@
 [ext_resource path="res://tests/battlebg.tscn" type="PackedScene" id=14]
 [ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=16]
 
-[sub_resource type="GDScript" id=1]
-script/source = "extends RichTextLabel
-
-var lines = []
-const MAX_LINES = 50
-
-func _ready():
-	update()
-
-func addLine(text):
-	print(text)
-	lines.push_back(text)
-	if(lines.size() > MAX_LINES): lines.pop_front()
-	update()
-
-func update():
-	var result = \"\"
-	for i in range(lines.size()):
-		result = str(result + lines[i] + \"\\n\")
-	self.bbcode_text=result
-	pass
-"
-
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0, 0, 0, 0.470588 )
 border_width_top = 2
@@ -43,30 +21,47 @@ border_width_bottom = 2
 border_blend = true
 corner_detail = 1
 
+[sub_resource type="GDScript" id=1]
+script/source = "extends RichTextLabel
+
+const MAX_LINES = 50
+var lines:Array = []
+
+func _ready() -> void:
+	update()
+
+func addLine(text) -> void:
+	print(text)
+	lines.push_back(text)
+	if(lines.size() > MAX_LINES): lines.pop_front()
+	update()
+
+func update() -> void:
+	var result = \"\"
+	for i in range(lines.size()):
+		result = str(result + lines[i] + \"\\n\")
+	self.bbcode_text=result
+
+func _on_Button_pressed() -> void:
+	hide()
+"
+
 [node name="Control" type="Control"]
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Timer" type="Timer" parent="."]
 
 [node name="Panel" type="Panel" parent="."]
 margin_right = 960.0
 margin_bottom = 720.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+mouse_filter = 1
 
 [node name="ViewportContainer" type="ViewportContainer" parent="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_bottom = -100.0
 stretch = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Viewport" type="Viewport" parent="Panel/ViewportContainer"]
 size = Vector2( 960, 620 )
@@ -79,68 +74,17 @@ gui_disable_input = true
 
 [node name="BattleView" parent="Panel/ViewportContainer/Viewport" instance=ExtResource( 14 )]
 
-[node name="Panel2" type="Panel" parent="Panel"]
-visible = false
-margin_right = 960.0
-margin_bottom = 90.0
-
-[node name="BattleLog" type="RichTextLabel" parent="Panel"]
-self_modulate = Color( 1, 1, 1, 0.811765 )
-anchor_right = 1.0
-margin_left = 1.0
-margin_top = 560.0
-margin_right = -402.0
-margin_bottom = 622.0
-custom_constants/line_separation = -1
-custom_fonts/normal_font = ExtResource( 16 )
-bbcode_enabled = true
-bbcode_text = "aaaaaa[url=\"AAAAAAAAAAAAAAAAA\"]aaaaaaaaa[/url]aaaaaaa[rainbow]aaaaa[shake]aaaaaaaaaaaaaaaaaaaaa[wave]aaaaaaaaaaaaaaaaaaaaaaaaa"
-meta_underlined = false
-tab_size = 2
-text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-scroll_following = true
-script = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Turn" type="Label" parent="Panel"]
-margin_left = 440.0
-margin_top = 622.0
-margin_right = 500.0
-margin_bottom = 643.0
-text = "Turn X"
-align = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Time" type="Label" parent="Panel"]
-margin_left = 379.0
-margin_top = 700.0
-margin_right = 509.0
-margin_bottom = 721.0
-align = 2
-
-[node name="Button" type="Button" parent="Panel/Time"]
-margin_left = 40.0
-margin_top = -20.0
-margin_right = 129.0
-text = "Pass hour"
-
 [node name="FieldEffect" parent="Panel" instance=ExtResource( 8 )]
 margin_top = 18.0
 margin_bottom = 83.0
 
 [node name="ActionQueue" parent="Panel" instance=ExtResource( 12 )]
-anchor_left = 0.781
-anchor_top = 0.181944
-anchor_right = 1.0
-anchor_bottom = 0.472
-margin_left = -747.76
-margin_top = -32.9997
-margin_right = -747.0
-margin_bottom = -19.84
+anchor_top = 0.306
+anchor_right = 0.0
+anchor_bottom = 0.306
+margin_top = -120.32
+margin_right = 211.0
+margin_bottom = 105.68
 
 [node name="BattleControls" parent="Panel" instance=ExtResource( 3 )]
 margin_left = 1.0
@@ -168,12 +112,67 @@ text = "VICTORY"
 align = 1
 valign = 1
 
+[node name="Time" type="Label" parent="Panel"]
+margin_left = 410.0
+margin_top = 699.0
+margin_right = 540.0
+margin_bottom = 720.0
+align = 2
+
+[node name="Button" type="Button" parent="Panel/Time"]
+margin_top = -20.0
+margin_right = 132.0
+text = "Pass hour"
+
+[node name="ShowLog" type="Button" parent="Panel"]
+margin_left = 409.0
+margin_top = 657.0
+margin_right = 542.0
+margin_bottom = 677.0
+text = "Show Battle Log"
+
 [node name="UIDisplay" parent="Panel" instance=ExtResource( 7 )]
+mouse_filter = 2
+
+[node name="Turn" type="Label" parent="Panel"]
+margin_left = 440.0
+margin_top = 622.0
+margin_right = 500.0
+margin_bottom = 643.0
+text = "Turn X"
+align = 2
 
 [node name="InfoDisplay" parent="Panel" instance=ExtResource( 5 )]
 visible = false
 margin_top = 620.0
 margin_bottom = 630.0
+
+[node name="BattleLog" type="RichTextLabel" parent="Panel"]
+visible = false
+self_modulate = Color( 1, 1, 1, 0.878431 )
+anchor_right = 1.0
+margin_top = 620.0
+margin_bottom = 721.0
+custom_constants/line_separation = -1
+custom_fonts/normal_font = ExtResource( 16 )
+bbcode_enabled = true
+bbcode_text = "aaaaaa[url=\"AAAAAAAAAAAAAAAAA\"]aaaaaaaaa[/url]aaaaaaa[rainbow]aaaaa[shake]aaaaaaaaaaaaaaaaaaaaa[wave]aaaaaaaaaaaaaaaaaaaaaaaaa"
+meta_underlined = false
+tab_size = 2
+text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+scroll_following = true
+script = SubResource( 1 )
+
+[node name="Button" type="Button" parent="Panel/BattleLog"]
+margin_left = 940.0
+margin_right = 961.0
+margin_bottom = 20.0
+text = "X"
+flat = true
+
+[node name="BossData" parent="Panel" instance=ExtResource( 4 )]
+margin_top = 590.0
+margin_bottom = -100.0
 
 [node name="QuitButton" type="Button" parent="."]
 modulate = Color( 1, 1, 1, 0.235294 )
@@ -192,14 +191,12 @@ script = ExtResource( 13 )
 [node name="FXTimer" type="Timer" parent="SkillController"]
 
 [node name="Panel2" type="Panel" parent="."]
+visible = false
 modulate = Color( 1, 1, 1, 0.235294 )
 margin_left = 2.0
 margin_top = 463.0
 margin_right = 64.0
 margin_bottom = 563.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Label" type="Label" parent="Panel2"]
 margin_right = 84.0
@@ -246,8 +243,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="pressed" from="Panel/Time/Button" to="." method="_on_Button_pressed"]
 [connection signal="finished" from="Panel/BattleControls" to="." method="_on_BattleControls_finished"]
+[connection signal="pressed" from="Panel/Time/Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="Panel/ShowLog" to="." method="_on_ShowLog_pressed"]
+[connection signal="pressed" from="Panel/BattleLog/Button" to="Panel/BattleLog" method="_on_Button_pressed"]
 [connection signal="pressed" from="QuitButton" to="." method="_on_QuitButton_pressed"]
 [connection signal="timeout" from="SkillController/FXTimer" to="SkillController" method="_on_FXTimer_timeout"]
 [connection signal="pressed" from="Panel2/Button" to="." method="_on_Speed_pressed" binds= [ 0 ]]

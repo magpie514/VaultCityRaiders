@@ -52,3 +52,6 @@ func setTracking(x:int) -> void:
 
 func setJump(x:int) -> void:
 	jump = x
+	match jump:
+		Focus.USER:   cam.global_position = user.effectHook.global_position + cam.OFFSET
+		Focus.TARGET: cam.global_position = target.effectHook.global_position + cam.OFFSET

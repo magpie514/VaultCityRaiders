@@ -25,35 +25,20 @@ var example = {
 			name = "Artillery Mastery",
 			description = "Increase damage for artillery-type weapons",
 			category = skill.CAT_FIELD,
-
 		},
 		"defend" : {
-			name = "Defend",
-			description = "",
-			animations = { 'main' : "/nodes/FX/basic_charge.tscn" },
-			category = skill.CAT_SUPPORT,
-			target = skill.TARGET_SELF,
+			name        = "Defend",
+			description = "Basic guard. Instant action. Halves damage and reinforces conditions.",
+			category    = skill.CAT_SUPPORT,
+			target      = skill.TARGET_SELF,
 			targetGroup = skill.TARGET_GROUP_ALLY,
-			element = core.stats.ELEMENTS.DMG_UNTYPED,
-			filter = skill.FILTER_ALIVE,
-			ranged = true,
-			levels = 10,
-			accMod = [100,100,100,100,100, 100,100,100,100,100],
-			spdMod = [300,200,200,200,200, 200,200,200,200,200],
-			AD =     [050,049,048,047,046, 045,044,043,042,041],
+			levels      = 10,
+			accMod      = 100,
+			spdMod      = 500,
+			AD          = [050,049,048,047,046, 045,044,043,042,041],
 			codeMN = [
 				["defend",   001,000,000,000,000, 000,000,000,000,000],
 			],
-		},
-		"defup2": {
-			inherits = "core/defup",
-			name = "DEF up 2",
-			description = "Raises defense, maybe.",
-		},
-		"megadefup2": {
-			inherits = "core/defuppppp",
-			name = "DEF up MAX",
-			description = "Raises defense???",
 		},
 		"defup": {
 			name = "DEF up",
@@ -68,11 +53,11 @@ var example = {
 			effectStatBonus = {
 				DEF_MULT = [150,000,000,000,000, 000,000,000,000,000],
 			},
-			effectDuration = [002, 002, 002, 002, 003,   003, 003, 003, 003, 004],
+			effectDuration = [002,002,002,002,003,  003,003,003,003,004],
 			effectPriority = 3,
-			accMod =	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			AD = 			[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
-			spdMod = 	[100, 100, 100, 100, 100,   100, 100, 100, 100, 100],
+			accMod =	100,
+			AD = 			100,
+			spdMod = 	100,
 		},
 		"accel": {
 			name = "Accelerate",
@@ -720,8 +705,7 @@ var example = {
 			damageStat = core.stats.STAT.ATK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
-			accMod = 100,
-			spdMod = [090,100,100,100,100, 100,100,100,100,100],
+			spdMod = 090,
 			AD     = 100,
 			codeMN = [
 				["attack.ex"  ,0x002D410, 0],
@@ -743,8 +727,7 @@ var example = {
 			damageStat = core.stats.STAT.ATK,
 			modStat = core.stats.STAT.LUC,
 			ranged = true,
-			accMod = 100,
-			spdMod = [090,100,100,100,100, 100,100,100,100,100],
+			spdMod = 090,
 			AD     = 100,
 			codeMN = [
 				["attack.ex"  ,0x0019810, 0],
@@ -1001,6 +984,26 @@ var example = {
 				["enemy.revive" ,100,125,132,132,140, 140,147,147,147,160],
 			],
 		},
+# Ash's skills ####################################################################################
+"ftapoth": {
+	name = "Forbidden Technique: Apotheosis", # :神化
+	description = "Heavy Unknown damage to one target. Destroys barriers, removes buffs, clears the element field. User is damaged by 75% of its max Vital.",
+	lore = "His sorrow, his powerlessness. Heavy burdens that he learned to turn into divinity, even as his body broke down.",
+	category = skill.CAT_OVER,
+	target = skill.TARGET_SINGLE,
+	targetGroup = skill.TARGET_GROUP_ENEMY,
+	element = core.stats.ELEMENTS.DMG_UNKNOWN,
+	energy = true,
+	damageStat = core.stats.STAT.ETK,
+	modStat = core.stats.STAT.LUC,
+	ranged = true,
+	accMod = 120,
+	spdMod = 75,
+	AD =     110,
+	codeMN = [
+		["attack"            ,2000,125,132,132,140,   140,147,147,147,160],
+	],
+},
 # Fantôme's skills #############################################################################
 		"gdomini7": {
 			name = "G-Dominion - Type 7",

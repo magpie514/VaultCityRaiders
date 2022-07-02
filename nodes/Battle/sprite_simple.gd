@@ -5,6 +5,7 @@ const AfterImage = preload("res://nodes/FX/afterimage.tscn")
 
 onready var effectHook:Node     = $EffectHook
 onready var effectorHolder:Node = $EffectHook/EffectorHolder
+onready var spriteHook:Node     = $SpriteHook
 onready var player:Node         = $AnimationPlayer
 onready var sprite:Node         = $SpriteHook/Sprite
 onready var chargeEmitter:Node  = $EffectHook/Charge
@@ -13,12 +14,13 @@ onready var glows:Sprite        = $SpriteHook/Sprite/Glows
 onready var condDisplay:Node    = $ConditionDisplay
 onready var parent:Node         = get_parent()
 
-var lock:bool      = false  #FIXME: This remains from the old plans. Might need to take it out.
-var afterimage:bool = true #Emit afterimages.
-var chr            = null   #Reference to the character assigned to this sprite.
-var shakeTimer:int = 0
-var shake:float = 0.0
-var origPosition:Vector2    #Original position. TODO: Review, might not be needed anymore.
+var lock:bool            = false  #FIXME: This remains from the old plans. Might need to take it out.
+var afterimage:bool      = true #Emit afterimages.
+var chr                  = null   #Reference to the character assigned to this sprite.
+var shakeTimer:int       = 0
+var shake:float          = 0.0
+var frame_offset:Vector2 = Vector2(0,0)
+var origPosition:Vector2 = Vector2(0,0)   #Original position. TODO: Review, might not be needed anymore.
 var frames:Dictionary       #Frame data.
 
 func _ready() -> void:
@@ -60,12 +62,6 @@ func _process(delta:float) -> void:
 	if shake > 0.1 and sprite.visible:
 		sprite.offset = Vector2(randf() * shake, randf() * shake)
 		glows.offset = sprite.offset #Looks terrible without.
-#	if shakeTimer > 0:
-#		sprite.offset = Vector2(0.0, (-6.0 + randf() * 12))
-#		shakeTimer -= 1
-#		if shakeTimer == 0:
-#			sprite.offset = Vector2(0,0)
-#			set_process(false)
 	if afterimage and sprite.visible:
 		var AF = AfterImage.instance()
 		core.battle.background.add_child(AF)
@@ -114,6 +110,12 @@ func clearEffectors() -> void: #Removes all active effectors.
 	for i in effectorHolder.get_children():
 		i.check_deletion()
 
+func reset() -> void:
+	spriteHook.position = frame_offset
+	spriteHook.scale.x = 1.0
+	spriteHook.scale.y = 1.0
+	spriteHook.modulate = "#FFFFFFFF"
+
 func setFrame(which:String) -> void:
 	which = which.to_upper() #ALLCAPS!!!
 	if not which in frames:
@@ -122,8 +124,9 @@ func setFrame(which:String) -> void:
 	sprite.region_enabled = true
 	sprite.region_rect    = Rect2(r[0], r[1], r[2], r[3])
 	sprite.scale          = Vector2(frames.scale[0], frames.scale[1])
-	$SpriteHook.position.y = floor(-(r[3] * frames.scale[1] / 2.0)) + 20
-	$EffectHook.position.y = $SpriteHook.position.y
+	frame_offset          = Vector2(0, floor(-(r[3] * frames.scale[1] / 2.0)) + 20)
+	$SpriteHook.position  = frame_offset
+	$EffectHook.position  = frame_offset
 	if ("%s_GLOWS" % which) in frames: #Search for a <frame>_GLOWS entry. If it exists set the glows node for it.
 		r                    = frames[("%s_GLOWS" % which)] #Recycle this var.
 		glows.visible        = true

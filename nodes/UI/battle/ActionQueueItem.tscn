@@ -4,34 +4,13 @@
 [ext_resource path="res://nodes/UI/group_position.tscn" type="PackedScene" id=2]
 [ext_resource path="res://nodes/UI/battle/warning.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resources/tres/fonts/sml_font.tres" type="DynamicFont" id=4]
-
-[sub_resource type="GDScript" id=1]
-script/source = "extends Panel
-var _style = load(\"res://resources/tres/action_queue_item-stylebox.tres\")
-var style  = null
-
-func init(A, pos) -> void: #A:Action
-	style = _style.duplicate()
-	set(\"custom_styles/panel\", style)
-	$Label.text = str(\"%s\" % [A.user.name])
-	if A.user is core.Player:
-		style.bg_color = \"55000088\"
-		$Warning.visible = false
-	elif A.user is core.Enemy:
-		style.bg_color = \"55880000\"
-		$Warning.visible = A.skill.dangerous
-		$Position.flip   = true
-	$Position.value = A.user.slot
-"
+[ext_resource path="res://nodes/UI/battle/ActionQueueItem.gd" type="Script" id=5]
 
 [node name="ActionQueueItem" type="Panel"]
 margin_right = 211.0
 margin_bottom = 21.0
 custom_styles/panel = ExtResource( 1 )
-script = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 5 )
 
 [node name="Label" type="Label" parent="."]
 margin_left = 30.0

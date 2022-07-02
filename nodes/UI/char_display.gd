@@ -1,6 +1,5 @@
 extends Panel
 signal display_info(x)
-signal hide_info
 
 onready var effectHook = get_node("EffectHook")
 onready var LookAtMePanel = get_node("EffectHook/LookAtMePanel")
@@ -140,7 +139,11 @@ func _on_Button_mouse_exited() -> void:
 	highlight(false)
 
 func _on_CharDisplay_mouse_entered() -> void:
-	emit_signal("display_info", chr, 0)
+	#TODO: Show/Hide a node acting as a hover popup.
+	pass
 
 func _on_CharDisplay_mouse_exited() -> void:
-	emit_signal("hide_info")
+	pass
+
+func _on_Button_pressed() -> void:
+	emit_signal("display_info", chr, 0)

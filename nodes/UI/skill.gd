@@ -5,6 +5,7 @@ signal hide_info
 var textures:Array = core.newArray(9)
 var S = null
 var level:int = 1
+var parent = null
 
 func _init() -> void:
 	for i in range(9):
@@ -17,9 +18,10 @@ enum {
 	COST_OV
 }
 
-func init(_S, _level, costs = COST_NONE, gem:bool = false):
+func init(_S, _level, _parent, costs = COST_NONE, gem:bool = false):
 	S = _S
 	level = _level
+	parent = _parent
 	var DE = S.displayElement
 	var elem = null
 	$Label.text = S.name
@@ -48,7 +50,13 @@ func init(_S, _level, costs = COST_NONE, gem:bool = false):
 
 
 func _on_Button_mouse_entered() -> void:
+	if parent != null:
+		var A:BattleState.Action = parent.setAction(core.tid.from(S.self_tid), level)
+		A.preview = true
+		core.battle.control.actionQueue.init(core.battle.state.sortPreview(A))
 	emit_signal("display_info", S, 2, level)
 
 func _on_Button_mouse_exited() -> void:
+	if parent != null:
+		core.battle.control.actionQueue.init(core.battle.state.sortPreview())
 	emit_signal("hide_info")

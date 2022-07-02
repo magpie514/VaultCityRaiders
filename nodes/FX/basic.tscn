@@ -1,287 +1,46 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://nodes/FX/FX.gd" type="Script" id=1]
 [ext_resource path="res://resources/images/blank.png" type="Texture" id=2]
-[ext_resource path="res://classes/FX/animation_puppet.gd" type="Script" id=3]
 [ext_resource path="res://classes/FX/animation_camera_puppet.gd" type="Script" id=4]
 [ext_resource path="res://classes/FX/char_clone.gd" type="Script" id=5]
-[ext_resource path="res://resources/icons/cut.svg" type="Texture" id=6]
+[ext_resource path="res://classes/FX/cutin_control.gd" type="Script" id=6]
+[ext_resource path="res://classes/FX/animation_puppet.gd" type="Script" id=7]
 
 [sub_resource type="Animation" id=1]
 resource_local_to_scene = true
 resource_name = "ACTION"
-length = 5.0
 step = 0.05
 tracks/0/type = "value"
-tracks/0/path = NodePath("PuppetUser:emitAfterimage")
+tracks/0/path = NodePath("PuppetCamera:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 2.3, 3.2, 4.65 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false, true ]
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 240, 0 ), Vector2( 0, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("PuppetTarget:frame")
+tracks/1/path = NodePath("PuppetCamera:capture")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 3 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ "DAMAGE" ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("PuppetUser:capture")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ true ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("PuppetUser:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0, 2.2, 2.3, 2.6, 2.95, 3.1, 3.3, 3.35, 3.45, 4.65, 4.7, 4.8, 4.9 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 1030, 0 ), Vector2( 1060, -80 ), Vector2( 1080, -90 ), Vector2( 1080, -90 ), Vector2( 560, -160 ), Vector2( 80, 0 ), Vector2( 70, 0 ), Vector2( 70, 0 ), Vector2( -160, 0 ), Vector2( -160, 0 ), Vector2( 230, -30 ), Vector2( 480, -60 ), Vector2( 1030, 0 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("PuppetUser:approach")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0, 2.8, 4.9 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false ]
-}
-tracks/5/type = "value"
-tracks/5/path = NodePath("Sprite:visible")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/keys = {
-"times": PoolRealArray( 0, 3.4 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
-}
-tracks/6/type = "value"
-tracks/6/path = NodePath("Sprite:position")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
-"times": PoolRealArray( 0, 3.4, 3.8 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 0, 0 ), Vector2( 0, 0 ), Vector2( -20, 0 ) ]
-}
-tracks/7/type = "value"
-tracks/7/path = NodePath("Sprite:modulate")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/keys = {
-"times": PoolRealArray( 0, 3.4, 3.8 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
-}
-tracks/8/type = "value"
-tracks/8/path = NodePath("PuppetTarget:shake")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/keys = {
-"times": PoolRealArray( 0, 3.45, 4.1 ),
-"transitions": PoolRealArray( 1e+06, 1, 1 ),
-"update": 0,
-"values": [ 0.0, 7.0, 0.0 ]
-}
-tracks/9/type = "value"
-tracks/9/path = NodePath("PuppetUser/FXHook/Particles2D2:emitting")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/keys = {
-"times": PoolRealArray( 0, 3.15, 3.35, 3.4, 3.8 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false, true, false ]
-}
-tracks/10/type = "value"
-tracks/10/path = NodePath("PuppetUser/FXHook/Particles2D:emitting")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/keys = {
-"times": PoolRealArray( 0, 2.2, 3.05 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false ]
-}
-tracks/11/type = "value"
-tracks/11/path = NodePath(".:slowdown")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/keys = {
-"times": PoolRealArray( 0, 3.45, 3.5 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false ]
-}
-tracks/12/type = "value"
-tracks/12/path = NodePath("Underlay/Underlay:visible")
-tracks/12/interp = 1
-tracks/12/loop_wrap = true
-tracks/12/imported = false
-tracks/12/enabled = true
-tracks/12/keys = {
 "times": PoolRealArray( 0, 0.15 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
-}
-tracks/13/type = "value"
-tracks/13/path = NodePath("Overlay/Overlay:visible")
-tracks/13/interp = 1
-tracks/13/loop_wrap = true
-tracks/13/imported = false
-tracks/13/enabled = true
-tracks/13/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
-}
-tracks/14/type = "value"
-tracks/14/path = NodePath("Overlay/Overlay:modulate")
-tracks/14/interp = 1
-tracks/14/loop_wrap = true
-tracks/14/imported = false
-tracks/14/enabled = true
-tracks/14/keys = {
-"times": PoolRealArray( 0, 0.1, 1.95, 2, 3.35, 3.4, 3.45 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ), Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
-}
-tracks/15/type = "value"
-tracks/15/path = NodePath("Underlay/Underlay:modulate")
-tracks/15/interp = 1
-tracks/15/loop_wrap = true
-tracks/15/imported = false
-tracks/15/enabled = true
-tracks/15/keys = {
-"times": PoolRealArray( 0, 0.15, 0.35, 4.5, 4.9 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ), Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 0 ) ]
-}
-tracks/16/type = "value"
-tracks/16/path = NodePath("PuppetCamera:position")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/keys = {
-"times": PoolRealArray( 0, 2.7, 2.9 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 240, 0 ), Vector2( 240, 0 ), Vector2( 0, 0 ) ]
-}
-tracks/17/type = "value"
-tracks/17/path = NodePath("PuppetCamera:capture")
-tracks/17/interp = 1
-tracks/17/loop_wrap = true
-tracks/17/imported = false
-tracks/17/enabled = true
-tracks/17/keys = {
-"times": PoolRealArray( 0, 2.7 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
-}
-tracks/18/type = "value"
-tracks/18/path = NodePath("Overlay/FakeUser:position")
-tracks/18/interp = 1
-tracks/18/loop_wrap = true
-tracks/18/imported = false
-tracks/18/enabled = true
-tracks/18/keys = {
-"times": PoolRealArray( 0.2, 1.85 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Vector2( 540, 560 ), Vector2( 800, 560 ) ]
-}
-tracks/19/type = "value"
-tracks/19/path = NodePath("Overlay/FakeTarget:position")
-tracks/19/interp = 1
-tracks/19/loop_wrap = true
-tracks/19/imported = false
-tracks/19/enabled = true
-tracks/19/keys = {
-"times": PoolRealArray( 0.2, 1.85 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Vector2( 460, 330 ), Vector2( 170, 320 ) ]
-}
-tracks/20/type = "value"
-tracks/20/path = NodePath("Overlay/FakeTarget:visible")
-tracks/20/interp = 1
-tracks/20/loop_wrap = true
-tracks/20/imported = false
-tracks/20/enabled = true
-tracks/20/keys = {
-"times": PoolRealArray( 0, 0.15, 1.95 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false ]
-}
-tracks/21/type = "value"
-tracks/21/path = NodePath("Overlay/FakeUser:visible")
-tracks/21/interp = 1
-tracks/21/loop_wrap = true
-tracks/21/imported = false
-tracks/21/enabled = true
-tracks/21/keys = {
-"times": PoolRealArray( 0, 0.15, 1.95 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ false, true, false ]
 }
 
 [sub_resource type="Animation" id=6]
 resource_local_to_scene = true
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("PuppetTarget:position")
+tracks/0/path = NodePath("PuppetCamera:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -290,10 +49,10 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 80, 0 ) ]
+"values": [ Vector2( 240, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("PuppetUser:position")
+tracks/1/path = NodePath("PuppetCamera:capture")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -302,336 +61,8 @@ tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 1030, 0 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("PuppetUser:emitAfterimage")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
 "values": [ false ]
 }
-tracks/3/type = "value"
-tracks/3/path = NodePath("PuppetUser:capture")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ false ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("PuppetTarget:capture")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ false ]
-}
-tracks/5/type = "value"
-tracks/5/path = NodePath("PuppetTarget:frame")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ "IDLE" ]
-}
-tracks/6/type = "value"
-tracks/6/path = NodePath("PuppetTarget:emitAfterimage")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ false ]
-}
-tracks/7/type = "value"
-tracks/7/path = NodePath("PuppetUser:frame")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ "IDLE" ]
-}
-tracks/8/type = "value"
-tracks/8/path = NodePath("PuppetCamera:track")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ 0 ]
-}
-tracks/9/type = "value"
-tracks/9/path = NodePath("PuppetUser:approach")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/10/type = "value"
-tracks/10/path = NodePath("Sprite:visible")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/11/type = "value"
-tracks/11/path = NodePath("Sprite:position")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector2( 0, 0 ) ]
-}
-tracks/12/type = "value"
-tracks/12/path = NodePath("Sprite:modulate")
-tracks/12/interp = 1
-tracks/12/loop_wrap = true
-tracks/12/imported = false
-tracks/12/enabled = true
-tracks/12/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ) ]
-}
-tracks/13/type = "value"
-tracks/13/path = NodePath("PuppetTarget:shake")
-tracks/13/interp = 1
-tracks/13/loop_wrap = true
-tracks/13/imported = false
-tracks/13/enabled = true
-tracks/13/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ 0.0 ]
-}
-tracks/14/type = "value"
-tracks/14/path = NodePath("PuppetUser/FXHook/Particles2D2:emitting")
-tracks/14/interp = 1
-tracks/14/loop_wrap = true
-tracks/14/imported = false
-tracks/14/enabled = true
-tracks/14/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/15/type = "value"
-tracks/15/path = NodePath("PuppetUser/FXHook/Particles2D:emitting")
-tracks/15/interp = 1
-tracks/15/loop_wrap = true
-tracks/15/imported = false
-tracks/15/enabled = true
-tracks/15/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/16/type = "value"
-tracks/16/path = NodePath(".:slowdown")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/17/type = "value"
-tracks/17/path = NodePath("Underlay/Underlay:visible")
-tracks/17/interp = 1
-tracks/17/loop_wrap = true
-tracks/17/imported = false
-tracks/17/enabled = true
-tracks/17/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/18/type = "value"
-tracks/18/path = NodePath("Overlay/Overlay:visible")
-tracks/18/interp = 1
-tracks/18/loop_wrap = true
-tracks/18/imported = false
-tracks/18/enabled = true
-tracks/18/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/19/type = "value"
-tracks/19/path = NodePath("Overlay/Overlay:modulate")
-tracks/19/interp = 1
-tracks/19/loop_wrap = true
-tracks/19/imported = false
-tracks/19/enabled = true
-tracks/19/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ) ]
-}
-tracks/20/type = "value"
-tracks/20/path = NodePath("Underlay/Underlay:modulate")
-tracks/20/interp = 1
-tracks/20/loop_wrap = true
-tracks/20/imported = false
-tracks/20/enabled = true
-tracks/20/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ) ]
-}
-tracks/21/type = "value"
-tracks/21/path = NodePath("PuppetCamera:position")
-tracks/21/interp = 1
-tracks/21/loop_wrap = true
-tracks/21/imported = false
-tracks/21/enabled = true
-tracks/21/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector2( 240, 0 ) ]
-}
-tracks/22/type = "value"
-tracks/22/path = NodePath("PuppetCamera:capture")
-tracks/22/interp = 1
-tracks/22/loop_wrap = true
-tracks/22/imported = false
-tracks/22/enabled = true
-tracks/22/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/23/type = "value"
-tracks/23/path = NodePath("Overlay/FakeUser:position")
-tracks/23/interp = 1
-tracks/23/loop_wrap = true
-tracks/23/imported = false
-tracks/23/enabled = true
-tracks/23/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector2( 770, 560 ) ]
-}
-tracks/24/type = "value"
-tracks/24/path = NodePath("Overlay/FakeTarget:position")
-tracks/24/interp = 1
-tracks/24/loop_wrap = true
-tracks/24/imported = false
-tracks/24/enabled = true
-tracks/24/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector2( 150, 350 ) ]
-}
-tracks/25/type = "value"
-tracks/25/path = NodePath("Overlay/FakeTarget:visible")
-tracks/25/interp = 1
-tracks/25/loop_wrap = true
-tracks/25/imported = false
-tracks/25/enabled = true
-tracks/25/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-tracks/26/type = "value"
-tracks/26/path = NodePath("Overlay/FakeUser:visible")
-tracks/26/interp = 1
-tracks/26/loop_wrap = true
-tracks/26/imported = false
-tracks/26/enabled = true
-tracks/26/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ false ]
-}
-
-[sub_resource type="ParticlesMaterial" id=7]
-flag_disable_z = true
-direction = Vector3( -0.2, -0.2, 0 )
-spread = 42.46
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 98.37
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-damping = 100.0
-scale = 2.5
-
-[sub_resource type="Curve" id=8]
-_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
-
-[sub_resource type="CurveTexture" id=9]
-curve = SubResource( 8 )
-
-[sub_resource type="ParticlesMaterial" id=10]
-flag_disable_z = true
-direction = Vector3( 1.8, 0.8, 0 )
-spread = 65.66
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 98.36
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-scale = 66.58
-scale_curve = SubResource( 9 )
 
 [node name="SkillAnimation" type="Node2D" groups=["speed_control"]]
 script = ExtResource( 1 )
@@ -650,18 +81,30 @@ __meta__ = {
 [node name="Underlay" type="CanvasLayer" parent="."]
 layer = 0
 
-[node name="Underlay" type="Sprite" parent="Underlay"]
+[node name="Underlay" type="Sprite" parent="Underlay" groups=["fit_to_screen_size"]]
 visible = false
-position = Vector2( 960, 720 )
 scale = Vector2( 960, 720 )
 texture = ExtResource( 2 )
+centered = false
 __meta__ = {
-"_editor_description_": "Set visibility and color of this object to obscure the background with a solid color. Like to darken the background as something happens."
+"_editor_description_": "Set visibility and color of this object to obscure the foreground with a solid color. Like to cause a flash that overrides everything except controls."
+}
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="Flash" type="Sprite" parent="Overlay" groups=["fit_to_screen_size"]]
+visible = false
+scale = Vector2( 960, 720 )
+texture = ExtResource( 2 )
+centered = false
+__meta__ = {
+"_editor_description_": "Set visibility and color of this object to obscure the foreground with a solid color. Like to cause a flash that overrides everything except controls."
 }
 
 [node name="PuppetUser" type="Position2D" parent="."]
 position = Vector2( 1030, 0 )
-script = ExtResource( 3 )
+script = ExtResource( 7 )
 __meta__ = {
 "_editor_description_": "User Puppet object.
 Move this object around to move the skill's user.
@@ -673,25 +116,8 @@ __meta__ = {
 "_editor_description_": "User effect hook. Put effects that need to be attached to the user here."
 }
 
-[node name="Particles2D2" type="Particles2D" parent="PuppetUser/FXHook" groups=["speed_control"]]
-emitting = false
-amount = 25
-lifetime = 1.5
-preprocess = 1.0
-local_coords = false
-process_material = SubResource( 7 )
-
-[node name="Particles2D" type="Particles2D" parent="PuppetUser/FXHook" groups=["speed_control"]]
-show_behind_parent = true
-position = Vector2( 30, -30 )
-emitting = false
-amount = 64
-local_coords = false
-process_material = SubResource( 10 )
-
 [node name="PuppetTarget" type="Position2D" parent="."]
-position = Vector2( 80, 0 )
-script = ExtResource( 3 )
+script = ExtResource( 7 )
 __meta__ = {
 "_editor_description_": "Target Puppet object.
 Move this object around to move the skill's target.
@@ -714,44 +140,43 @@ Set track to follow an actor at all times.
 Set jump to focus on an actor, but not follow."
 }
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="LocalCamera" type="Camera2D" parent="."]
 visible = false
 position = Vector2( 720, 0 )
 rotating = true
 
-[node name="Overlay" type="CanvasLayer" parent="."]
+[node name="CutInSpace" type="CanvasLayer" parent="."]
 layer = 4
+script = ExtResource( 6 )
 
-[node name="Overlay" type="Sprite" parent="Overlay"]
+[node name="Background" type="Sprite" parent="CutInSpace" groups=["fit_to_screen_size"]]
 visible = false
-modulate = Color( 1, 1, 1, 0 )
-position = Vector2( 960, 720 )
 scale = Vector2( 960, 720 )
 texture = ExtResource( 2 )
+centered = false
 __meta__ = {
 "_editor_description_": "Set visibility and color of this object to obscure the foreground with a solid color. Like to cause a flash that overrides everything except controls."
 }
 
-[node name="FakeUser" type="Sprite" parent="Overlay"]
+[node name="FakeUser" type="Position2D" parent="CutInSpace"]
 visible = false
-position = Vector2( 770, 560 )
-scale = Vector2( 1.3, 1.3 )
 script = ExtResource( 5 )
 
-[node name="FakeTarget" type="Sprite" parent="Overlay"]
+[node name="FXHook" type="Node2D" parent="CutInSpace/FakeUser"]
+__meta__ = {
+"_editor_description_": "User effect hook. Put effects that need to be attached to the user here."
+}
+
+[node name="FakeTarget" type="Position2D" parent="CutInSpace"]
 visible = false
-modulate = Color( 0.156863, 0.156863, 0.156863, 1 )
-position = Vector2( 150, 350 )
-scale = Vector2( 0.3, 0.3 )
+modulate = Color( 0.270588, 0, 0, 1 )
 script = ExtResource( 5 )
+
+[node name="FXHook" type="Node2D" parent="CutInSpace/FakeTarget"]
+__meta__ = {
+"_editor_description_": "User effect hook. Put effects that need to be attached to the user here."
+}
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-
-[node name="Sprite" type="Sprite" parent="."]
-visible = false
-rotation = 0.829031
-scale = Vector2( 1.2, 2.9 )
-texture = ExtResource( 6 )
-offset = Vector2( 0, -19.6 )
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_finished"]

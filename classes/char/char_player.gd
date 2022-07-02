@@ -1,4 +1,6 @@
 extends "res://classes/char/char_base.gd"
+class_name Player
+
 const DragonGem = preload("res://classes/inventory/item.gd").DragonGem
 const DragonGemContainer = preload("res://classes/inventory/item.gd").DragonGemContainer
 const DEFAULT = { energyColor = "#4466FF" }

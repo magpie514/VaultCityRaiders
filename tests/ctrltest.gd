@@ -10,6 +10,7 @@ var testmform       = null
 var state           = preload("res://classes/battle/battle_state.gd").new()
 var reply           = null
 var battleSpeed:int = 0
+onready var actionQueue = $Panel/ActionQueue
 
 func _ready():
 	testguild                = core.guild
@@ -47,9 +48,8 @@ func _ready():
 	core.changeScene("res://tests/debug_menu.tscn")
 
 func battle():
-	var A = null
-	var islot = 0
-	var playerActions:Array = []
+	var A:BattleState.Action
+	var islot:int = 0
 	var C = null
 	var playerChars = null
 	$Panel/BattleControls.hide()
@@ -59,8 +59,6 @@ func battle():
 		$Panel/CurrentAction.hide()
 		if checkResolution(): return #Make sure end of turn special effects didn't cause a victory or defeat.
 		$Panel/FieldEffect.updateDisplay(state.field)
-		#Show battle log and hide large action text.
-		$Panel/BattleLog.show()
 		#TODO: Wait for background intro to complete if it exists here.
 		core.battle.cam.zoom = Vector2(1.0,1.0)
 
@@ -75,13 +73,13 @@ func battle():
 
 		$Panel/UIDisplay.update()
 
-		playerActions.clear()
+		state.playerActions.clear()
 		playerChars = testguild.activeMembers()
 		islot = 0
 
 		# Collect player actions ######################################################################
 		while islot < playerChars.size():
-			$Panel/ActionQueue.init(state.sortPreview(playerActions))
+			actionQueue.init(state.sortPreview())
 			C = playerChars[islot]
 			core.battle.cam.focusAnchor(C.sprite)
 			core.battle.background.setCursor(C.sprite)
@@ -99,7 +97,7 @@ func battle():
 			if reply is state.Action:
 				#Player chose a valid action, register it and move to next.
 				#C.UIdisplay.setActionText(reply)
-				playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
+				state.playerActions.push_back([state.SIDE_PLAYER, C.slot, reply])
 				islot += 1
 			elif typeof(reply) == TYPE_STRING:
 				match(reply):
@@ -108,7 +106,7 @@ func battle():
 			elif islot > 0:
 				#Player cancelled current action, clean up and go back.
 				C.battle.overAction.clear() #Remove Over skills.
-				var temp = playerActions.pop_back()
+				var temp = state.playerActions.pop_back()
 				if temp[2].IT: #If player selected items, give them back to inventory or give charge back.
 					#TODO: Check for standard item duplication exploit shenanigans.
 					testguild.inventory.returnConsumable(temp[2].IT)
@@ -117,7 +115,7 @@ func battle():
 			$Panel/BattleControls.closeAll()
 
 		yield(wait(0.25, true), "timeout")
-		for i in playerActions:
+		for i in state.playerActions:
 			C = testguild.formation[i[1]]
 			if not C.battle.overAction.empty():
 				for j in C.battle.overAction:
@@ -246,3 +244,7 @@ func _on_Speed_pressed(x:int) -> void: #Speed control debug buttons.
 
 func _on_Button_pressed() -> void: #PASS HOUR debug button.
 	core.world.passTime()
+
+
+func _on_ShowLog_pressed() -> void: #Show battle log button.
+	$Panel/BattleLog.show()

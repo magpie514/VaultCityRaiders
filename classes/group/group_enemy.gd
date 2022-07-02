@@ -1,15 +1,30 @@
 extends "res://classes/group/group_base.gd"
-var enemy                 = preload("res://classes/char/char_enemy.gd")
 var display               = null
-var defeated              = []
+var defeated:Array        = []
 var lib                   = null
 var summonRestriction:int = 1
+var boss:bool             = false
 
 # Virtual overrides ###############################################################################
 func getDefeated() -> int:	return defeated.size()
 ###################################################################################################
+func init(tid, lvbonus:int = 0) -> void:
+	formation = core.newArray(MAX_SIZE)
+	var form  = core.lib.mform.getIndex(tid)
+	lib       = form
+	name      = lib.name
+	for i in range(MAX_SIZE):
+		if form.formation[i] != null: addMember(lib.formation[i], i, lvbonus)
 
-func updateFormation():
+func addMember(data, slot:int, lvbonus:int = 0) -> void:
+	formation[slot]         = initMember(data, lvbonus)
+	formation[slot].slot    = slot
+	formation[slot].row     = 0 if slot < ROW_SIZE else 1
+	formation[slot].group   = self
+	formation[slot].initBattle()
+	#formation[slot].sprite = core.battle.displayManager.initSprite(formation[slot], slot)
+
+func updateFormation() -> void:
 	var M = null
 
 func initBattleTurn() -> void:
@@ -22,15 +37,15 @@ func initBattleTurn() -> void:
 	#display.update()
 	.initBattleTurn()
 
-func initMember(d, lvbonus:int = 0):
-	var m   = enemy.new()
-	m.level = d.level + lvbonus
-	m.tid   = d.tid
-	m.initDict(core.lib.enemy.getIndex(d.tid))
+func initMember(D:Dictionary, lvbonus:int = 0) -> Enemy:
+	var m:Enemy = Enemy.new()
+	m.level     = D.level + lvbonus
+	m.tid       = D.tid
+	m.initDict(core.lib.enemy.getIndex(D.tid))
 	return m
 
 func getSummoned(C) -> Array:
-	var result = []
+	var result:Array = []
 	for i in formation:
 		if i != null and i.summoner == C:
 			result.push_back(i)
@@ -104,7 +119,7 @@ func findSummonSlot(SU) -> int:
 				slot = j
 	return slot
 
-func summon(user, slot:int, SU) -> void:
+func summon(user:Enemy, slot:int, SU) -> void:
 	print("[GROUP_ENEMY][summon] Trying to summon %s" % [str(SU)])
 	addMember(SU, slot)
 	core.battle.displayManager.initSprite(formation[slot], slot)
@@ -141,22 +156,6 @@ func canRevive() -> bool:
 			print("[GROUP_ENEMY] Can revive: %s" % defeated.size())
 			return true
 	return false
-
-func addMember(data, slot:int, lvbonus:int = 0) -> void:
-	formation[slot]         = initMember(data, lvbonus)
-	formation[slot].slot    = slot
-	formation[slot].row     = 0 if slot < ROW_SIZE else 1
-	formation[slot].group   = self
-	formation[slot].initBattle()
-	#formation[slot].sprite = core.battle.displayManager.initSprite(formation[slot], slot)
-
-func init(tid, lvbonus:int = 0) -> void:
-	formation = core.newArray(MAX_SIZE)
-	var form  = core.lib.mform.getIndex(tid)
-	lib       = form
-	name      = lib.name
-	for i in range(MAX_SIZE):
-		if form.formation[i] != null: addMember(lib.formation[i], i, lvbonus)
 
 func loadDebug() -> void:
 	init(["debug", "debug"])

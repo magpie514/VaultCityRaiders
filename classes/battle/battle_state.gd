@@ -1,3 +1,4 @@
+class_name BattleState
 const FIELD_EFFECT_SIZE = 12
 const ElementField = preload("res://classes/battle/field_effects.gd")
 const msgColors = {
@@ -15,19 +16,20 @@ enum { #Global event notification subsystem.
 }
 enum { SKILL_OK = 0, SKILL_FAIL = 1, SKILL_MISS = 2 }
 
-var turn:int         = 0                  #Current turn for this battle. Influences AI.
-var quit:bool        = false              #If battle should continue or not.
-var resolution:int   = 0                  #Result for the encounter when quitting.
-var formations:Array = core.newArray(2)   #Pointers to the participating groups.
-var actionQueue      = core.newArray(1)   #Action queue.
-var field            = ElementField.new() #Elemental field.
-var lastElement:int  = 0                  #Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
-var onhit            = []                 #Temporary var to store extra onhit effects.
-var UI               = null               #Pointer to user interface.
-var lastAct          = []                 #Last action?
-var nextAct          = []                 #Next action?
-var EXP:int          = 0                  #Accumulated EXP reward for the encounter.
-var notifyListeners:Array = [             #Report to these characters when notifications happen. See event notification enum for array details.
+var turn:int         = 0                  # Current turn for this battle. Influences AI.
+var quit:bool        = false              # If battle should continue or not.
+var resolution:int   = 0                  # Result for the encounter when quitting.
+var formations:Array = core.newArray(2)   # Pointers to the participating groups.
+var actionQueue      = core.newArray(1)   # Action queue.
+var playerActions:Array = []              # Collected player actions for current turn.
+var field            = ElementField.new() # Elemental field.
+var lastElement:int  = 0                  # Temporary var to store last used element. This is just to prevent multitarget attacks from adding too much.
+var onhit            = []                 # Temporary var to store extra onhit effects.
+var UI               = null               # Pointer to user interface.
+var lastAct          = []                 # Last action?
+var nextAct          = []                 # Next action?
+var EXP:int          = 0                  # Accumulated EXP reward for the encounter.
+var notifyListeners:Array = [             # Report to these characters when notifications happen. See event notification enum for array details.
 	[], #NOTIFY_ON_DEFEAT: Characters here request to be informed of defeats. Run their codeGD skill codes if able.
 ]
 var notifyQueue:Array = [
@@ -47,6 +49,7 @@ class Action:
 	var target:Array             #List of targets.
 	var override    = null       #Pointer to skill override (mostly dragon gems)
 	var cancel:bool = false      #TODO: What?
+	var preview:bool = false     #Whether it's a preview (mouse over skill buttons) or not.
 	var skillTid                 #TID of skill definition.
 	var skill                    #Pointer to action's skill library.
 	#Player only.
@@ -178,14 +181,15 @@ func popAction() -> Action: #Pop the front of the queue and return it.
 func amount() -> int: #Returns amount of actions in the queue.
 	return actionQueue.size()
 
-func sortPreview(playerActs:Array, overActions:Array = []) -> Array:
+func sortPreview(A = null) -> Array:
 	var result:Array = [] #Store stuff in a temp array to prevent disturbances.
 	for i in actionQueue:
 		result.push_back(i)
-	for i in playerActs:
+	for i in playerActions:
 		var temp:Action = i[2].duplicate()
 		prepareAction(i[0],i[1],temp)
 		result.push_back(temp)
+	if A != null: result.push_back(A)
 	result.sort_custom(self, "sortActionQueue")
 	return result
 
@@ -243,7 +247,7 @@ func addAction(side:int, slot:int, act:Action) -> void:
 	prepareAction(side, slot, act)
 	pushAction(act)
 
-func updateActions(A) -> void:
+func updateActions(A:Action) -> void:
 	lastAct = [A.side, A.user, A.skill, A.level]
 	print("[BATTLE_STATE][UPDATEACTIONS] lastAct: %s %s LV%2d" % [lastAct[1].name, lastAct[2].name, lastAct[3]])
 	var tmp = null
@@ -324,7 +328,7 @@ func initAction(act) -> void:
 				var targetNode = targets[0].sprite
 				if targets.size() > 1:
 					targetNode = core.battle.background.multitargets[targets[0].side][0]
-				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targetNode, act.user.sprite, true if act.user is core.Enemy else false)
+				core.battle.skillControl.startAnim(act.skill, act.level, 'main', targetNode, act.user.sprite, true if act.user is Enemy else false)
 				yield(core.battle.skillControl, "fx_finished") #Wait for animation to finish.
 				print("[BATTLE_STATE][initAction] Main animation finished")
 		act.user.charge(false) #Stop charging effects.
@@ -402,7 +406,7 @@ func actions() -> Array: #Returns a total list of actions without popping them.
 
 # Combat event notifications ##################################################
 func addEventListener(event:int, listener) -> void: #Add character to listen to give event type.
-	 #A character is requesting to be notified of certain combat events.
+	#A character is requesting to be notified of certain combat events.
 	print("[BATTLE_STATE][addEventListener] %s wants to be reported of event type %s" % [listener.name, event])
 	if listener in notifyListeners[event]:
 		print("[BATTLE_STATE][addEventListener] %s is already accounted for." % listener.name)

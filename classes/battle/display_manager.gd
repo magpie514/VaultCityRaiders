@@ -20,13 +20,13 @@ func init() -> void:
 			initSprite(C, slot)
 
 func initSprite(C, slot:int) -> void:
-	var spr:String = C.lib.spriteFile if C is core.Enemy else C.spriteFile
+	var spr:String = C.lib.spriteFile if C is Enemy else C.spriteFile
 	var node:Node  = getAnchorNode(C, slot)
 	if node != null:
 		var sprite:Node = SpriteH.instance()
 		node.add_child(sprite)
 		C.sprite = sprite
-		C.UIdisplay = core.battle.UI.grid[1 if C is core.Enemy else 0][slot]
+		C.UIdisplay = core.battle.UI.grid[1 if C is Enemy else 0][slot]
 		C.UIdisplay.init(C)
 		C.display = node.get_node("Position2D/CharDisplay")
 		sprite.init(spr, C, slot)
@@ -52,12 +52,12 @@ func addEffector(C, fx:String, lib:Dictionary, del_type:int = 0) -> void:
 
 
 func getAnchorNode(C, slot:int) -> Node:
-	return core.battle.background.getCharAnchor(0 if C is core.Player else 1, slot)
+	return core.battle.background.getCharAnchor(0 if C is Player else 1, slot)
 	# Get location node placed in the background scene.
 	# var t:int         = slot + 1
 	# var prefix:String = "F" if t < 4 else "B"
 	# t = t if t < 4 else (t - 3)
-	# var side:String      = 'Player' if C is core.Player else 'Enemy'
+	# var side:String      = 'Player' if C is Player else 'Enemy'
 	# var nodeName:String  = str("%s/%s%s" % [side, prefix, t])
 	# var node:Node        = core.battle.background.get_node(nodeName)
 	#return node

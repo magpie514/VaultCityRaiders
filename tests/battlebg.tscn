@@ -26,7 +26,7 @@ position = Vector2( -206, 142 )
 
 [node name="B1" type="Position2D" parent="Main/Enemy"]
 position = Vector2( -238, 103 )
-z_index = -2
+z_index = -5
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/B1"]
 z_index = 20
@@ -35,7 +35,7 @@ z_index = 20
 
 [node name="B2" type="Position2D" parent="Main/Enemy"]
 position = Vector2( -348, 201 )
-z_index = -2
+z_index = 5
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/B2"]
 z_index = 20
@@ -44,7 +44,7 @@ z_index = 20
 
 [node name="B3" type="Position2D" parent="Main/Enemy"]
 position = Vector2( -458, 309 )
-z_index = -2
+z_index = 15
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/B3"]
 z_index = 20
@@ -61,6 +61,7 @@ z_index = 20
 
 [node name="F2" type="Position2D" parent="Main/Enemy"]
 position = Vector2( -138, 230 )
+z_index = 10
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/F2"]
 z_index = 20
@@ -69,6 +70,7 @@ z_index = 20
 
 [node name="F3" type="Position2D" parent="Main/Enemy"]
 position = Vector2( -238, 340 )
+z_index = 20
 
 [node name="Position2D" type="Position2D" parent="Main/Enemy/F3"]
 z_index = 20
@@ -84,7 +86,7 @@ z_index = -10
 
 [node name="B1" type="Position2D" parent="Main/Player"]
 position = Vector2( 238, 103 )
-z_index = -2
+z_index = -5
 
 [node name="Position2D" type="Position2D" parent="Main/Player/B1"]
 z_index = 20
@@ -102,7 +104,7 @@ z_index = 20
 
 [node name="B3" type="Position2D" parent="Main/Player"]
 position = Vector2( 450, 309 )
-z_index = 10
+z_index = 15
 
 [node name="Position2D" type="Position2D" parent="Main/Player/B3"]
 z_index = 20
@@ -119,7 +121,7 @@ z_index = 20
 
 [node name="F2" type="Position2D" parent="Main/Player"]
 position = Vector2( 136, 228 )
-z_index = 5
+z_index = 10
 
 [node name="Position2D" type="Position2D" parent="Main/Player/F2"]
 z_index = 20
@@ -128,7 +130,7 @@ z_index = 20
 
 [node name="F3" type="Position2D" parent="Main/Player"]
 position = Vector2( 238, 340 )
-z_index = 10
+z_index = 20
 
 [node name="Position2D" type="Position2D" parent="Main/Player/F3"]
 z_index = 20

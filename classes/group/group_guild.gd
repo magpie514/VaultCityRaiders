@@ -130,7 +130,7 @@ func loadDebug() -> void: #Load debug "save file".
 		return
 	init(data)
 
-func getFormationSlot(n): #Get member in a given slot.
+func getFormationSlot(n:int): #Get member in a given slot.
 	return formation[n]
 
 func healAll() -> void: #Heals all party members.
@@ -146,7 +146,8 @@ func restoreAll() -> void: #Heals all party members, restores all weapon durabil
 			i.condition = core.skill.CONDITION_GREEN
 			i.condition2 = 0
 			i.fullHeal()
-			if i is core.Player: i.equip.fullRepair(true)
+			if i is Player: i.equip.fullRepair(true)
+			inventory.fullRecharge()
 
 func passTime() -> void: #Hook for time passing.
 	inventory.updateCharges()

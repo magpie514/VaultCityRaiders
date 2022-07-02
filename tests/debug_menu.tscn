@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://tests/debug_menu.gd" type="Script" id=1]
 [ext_resource path="res://tests/debug_partydisplay.tscn" type="PackedScene" id=2]
 [ext_resource path="res://tests/debug_dgem.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Panel
@@ -40,7 +41,7 @@ func close(parent) -> void:
 	if not connected: return
 	for i in C.equip.WEAPON_SLOT:
 		var N = get_node(\"DGem%1d\" % i)
-		N.disconnect(\"openMenu\", parent, \"_on_DGem_select\")
+		if connected: N.disconnect(\"openMenu\", parent, \"_on_DGem_select\")
 	hide()
 "
 
@@ -178,10 +179,8 @@ func close() -> void:
 [node name="Control" type="Control"]
 margin_right = 40.0
 margin_bottom = 40.0
+theme = ExtResource( 4 )
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Panel" type="Panel" parent="."]
 margin_right = 480.0

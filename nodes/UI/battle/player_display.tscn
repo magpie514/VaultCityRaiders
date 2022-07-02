@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://nodes/UI/battle/player_display.gd" type="Script" id=1]
 [ext_resource path="res://resources/fonts/Magero.ttf" type="DynamicFontData" id=2]
@@ -8,18 +8,6 @@
 [ext_resource path="res://resources/tres/fonts/std_font.tres" type="DynamicFont" id=6]
 [ext_resource path="res://resources/tres/battle_controls.tres" type="Theme" id=7]
 [ext_resource path="res://nodes/UI/battle/condition_defs.tscn" type="PackedScene" id=8]
-
-[sub_resource type="StyleBoxFlat" id=1]
-content_margin_left = 50.0
-bg_color = Color( 0, 0.00784314, 0.45098, 1 )
-border_width_left = 4
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 1, 0.701961, 0, 1 )
-corner_radius_top_left = 50
-corner_detail = 1
-anti_aliasing = false
 
 [sub_resource type="DynamicFont" id=4]
 size = 13
@@ -55,12 +43,8 @@ __meta__ = {
 margin_right = 250.0
 margin_bottom = 20.0
 custom_fonts/font = ExtResource( 6 )
-custom_styles/normal = SubResource( 1 )
 text = "123456789012345678901234"
 valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Level" type="Label" parent="."]
 margin_top = 20.0
@@ -455,6 +439,15 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="."]
 margin_left = 750.0
-margin_top = 10.0
+margin_top = 73.0
 margin_right = 950.0
-margin_bottom = 28.0
+margin_bottom = 91.0
+
+[node name="Button" type="Button" parent="."]
+margin_left = 939.0
+margin_right = 960.0
+margin_bottom = 23.0
+text = "X"
+flat = true
+
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

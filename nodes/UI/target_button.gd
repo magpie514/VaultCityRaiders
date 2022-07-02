@@ -20,7 +20,7 @@ func init(C, key = '') -> void:
 	else:
 		visible = true
 	self.chr = C
-	if C is core.Player: info = 0
+	if C is Player: info = 0
 	$Name.text = C.name
 	$Bar.value = C.getHealthN()
 	if not key.empty():

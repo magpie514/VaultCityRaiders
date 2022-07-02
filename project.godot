@@ -8,8 +8,32 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Reference",
+"class": "BattleState",
+"language": "GDScript",
+"path": "res://classes/battle/battle_state.gd"
+}, {
+"base": "Reference",
+"class": "Enemy",
+"language": "GDScript",
+"path": "res://classes/char/char_enemy.gd"
+}, {
+"base": "Reference",
+"class": "EnemyBoss",
+"language": "GDScript",
+"path": "res://classes/char/char_boss.gd"
+}, {
+"base": "Reference",
+"class": "Player",
+"language": "GDScript",
+"path": "res://classes/char/char_player.gd"
+} ]
 _global_script_class_icons={
+"BattleState": "",
+"Enemy": "",
+"EnemyBoss": "",
+"Player": ""
 }
 
 [application]

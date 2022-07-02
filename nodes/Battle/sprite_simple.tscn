@@ -155,7 +155,7 @@ region_enabled = true
 region_rect = Rect2( 448, 177, 253, 205 )
 
 [node name="Glows" type="Sprite" parent="SpriteHook/Sprite"]
-self_modulate = Color( 1, 1, 1, 0.5 )
+self_modulate = Color( 1, 1, 1, 0.62815 )
 material = SubResource( 6 )
 position = Vector2( -24, -15.4 )
 texture = ExtResource( 3 )

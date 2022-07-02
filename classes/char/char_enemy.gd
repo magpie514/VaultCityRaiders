@@ -1,9 +1,10 @@
 extends "res://classes/char/char_base.gd"
+class_name Enemy
 
 var tid = null
 var lib = null #Link to data library containing static enemy attributes.
 
-var ability:Array      = core.newArray(2) #Passive skill. [TID, level]
+var ability:Array      = core.newArray(2) #Passive skill. [TID, level] #TODO: Remove in favor of lib data.
 var XPMultiplier:float = 1.0
 var summoner           = null
 var armed:bool         = true #If the enemy is supposed to be wielding weapons or not.
@@ -47,14 +48,14 @@ func recalculateStats() -> void:
 	stats.copy(statBase, S)
 	stats.sumInto(statFinal, S, modstats)
 
-func initDict(C): #Initialize an enemy from a data dict.
+func initDict(C:Dictionary): #Initialize an enemy from a data dict.
 	side        = 1
 	lib         = C
 	ID          = randi() #TODO: Assign an unique integer ID to this enemy.
 	self.name   = str(lib.name)
 	energyColor = C.energyColor
 	skills      = lib.skillSetup[0] #TODO: Change from Rank.
-	ability     = [core.lib.skill.getIndex(['debug','regenera']), 1]
+	ability     = [core.lib.skill.getIndex(C.passive), 1]
 	recalculateStats()
 	fullHeal()
 	print(getTooltip())

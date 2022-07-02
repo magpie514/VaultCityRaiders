@@ -17,7 +17,7 @@ var validSkills = [
 onready var buttonWidth = $ScrollContainer.rect_size.x * 0.8
 onready var container = $ScrollContainer/VBoxContainer
 
-func init(C):
+func init(C) -> void:
 	clear()
 	currentChar = C
 	$ColorRect/Label.text = str("%s's skills" % C.name)
@@ -28,14 +28,14 @@ func init(C):
 		var S = core.getSkillPtr(TID)
 		if S.requiresWeapon == 0 and (S.category in validSkills):
 			var button = skillNode.instance()
-			button.init(S, i[1], button.COST_EP)
+			button.init(S, i[1], self, button.COST_EP)
 			addButton(button, [TID, i[1]])
 	if not C.extraSkills.empty():
 		for i in C.extraSkills:
 			var S = core.getSkillPtr(i[0])
 			if S.category in validSkills:
 				var button = skillNode.instance()
-				button.init(S, i[1], button.COST_EP, true)
+				button.init(S, i[1], self, button.COST_EP, true)
 				addButton(button, [i[0], i[1]])
 	show()
 
@@ -58,12 +58,22 @@ func finish() -> void:
 	controls.infoPanel.hideInfo()
 	hide()
 
-func chooseResult(TID, level): #[TID skill, int level]
-	modulate.a = 0.2			#Fade menu out a bit.
-	var result = controls.state.Action.new(controls.state.ACT_SKILL)
+func setAction(TID, level:int) -> BattleState.Action:
+	var result:BattleState.Action = BattleState.Action.new(BattleState.ACT_SKILL)
 	result.WP = currentChar.currentWeapon
-	var S = core.getSkillPtr(TID) #Get pointer to skill.
-	result.skill = S; result.skillTid = TID; result.level = level
+	var S = core.getSkillPtr(TID)
+	result.user     = currentChar
+	result.skill    = S
+	result.skillTid = TID
+	result.level    = level
+	result.spd      = currentChar.calcSPD(S.spdMod[level])
+	result.spdMod   = S.spdMod[level]
+	return result
+
+func chooseResult(TID, level:int): #[TID skill, int level]
+	var result:BattleState.Action = setAction(TID, level)
+	var S                         = core.getSkillPtr(TID)
+	modulate.a = 0.2   # Fade menu out a little bit.
 	target = core.skill.selectTargetAuto(S, level, currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()

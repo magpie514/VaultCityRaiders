@@ -59,7 +59,7 @@ func init(C, slot):
 		# count += 1 #Keep a count of list elements to assign hotkeys.
 		button = skillNode.instance()
 		S = core.lib.skill.getIndex(i)
-		button.init(S, WP.level, button.COST_WP)
+		button.init(S, WP.level, self, button.COST_WP)
 		addButton(button, [[i, WP.level], WP])
 
 	addSeparator("Dragon gem skills")
@@ -69,7 +69,7 @@ func init(C, slot):
 		button = skillNode.instance()
 		S = core.getSkillPtr(i[0])
 		var tmp = i[2] if i[2] != null else S
-		button.init(tmp, i[1], button.COST_WP, true)
+		button.init(tmp, i[1], self, button.COST_WP, true)
 		addButton(button, [[i[0], i[1]], WP, i[2]])
 
 	addSeparator("Weapon skills")
@@ -79,7 +79,7 @@ func init(C, slot):
 		S = core.getSkillPtr(TID)
 		if S.requiresWeapon == WP.lib.wclass and S.category in [core.skill.CAT_ATTACK, core.skill.CAT_SUPPORT]:
 			button = skillNode.instance()
-			button.init(S, i[1], button.COST_WP)
+			button.init(S, i[1], self, button.COST_WP)
 			addButton(button, [[TID, i[1]], WP])
 	show()
 
@@ -109,14 +109,25 @@ func finish():
 	controls.infoPanel.hideInfo()
 	hide()
 
+
+func setAction(TID, level:int, skillOverride = null) -> BattleState.Action:
+	var result:BattleState.Action = BattleState.Action.new(BattleState.ACT_FIGHT)
+	result.user     = currentChar
+	result.skill    = core.getSkillPtr(TID) if skillOverride == null else skillOverride
+	result.override = skillOverride
+	result.skillTid = TID
+	result.level    = level
+	result.spd      = currentChar.calcSPD(result.skill.spdMod[level])
+	result.spdMod   = result.skill.spdMod[level]
+	return result
+
+
 func chooseResult(x, WP, skillOverride=null): #[TID skill, int level]
+	var result:BattleState.Action = setAction(x[0], x[1])
 	modulate.a = 0.2 #Fade menu out a bit.
-	var result = controls.state.Action.new(controls.state.ACT_FIGHT)
 	result.WP = WP
 	if skillOverride != null: print("[MENU_WEAPON][chooseResult] Found override: %s" % skillOverride.name)
-	var S = core.getSkillPtr(x[0]) if skillOverride == null else skillOverride #Get pointer to skill.
-	result.skill = S; result.skillTid = x[0]; result.level = x[1]
-	result.override = skillOverride
+	var S = result.skill
 	target = core.skill.selectTargetAuto(S, x[1], currentChar, controls.state)
 	if target != null: #Check if the target was resolved automagically.
 		finish()

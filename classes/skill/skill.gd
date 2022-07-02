@@ -197,6 +197,13 @@ enum { #Skill function flags. Value between [] is used in the function codes whe
 	OPFLAG_LOGIC_NOT      = 0b100000000,  #[!] In a conditional, reverse the outcome.
 }
 
+enum { #Type of data for this skill code.
+	OPTYPE_INT   = 0, #Integers
+	OPTYPE_FLOAT = 1, #Floats
+	OPTYPE_STR   = 2  #Strings
+	#Array
+}
+
 enum { #Skill function codes.
 	#Null
 	OPCODE_NULL                       , #No effect
@@ -1042,6 +1049,9 @@ func translateOpCode(o:String) -> int:
 	o = o.to_lower() #Ensure string is lower case.
 	return opCode[o] if o in opCode else OPCODE_NULL
 
+func opCodeType(code:int) -> int:
+	return OPTYPE_INT
+
 func hasCodePR(S) -> bool:
 	return true if S.codePR != null else false
 
@@ -1466,7 +1476,7 @@ func calculateTarget(S, level:int, user, _targets) -> Array:
 	return finalTargets
 
 func addEffect(S, level:int, user, target, state):
-	if target is core.Player:
+	if target is Player:
 		var what:int = 0
 		match S.effectType:
 			EFFTYPE_BUFF:    what = core.lib.item.COUNTER_BUFF
@@ -2264,38 +2274,38 @@ func runSkillCode(S, level:int, state:SkillState, code:Array, user, target) -> v
 # Player only specials #########################################################
 					OPCODE_EXP_BONUS:
 						print(">EXP BONUS: %s" % value)
-						if variableTarget is core.Enemy:
+						if variableTarget is Enemy:
 							variableTarget.XPMultiplier += (float(value) * 0.01)
 							variableTarget.display.message("EXP BONUS UP!", messageColors.buff)
 						else:
 							print("EXP_BONUS not applied, target is not an enemy.")
 					OPCODE_REPAIR_PARTIAL:
 						print(">REPAIR PARTIAL: %s" % value)
-						if variableTarget is core.Player:
+						if variableTarget is Player:
 							variableTarget.partialRepair(value, false)
 						else:
 							print("Target is not a player.")
 					OPCODE_REPAIR_FULL:
 						print(">REPAIR FULL: %s" % value)
-						if variableTarget is core.Player:
+						if variableTarget is Player:
 							variableTarget.fullRepair(false)
 						else:
 							print("Target is not a player.")
 					OPCODE_REPAIR_PARTIAL_ALL:
 						print(">REPAIR PARTIAL: %s" % value)
-						if variableTarget is core.Player:
+						if variableTarget is Player:
 							variableTarget.partialRepair(value)
 						else:
 							print("Target is not a player.")
 					OPCODE_REPAIR_FULL_ALL:
 						print(">REPAIR FULL: %s" % value)
-						if variableTarget is core.Player:
+						if variableTarget is Player:
 							variableTarget.fullRepair()
 						else:
 							print("Target is not a player.")
 					OPCODE_ITEM_RECHARGE:
 						print(">ITEM RECHARGE: %s")
-						if variableTarget is core.Player and value != 0:
+						if variableTarget is Player and value != 0:
 							for i in value:
 								variableTarget.group.inventory.checkRecharges()
 # Enemy only specials ##########################################################
@@ -2417,9 +2427,9 @@ func runSkillCode(S, level:int, state:SkillState, code:Array, user, target) -> v
 					OPCODE_GET_WEAPON_DUR:
 						print(">GET WEAPON DURABILITY")
 						print("\tGetting durability for %s" % variableTarget.currentWeapon.lib.name)
-						if variableTarget is core.Player:
+						if variableTarget is Player:
 							state.value = variableTarget.currentWeapon.uses
-						elif variableTarget is core.Enemy:
+						elif variableTarget is Enemy:
 							state.value = 100 if variableTarget.armed else 0
 						print(">>>>>SVAL = %s" % state.value)
 					OPCODE_GET_WORLD_TIME:
@@ -2698,7 +2708,7 @@ func runSkillCode(S, level:int, state:SkillState, code:Array, user, target) -> v
 					OPCODE_IF_RACE_ASPECT:
 						print(">IF RACE ASPECT IN TARGET %s" % value)
 						var temp2 = false
-						if variableTarget is core.Player:
+						if variableTarget is Player:
 							temp2 = variableTarget.racelib.aspect & int(value)
 						else:
 							temp2 = variableTarget.lib.aspect & int(value)

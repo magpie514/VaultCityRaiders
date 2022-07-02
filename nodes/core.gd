@@ -1,7 +1,5 @@
 extends Node
 # Important shared classes ####################################################
-const Enemy     = preload("res://classes/char/char_enemy.gd")
-const Player    = preload("res://classes/char/char_player.gd")
 const Inventory = preload("res://classes/inventory/item.gd")
 
 # Misc utility constants ######################################################

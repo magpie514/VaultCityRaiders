@@ -90,8 +90,8 @@ var example = {
 			category = 0,
 			maxLevel = 10,
 			charge = true,
-			chargeRate = [020,025,025,025,025, 025,025,025,025,025],
-			chargeUse =  [020,025,025,025,025, 025,025,025,025,025],
+			chargeRate = 020,
+			chargeUse =  020,
 			skill = [001,001,001,001,001, 001,001,001,001,001],
 			skills = [
 				"core/elemshft",

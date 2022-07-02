@@ -26,6 +26,16 @@ enum {
 #[ ] Allow providing up to 4 skills defined by level (make SKL a 4-bit int to choose?)
 #[v] Replace skillmods for an array so order can be preserved.
 #[x] Move gem skill factory to its own class, inheriting from skill, I guess.
+#Finish the star gem set:
+#[ ] Rasalhague, for Serpentarius.
+#[ ] Fomalhaut, for Pisces (Jay) One of these things is not like the others.
+#[ ] Regulus, for Leo. (Magpie)
+#[ ] Antares, for Scorpio (Shiro)
+#[ ] Aldebaran, for Taurus (Anna)
+#[ ] Polaris (Yukiko)
+#[ ] Sol (Elodie)
+#[ ] Betelgeuse (King Solarica)
+#[ ] Spica, for Virgo.
 
 
 var example = {
@@ -78,7 +88,7 @@ var example = {
 			shape = GEMSHAPE_STAR,
 		},
 		"polaris": { #Yukiko's personal Star. Starts with it equipped.
-			name = "Prime Blue",
+			name = "Polaris",
 			levels = 10,
 			desc = "Alpha Ursae Minoris. The current Northern Polar Star in Earth's firmament. A yellow star that watches over the planet.",
 			shape = GEMSHAPE_STAR,
@@ -441,7 +451,7 @@ var example = {
 		"accel" : {
 			name = "Acceleration",
 			levels = 10,
-			desc = "Makes the linked gem faster.",
+			desc = "Makes the linked gem's skill faster.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#AAAAAA",
 			skillMod = [
@@ -451,7 +461,7 @@ var example = {
 		"decel" : {
 			name = "Deceleration",
 			levels = 10,
-			desc = "Makes the linked gem slower.",
+			desc = "Makes the linked gem's skill slower.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#AAAAAA",
 			skillMod = [
@@ -461,7 +471,7 @@ var example = {
 		"accrc" : {
 			name = "Accuracy",
 			levels = 10,
-			desc = "Makes the linked gem more accurate, and makes it long range from level 5 and above.",
+			desc = "Makes the linked gem's skill more accurate, and makes it long range from level 5 and above.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#AAAAAA",
 			skillMod = [
@@ -472,7 +482,7 @@ var example = {
 		"expan" : {
 			name = "Expansion",
 			levels = 10,
-			desc = "Increases area effect of linked skill. Levels 1-4 make it have splash damage, levels 5-9 make it target a row, lv.10 targets all.",
+			desc = "Increases area effect of linked gem's skill. Levels 1-4 make it have splash damage, levels 5-9 make it target a row, lv.10 targets all.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#AAAAAA",
 			skillMod = [
@@ -483,7 +493,7 @@ var example = {
 		"drain" : {
 			name = "Drain",
 			levels = 10,
-			desc = "Makes skill drain some health on hit.",
+			desc = "Makes linked gem's skill drain some health on hit.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#111111",
 			skillMod = [
@@ -503,7 +513,7 @@ var example = {
 		"charge" : {
 			name = "Focus",
 			levels = 10,
-			desc = "Makes linked skill slower, and decreases Active Defense until it activates, but greatly increases its power.",
+			desc = "Makes linked gem's skill slower, and decreases Active Defense until it activates, but greatly increases its power.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#018E3E",
 			on_weapon = {
@@ -518,7 +528,7 @@ var example = {
 		"merls" : {
 			name = "Cruelty",
 			levels = 10,
-			desc = "Linked skill gets a damage bonus if target has a condition effect active. Cancels nonlethal effect.",
+			desc = "Linked gem's skill gets a damage bonus if target has a condition effect active. Cancels nonlethal effect.",
 			shape = GEMSHAPE_SQUARE,
 			color = "#EFFF04",
 			skillMod = [
@@ -529,7 +539,7 @@ var example = {
 		"mercy" : {
 			name   = "Mercy",
 			levels = 10,
-			desc   = "Linked skill becomes non-lethal.",
+			desc   = "Linked gem's skill becomes non-lethal.",
 			shape  = GEMSHAPE_SQUARE,
 			color  = "#04FFEF",
 			on_weapon = {
@@ -551,121 +561,88 @@ var example = {
 				[skill.DGEM_POWER        , 080,084,088,092,098 ],
 			]
 		},
-		"rebifire" : {
-			name = "Rebind: Fire",
+		"rebinull" : {
+			name = "Rebind: Null",
 			levels = 10,
-			desc = "Linked skill changes element to fire.",
+			desc = "Linked skill changes element to none.",
 			shape = GEMSHAPE_SQUARE,
+			color = "#999999",
+			skillMod = [ [ skill.DGEM_ELEMENT, 000 ] ]
+		},
+		"rebifire" : {
+			inherits = "core/rebinull",
+			name = "Rebind: Fire",
+			desc = "Linked skill changes element to fire.",
 			color = "#FF2222",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 004 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 004 ] ]
 		},
 		"rebicold" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Cold",
-			levels = 10,
 			desc = "Linked skill changes element to cold.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#6ED8E3",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 005 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 005 ] ]
 		},
 		"rebibolt" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Bolt",
-			levels = 10,
 			desc = "Linked skill changes element to bolt.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#E2E36E",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 006 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 006 ] ]
 		},
 		"rebiwind" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Wind",
-			levels = 10,
 			desc = "Linked skill changes element to cut.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#72E36E",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 001 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 001 ] ]
 		},
 		"rebierth" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Earth",
-			levels = 10,
 			desc = "Linked skill changes element to pierce.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#E26EE3",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 002 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 002 ] ]
 		},
 		"rebiwatr" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Water",
-			levels = 10,
 			desc = "Linked skill changes element to blunt.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#6EA4E3",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 003 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 003 ] ]
 		},
 		"rebilite" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Light",
-			levels = 10,
 			desc = "Linked skill changes element to unknown.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#000022",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 007 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 007 ] ]
 		},
 		"rebivoid" : {
+			inherits = "core/rebinull",
 			name = "Rebind: Gravity",
-			levels = 10,
 			desc = "Linked skill changes element to ultimate.",
-			shape = GEMSHAPE_SQUARE,
 			color = "#000022",
-			on_weapon = {
-			},
-			skillMod = [
-				[ skill.DGEM_ELEMENT, 008 ],
-			]
+			skillMod = [ [ skill.DGEM_ELEMENT, 008 ] ]
 		},
 	},
-
 }
 
 
 func initTemplate():
 	return {
-		"name" : { loader = LIBSTD_STRING, default = "Unknown" },
-		"levels" : { loader = LIBSTD_INT, default = int(10) },
-		"growth" : { loader = LIBSTD_INT, default = 0 },
-		"desc" : { loader = LIBSTD_STRING, default = "???" },
-		"shape" : { loader = LIBSTD_INT, default = GEMSHAPE_NONE},
-		"color" : { loader = LIBSTD_STRING, default = "FFFF22" },
-		"unique" : { loader = LIBSTD_BOOL, default = false },
-		"on_weapon" : { loader = LIBEXT_WEAPONBONUS, default = {} },
-		"on_body"   : { loader = LIBEXT_BODYBONUS  , default = {} },
-		"on_mon"    : { loader = LIBEXT_BODYBONUS  , default = {} },
-		"skill" : { loader = LIBEXT_TID, default = null },
-		"skillMod" : { loader = LIBEXT_SKILL_MODIFIER, default = [] },
+		"name"      : { loader = LIBSTD_STRING        , default = "Unknown" },
+		"levels"    : { loader = LIBSTD_INT           , default = int(10) },
+		"growth"    : { loader = LIBSTD_INT           , default = 0 },
+		"desc"      : { loader = LIBSTD_STRING        , default = "???" },
+		"shape"     : { loader = LIBSTD_INT           , default = GEMSHAPE_NONE},
+		"color"     : { loader = LIBSTD_STRING        , default = "FFFF22" },
+		"unique"    : { loader = LIBSTD_BOOL          , default = false },
+		"on_weapon" : { loader = LIBEXT_WEAPONBONUS   , default = {} },
+		"on_body"   : { loader = LIBEXT_BODYBONUS     , default = {} },
+		"on_mon"    : { loader = LIBEXT_BODYBONUS     , default = {} },
+		"skill"     : { loader = LIBEXT_TID           , default = null },
+		"skillMod"  : { loader = LIBEXT_SKILL_MODIFIER, default = [] },
 	}
 
 func loadDebug():

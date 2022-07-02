@@ -11,12 +11,10 @@ func init() -> void:
 func connectUISignals(obj) -> void:
 	for i in range(PARTY_SIZE):
 		grid[0][i].connect("display_info", obj, "showInfo")
-		grid[0][i].connect("hide_info"   , obj, "hideInfo")
 
 func disconnectUISignals(obj) -> void:
 	for i in range(PARTY_SIZE):
 		grid[0][i].disconnect("display_info", obj, "showInfo")
-		grid[0][i].disconnect("hide_info"   , obj, "hideInfo")
 
 func update() -> void:
 	for i in range(PARTY_SIZE):

@@ -1,8 +1,86 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://nodes/UI/char_display.tscn" type="PackedScene" id=1]
 [ext_resource path="res://nodes/UI/guild_display.gd" type="Script" id=2]
 [ext_resource path="res://nodes/UI/battle/enemy_display.tscn" type="PackedScene" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+resource_local_to_scene = true
+bg_color = Color( 0.109804, 0.109804, 0.109804, 0.0313726 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.890196, 0.890196, 0.501961 )
+corner_radius_top_left = 10
+corner_radius_bottom_right = 20
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=2]
+resource_local_to_scene = true
+bg_color = Color( 0.109804, 0.109804, 0.109804, 0.0313726 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.890196, 0.890196, 0.501961 )
+corner_radius_top_left = 10
+corner_radius_bottom_right = 20
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=3]
+resource_local_to_scene = true
+bg_color = Color( 0.109804, 0.109804, 0.109804, 0.0313726 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.890196, 0.890196, 0.501961 )
+corner_radius_top_left = 10
+corner_radius_bottom_right = 20
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=4]
+resource_local_to_scene = true
+bg_color = Color( 0.109804, 0.109804, 0.109804, 0.0313726 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.890196, 0.890196, 0.501961 )
+corner_radius_top_left = 10
+corner_radius_bottom_right = 20
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=5]
+resource_local_to_scene = true
+bg_color = Color( 0.109804, 0.109804, 0.109804, 0.0313726 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.890196, 0.890196, 0.501961 )
+corner_radius_top_left = 10
+corner_radius_bottom_right = 20
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=6]
+resource_local_to_scene = true
+bg_color = Color( 0.109804, 0.109804, 0.109804, 0.0313726 )
+border_width_left = 8
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.890196, 0.890196, 0.890196, 0.501961 )
+corner_radius_top_left = 10
+corner_radius_bottom_right = 20
+corner_detail = 1
+anti_aliasing = false
 
 [node name="UIDisplay" type="Control"]
 anchor_top = 1.0
@@ -17,34 +95,40 @@ __meta__ = {
 [node name="AF0" parent="." instance=ExtResource( 1 )]
 margin_left = 550.0
 margin_right = 750.0
+custom_styles/panel = SubResource( 1 )
 
 [node name="AF1" parent="." instance=ExtResource( 1 )]
 margin_left = 550.0
 margin_top = 31.0
 margin_right = 750.0
 margin_bottom = 61.0
+custom_styles/panel = SubResource( 2 )
 
 [node name="AF2" parent="." instance=ExtResource( 1 )]
 margin_left = 550.0
 margin_top = 62.0
 margin_right = 750.0
 margin_bottom = 92.0
+custom_styles/panel = SubResource( 3 )
 
 [node name="AB0" parent="." instance=ExtResource( 1 )]
 margin_left = 760.0
 margin_right = 960.0
+custom_styles/panel = SubResource( 4 )
 
 [node name="AB1" parent="." instance=ExtResource( 1 )]
 margin_left = 760.0
 margin_top = 31.0
 margin_right = 960.0
 margin_bottom = 61.0
+custom_styles/panel = SubResource( 5 )
 
 [node name="AB2" parent="." instance=ExtResource( 1 )]
 margin_left = 760.0
 margin_top = 62.0
 margin_right = 960.0
 margin_bottom = 92.0
+custom_styles/panel = SubResource( 6 )
 
 [node name="BF0" parent="." instance=ExtResource( 3 )]
 margin_left = 200.0

@@ -208,6 +208,7 @@ func initTemplate():
 		"ai"           : { loader = LIBSTD_INT },                         #AI mode
 		"aiPattern"    : { loader = LIBEXT_AIPATTERN },	                  #AI pattern
 		"skills"       : { loader = LIBEXT_ENEMY_SKILL },                 #Enemy skill list.
+		"passive"      : { loader = LIBSTD_TID, default = "debug/regenera" }, #Enemy passive skill
 		"skillSetup"   : { loader = LIBEXT_SKILL_SETUP, default = [ [ [0,1], [1,1], [2,1], [3,1] ] ] },  #Skill setup [skill array index, level]
 	}
 

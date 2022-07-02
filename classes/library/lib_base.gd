@@ -303,14 +303,35 @@ func loaderSkillCode(a): #Loads skill codes.
 								result[j][11] = int(line[1])
 							3:  # Instruction + single value + flags
 								result[j][0] = skill.translateOpCode(line[0])
-								for i in range(1, 11): result[j][i] = int(line[1])
+								for i in range(1, 11):
+									match(skill.opCodeType(result[j][0])):
+										skill.OPTYPE_INT:
+											result[j][i] = int(line[1])
+										skill.OPTYPE_FLOAT:
+											result[j][i] = float(line[1])
+										skill.OPTYPE_STR:
+											result[j][i] = str(line[1])
 								result[j][11] = int(line[2])
 							11: # Instruction + values for 10 levels
 								result[j][0] = skill.translateOpCode(line[0])
-								for i in range(1, 11): result[j][i] = int(line[i])
+								for i in range(1, 11):
+									match(skill.opCodeType(result[j][0])):
+										skill.OPTYPE_INT:
+											result[j][i] = int(line[i])
+										skill.OPTYPE_FLOAT:
+											result[j][i] = float(line[i])
+										skill.OPTYPE_STR:
+											result[j][i] = str(line[i])
 							12: # Instruction + values for 10 levels + flags
 								result[j][0] = skill.translateOpCode(line[0])
-								for i in range(1, 11): result[j][i] = int(line[i])
+								for i in range(1, 11):
+									match(skill.opCodeType(result[j][0])):
+										skill.OPTYPE_INT:
+											result[j][i] = int(line[i])
+										skill.OPTYPE_FLOAT:
+											result[j][i] = float(line[i])
+										skill.OPTYPE_STR:
+											result[j][i] = str(line[i])
 								result[j][11] = int(line[11])
 							_:  # Unexpected line. Print an error.
 								print("\t[!!][SKILL][loaderSkillCode] Line size is not normal, returning null line.")
